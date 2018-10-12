@@ -118,7 +118,7 @@ namespace DuiLib {
 						rcCorner.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 						paintManager->GetDPIObj ()->Scale (&rcCorner);
 					} else if (sItem == _T ("mask")) {
-						if (sValue[0] == _T ('#')) dwMask = _tcstoul (sValue.c_str () + 1, &pstr, 16);
+						if (sValue.operator[] (0) == _T ('#')) dwMask = _tcstoul (sValue.c_str () + 1, &pstr, 16);
 						else dwMask = _tcstoul (sValue.c_str (), &pstr, 16);
 					} else if (sItem == _T ("fade")) {
 						uFade = (BYTE) _tcstoul (sValue.c_str (), &pstr, 10);
@@ -3600,7 +3600,7 @@ namespace DuiLib {
 					} else if (sItem == _T ("restype")) {
 						sImageResType = sValue;
 					} else if (sItem == _T ("mask")) {
-						if (sValue[0] == _T ('#')) dwMask = _tcstoul (sValue.c_str () + 1, &pstr, 16);
+						if (sValue.operator[] (0) == _T ('#')) dwMask = _tcstoul (sValue.c_str () + 1, &pstr, 16);
 						else dwMask = _tcstoul (sValue.c_str (), &pstr, 16);
 					}
 

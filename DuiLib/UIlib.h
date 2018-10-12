@@ -40,14 +40,16 @@
 #include <comdef.h>
 #include <Gdiplus.h>
 
+#pragma warning (disable : 4100)
 #pragma warning (disable : 4244)
 #pragma warning (disable : 4302)
 #pragma warning (disable : 4311)
 #pragma warning (disable : 4312)
+#pragma warning (disable : 4505)
 
-//#define USE_XIMAGE_EFFECT //使用ximage的gif控件CGifAnimExUI开关
+//#define USE_XIMAGE_EFFECT
 
-#ifdef UNICODE
+#ifdef _UNICODE
 using string_t = std::wstring;
 #else
 using string_t = std::string;

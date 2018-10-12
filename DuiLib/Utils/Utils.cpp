@@ -309,13 +309,11 @@ namespace DuiLib {
 
 	CDuiString::CDuiString () {
 		reserve (64);
-		(*this)[0] = _T ('\0');
 	}
 
 	CDuiString::CDuiString (const TCHAR ch) {
 		reserve (64);
-		(*this)[0] = ch;
-		(*this)[1] = _T ('\0');
+		assign (1, ch);
 	}
 
 	CDuiString::CDuiString (const string_t& src) : string_t (src) {

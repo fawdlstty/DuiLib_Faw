@@ -132,8 +132,8 @@ namespace DuiLib {
 		inline int Compare (LPCTSTR pstr) const { return _tcscmp (c_str (), pstr); }
 		inline int CompareNoCase (LPCTSTR pstr) const { return _tcsicmp (c_str (), pstr); }
 
-		inline void MakeUpper () { _tcsupr (&(*this)[0]); }
-		inline void MakeLower () { _tcslwr (&(*this)[0]); }
+		inline void MakeUpper () { _tcsupr (&this->operator[] (0)); }
+		inline void MakeLower () { _tcslwr (&this->operator[] (0)); }
 
 		inline CDuiString Left (size_t nLength) const { return substr (0, nLength); }
 		inline CDuiString Mid (size_t iPos, size_t nLength = string_t::npos) const { return substr (iPos, nLength); }

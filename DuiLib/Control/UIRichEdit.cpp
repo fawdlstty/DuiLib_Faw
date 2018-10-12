@@ -8,6 +8,16 @@
 // These constants are for backward compatibility. They are the 
 // sizes used for initialization and reset in RichEdit 1.0
 
+static std::string _conv_to_multi (std::wstring _old) {
+	int lenOld = lstrlenW (_old.c_str ());
+	int lenNew = ::WideCharToMultiByte (CP_ACP, 0, _old.c_str (), lenOld, NULL, 0, NULL, NULL);
+	std::string s;
+	s.resize (lenNew);
+	if (!::WideCharToMultiByte (CP_ACP, 0, _old.c_str (), lenOld, const_cast<char*>(s.c_str ()), lenNew, NULL, NULL))
+		return "";
+	return s.c_str ();
+}
+
 namespace DuiLib {
 
 #define ID_RICH_UNDO			101
@@ -346,7 +356,7 @@ namespace DuiLib {
 			if (FAILED (pserv->TxSetText ((TCHAR *) pcs->lpszName)))
 				return FALSE;
 #else
-			size_t iLen = _tcslen (pcs->lpszName);
+			int iLen = _tcslen (pcs->lpszName);
 			LPWSTR lpText = new WCHAR[iLen + 1];
 			::ZeroMemory (lpText, (iLen + 1) * sizeof (WCHAR));
 			::MultiByteToWideChar (CP_ACP, 0, pcs->lpszName, -1, (LPWSTR) lpText, iLen);
@@ -1231,7 +1241,11 @@ namespace DuiLib {
 		::ZeroMemory (lpText, (cr.cpMax - cr.cpMin + 1) * sizeof (WCHAR));
 		TxSendMessage (EM_GETSELTEXT, 0, (LPARAM) lpText, 0);
 		CDuiString sText;
+#ifdef UNICODE
 		sText = (LPCWSTR) lpText;
+#else
+		sText = _conv_to_multi (lpText);
+#endif
 		delete[] lpText;
 		return sText;
 	}
@@ -1304,7 +1318,11 @@ namespace DuiLib {
 		tr.lpstrText = lpText;
 		TxSendMessage (EM_GETTEXTRANGE, 0, (LPARAM) &tr, 0);
 		CDuiString sText;
+#ifdef UNICODE
 		sText = (LPCWSTR) lpText;
+#else
+		sText = _conv_to_multi (lpText);
+#endif
 		delete[] lpText;
 		return sText;
 	}
@@ -1457,7 +1475,11 @@ namespace DuiLib {
 		*(LPWORD) lpText = (WORD) nMaxLength;
 		TxSendMessage (EM_GETLINE, nIndex, (LPARAM) lpText, 0);
 		CDuiString sText;
+#ifdef UNICODE
 		sText = (LPCWSTR) lpText;
+#else
+		sText = _conv_to_multi (lpText);
+#endif
 		delete[] lpText;
 		return sText;
 	}
