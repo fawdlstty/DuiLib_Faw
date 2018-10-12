@@ -356,10 +356,10 @@ namespace DuiLib {
 			if (FAILED (pserv->TxSetText ((TCHAR *) pcs->lpszName)))
 				return FALSE;
 #else
-			int iLen = _tcslen (pcs->lpszName);
+			size_t iLen = _tcslen (pcs->lpszName);
 			LPWSTR lpText = new WCHAR[iLen + 1];
 			::ZeroMemory (lpText, (iLen + 1) * sizeof (WCHAR));
-			::MultiByteToWideChar (CP_ACP, 0, pcs->lpszName, -1, (LPWSTR) lpText, iLen);
+			::MultiByteToWideChar (CP_ACP, 0, pcs->lpszName, -1, (LPWSTR) lpText, (int) iLen);
 			if (FAILED (pserv->TxSetText ((LPWSTR) lpText))) {
 				delete[] lpText;
 				return FALSE;
@@ -1218,10 +1218,10 @@ namespace DuiLib {
 #ifdef _UNICODE		
 		TxSendMessage (EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM) lpszNewText, 0);
 #else
-		int iLen = _tcslen (lpszNewText);
+		size_t iLen = _tcslen (lpszNewText);
 		LPWSTR lpText = new WCHAR[iLen + 1];
 		::ZeroMemory (lpText, (iLen + 1) * sizeof (WCHAR));
-		::MultiByteToWideChar (CP_ACP, 0, lpszNewText, -1, (LPWSTR) lpText, iLen);
+		::MultiByteToWideChar (CP_ACP, 0, lpszNewText, -1, (LPWSTR) lpText, (int) iLen);
 		TxSendMessage (EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM) lpText, 0);
 		delete[] lpText;
 #endif
