@@ -17,14 +17,6 @@
 #endif
 #define UILIB_COMDAT __declspec(selectany)
 
-#pragma warning(disable:4706)
-#pragma warning(disable:4505)
-#pragma warning(disable:4458)
-#pragma warning(disable:4251)
-#pragma warning(disable:4189)
-#pragma warning(disable:4121)
-#pragma warning(disable:4100)
-
 #if defined _M_IX86
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_IA64
@@ -35,6 +27,7 @@
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
+#include <string>
 #include <Windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
@@ -46,6 +39,19 @@
 #include <malloc.h>
 #include <comdef.h>
 #include <Gdiplus.h>
+
+#pragma warning (disable : 4244)
+#pragma warning (disable : 4302)
+#pragma warning (disable : 4311)
+#pragma warning (disable : 4312)
+
+//#define USE_XIMAGE_EFFECT //使用ximage的gif控件CGifAnimExUI开关
+
+#ifdef UNICODE
+using string_t = std::wstring;
+#else
+using string_t = std::string;
+#endif
 
 #include "Utils/Utils.h"
 #include "Utils/unzip.h"
@@ -114,6 +120,6 @@
 #include "Control/UIFadeButton.h"
 #include "Control/UIRing.h"
 
-#pragma comment( lib, "comctl32.lib" )
-#pragma comment( lib, "GdiPlus.lib" )
-#pragma comment( lib, "Imm32.lib" )
+#pragma comment (lib, "comctl32.lib")
+#pragma comment (lib, "GdiPlus.lib")
+#pragma comment (lib, "Imm32.lib")
