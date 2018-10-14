@@ -158,7 +158,7 @@ namespace DuiLib {
 	}
 
 	LPCTSTR CColorPaletteUI::GetThumbImage () const {
-		return m_strThumbImage.c_str ();
+		return m_strThumbImage;
 	}
 
 	void CColorPaletteUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {

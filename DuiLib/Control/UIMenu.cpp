@@ -155,7 +155,7 @@ namespace DuiLib {
 		return TRUE;
 	}
 
-	CMenuWnd* CMenuWnd::CreateMenu (CMenuElementUI* pOwner, STRINGorID xml, POINT point, CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo /*= nullptr*/, DWORD dwAlignment /*= eMenuAlignment_Left | eMenuAlignment_Top*/) {
+	CMenuWnd* CMenuWnd::CreateMenu (CMenuElementUI* pOwner, std::variant<UINT, string_t> xml, POINT point, CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo /*= nullptr*/, DWORD dwAlignment /*= eMenuAlignment_Left | eMenuAlignment_Top*/) {
 		CMenuWnd* pMenu = new CMenuWnd;
 		pMenu->Init (pOwner, xml, point, pMainPaintManager, pMenuCheckInfo, dwAlignment);
 		return pMenu;
@@ -195,7 +195,7 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	void CMenuWnd::Init (CMenuElementUI* pOwner, STRINGorID xml, POINT point,
+	void CMenuWnd::Init (CMenuElementUI* pOwner, std::variant<UINT, string_t> xml, POINT point,
 		CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo/* = nullptr*/,
 		DWORD dwAlignment/* = eMenuAlignment_Left | eMenuAlignment_Top*/) {
 
@@ -714,7 +714,7 @@ namespace DuiLib {
 			_cxyFixed.cx = GetManager ()->GetDPIObj ()->Scale (_cxyFixed.cx);
 			_cxyFixed.cy = GetManager ()->GetDPIObj ()->Scale (_cxyFixed.cy);
 			int padding = GetManager ()->GetDPIObj ()->Scale (ITEM_DEFAULT_EXPLAND_ICON_WIDTH) / 3;
-			const TDrawInfo* pDrawInfo = GetManager ()->GetDrawInfo ((LPCTSTR) strExplandIcon, nullptr);
+			const TDrawInfo* pDrawInfo = GetManager ()->GetDrawInfo (strExplandIcon, nullptr);
 			const TImageInfo *pImageInfo = GetManager ()->GetImageEx (pDrawInfo->sImageName, nullptr, 0);
 			if (!pImageInfo) {
 				return;
@@ -890,9 +890,9 @@ namespace DuiLib {
 						if (CMenuWnd::GetGlobalContextMenuObserver ().GetManager () != nullptr) {
 
 							MenuCmd* pMenuCmd = new MenuCmd ();
-							lstrcpy (pMenuCmd->szName, GetName ().c_str ());
-							lstrcpy (pMenuCmd->szUserData, GetUserData ().c_str ());
-							lstrcpy (pMenuCmd->szText, GetText ().c_str ());
+							lstrcpy (pMenuCmd->szName, GetName ());
+							lstrcpy (pMenuCmd->szUserData, GetUserData ());
+							lstrcpy (pMenuCmd->szText, GetText ());
 							pMenuCmd->bChecked = GetChecked ();
 							if (!PostMessage (CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()->GetPaintWindow (), WM_MENUCLICK, (WPARAM) pMenuCmd, (LPARAM) this)) {
 								delete pMenuCmd;

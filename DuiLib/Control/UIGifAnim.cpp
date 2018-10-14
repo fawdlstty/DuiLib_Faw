@@ -106,7 +106,7 @@ namespace DuiLib {
 	}
 
 	LPCTSTR CGifAnimUI::GetBkImage () {
-		return m_sBkImage.c_str ();
+		return m_sBkImage;
 	}
 
 	void CGifAnimUI::SetAutoPlay (bool bIsAuto) {
@@ -230,7 +230,7 @@ namespace DuiLib {
 			CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 			if (CPaintManagerUI::GetResourceZip ().empty ()) {
 				sFile += pstrGifPath;
-				HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
+				HANDLE hFile = ::CreateFile (sFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
 					FILE_ATTRIBUTE_NORMAL, NULL);
 				if (hFile == INVALID_HANDLE_VALUE) break;
 				dwSize = ::GetFileSize (hFile, NULL);
@@ -250,8 +250,8 @@ namespace DuiLib {
 				sFile += CPaintManagerUI::GetResourceZip ();
 				HZIP hz = NULL;
 				if (CPaintManagerUI::IsCachedResourceZip ()) hz = (HZIP) CPaintManagerUI::GetResourceZipHandle ();
-				//else hz = OpenZip ((void*) sFile.c_str (), 0, 2);
-				else hz = OpenZip (sFile.c_str ());
+				//else hz = OpenZip ((void*) sFile, 0, 2);
+				else hz = OpenZip (sFile);
 				if (hz == NULL) break;
 				ZIPENTRY ze;
 				int i;

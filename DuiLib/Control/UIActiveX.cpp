@@ -820,7 +820,7 @@ namespace DuiLib {
 		ReleaseControl ();
 	}
 
-	LPCTSTR CActiveXUI::GetClass () const {
+	string_view_t CActiveXUI::GetClass () const {
 		return _T ("ActiveXUI");
 	}
 
@@ -1030,7 +1030,7 @@ namespace DuiLib {
 
 		HRESULT Hr = -1;
 		if (!m_sModuleName.empty ()) {
-			HMODULE hModule = ::LoadLibrary ((LPCTSTR) m_sModuleName);
+			HMODULE hModule = ::LoadLibrary (m_sModuleName);
 			if (hModule != nullptr) {
 				IClassFactory* aClassFactory = nullptr;
 				DllGetClassObjectFunc aDllGetClassObjectFunc = (DllGetClassObjectFunc)::GetProcAddress (hModule, "DllGetClassObject");
@@ -1102,7 +1102,7 @@ namespace DuiLib {
 		return m_clsid;
 	}
 
-	CDuiString CActiveXUI::GetModuleName () const {
+	string_view_t CActiveXUI::GetModuleName () const {
 		return m_sModuleName;
 	}
 

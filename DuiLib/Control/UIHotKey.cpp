@@ -83,8 +83,8 @@ namespace DuiLib {
 			::DeleteObject (hBrush);
 			HFONT hOldFont = (HFONT) SelectObject (hDC, GetWindowFont (m_hWnd));
 			::SIZE size = { 0 };
-			::GetTextExtentPoint32 (hDC, strText.c_str (), (int) strText.length (), &size);
-			::DrawText (hDC, strText.c_str (), -1, &rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			::GetTextExtentPoint32 (hDC, strText, (int) strText.length (), &size);
+			::DrawText (hDC, strText, -1, &rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 			::SelectObject (hDC, hOldFont);
 			::SetCaretPos (size.cx, 0);
 			::EndPaint (m_hWnd, &ps);
@@ -393,23 +393,23 @@ namespace DuiLib {
 
 		if ((m_uButtonState & UISTATE_DISABLED) != 0) {
 			if (!m_sDisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sDisabledImage)) {
+				if (!DrawImage (hDC, m_sDisabledImage)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_FOCUSED) != 0) {
 			if (!m_sFocusedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sFocusedImage)) {
+				if (!DrawImage (hDC, m_sFocusedImage)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sHotImage)) {
+				if (!DrawImage (hDC, m_sHotImage)) {
 				} else return;
 			}
 		}
 
 		if (!m_sNormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sNormalImage)) {
+			if (!DrawImage (hDC, m_sNormalImage)) {
 			} else return;
 		}
 	}

@@ -226,22 +226,22 @@ namespace DuiLib {
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedImage.Format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName.c_str (), info.sResType.c_str (), info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedImage.Format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 						if (m_nSelectedStateCount > 1) {
 							int iLeft = rcSrc.left + 1 * szStatus.cx;
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedHotImage.Format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName.c_str (), info.sResType.c_str (), info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
-							m_sSelectedPushedImage.Format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName.c_str (), info.sResType.c_str (), info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedHotImage.Format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedPushedImage.Format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 						if (m_nSelectedStateCount > 2) {
 							int iLeft = rcSrc.left + 2 * szStatus.cx;
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedPushedImage.Format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName.c_str (), info.sResType.c_str (), info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedPushedImage.Format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 					}
 				}
@@ -249,15 +249,15 @@ namespace DuiLib {
 
 
 			if ((m_uButtonState & UISTATE_PUSHED) != 0 && !m_sSelectedPushedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sSelectedPushedImage)) {
+				if (!DrawImage (hDC, m_sSelectedPushedImage)) {
 				} else return;
 			} else if ((m_uButtonState & UISTATE_HOT) != 0 && !m_sSelectedHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sSelectedHotImage)) {
+				if (!DrawImage (hDC, m_sSelectedHotImage)) {
 				} else return;
 			}
 
 			if (!m_sSelectedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sSelectedImage)) {
+				if (!DrawImage (hDC, m_sSelectedImage)) {
 				}
 			}
 		} else {
@@ -268,7 +268,7 @@ namespace DuiLib {
 	void COptionUI::PaintForeImage (HDC hDC) {
 		if (IsSelected ()) {
 			if (!m_sSelectedForeImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sSelectedForeImage)) {
+				if (!DrawImage (hDC, m_sSelectedForeImage)) {
 				} else return;
 			}
 		}

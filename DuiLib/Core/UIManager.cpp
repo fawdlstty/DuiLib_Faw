@@ -59,7 +59,7 @@ namespace DuiLib {
 		Clear ();
 	}
 
-	void tagTDrawInfo::Parse (LPCTSTR pStrImage, LPCTSTR pStrModify, CPaintManagerUI *paintManager) {
+	void tagTDrawInfo::Parse (string_view_t pStrImage, string_view_t pStrModify, CPaintManagerUI *paintManager) {
 		// 1¡¢aaa.jpg
 		// 2¡¢file='aaa.jpg' res='' restype='0' dest='0,0,0,0' source='0,0,0,0' corner='0,0,0,0' 
 		// mask='#FF0000' fade='255' hole='false' xtiled='false' ytiled='false'
@@ -67,72 +67,35 @@ namespace DuiLib {
 		sDrawModify = pStrModify;
 		sImageName = pStrImage;
 
-		CDuiString sItem;
-		CDuiString sValue;
-		LPTSTR pstr = nullptr;
-		for (int i = 0; i < 2; ++i) {
-			if (i == 1) pStrImage = pStrModify;
-			if (!pStrImage) continue;
-			while (*pStrImage != _T ('\0')) {
-				sItem.clear ();
-				sValue.clear ();
-				while (*pStrImage > _T ('\0') && *pStrImage <= _T (' ')) pStrImage = ::CharNext (pStrImage);
-				while (*pStrImage != _T ('\0') && *pStrImage != _T ('=') && *pStrImage > _T (' ')) {
-					LPTSTR pstrTemp = ::CharNext (pStrImage);
-					while (pStrImage < pstrTemp) {
-						sItem += *pStrImage++;
-					}
+		for (size_t i = 0; i < 2; ++i) {
+			std::map<string_t, string_t> m = FawTools::parse_keyvalue_pairs (i == 0 ? pStrImage : pStrModify);
+			for (auto[str_key, str_value] : m) {
+				if (str_key == _T ("file") || str_key == _T ("res")) {
+					sImageName = str_value;
+				} else if (str_key == _T ("restype")) {
+					sResType = str_value;
+				} else if (str_key == _T ("dest")) {
+					rcDest = FawTools::parse_rect_from_str (str_value);
+					paintManager->GetDPIObj ()->Scale (&rcDest);
+				} else if (str_key == _T ("source")) {
+					rcSource = FawTools::parse_rect_from_str (str_value);
+					paintManager->GetDPIObj ()->Scale (&rcSource);
+				} else if (str_key == _T ("corner")) {
+					rcCorner = FawTools::parse_rect_from_str (str_value);
+					paintManager->GetDPIObj ()->Scale (&rcCorner);
+				} else if (str_key == _T ("mask")) {
+					dwMask = (DWORD) FawTools::parse_hex (str_value);
+				} else if (str_key == _T ("fade")) {
+					uFade = (BYTE) _ttoi (str_value.c_str ());
+				} else if (str_key == _T ("hole")) {
+					bHole = FawTools::parse_bool (str_value);
+				} else if (str_key == _T ("xtiled")) {
+					bTiledX = FawTools::parse_bool (str_value);
+				} else if (str_key == _T ("ytiled")) {
+					bTiledY = FawTools::parse_bool (str_value);
+				} else if (str_key == _T ("hsl")) {
+					bHSL = FawTools::parse_bool (str_value);
 				}
-				while (*pStrImage > _T ('\0') && *pStrImage <= _T (' ')) pStrImage = ::CharNext (pStrImage);
-				if (*pStrImage++ != _T ('=')) break;
-				while (*pStrImage > _T ('\0') && *pStrImage <= _T (' ')) pStrImage = ::CharNext (pStrImage);
-				if (*pStrImage++ != _T ('\'')) break;
-				while (*pStrImage != _T ('\0') && *pStrImage != _T ('\'')) {
-					LPTSTR pstrTemp = ::CharNext (pStrImage);
-					while (pStrImage < pstrTemp) {
-						sValue += *pStrImage++;
-					}
-				}
-				if (*pStrImage++ != _T ('\'')) break;
-				if (!sValue.empty ()) {
-					if (sItem == _T ("file") || sItem == _T ("res")) {
-						sImageName = sValue;
-					} else if (sItem == _T ("restype")) {
-						sResType = sValue;
-					} else if (sItem == _T ("dest")) {
-						rcDest.left = _tcstol (sValue.c_str (), &pstr, 10);  ASSERT (pstr);
-						rcDest.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-						rcDest.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-						rcDest.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
-						paintManager->GetDPIObj ()->Scale (&rcDest);
-					} else if (sItem == _T ("source")) {
-						rcSource.left = _tcstol (sValue.c_str (), &pstr, 10);  ASSERT (pstr);
-						rcSource.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-						rcSource.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-						rcSource.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
-						paintManager->GetDPIObj ()->Scale (&rcSource);
-					} else if (sItem == _T ("corner")) {
-						rcCorner.left = _tcstol (sValue.c_str (), &pstr, 10);  ASSERT (pstr);
-						rcCorner.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-						rcCorner.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-						rcCorner.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
-						paintManager->GetDPIObj ()->Scale (&rcCorner);
-					} else if (sItem == _T ("mask")) {
-						if (sValue.operator[] (0) == _T ('#')) dwMask = _tcstoul (sValue.c_str () + 1, &pstr, 16);
-						else dwMask = _tcstoul (sValue.c_str (), &pstr, 16);
-					} else if (sItem == _T ("fade")) {
-						uFade = (BYTE) _tcstoul (sValue.c_str (), &pstr, 10);
-					} else if (sItem == _T ("hole")) {
-						bHole = (_tcsicmp (sValue.c_str (), _T ("true")) == 0);
-					} else if (sItem == _T ("xtiled")) {
-						bTiledX = (_tcsicmp (sValue.c_str (), _T ("true")) == 0);
-					} else if (sItem == _T ("ytiled")) {
-						bTiledY = (_tcsicmp (sValue.c_str (), _T ("true")) == 0);
-					} else if (sItem == _T ("hsl")) {
-						bHSL = (_tcsicmp (sValue.c_str (), _T ("true")) == 0);
-					}
-				}
-				if (*pStrImage++ != _T (' ')) break;
 			}
 		}
 
@@ -315,7 +278,7 @@ namespace DuiLib {
 		}
 	}
 
-	void CPaintManagerUI::Init (HWND hWnd, LPCTSTR pstrName) {
+	void CPaintManagerUI::Init (HWND hWnd, string_view_t pstrName) {
 		ASSERT (::IsWindow (hWnd));
 
 		m_mNameHash.Resize ();
@@ -396,22 +359,22 @@ namespace DuiLib {
 		m_hInstance = hInst;
 	}
 
-	void CPaintManagerUI::SetCurrentPath (LPCTSTR pStrPath) {
-		::SetCurrentDirectory (pStrPath);
+	void CPaintManagerUI::SetCurrentPath (string_view_t pStrPath) {
+		::SetCurrentDirectory (pStrPath.data ());
 	}
 
 	void CPaintManagerUI::SetResourceDll (HINSTANCE hInst) {
 		m_hResourceInstance = hInst;
 	}
 
-	void CPaintManagerUI::SetResourcePath (LPCTSTR pStrPath) {
+	void CPaintManagerUI::SetResourcePath (string_view_t pStrPath) {
 		m_pStrResourcePath = pStrPath;
 		if (m_pStrResourcePath.empty ()) return;
 		TCHAR cEnd = m_pStrResourcePath[m_pStrResourcePath.length () - 1];
 		if (cEnd != _T ('\\') && cEnd != _T ('/')) m_pStrResourcePath += _T ('\\');
 	}
 
-	void CPaintManagerUI::SetResourceZip (LPVOID pVoid, unsigned int len, LPCTSTR password) {
+	void CPaintManagerUI::SetResourceZip (LPVOID pVoid, unsigned int len, string_view_t password) {
 		if (m_pStrResourceZip == _T ("membuffer")) return;
 		if (m_bCachedResourceZip && m_hResourceZip != nullptr) {
 			CloseZip ((HZIP) m_hResourceZip);
@@ -421,20 +384,12 @@ namespace DuiLib {
 		m_bCachedResourceZip = true;
 		m_pStrResourceZipPwd = password;  //Garfield 20160325 ´øÃÜÂëzip°ü½âÃÜ
 		if (m_bCachedResourceZip) {
-#ifdef UNICODE
-			char* pwd = w2a ((wchar_t*) password);
-			m_hResourceZip = (HANDLE) OpenZip (pVoid, len, pwd);
-			if (pwd) {
-				delete[] pwd;
-				pwd = nullptr;
-			}
-#else
-			m_hResourceZip = (HANDLE) OpenZip (pVoid, len, password);
-#endif
+			std::string pwd = FawTools::get_T (password);
+			m_hResourceZip = (HANDLE) OpenZip (pVoid, len, pwd.c_str ());
 		}
 	}
 
-	void CPaintManagerUI::SetResourceZip (LPCTSTR pStrPath, bool bCachedResourceZip, LPCTSTR password) {
+	void CPaintManagerUI::SetResourceZip (string_view_t pStrPath, bool bCachedResourceZip, string_view_t password) {
 		if (m_pStrResourceZip == pStrPath && m_bCachedResourceZip == bCachedResourceZip) return;
 		if (m_bCachedResourceZip && m_hResourceZip != nullptr) {
 			CloseZip ((HZIP) m_hResourceZip);
@@ -448,13 +403,13 @@ namespace DuiLib {
 			sFile += CPaintManagerUI::GetResourceZip ();
 #ifdef UNICODE
 			char* pwd = w2a ((wchar_t*) password);
-			m_hResourceZip = (HANDLE) OpenZip (sFile.c_str (), pwd);
+			m_hResourceZip = (HANDLE) OpenZip (sFile, pwd);
 			if (pwd) {
 				delete[] pwd;
 				pwd = nullptr;
 			}
 #else
-			m_hResourceZip = (HANDLE) OpenZip (sFile.c_str (), password);
+			m_hResourceZip = (HANDLE) OpenZip (sFile, password);
 #endif
 		}
 	}
@@ -546,7 +501,7 @@ namespace DuiLib {
 		m_iHoverTime = iTime;
 	}
 
-	LPCTSTR CPaintManagerUI::GetName () const {
+	string_view_t CPaintManagerUI::GetName () const {
 		return m_sName;
 	}
 
@@ -1274,7 +1229,7 @@ namespace DuiLib {
 			m_ToolTip.hwnd = m_hWndPaint;
 			m_ToolTip.uId = (UINT_PTR) m_hWndPaint;
 			m_ToolTip.hinst = m_hInstance;
-			m_ToolTip.lpszText = const_cast<LPTSTR>((LPCTSTR) sToolTip);
+			m_ToolTip.lpszText = &sToolTip[0];
 			m_ToolTip.rect = pHover->GetPos ();
 			if (m_hwndTooltip == nullptr) {
 				m_hwndTooltip = ::CreateWindowEx (0, TOOLTIPS_CLASS, nullptr, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, m_hWndPaint, nullptr, m_hInstance, nullptr);
@@ -2629,7 +2584,7 @@ namespace DuiLib {
 			CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 			if (CPaintManagerUI::GetResourceZip ().empty ()) {
 				sFile += pstrPath;
-				HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+				HANDLE hFile = ::CreateFile (sFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
 					FILE_ATTRIBUTE_NORMAL, nullptr);
 				if (hFile == INVALID_HANDLE_VALUE) break;
 				dwSize = ::GetFileSize (hFile, nullptr);
@@ -2652,11 +2607,11 @@ namespace DuiLib {
 				else {
 					CDuiString sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
 #ifdef UNICODE
-					char* pwd = w2a ((wchar_t*) sFilePwd.c_str ());
-					hz = OpenZip (sFile.c_str (), pwd);
+					char* pwd = w2a ((wchar_t*) sFilePwd);
+					hz = OpenZip (sFile, pwd);
 					if (pwd) delete[] pwd;
 #else
-					hz = OpenZip (sFile.c_str (), sFilePwd.c_str ());
+					hz = OpenZip (sFile, sFilePwd);
 #endif
 				}
 				if (hz == nullptr) break;
@@ -3094,7 +3049,7 @@ namespace DuiLib {
 						if (isdigit (*bitmap)) {
 							LPTSTR pstr = nullptr;
 							int iIndex = _tcstol (bitmap, &pstr, 10);
-							pNewData = CRenderEngine::LoadImage (iIndex, data->sResType.c_str (), data->dwMask);
+							pNewData = CRenderEngine::LoadImage (iIndex, data->sResType, data->dwMask);
 						}
 					} else {
 						pNewData = CRenderEngine::LoadImage (bitmap, nullptr, data->dwMask);
@@ -3133,7 +3088,7 @@ namespace DuiLib {
 						if (isdigit (*bitmap)) {
 							LPTSTR pstr = nullptr;
 							int iIndex = _tcstol (bitmap, &pstr, 10);
-							pNewData = CRenderEngine::LoadImage (iIndex, data->sResType.c_str (), data->dwMask);
+							pNewData = CRenderEngine::LoadImage (iIndex, data->sResType, data->dwMask);
 						}
 					} else {
 						pNewData = CRenderEngine::LoadImage (bitmap, nullptr, data->dwMask);
@@ -3507,7 +3462,7 @@ namespace DuiLib {
 		}
 	}
 
-	LPCTSTR CPaintManagerUI::GetStyle (LPCTSTR pName) const {
+	string_view_t CPaintManagerUI::GetStyle (string_view_t pName) const {
 		CDuiString* pStyle = static_cast<CDuiString*>(m_ResInfo.m_StyleHash.Find (pName));
 		if (!pStyle) pStyle = static_cast<CDuiString*>(m_SharedResInfo.m_StyleHash.Find (pName));
 		if (pStyle) return pStyle->c_str ();
@@ -3600,8 +3555,8 @@ namespace DuiLib {
 					} else if (sItem == _T ("restype")) {
 						sImageResType = sValue;
 					} else if (sItem == _T ("mask")) {
-						if (sValue.operator[] (0) == _T ('#')) dwMask = _tcstoul (sValue.c_str () + 1, &pstr, 16);
-						else dwMask = _tcstoul (sValue.c_str (), &pstr, 16);
+						if (sValue.operator[] (0) == _T ('#')) dwMask = _tcstoul (sValue + 1, &pstr, 16);
+						else dwMask = _tcstoul (sValue, &pstr, 16);
 					}
 
 				}

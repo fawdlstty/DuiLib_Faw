@@ -256,10 +256,10 @@ namespace DuiLib {
 		CDialogBuilder builder;
 		CDuiString sSkinType = GetSkinType ();
 		if (!sSkinType.empty ()) {
-			STRINGorID xml (_ttoi (GetSkinFile ().c_str ()));
+			std::variant<UINT, string_t> xml (_ttoi (GetSkinFile ()));
 			pRoot = builder.Create (xml, sSkinType, this, &m_pm);
 		} else {
-			pRoot = builder.Create (GetSkinFile ().c_str (), (UINT) 0, this, &m_pm);
+			pRoot = builder.Create (GetSkinFile (), (UINT) 0, this, &m_pm);
 		}
 
 		if (pRoot == nullptr) {

@@ -250,14 +250,14 @@ namespace DuiLib {
 			if (!m_sThumbPushedImage.empty ()) {
 				m_sImageModify.clear ();
 				m_sImageModify.Format (_T ("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-				if (!DrawImage (hDC, (LPCTSTR) m_sThumbPushedImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sThumbPushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sThumbHotImage.empty ()) {
 				m_sImageModify.clear ();
 				m_sImageModify.Format (_T ("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-				if (!DrawImage (hDC, (LPCTSTR) m_sThumbHotImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sThumbHotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
@@ -265,7 +265,7 @@ namespace DuiLib {
 		if (!m_sThumbImage.empty ()) {
 			m_sImageModify.clear ();
 			m_sImageModify.Format (_T ("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-			if (!DrawImage (hDC, (LPCTSTR) m_sThumbImage, (LPCTSTR) m_sImageModify)) {
+			if (!DrawImage (hDC, m_sThumbImage, m_sImageModify)) {
 			} else return;
 		}
 	}

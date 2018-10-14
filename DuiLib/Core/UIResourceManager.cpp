@@ -12,15 +12,15 @@ namespace DuiLib {
 		ResetResourceMap ();
 	}
 
-	BOOL CResourceManager::LoadResource (STRINGorID xml, LPCTSTR type) {
-		if (HIWORD (xml.m_lpstr) != 0) {
-			if (*(xml.m_lpstr) == _T ('<')) {
-				if (!m_xml.Load (xml.m_lpstr)) return FALSE;
+	BOOL CResourceManager::LoadResource (std::variant<UINT, string_t> xml, string_view_t type) {
+		if (xml.index () == 1) {
+			if (std::get<1> (xml)[0] == _T ('<')) {
+				if (!m_xml.Load (std::get<1> (xml).data ())) return FALSE;
 			} else {
-				if (!m_xml.LoadFromFile (xml.m_lpstr)) return FALSE;
+				if (!m_xml.LoadFromFile (std::get<1> (xml).data ())) return FALSE;
 			}
 		} else {
-			HRSRC hResource = ::FindResource (CPaintManagerUI::GetResourceDll (), xml.m_lpstr, type);
+			HRSRC hResource = ::FindResource (CPaintManagerUI::GetResourceDll (), MAKEINTRESOURCE (std::get<0> (xml)), type.data ());
 			if (hResource == nullptr) return FALSE;
 			HGLOBAL hGlobal = ::LoadResource (CPaintManagerUI::GetResourceDll (), hResource);
 			if (hGlobal == nullptr) {
@@ -92,37 +92,40 @@ namespace DuiLib {
 		return TRUE;
 	}
 
-	LPCTSTR CResourceManager::GetImagePath (LPCTSTR lpstrId) {
+	string_view_t CResourceManager::GetImagePath (string_view_t lpstrId) {
 		CDuiString * lpStr = static_cast<CDuiString *>(m_mImageHashMap.Find (lpstrId));
 		return lpStr == nullptr ? nullptr : lpStr->c_str ();
 	}
 
-	LPCTSTR CResourceManager::GetXmlPath (LPCTSTR lpstrId) {
+	string_view_t CResourceManager::GetXmlPath (string_view_t lpstrId) {
 		CDuiString * lpStr = static_cast<CDuiString *>(m_mXmlHashMap.Find (lpstrId));
 		return lpStr == nullptr ? nullptr : lpStr->c_str ();
 	}
 
 	void CResourceManager::ResetResourceMap () {
 		for (int i = 0; i < m_mImageHashMap.GetSize (); i++) {
-			if (LPCTSTR key = m_mImageHashMap.GetAt (i))
+			string_view_t key = m_mImageHashMap.GetAt (i);
+			if (!key.empty ())
 				delete static_cast<CDuiString *>(m_mImageHashMap.Find (key));
 		}
 		for (int i = 0; i < m_mXmlHashMap.GetSize (); i++) {
-			if (LPCTSTR key = m_mXmlHashMap.GetAt (i))
+			string_view_t key = m_mXmlHashMap.GetAt (i);
+			if (!key.empty ())
 				delete static_cast<CDuiString *>(m_mXmlHashMap.Find (key));
 		}
 		for (int i = 0; i < m_mTextResourceHashMap.GetSize (); i++) {
-			if (LPCTSTR key = m_mTextResourceHashMap.GetAt (i))
+			string_view_t key = m_mTextResourceHashMap.GetAt (i);
+			if (!key.empty ())
 				delete static_cast<CDuiString *>(m_mTextResourceHashMap.Find (key));
 		}
 	}
 
-	BOOL CResourceManager::LoadLanguage (LPCTSTR pstrXml) {
+	BOOL CResourceManager::LoadLanguage (string_view_t pstrXml) {
 		CMarkup xml;
-		if (*(pstrXml) == _T ('<')) {
-			if (!xml.Load (pstrXml)) return FALSE;
+		if (pstrXml[0] == _T ('<')) {
+			if (!xml.Load (pstrXml.data ())) return FALSE;
 		} else {
-			if (!xml.LoadFromFile (pstrXml)) return FALSE;
+			if (!xml.LoadFromFile (pstrXml.data ())) return FALSE;
 		}
 		CMarkupNode Root = xml.GetRoot ();
 		if (!Root.IsValid ()) return FALSE;
@@ -165,7 +168,7 @@ namespace DuiLib {
 		return TRUE;
 	}
 
-	CDuiString CResourceManager::GetText (LPCTSTR lpstrId, LPCTSTR lpstrType) {
+	CDuiString CResourceManager::GetText (string_view_t lpstrId, string_view_t lpstrType) {
 		if (lpstrId == nullptr) return _T ("");
 
 		CDuiString *lpstrFind = static_cast<CDuiString *>(m_mTextResourceHashMap.Find (lpstrId));
@@ -179,14 +182,12 @@ namespace DuiLib {
 	void CResourceManager::ReloadText () {
 		if (m_pQuerypInterface == nullptr) return;
 		//÷ÿ‘ÿŒƒ◊÷√Ë ˆ
-		LPCTSTR lpstrId = nullptr;
-		LPCTSTR lpstrText;
 		for (int i = 0; i < m_mTextResourceHashMap.GetSize (); i++) {
-			lpstrId = m_mTextResourceHashMap.GetAt (i);
+			string_view_t lpstrId = m_mTextResourceHashMap.GetAt (i);
 			if (lpstrId == nullptr) continue;
-			lpstrText = m_pQuerypInterface->QueryControlText (lpstrId, nullptr);
+			string_view_t lpstrText = m_pQuerypInterface->QueryControlText (lpstrId, nullptr);
 			if (lpstrText != nullptr) {
-				CDuiString * lpStr = static_cast<CDuiString *>(m_mTextResourceHashMap.Find (lpstrId));
+				CDuiString *lpStr = static_cast<CDuiString*> (m_mTextResourceHashMap.Find (lpstrId));
 				*lpStr = lpstrText;
 			}
 		}
@@ -194,7 +195,8 @@ namespace DuiLib {
 	void CResourceManager::ResetTextMap () {
 		CDuiString * lpStr;
 		for (int i = 0; i < m_mTextResourceHashMap.GetSize (); i++) {
-			if (LPCTSTR key = m_mTextResourceHashMap.GetAt (i)) {
+			string_view_t key = m_mTextResourceHashMap.GetAt (i);
+			if (!key.empty ()) {
 				lpStr = static_cast<CDuiString *>(m_mTextResourceHashMap.Find (key));
 				delete lpStr;
 			}

@@ -58,17 +58,17 @@ namespace DuiLib {
 
 		if ((m_uButtonState & UISTATE_DISABLED) != 0) {
 			if (!m_sDisabledImage.empty ()) {
-				if (DrawImage (hDC, (LPCTSTR) m_sDisabledImage))
+				if (DrawImage (hDC, m_sDisabledImage))
 					return;
 			}
 		} else if ((m_uButtonState & UISTATE_PUSHED) != 0) {
 			if (!m_sPushedImage.empty ()) {
-				if (DrawImage (hDC, (LPCTSTR) m_sPushedImage))
+				if (DrawImage (hDC, m_sPushedImage))
 					return;
 			}
 		} else if ((m_uButtonState & UISTATE_FOCUSED) != 0) {
 			if (!m_sFocusedImage.empty ()) {
-				if (DrawImage (hDC, (LPCTSTR) m_sFocusedImage))
+				if (DrawImage (hDC, m_sFocusedImage))
 					return;
 			}
 		}
@@ -78,12 +78,12 @@ namespace DuiLib {
 				if (m_bMouseHove) {
 					m_bMouseHove = FALSE;
 					m_sLastImage = m_sHotImage;
-					DrawImage (hDC, (LPCTSTR) m_sNormalImage);
+					DrawImage (hDC, m_sNormalImage);
 					return;
 				} else if (m_bMouseLeave) {
 					m_bMouseLeave = FALSE;
 					m_sLastImage = m_sNormalImage;
-					DrawImage (hDC, (LPCTSTR) m_sHotImage);
+					DrawImage (hDC, m_sHotImage);
 					return;
 				}
 
@@ -96,22 +96,22 @@ namespace DuiLib {
 				CDuiString sFadeOut, sFadeIn;
 				sFadeOut.Format (_T ("fade='%d'"), 255 - m_bFadeAlpha);
 				sFadeIn.Format (_T ("fade='%d'"), m_bFadeAlpha);
-				DrawImage (hDC, (LPCTSTR) m_sOldImage, sFadeOut);
-				DrawImage (hDC, (LPCTSTR) m_sNewImage, sFadeIn);
+				DrawImage (hDC, m_sOldImage, sFadeOut);
+				DrawImage (hDC, m_sNewImage, sFadeIn);
 				return;
 			} else {
 				if (m_bMouseHove) {
 					m_bMouseHove = FALSE;
 					m_sLastImage = m_sHotImage;
-					DrawImage (hDC, (LPCTSTR) m_sNormalImage);
+					DrawImage (hDC, m_sNormalImage);
 				} else if (m_bMouseLeave) {
 					m_bMouseLeave = FALSE;
 					m_sLastImage = m_sNormalImage;
-					DrawImage (hDC, (LPCTSTR) m_sHotImage);
+					DrawImage (hDC, m_sHotImage);
 				} else {
 					if (m_sLastImage.empty ())
 						m_sLastImage = m_sNormalImage;
-					DrawImage (hDC, (LPCTSTR) m_sLastImage);
+					DrawImage (hDC, m_sLastImage);
 				}
 			}
 		}

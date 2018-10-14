@@ -7,14 +7,14 @@ namespace DuiLib {
 
 	class IDialogBuilderCallback {
 	public:
-		virtual CControlUI* CreateControl (LPCTSTR pstrClass) = 0;
+		virtual CControlUI* CreateControl (string_view_t pstrClass) = 0;
 	};
 
 
 	class UILIB_API CDialogBuilder {
 	public:
 		CDialogBuilder ();
-		CControlUI* Create (STRINGorID xml, LPCTSTR type = nullptr, IDialogBuilderCallback* pCallback = nullptr,
+		CControlUI* Create (std::variant<UINT, string_t> xml, string_view_t type = nullptr, IDialogBuilderCallback* pCallback = nullptr,
 			CPaintManagerUI* pManager = nullptr, CControlUI* pParent = nullptr);
 		CControlUI* Create (IDialogBuilderCallback* pCallback = nullptr, CPaintManagerUI* pManager = nullptr,
 			CControlUI* pParent = nullptr);
@@ -23,15 +23,13 @@ namespace DuiLib {
 
 		void GetLastErrorMessage (LPTSTR pstrMessage, SIZE_T cchMax) const;
 		void GetLastErrorLocation (LPTSTR pstrSource, SIZE_T cchMax) const;
-		void SetInstance (HINSTANCE instance) {
-			m_instance = instance;
-		};
+		void SetInstance (HINSTANCE instance) { m_instance = instance; };
 	private:
 		CControlUI* _Parse (CMarkupNode* parent, CControlUI* pParent = nullptr, CPaintManagerUI* pManager = nullptr);
 
 		CMarkup					m_xml;
 		IDialogBuilderCallback	*m_pCallback	= nullptr;
-		LPCTSTR					m_pstrtype		= nullptr;
+		CDuiString				m_pstrtype		= _T ("");
 		HINSTANCE				m_instance		= NULL;
 	};
 

@@ -388,5 +388,8 @@
     <ClInclude Include="Utils\stb_image.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\FawTools.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

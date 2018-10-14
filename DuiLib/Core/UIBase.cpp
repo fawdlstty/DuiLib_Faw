@@ -19,10 +19,8 @@ namespace DuiLib {
 		_vsntprintf (szBuffer, 2048, pstrFormat, args);
 		va_end (args);
 
-		CDuiString strMsg = szBuffer;
-		strMsg += _T ("\n");
-		OutputDebugString (strMsg.c_str ());
-
+		lstrcat (szBuffer, _T ("\n"));
+		OutputDebugString (szBuffer);
 #endif
 	}
 
@@ -115,15 +113,15 @@ namespace DuiLib {
 		return pMsgTypeEntry;
 	}
 
-	bool CNotifyPump::AddVirtualWnd (CDuiString strName, CNotifyPump* pObject) {
+	bool CNotifyPump::AddVirtualWnd (string_view_t strName, CNotifyPump* pObject) {
 		if (m_VirtualWndMap.Find (strName) == nullptr) {
-			m_VirtualWndMap.Insert (strName.c_str (), (LPVOID) pObject);
+			m_VirtualWndMap.Insert (strName, (LPVOID) pObject);
 			return true;
 		}
 		return false;
 	}
 
-	bool CNotifyPump::RemoveVirtualWnd (CDuiString strName) {
+	bool CNotifyPump::RemoveVirtualWnd (string_view_t strName) {
 		if (m_VirtualWndMap.Find (strName) != nullptr) {
 			m_VirtualWndMap.Remove (strName);
 			return true;
@@ -179,8 +177,9 @@ namespace DuiLib {
 		///±éÀúÐéÄâ´°¿Ú
 		if (!msg.sVirtualWnd.empty ()) {
 			for (int i = 0; i < m_VirtualWndMap.GetSize (); i++) {
-				if (LPCTSTR key = m_VirtualWndMap.GetAt (i)) {
-					if (_tcsicmp (key, msg.sVirtualWnd.c_str ()) == 0) {
+				string_view_t key = m_VirtualWndMap.GetAt (i);
+				if (!key.empty ()) {
+					if (_tcsicmp (key.data (), msg.sVirtualWnd.c_str ()) == 0) {
 						CNotifyPump* pObject = static_cast<CNotifyPump*>(m_VirtualWndMap.Find (key, false));
 						if (pObject && pObject->LoopDispatch (msg))
 							return;
@@ -198,22 +197,6 @@ namespace DuiLib {
 	///
 	CWindowWnd::CWindowWnd (): m_hWnd (nullptr), m_OldWndProc (::DefWindowProc), m_bSubclassed (false) {}
 
-	HWND CWindowWnd::GetHWND () const {
-		return m_hWnd;
-	}
-
-	UINT CWindowWnd::GetClassStyle () const {
-		return 0;
-	}
-
-	LPCTSTR CWindowWnd::GetSuperClassName () const {
-		return nullptr;
-	}
-
-	CWindowWnd::operator HWND() const {
-		return m_hWnd;
-	}
-
 	HWND CWindowWnd::CreateDuiWindow (HWND hwndParent, LPCTSTR pstrWindowName, DWORD dwStyle /*=0*/, DWORD dwExStyle /*=0*/) {
 		return Create (hwndParent, pstrWindowName, dwStyle, dwExStyle, 0, 0, 0, 0, nullptr);
 	}
@@ -225,7 +208,7 @@ namespace DuiLib {
 	HWND CWindowWnd::Create (HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu) {
 		if (GetSuperClassName () != nullptr && !RegisterSuperclass ()) return nullptr;
 		if (GetSuperClassName () == nullptr && !RegisterWindowClass ()) return nullptr;
-		m_hWnd = ::CreateWindowEx (dwExStyle, GetWindowClassName (), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance (), this);
+		m_hWnd = ::CreateWindowEx (dwExStyle, GetWindowClassName ().data (), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance (), this);
 		ASSERT (m_hWnd != nullptr);
 		return m_hWnd;
 	}
@@ -294,7 +277,7 @@ namespace DuiLib {
 		::GetWindowRect (m_hWnd, &rcDlg);
 		RECT rcArea = { 0 };
 		RECT rcCenter = { 0 };
-		HWND hWnd = *this;
+		HWND hWnd = GetHWND ();
 		HWND hWndParent = ::GetParent (m_hWnd);
 		HWND hWndCenter = ::GetWindowOwner (m_hWnd);
 		if (hWndCenter != nullptr)
@@ -351,7 +334,7 @@ namespace DuiLib {
 		wc.hCursor = ::LoadCursor (nullptr, IDC_ARROW);
 		wc.hbrBackground = nullptr;
 		wc.lpszMenuName = nullptr;
-		wc.lpszClassName = GetWindowClassName ();
+		wc.lpszClassName = GetWindowClassName ().data ();
 		ATOM ret = ::RegisterClass (&wc);
 		ASSERT (ret != 0 || ::GetLastError () == ERROR_CLASS_ALREADY_EXISTS);
 		return ret != 0 || ::GetLastError () == ERROR_CLASS_ALREADY_EXISTS;
@@ -362,8 +345,8 @@ namespace DuiLib {
 		// window so we can subclass it later on...
 		WNDCLASSEX wc = { 0 };
 		wc.cbSize = sizeof (WNDCLASSEX);
-		if (!::GetClassInfoEx (nullptr, GetSuperClassName (), &wc)) {
-			if (!::GetClassInfoEx (CPaintManagerUI::GetInstance (), GetSuperClassName (), &wc)) {
+		if (!::GetClassInfoEx (nullptr, GetSuperClassName ().data (), &wc)) {
+			if (!::GetClassInfoEx (CPaintManagerUI::GetInstance (), GetSuperClassName ().data (), &wc)) {
 				ASSERT (!"Unable to locate window class");
 				return nullptr;
 			}
@@ -371,7 +354,7 @@ namespace DuiLib {
 		m_OldWndProc = wc.lpfnWndProc;
 		wc.lpfnWndProc = CWindowWnd::__ControlProc;
 		wc.hInstance = CPaintManagerUI::GetInstance ();
-		wc.lpszClassName = GetWindowClassName ();
+		wc.lpszClassName = GetWindowClassName ().data ();
 		ATOM ret = ::RegisterClassEx (&wc);
 		ASSERT (ret != 0 || ::GetLastError () == ERROR_CLASS_ALREADY_EXISTS);
 		return ret != 0 || ::GetLastError () == ERROR_CLASS_ALREADY_EXISTS;

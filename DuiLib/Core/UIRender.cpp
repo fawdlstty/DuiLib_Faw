@@ -233,9 +233,9 @@ namespace DuiLib {
 		}
 		const TImageInfo* data = nullptr;
 		if (sImageResType.empty ()) {
-			data = pManager->GetImageEx ((LPCTSTR) sImageName, nullptr, dwMask, false, instance);
+			data = pManager->GetImageEx (sImageName, nullptr, dwMask, false, instance);
 		} else {
-			data = pManager->GetImageEx ((LPCTSTR) sImageName, (LPCTSTR) sImageResType, dwMask, false, instance);
+			data = pManager->GetImageEx (sImageName, sImageResType, dwMask, false, instance);
 		}
 		if (!data) return false;
 
@@ -269,7 +269,7 @@ namespace DuiLib {
 		return dwColor;
 	}
 
-	TImageInfo* CRenderEngine::LoadImage (STRINGorID bitmap, LPCTSTR type, DWORD mask, HINSTANCE instance) {
+	TImageInfo* CRenderEngine::LoadImage (std::variant<UINT, string_t> bitmap, LPCTSTR type, DWORD mask, HINSTANCE instance) {
 		LPBYTE pData = nullptr;
 		DWORD dwSize = 0;
 		do {
@@ -277,7 +277,7 @@ namespace DuiLib {
 				CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 				if (CPaintManagerUI::GetResourceZip ().empty ()) {
 					sFile += bitmap.m_lpstr;
-					HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+					HANDLE hFile = ::CreateFile (sFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
 						FILE_ATTRIBUTE_NORMAL, nullptr);
 					if (hFile == INVALID_HANDLE_VALUE) break;
 					dwSize = ::GetFileSize (hFile, nullptr);
@@ -300,11 +300,11 @@ namespace DuiLib {
 					if (CPaintManagerUI::IsCachedResourceZip ()) hz = (HZIP) CPaintManagerUI::GetResourceZipHandle ();
 					else {
 #ifdef UNICODE
-						char* pwd = w2a ((wchar_t*) sFilePwd.c_str ());
-						hz = OpenZip (sFile.c_str (), pwd);
+						char* pwd = w2a ((wchar_t*) sFilePwd);
+						hz = OpenZip (sFile, pwd);
 						if (pwd) delete[] pwd;
 #else
-						hz = OpenZip (sFile.c_str (), sFilePwd.c_str ());
+						hz = OpenZip (sFile, sFilePwd);
 #endif
 					}
 					if (hz == nullptr) break;
@@ -433,7 +433,7 @@ namespace DuiLib {
 		return data;
 	}
 #ifdef USE_XIMAGE_EFFECT
-	static DWORD LoadImage2Memory (const STRINGorID &bitmap, LPCTSTR type, LPBYTE &pData) {
+	static DWORD LoadImage2Memory (const std::variant<UINT, string_t> &bitmap, LPCTSTR type, LPBYTE &pData) {
 		assert (pData == nullptr);
 		pData = nullptr;
 		DWORD dwSize (0U);
@@ -442,7 +442,7 @@ namespace DuiLib {
 				CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 				if (CPaintManagerUI::GetResourceZip ().empty ()) {
 					sFile += bitmap.m_lpstr;
-					HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+					HANDLE hFile = ::CreateFile (sFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
 						FILE_ATTRIBUTE_NORMAL, nullptr);
 					if (hFile == INVALID_HANDLE_VALUE) break;
 					dwSize = ::GetFileSize (hFile, nullptr);
@@ -468,11 +468,11 @@ namespace DuiLib {
 					else {
 						CDuiString sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
 #ifdef UNICODE
-						char* pwd = w2a ((wchar_t*) sFilePwd.c_str ());
-						hz = OpenZip ((void*) sFile.c_str (), pwd);
+						char* pwd = w2a ((wchar_t*) sFilePwd);
+						hz = OpenZip ((void*) sFile, pwd);
 						if (pwd) delete[] pwd;
 #else
-						hz = OpenZip ((void*) sFile.c_str (), sFilePwd.c_str ());
+						hz = OpenZip ((void*) sFile, sFilePwd);
 #endif
 					}
 					if (hz == nullptr) break;
@@ -536,7 +536,7 @@ namespace DuiLib {
 		}
 		return dwSize;
 	}
-	CxImage* CRenderEngine::LoadGifImageX (STRINGorID bitmap, LPCTSTR type, DWORD mask) {
+	CxImage* CRenderEngine::LoadGifImageX (std::variant<UINT, string_t> bitmap, LPCTSTR type, DWORD mask) {
 		//write by wangji
 		LPBYTE pData = nullptr;
 		DWORD dwSize = LoadImage2Memory (bitmap, type, pData);
@@ -564,7 +564,7 @@ namespace DuiLib {
 			CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 			if (CPaintManagerUI::GetResourceZip ().empty ()) {
 				sFile += pstrPath;
-				HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+				HANDLE hFile = ::CreateFile (sFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
 					FILE_ATTRIBUTE_NORMAL, nullptr);
 				if (hFile == INVALID_HANDLE_VALUE) break;
 				dwSize = ::GetFileSize (hFile, nullptr);
@@ -587,11 +587,11 @@ namespace DuiLib {
 				else {
 					CDuiString sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
 #ifdef UNICODE
-					char* pwd = w2a ((wchar_t*) sFilePwd.c_str ());
-					hz = OpenZip (sFile.c_str (), pwd);
+					char* pwd = w2a ((wchar_t*) sFilePwd);
+					hz = OpenZip (sFile, pwd);
 					if (pwd) delete[] pwd;
 #else
-					hz = OpenZip (sFile.c_str (), sFilePwd.c_str ());
+					hz = OpenZip (sFile, sFilePwd);
 #endif
 				}
 				if (hz == nullptr) break;
@@ -750,7 +750,7 @@ namespace DuiLib {
 						sImageResType = sValue;
 						++image_count;
 					} else if (sItem == _T ("dest")) {
-						rcItem.left = rc.left + _tcstol (sValue.c_str (), &pstr, 10);  ASSERT (pstr);
+						rcItem.left = rc.left + _tcstol (sValue, &pstr, 10);  ASSERT (pstr);
 						rcItem.top = rc.top + _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 						rcItem.right = rc.left + _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 
@@ -761,28 +761,28 @@ namespace DuiLib {
 						if (rcItem.bottom > rc.bottom)
 							rcItem.bottom = rc.bottom;
 					} else if (sItem == _T ("source")) {
-						rcBmpPart.left = _tcstol (sValue.c_str (), &pstr, 10);  ASSERT (pstr);
+						rcBmpPart.left = _tcstol (sValue, &pstr, 10);  ASSERT (pstr);
 						rcBmpPart.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 						rcBmpPart.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 						rcBmpPart.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 					} else if (sItem == _T ("corner")) {
-						rcCorner.left = _tcstol (sValue.c_str (), &pstr, 10);  ASSERT (pstr);
+						rcCorner.left = _tcstol (sValue, &pstr, 10);  ASSERT (pstr);
 						rcCorner.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 						rcCorner.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 						rcCorner.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 					} else if (sItem == _T ("mask")) {
-						if (sValue.operator[] (0) == _T ('#')) dwMask = _tcstoul (sValue.c_str () + 1, &pstr, 16);
-						else dwMask = _tcstoul (sValue.c_str (), &pstr, 16);
+						if (sValue.operator[] (0) == _T ('#')) dwMask = _tcstoul (sValue + 1, &pstr, 16);
+						else dwMask = _tcstoul (sValue, &pstr, 16);
 					} else if (sItem == _T ("fade")) {
-						bFade = (BYTE) _tcstoul (sValue.c_str (), &pstr, 10);
+						bFade = (BYTE) _tcstoul (sValue, &pstr, 10);
 					} else if (sItem == _T ("hole")) {
-						bHole = (_tcsicmp (sValue.c_str (), _T ("TRUE")) == 0);
+						bHole = (_tcsicmp (sValue, _T ("TRUE")) == 0);
 					} else if (sItem == _T ("xtiled")) {
-						bTiledX = (_tcsicmp (sValue.c_str (), _T ("TRUE")) == 0);
+						bTiledX = (_tcsicmp (sValue, _T ("TRUE")) == 0);
 					} else if (sItem == _T ("ytiled")) {
-						bTiledY = (_tcsicmp (sValue.c_str (), _T ("TRUE")) == 0);
+						bTiledY = (_tcsicmp (sValue, _T ("TRUE")) == 0);
 					} else if (sItem == _T ("iconsize")) {
-						szIcon.cx = _tcstol (sValue.c_str (), &pstr, 10);  ASSERT (pstr);
+						szIcon.cx = _tcstol (sValue, &pstr, 10);  ASSERT (pstr);
 						szIcon.cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 					} else if (sItem == _T ("iconalign")) {
 						MakeFitIconDest (rcItem, szIcon, sValue, rcItem);
@@ -846,11 +846,11 @@ namespace DuiLib {
 				}*/
 			}
 		}
-		return LoadImage (STRINGorID (sStrPath.c_str ()), type, mask, instance);
+		return LoadImage (std::variant<UINT, string_t> (sStrPath), type, mask, instance);
 	}
 
 	TImageInfo* CRenderEngine::LoadImage (UINT nID, LPCTSTR type, DWORD mask, HINSTANCE instance) {
-		return LoadImage (STRINGorID (nID), type, mask, instance);
+		return LoadImage (std::variant<UINT, string_t> (nID), type, mask, instance);
 	}
 
 	void CRenderEngine::DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, \
@@ -1325,7 +1325,7 @@ namespace DuiLib {
 		return bRet;
 	}
 
-	bool CRenderEngine::DrawImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, LPCTSTR pStrImage, LPCTSTR pStrModify, HINSTANCE instance) {
+	bool CRenderEngine::DrawImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, string_view_t pStrImage, string_view_t pStrModify, HINSTANCE instance) {
 		if ((pManager == nullptr) || (hDC == nullptr)) return false;
 		const TDrawInfo* pDrawInfo = pManager->GetDrawInfo (pStrImage, pStrModify);
 		return DrawImageInfo (hDC, pManager, rcItem, rcPaint, pDrawInfo, instance);
@@ -1583,7 +1583,7 @@ namespace DuiLib {
 					strUnicode = strUnicode.Mid (0, strUnicode.length () - 1);
 				}
 				wchar_t wch[2] = { 0 };
-				wch[0] = static_cast<wchar_t>(_tcstol (strUnicode.c_str (), 0, 16));
+				wch[0] = static_cast<wchar_t>(_tcstol (strUnicode, 0, 16));
 				::DrawTextW (hDC, wch, -1, &rc, uStyle);
 			} else {
 				::DrawText (hDC, pstrText, -1, &rc, uStyle);
@@ -1885,10 +1885,10 @@ namespace DuiLib {
 						int iImageListIndex = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
 						if (iImageListIndex < 0 || iImageListIndex >= iImageListNum) iImageListIndex = 0;
 
-						if (_tcsstr (sImageString.c_str (), _T ("file=\'")) != nullptr || _tcsstr (sImageString.c_str (), _T ("res=\'")) != nullptr) {
+						if (_tcsstr (sImageString, _T ("file=\'")) != nullptr || _tcsstr (sImageString, _T ("res=\'")) != nullptr) {
 							CDuiString sImageResType;
 							CDuiString sImageName;
-							LPCTSTR pStrImage = sImageString.c_str ();
+							LPCTSTR pStrImage = sImageString;
 							CDuiString sItem;
 							CDuiString sValue;
 							while (*pStrImage != _T ('\0')) {
@@ -1922,9 +1922,9 @@ namespace DuiLib {
 								if (*pStrImage++ != _T (' ')) break;
 							}
 
-							pImageInfo = pManager->GetImageEx ((LPCTSTR) sImageName, sImageResType);
+							pImageInfo = pManager->GetImageEx (sImageName, sImageResType);
 						} else
-							pImageInfo = pManager->GetImageEx ((LPCTSTR) sName);
+							pImageInfo = pManager->GetImageEx (sName);
 
 						if (pImageInfo) {
 							iWidth = pImageInfo->nX;

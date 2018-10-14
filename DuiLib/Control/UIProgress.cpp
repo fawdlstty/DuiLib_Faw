@@ -126,7 +126,7 @@ namespace DuiLib {
 				m_sForeImageModify.Format (_T ("dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), rc.left, rc.top, rc.right, rc.bottom, rc.left, rc.top, rc.right, rc.bottom);
 			}
 
-			if (DrawImage (hDC, (LPCTSTR) m_sForeImage, (LPCTSTR) m_sForeImageModify))
+			if (DrawImage (hDC, m_sForeImage, m_sForeImageModify))
 				return;
 		}
 	}

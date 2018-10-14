@@ -527,7 +527,7 @@ namespace DuiLib {
 		return true;
 	}
 
-	CDuiString CComboUI::GetText () const {
+	string_view_t CComboUI::GetText () const {
 		if (m_iCurSel < 0 || m_iCurSel >= m_items.GetSize ()) {
 			return __super::GetText ();
 		} else {
@@ -559,8 +559,8 @@ namespace DuiLib {
 		if (!IsEnabled ()) m_uButtonState = 0;
 	}
 
-	CDuiString CComboUI::GetDropBoxAttributeList () {
-		return m_sDropBoxAttributes;
+	std::string_view CComboUI::GetDropBoxAttributeList () {
+		return string_view_t ((string_t) m_sDropBoxAttributes);
 	}
 
 	void CComboUI::SetDropBoxAttributeList (LPCTSTR pstrList) {
@@ -1028,28 +1028,28 @@ namespace DuiLib {
 
 		if ((m_uButtonState & UISTATE_DISABLED) != 0) {
 			if (!m_sDisabledImage.empty ()) {
-				if (DrawImage (hDC, (LPCTSTR) m_sDisabledImage))
+				if (DrawImage (hDC, m_sDisabledImage))
 					return;
 			}
 		} else if ((m_uButtonState & UISTATE_PUSHED) != 0) {
 			if (!m_sPushedImage.empty ()) {
-				if (DrawImage (hDC, (LPCTSTR) m_sPushedImage))
+				if (DrawImage (hDC, m_sPushedImage))
 					return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sHotImage.empty ()) {
-				if (DrawImage (hDC, (LPCTSTR) m_sHotImage))
+				if (DrawImage (hDC, m_sHotImage))
 					return;
 			}
 		} else if ((m_uButtonState & UISTATE_FOCUSED) != 0) {
 			if (!m_sFocusedImage.empty ()) {
-				if (DrawImage (hDC, (LPCTSTR) m_sFocusedImage))
+				if (DrawImage (hDC, m_sFocusedImage))
 					return;
 			}
 		}
 
 		if (!m_sNormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sNormalImage)) {
+			if (!DrawImage (hDC, m_sNormalImage)) {
 			} else return;
 		}
 	}

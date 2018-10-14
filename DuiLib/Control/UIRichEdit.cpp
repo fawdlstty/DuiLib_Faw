@@ -9,13 +9,13 @@
 // sizes used for initialization and reset in RichEdit 1.0
 
 static std::string _conv_to_multi (std::wstring _old) {
-	int lenOld = lstrlenW (_old.c_str ());
-	int lenNew = ::WideCharToMultiByte (CP_ACP, 0, _old.c_str (), lenOld, NULL, 0, NULL, NULL);
+	int lenOld = lstrlenW (_old);
+	int lenNew = ::WideCharToMultiByte (CP_ACP, 0, _old, lenOld, NULL, 0, NULL, NULL);
 	std::string s;
 	s.resize (lenNew);
-	if (!::WideCharToMultiByte (CP_ACP, 0, _old.c_str (), lenOld, const_cast<char*>(s.c_str ()), lenNew, NULL, NULL))
+	if (!::WideCharToMultiByte (CP_ACP, 0, _old, lenOld, const_cast<char*>(s), lenNew, NULL, NULL))
 		return "";
-	return s.c_str ();
+	return s;
 }
 
 namespace DuiLib {
@@ -1572,7 +1572,7 @@ namespace DuiLib {
 		cs.y = 0;
 		cs.cy = 0;
 		cs.cx = 0;
-		cs.lpszName = m_sText.c_str ();
+		cs.lpszName = m_sText;
 		CreateHost (this, &cs, &m_pTwh);
 		if (m_pTwh) {
 			if (m_bTransparent) m_pTwh->SetTransparent (TRUE);
@@ -2114,7 +2114,7 @@ namespace DuiLib {
 	}
 
 	LPCTSTR CRichEditUI::GetTipValue () {
-		return m_sTipValue.c_str ();
+		return m_sTipValue;
 	}
 
 	void CRichEditUI::SetTipValueColor (LPCTSTR pStrColor) {
@@ -2146,23 +2146,23 @@ namespace DuiLib {
 
 		if ((m_uButtonState & UISTATE_DISABLED) != 0) {
 			if (!m_sDisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sDisabledImage)) {
+				if (!DrawImage (hDC, m_sDisabledImage)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_FOCUSED) != 0) {
 			if (!m_sFocusedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sFocusedImage)) {
+				if (!DrawImage (hDC, m_sFocusedImage)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sHotImage)) {
+				if (!DrawImage (hDC, m_sHotImage)) {
 				} else return;
 			}
 		}
 
 		if (!m_sNormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sNormalImage)) {
+			if (!DrawImage (hDC, m_sNormalImage)) {
 			} else return;
 		}
 	}

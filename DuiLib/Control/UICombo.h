@@ -21,7 +21,7 @@ namespace DuiLib {
 		void DoInit ();
 		UINT GetControlFlags () const;
 
-		CDuiString GetText () const;
+		string_view_t GetText () const;
 		void SetText (LPCTSTR pstrText) override;
 		void SetEnabled (bool bEnable = true);
 
@@ -40,7 +40,7 @@ namespace DuiLib {
 		bool IsShowShadow ();
 		void SetShowShadow (bool bShow = true);
 
-		CDuiString GetDropBoxAttributeList ();
+		string_view_t GetDropBoxAttributeList ();
 		void SetDropBoxAttributeList (LPCTSTR pstrList);
 		SIZE GetDropBoxSize () const;
 		void SetDropBoxSize (SIZE szDropBox);

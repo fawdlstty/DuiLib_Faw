@@ -48,7 +48,7 @@ namespace DuiLib {
 
 			CDuiRect rcBmpPart;
 			LPTSTR lpszValue = nullptr;
-			rcBmpPart.left = _tcstol (sModify.c_str () + nPos2 + 1, &lpszValue, 10);  ASSERT (lpszValue);
+			rcBmpPart.left = _tcstol (sModify + nPos2 + 1, &lpszValue, 10);  ASSERT (lpszValue);
 			rcBmpPart.top = _tcstol (lpszValue + 1, &lpszValue, 10);    ASSERT (lpszValue);
 			rcBmpPart.right = _tcstol (lpszValue + 1, &lpszValue, 10);  ASSERT (lpszValue);
 			rcBmpPart.bottom = _tcstol (lpszValue + 1, &lpszValue, 10); ASSERT (lpszValue);

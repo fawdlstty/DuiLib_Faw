@@ -243,7 +243,7 @@ namespace DuiLib {
 			static MenuObserverImpl s_context_menu_observer;
 			return s_context_menu_observer;
 		}
-		static CMenuWnd* CreateMenu (CMenuElementUI* pOwner, STRINGorID xml, POINT point,
+		static CMenuWnd* CreateMenu (CMenuElementUI* pOwner, std::variant<UINT, string_t> xml, POINT point,
 			CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo = nullptr,
 			DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top);
 		static void DestroyMenu ();
@@ -263,7 +263,7 @@ namespace DuiLib {
 		 	*@dwAlignment		菜单的出现位置，默认出现在鼠标的右下侧。
 		 */
 
-		void Init (CMenuElementUI* pOwner, STRINGorID xml, POINT point,
+		void Init (CMenuElementUI* pOwner, std::variant<UINT, string_t> xml, POINT point,
 			CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo = nullptr,
 			DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top);
 		LPCTSTR GetWindowClassName () const;
@@ -291,7 +291,7 @@ namespace DuiLib {
 	public:
 
 		POINT			m_BasedPoint;
-		STRINGorID		m_xml;
+		std::variant<UINT, string_t>		m_xml;
 		CPaintManagerUI m_pm;
 		CMenuElementUI* m_pOwner;
 		CMenuUI	*m_pLayout;

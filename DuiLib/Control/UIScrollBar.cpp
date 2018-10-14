@@ -682,23 +682,23 @@ namespace DuiLib {
 
 		if ((m_uThumbState & UISTATE_DISABLED) != 0) {
 			if (!m_sBkDisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sBkDisabledImage)) {
+				if (!DrawImage (hDC, m_sBkDisabledImage)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_PUSHED) != 0) {
 			if (!m_sBkPushedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sBkPushedImage)) {
+				if (!DrawImage (hDC, m_sBkPushedImage)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_HOT) != 0) {
 			if (!m_sBkHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sBkHotImage)) {
+				if (!DrawImage (hDC, m_sBkHotImage)) {
 				} else return;
 			}
 		}
 
 		if (!m_sBkNormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sBkNormalImage)) {
+			if (!DrawImage (hDC, m_sBkNormalImage)) {
 			} else return;
 		}
 	}
@@ -718,23 +718,23 @@ namespace DuiLib {
 
 		if ((m_uButton1State & UISTATE_DISABLED) != 0) {
 			if (!m_sButton1DisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sButton1DisabledImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sButton1DisabledImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButton1State & UISTATE_PUSHED) != 0) {
 			if (!m_sButton1PushedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sButton1PushedImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sButton1PushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButton1State & UISTATE_HOT) != 0) {
 			if (!m_sButton1HotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sButton1HotImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sButton1HotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sButton1NormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sButton1NormalImage, (LPCTSTR) m_sImageModify)) {
+			if (!DrawImage (hDC, m_sButton1NormalImage, m_sImageModify)) {
 			} else return;
 		}
 
@@ -757,23 +757,23 @@ namespace DuiLib {
 
 		if ((m_uButton2State & UISTATE_DISABLED) != 0) {
 			if (!m_sButton2DisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sButton2DisabledImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sButton2DisabledImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButton2State & UISTATE_PUSHED) != 0) {
 			if (!m_sButton2PushedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sButton2PushedImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sButton2PushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButton2State & UISTATE_HOT) != 0) {
 			if (!m_sButton2HotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sButton2HotImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sButton2HotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sButton2NormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sButton2NormalImage, (LPCTSTR) m_sImageModify)) {
+			if (!DrawImage (hDC, m_sButton2NormalImage, m_sImageModify)) {
 			} else return;
 		}
 
@@ -795,23 +795,23 @@ namespace DuiLib {
 
 		if ((m_uThumbState & UISTATE_DISABLED) != 0) {
 			if (!m_sThumbDisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sThumbDisabledImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sThumbDisabledImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_PUSHED) != 0) {
 			if (!m_sThumbPushedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sThumbPushedImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sThumbPushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_HOT) != 0) {
 			if (!m_sThumbHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sThumbHotImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sThumbHotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sThumbNormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sThumbNormalImage, (LPCTSTR) m_sImageModify)) {
+			if (!DrawImage (hDC, m_sThumbNormalImage, m_sImageModify)) {
 			} else return;
 		}
 
@@ -842,23 +842,23 @@ namespace DuiLib {
 
 		if ((m_uThumbState & UISTATE_DISABLED) != 0) {
 			if (!m_sRailDisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sRailDisabledImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sRailDisabledImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_PUSHED) != 0) {
 			if (!m_sRailPushedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sRailPushedImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sRailPushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_HOT) != 0) {
 			if (!m_sRailHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sRailHotImage, (LPCTSTR) m_sImageModify)) {
+				if (!DrawImage (hDC, m_sRailHotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sRailNormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sRailNormalImage, (LPCTSTR) m_sImageModify)) {
+			if (!DrawImage (hDC, m_sRailNormalImage, m_sImageModify)) {
 			} else return;
 		}
 	}

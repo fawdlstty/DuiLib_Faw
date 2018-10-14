@@ -48,8 +48,8 @@ namespace DuiLib {
 
 	class UILIB_API CNotifyPump {
 	public:
-		bool AddVirtualWnd (CDuiString strName, CNotifyPump* pObject);
-		bool RemoveVirtualWnd (CDuiString strName);
+		bool AddVirtualWnd (string_view_t strName, CNotifyPump* pObject);
+		bool RemoveVirtualWnd (string_view_t strName);
 		void NotifyPump (TNotifyUI& msg);
 		bool LoopDispatch (TNotifyUI& msg);
 		DUI_DECLARE_MESSAGE_MAP ()
@@ -61,9 +61,7 @@ namespace DuiLib {
 	public:
 		CWindowWnd ();
 
-		HWND GetHWND () const;
-		operator HWND() const;
-
+		HWND GetHWND () const { return m_hWnd; }
 		bool RegisterWindowClass ();
 		bool RegisterSuperclass ();
 
@@ -83,9 +81,9 @@ namespace DuiLib {
 		void ResizeClient (int cx = -1, int cy = -1);
 
 	protected:
-		virtual LPCTSTR GetWindowClassName () const = 0;
-		virtual LPCTSTR GetSuperClassName () const;
-		virtual UINT GetClassStyle () const;
+		virtual string_view_t GetWindowClassName () const = 0;
+		virtual string_view_t GetSuperClassName () const { return _T (""); }
+		virtual UINT GetClassStyle () const { return 0; }
 
 		virtual LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
 		virtual void OnFinalMessage (HWND hWnd);

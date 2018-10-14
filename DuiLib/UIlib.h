@@ -28,6 +28,8 @@
 #endif
 
 #include <string>
+#include <string_view>
+#include <variant>
 #include <Windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
@@ -51,10 +53,13 @@
 
 #ifdef _UNICODE
 using string_t = std::wstring;
+using string_view_t = std::wstring_view;
 #else
 using string_t = std::string;
+using string_view_t = std::string_view;
 #endif
 
+#include "Utils/FawTools.hpp"
 #include "Utils/Utils.h"
 #include "Utils/unzip.h"
 #include "Utils/VersionHelpers.h"

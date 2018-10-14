@@ -316,14 +316,19 @@ namespace DuiLib {
 		assign (1, ch);
 	}
 
+	CDuiString::CDuiString (LPCTSTR str) {
+		reserve (64);
+		assign (str);
+	}
+
 	CDuiString::CDuiString (const string_t& src) : string_t (src) {
 		if (src.length () < 64)
 			reserve (64);
 	}
 
-	CDuiString::CDuiString (LPCTSTR lpsz, int nLen) {
+	CDuiString::CDuiString (string_view_t lpsz, int nLen) {
 		reserve (64);
-		if (lpsz) {
+		if (!lpsz.empty ()) {
 			if (nLen == -1)
 				assign (lpsz);
 			else
@@ -331,7 +336,7 @@ namespace DuiLib {
 		}
 	}
 
-	int CDuiString::Replace (LPCTSTR pstrFrom, LPCTSTR pstrTo) {
+	int CDuiString::Replace (string_view_t pstrFrom, string_view_t pstrTo) {
 		//CDuiString sTemp;
 		//int nCount = 0;
 		//size_t iPos = find (pstrFrom);
@@ -349,39 +354,39 @@ namespace DuiLib {
 		//return nCount;
 		size_t ret = 0, pos = find (pstrFrom);
 		while (pos != string_t::npos) {
-			replace (pos, lstrlen (pstrFrom), pstrTo);
+			replace (pos, pstrFrom.length (), pstrTo);
 			++ret;
 			pos = find (pstrFrom, pos + 2);
 		}
 		return (int) ret;
 	}
 
-	int CDuiString::Format (LPCTSTR pstrFormat, ...) {
+	int CDuiString::Format (string_view_t pstrFormat, ...) {
 		if (pstrFormat == nullptr || pstrFormat[0] == _T ('\0'))
 			return 0;
 		try {
 			va_list ap;
 #ifndef __GNUC__
 			//À´Ô´£ºhttp://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
-			ptrdiff_t final_n, n = (lstrlen (pstrFormat)) * 2;
+			ptrdiff_t final_n, n = (pstrFormat.length ()) * 2;
 			std::unique_ptr<TCHAR[]> formatted;
 			while (true) {
 				formatted.reset (new TCHAR[n]);
-				//strcpy_s (&formatted [0], fmt_str.size (), fmt_str.c_str ());
+				//strcpy_s (&formatted [0], fmt_str.size (), fmt_str);
 				va_start (ap, pstrFormat);
 				// _vsntprintf_s
-				final_n = _vsntprintf_s (&formatted[0], n, _TRUNCATE, pstrFormat, ap);
+				final_n = _vsntprintf_s (formatted.get (), n, _TRUNCATE, pstrFormat.data (), ap);
 				va_end (ap);
 				if (final_n < 0 || final_n >= n)
 					n += abs (final_n - n + 1);
 				else
 					break;
 			}
-			(*this) = formatted.get ();
+			assign (formatted.get ());
 #else //__GNUC__
 			char *buf = nullptr;
 			va_start (ap, fmt_str);
-			int iresult = vasprintf (&buf, fmt_str.c_str (), ap);
+			int iresult = vasprintf (&buf, fmt_str, ap);
 			va_end (ap);
 			if (buf) {
 				if (iresult >= 0) {
@@ -400,15 +405,15 @@ namespace DuiLib {
 	//
 	//
 
-	static UINT HashKey (LPCTSTR Key) {
+	static UINT HashKey (string_view_t Key) {
 		UINT i = 0;
-		SIZE_T len = _tcslen (Key);
+		SIZE_T len = Key.length ();
 		while (len-- > 0) i = (i << 5) + i + Key[len];
 		return i;
 	}
 
 	static UINT HashKey (const CDuiString& Key) {
-		return HashKey ((LPCTSTR) Key);
+		return HashKey (Key);
 	};
 
 	CStdStringPtrMap::CStdStringPtrMap (int nSize): m_nCount (0) {
@@ -462,7 +467,7 @@ namespace DuiLib {
 		m_nCount = 0;
 	}
 
-	LPVOID CStdStringPtrMap::Find (LPCTSTR key, bool optimize) const {
+	LPVOID CStdStringPtrMap::Find (string_view_t key, bool optimize) const {
 		if (m_nBuckets == 0 || GetSize () == 0) return nullptr;
 
 		UINT slot = HashKey (key) % m_nBuckets;
@@ -486,7 +491,7 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	bool CStdStringPtrMap::Insert (LPCTSTR key, LPVOID pData) {
+	bool CStdStringPtrMap::Insert (string_view_t key, LPVOID pData) {
 		if (m_nBuckets == 0) return false;
 		if (Find (key)) return false;
 
@@ -504,7 +509,7 @@ namespace DuiLib {
 		return true;
 	}
 
-	LPVOID CStdStringPtrMap::Set (LPCTSTR key, LPVOID pData) {
+	LPVOID CStdStringPtrMap::Set (string_view_t key, LPVOID pData) {
 		if (m_nBuckets == 0) return pData;
 
 		if (GetSize () > 0) {
@@ -523,7 +528,7 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	bool CStdStringPtrMap::Remove (LPCTSTR key) {
+	bool CStdStringPtrMap::Remove (string_view_t key) {
 		if (m_nBuckets == 0 || GetSize () == 0) return false;
 
 		UINT slot = HashKey (key) % m_nBuckets;
@@ -556,7 +561,7 @@ namespace DuiLib {
 		return m_nCount;
 	}
 
-	LPCTSTR CStdStringPtrMap::GetAt (int iIndex) const {
+	string_view_t CStdStringPtrMap::GetAt (int iIndex) const {
 		if (m_nBuckets == 0 || GetSize () == 0) return false;
 
 		int pos = 0;
@@ -564,7 +569,7 @@ namespace DuiLib {
 		while (len--) {
 			for (TITEM* pItem = m_aT[len]; pItem; pItem = pItem->pNext) {
 				if (pos++ == iIndex) {
-					return pItem->Key.c_str ();
+					return pItem->Key;
 				}
 			}
 		}
@@ -572,7 +577,7 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	LPCTSTR CStdStringPtrMap::operator[] (int nIndex) const {
+	string_view_t CStdStringPtrMap::operator[] (int nIndex) const {
 		return GetAt (nIndex);
 	}
 

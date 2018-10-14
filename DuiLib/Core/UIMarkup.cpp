@@ -316,11 +316,11 @@ namespace DuiLib {
 			else {
 				CDuiString sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
 #ifdef UNICODE
-				char* pwd = w2a ((wchar_t*) sFilePwd.c_str ());
-				hz = OpenZip (sFile.c_str (), pwd);
+				char* pwd = w2a ((wchar_t*) sFilePwd);
+				hz = OpenZip (sFile, pwd);
 				if (pwd) delete[] pwd;
 #else
-				hz = OpenZip (sFile.c_str (), sFilePwd.c_str ());
+				hz = OpenZip (sFile, sFilePwd);
 #endif
 			}
 			if (hz == nullptr) return _Failed (_T ("Error opening zip file"));

@@ -4,22 +4,22 @@ namespace DuiLib {
 
 	CDialogBuilder::CDialogBuilder () {}
 
-	CControlUI* CDialogBuilder::Create (STRINGorID xml, LPCTSTR type, IDialogBuilderCallback* pCallback,
+	CControlUI* CDialogBuilder::Create (std::variant<UINT, string_t> xml, string_view_t type, IDialogBuilderCallback* pCallback,
 		CPaintManagerUI* pManager, CControlUI* pParent) {
 		//资源ID为0-65535，两个字节；字符串指针为4个字节
 		//字符串以<开头认为是XML字符串，否则认为是XML文件
-		if (HIWORD (xml.m_lpstr) != 0 && *(xml.m_lpstr) != _T ('<')) {
-			LPCTSTR xmlpath = CResourceManager::GetInstance ()->GetXmlPath (xml.m_lpstr);
-			if (xmlpath != nullptr) {
-				xml = xmlpath;
+		if (xml.index () == 1 && std::get<1> (xml)[0] != _T ('<')) {
+			string_view_t xmlpath = CResourceManager::GetInstance ()->GetXmlPath (std::get<1> (xml));
+			if (!xmlpath.empty ()) {
+				xml = string_t (xmlpath);
 			}
 		}
 
-		if (HIWORD (xml.m_lpstr) != 0) {
-			if (*(xml.m_lpstr) == _T ('<')) {
-				if (!m_xml.Load (xml.m_lpstr)) return nullptr;
+		if (xml.index () == 1) {
+			if (std::get<1> (xml)[0] == _T ('<')) {
+				if (!m_xml.Load (std::get<1> (xml).c_str ())) return nullptr;
 			} else {
-				if (!m_xml.LoadFromFile (xml.m_lpstr)) return nullptr;
+				if (!m_xml.LoadFromFile (std::get<1> (xml).c_str ())) return nullptr;
 			}
 		} else {
 			HINSTANCE dll_instence = nullptr;
@@ -28,7 +28,7 @@ namespace DuiLib {
 			} else {
 				dll_instence = CPaintManagerUI::GetResourceDll ();
 			}
-			HRSRC hResource = ::FindResource (dll_instence, xml.m_lpstr, type);
+			HRSRC hResource = ::FindResource (dll_instence, MAKEINTRESOURCE (std::get<0> (xml)), type.data ());
 			if (hResource == nullptr) return nullptr;
 			HGLOBAL hGlobal = ::LoadResource (dll_instence, hResource);
 			if (hGlobal == nullptr) {
@@ -325,11 +325,11 @@ namespace DuiLib {
 				if (!node.GetAttributeValue (_T ("source"), szValue, cchLen)) continue;
 				for (int i = 0; i < count; i++) {
 					CDialogBuilder builder;
-					if (m_pstrtype != nullptr) { // 使用资源dll，从资源中读取
+					if (!m_pstrtype.empty ()) { // 使用资源dll，从资源中读取
 						WORD id = (WORD) _tcstol (szValue, &pstr, 10);
 						pControl = builder.Create ((UINT) id, m_pstrtype, m_pCallback, pManager, pParent);
 					} else {
-						pControl = builder.Create ((LPCTSTR) szValue, (UINT) 0, m_pCallback, pManager, pParent);
+						pControl = builder.Create (szValue, (UINT) 0, m_pCallback, pManager, pParent);
 					}
 				}
 				continue;

@@ -17,10 +17,10 @@ namespace DuiLib {
 		virtual ~CControlUI ();
 
 	public:
-		virtual CDuiString GetName () const;
-		virtual void SetName (LPCTSTR pstrName);
-		virtual LPCTSTR GetClass () const;
-		virtual LPVOID GetInterface (LPCTSTR pstrName);
+		virtual string_view_t GetName () const;
+		virtual void SetName (string_view_t pstrName);
+		virtual string_view_t GetClass () const;
+		virtual LPVOID GetInterface (string_view_t pstrName);
 		virtual UINT GetControlFlags () const;
 
 		virtual bool Activate ();
@@ -36,8 +36,8 @@ namespace DuiLib {
 		void KillTimer (UINT nTimerID);
 
 		// 文本相关
-		virtual CDuiString GetText () const;
-		virtual void SetText (LPCTSTR pstrText);
+		virtual string_view_t GetText () const;
+		virtual void SetText (string_view_t pstrText);
 
 		virtual bool IsResourceText () const;
 		virtual void SetResourceText (bool bResource);
@@ -49,8 +49,8 @@ namespace DuiLib {
 		virtual void SetDropEnable (bool bDrop);
 
 		// 图形相关
-		LPCTSTR GetGradient ();
-		void SetGradient (LPCTSTR pStrImage);
+		string_view_t GetGradient ();
+		void SetGradient (string_view_t pStrImage);
 		DWORD GetBkColor () const;
 		void SetBkColor (DWORD dwBackColor);
 		DWORD GetBkColor2 () const;
@@ -59,10 +59,10 @@ namespace DuiLib {
 		void SetBkColor3 (DWORD dwBackColor);
 		DWORD GetForeColor () const;
 		void SetForeColor (DWORD dwForeColor);
-		LPCTSTR GetBkImage ();
-		void SetBkImage (LPCTSTR pStrImage);
-		LPCTSTR GetForeImage () const;
-		void SetForeImage (LPCTSTR pStrImage);
+		string_view_t GetBkImage ();
+		void SetBkImage (string_view_t pStrImage);
+		string_view_t GetForeImage () const;
+		void SetForeImage (string_view_t pStrImage);
 
 		DWORD GetFocusBorderColor () const;
 		void SetFocusBorderColor (DWORD dwBorderColor);
@@ -70,7 +70,7 @@ namespace DuiLib {
 		void SetColorHSL (bool bColorHSL);
 		SIZE GetBorderRound () const;
 		void SetBorderRound (SIZE cxyRound);
-		bool DrawImage (HDC hDC, LPCTSTR pStrImage, LPCTSTR pStrModify = nullptr);
+		bool DrawImage (HDC hDC, string_view_t pStrImage, string_view_t pStrModify = nullptr);
 
 		//边框相关
 		int GetBorderSize () const;
@@ -120,10 +120,10 @@ namespace DuiLib {
 		virtual void SetFloatAlign (UINT uAlign);
 		virtual UINT GetFloatAlign () const;
 		// 鼠标提示
-		virtual CDuiString GetToolTip () const;
-		virtual void SetToolTip (LPCTSTR pstrText);
+		virtual string_view_t GetToolTip () const;
+		virtual void SetToolTip (string_view_t pstrText);
 		virtual void SetToolTipWidth (int nWidth);
-		virtual int	  GetToolTipWidth (void);	// 多行ToolTip单行最长宽度
+		virtual int GetToolTipWidth (void);	// 多行ToolTip单行最长宽度
 
 		// 光标
 		virtual WORD GetCursor ();
@@ -139,7 +139,7 @@ namespace DuiLib {
 
 		// 用户属性
 		virtual const CDuiString& GetUserData (); // 辅助函数，供用户使用
-		virtual void SetUserData (LPCTSTR pstrText); // 辅助函数，供用户使用
+		virtual void SetUserData (string_view_t pstrText); // 辅助函数，供用户使用
 		virtual UINT_PTR GetTag () const; // 辅助函数，供用户使用
 		virtual void SetTag (UINT_PTR pTag); // 辅助函数，供用户使用
 
@@ -173,13 +173,13 @@ namespace DuiLib {
 		virtual void DoEvent (TEventUI& event);
 
 		// 自定义(未处理的)属性
-		void AddCustomAttribute (LPCTSTR pstrName, LPCTSTR pstrAttr);
-		LPCTSTR GetCustomAttribute (LPCTSTR pstrName) const;
-		bool RemoveCustomAttribute (LPCTSTR pstrName);
+		void AddCustomAttribute (string_view_t pstrName, string_view_t pstrAttr);
+		string_view_t GetCustomAttribute (string_view_t pstrName) const;
+		bool RemoveCustomAttribute (string_view_t pstrName);
 		void RemoveAllCustomAttribute ();
 
-		virtual void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
-		CControlUI* ApplyAttributeList (LPCTSTR pstrList);
+		virtual void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
+		CControlUI* ApplyAttributeList (string_view_t pstrList);
 
 		virtual SIZE EstimateSize (SIZE szAvailable);
 		virtual bool Paint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl = nullptr); // 返回要不要继续绘制
@@ -195,7 +195,7 @@ namespace DuiLib {
 		virtual void DoPostPaint (HDC hDC, const RECT& rcPaint);
 
 		//虚拟窗口参数
-		void SetVirtualWnd (LPCTSTR pstrValue);
+		void SetVirtualWnd (string_view_t pstrValue);
 		CDuiString GetVirtualWnd () const;
 
 	public:

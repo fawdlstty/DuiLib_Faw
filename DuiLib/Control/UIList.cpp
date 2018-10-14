@@ -1692,20 +1692,20 @@ namespace DuiLib {
 		else m_uButtonState &= ~UISTATE_FOCUSED;
 
 		if ((m_uButtonState & UISTATE_PUSHED) != 0) {
-			if (m_sPushedImage.empty () && !m_sNormalImage.empty ()) DrawImage (hDC, (LPCTSTR) m_sNormalImage);
-			if (!DrawImage (hDC, (LPCTSTR) m_sPushedImage)) {
+			if (m_sPushedImage.empty () && !m_sNormalImage.empty ()) DrawImage (hDC, m_sNormalImage);
+			if (!DrawImage (hDC, m_sPushedImage)) {
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
-			if (m_sHotImage.empty () && !m_sNormalImage.empty ()) DrawImage (hDC, (LPCTSTR) m_sNormalImage);
-			if (!DrawImage (hDC, (LPCTSTR) m_sHotImage)) {
+			if (m_sHotImage.empty () && !m_sNormalImage.empty ()) DrawImage (hDC, m_sNormalImage);
+			if (!DrawImage (hDC, m_sHotImage)) {
 			}
 		} else if ((m_uButtonState & UISTATE_FOCUSED) != 0) {
-			if (m_sFocusedImage.empty () && !m_sNormalImage.empty ()) DrawImage (hDC, (LPCTSTR) m_sNormalImage);
-			if (!DrawImage (hDC, (LPCTSTR) m_sFocusedImage)) {
+			if (m_sFocusedImage.empty () && !m_sNormalImage.empty ()) DrawImage (hDC, m_sNormalImage);
+			if (!DrawImage (hDC, m_sFocusedImage)) {
 			}
 		} else {
 			if (!m_sNormalImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sNormalImage)) {
+				if (!DrawImage (hDC, m_sNormalImage)) {
 				}
 			}
 		}
@@ -1719,7 +1719,7 @@ namespace DuiLib {
 
 			m_sSepImageModify.clear ();
 			m_sSepImageModify.Format (_T ("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-			if (!DrawImage (hDC, (LPCTSTR) m_sSepImage, (LPCTSTR) m_sSepImageModify)) {
+			if (!DrawImage (hDC, m_sSepImage, m_sSepImageModify)) {
 			}
 		}
 	}
@@ -1932,33 +1932,33 @@ namespace DuiLib {
 
 		if (!IsEnabled ()) {
 			if (!pInfo->sDisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) pInfo->sDisabledImage)) {
+				if (!DrawImage (hDC, pInfo->sDisabledImage)) {
 				} else return;
 			}
 		}
 		if (IsSelected ()) {
 			if (!pInfo->sSelectedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) pInfo->sSelectedImage)) {
+				if (!DrawImage (hDC, pInfo->sSelectedImage)) {
 				} else return;
 			}
 		}
 		if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!pInfo->sHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) pInfo->sHotImage)) {
+				if (!DrawImage (hDC, pInfo->sHotImage)) {
 				} else return;
 			}
 		}
 
 		if (!m_sBkImage.empty ()) {
 			if (!pInfo->bAlternateBk || m_iIndex % 2 == 0) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sBkImage)) {
+				if (!DrawImage (hDC, m_sBkImage)) {
 				}
 			}
 		}
 
 		if (m_sBkImage.empty ()) {
 			if (!pInfo->sBkImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) pInfo->sBkImage)) {
+				if (!DrawImage (hDC, pInfo->sBkImage)) {
 				} else return;
 			}
 		}
@@ -2280,10 +2280,10 @@ namespace DuiLib {
 				strText = GetText (i);
 
 			if (pInfo->bShowHtml)
-				CRenderEngine::DrawHtmlText (hDC, m_pManager, rcItem, strText.c_str (), iTextColor, \
+				CRenderEngine::DrawHtmlText (hDC, m_pManager, rcItem, strText, iTextColor, \
 					&m_rcLinks[m_nLinks], &m_sLinks[m_nLinks], nLinks, pInfo->nFont, pInfo->uTextStyle);
 			else
-				CRenderEngine::DrawText (hDC, m_pManager, rcItem, strText.c_str (), iTextColor, \
+				CRenderEngine::DrawText (hDC, m_pManager, rcItem, strText, iTextColor, \
 					pInfo->nFont, pInfo->uTextStyle);
 
 			m_nLinks += nLinks;
@@ -2550,32 +2550,32 @@ namespace DuiLib {
 
 		if (!IsEnabled ()) {
 			if (!pInfo->sDisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) pInfo->sDisabledImage)) {
+				if (!DrawImage (hDC, pInfo->sDisabledImage)) {
 				} else return;
 			}
 		}
 		if (IsSelected ()) {
 			if (!pInfo->sSelectedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) pInfo->sSelectedImage)) {
+				if (!DrawImage (hDC, pInfo->sSelectedImage)) {
 				} else return;
 			}
 		}
 		if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!pInfo->sHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) pInfo->sHotImage)) {
+				if (!DrawImage (hDC, pInfo->sHotImage)) {
 				} else return;
 			}
 		}
 		if (!m_sBkImage.empty ()) {
 			if (!pInfo->bAlternateBk || m_iIndex % 2 == 0) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sBkImage)) {
+				if (!DrawImage (hDC, m_sBkImage)) {
 				}
 			}
 		}
 
 		if (m_sBkImage.empty ()) {
 			if (!pInfo->sBkImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) pInfo->sBkImage)) {
+				if (!DrawImage (hDC, pInfo->sBkImage)) {
 				} else return;
 			}
 		}

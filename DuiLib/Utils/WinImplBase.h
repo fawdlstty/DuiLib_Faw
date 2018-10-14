@@ -29,14 +29,12 @@ namespace DuiLib {
 		virtual BOOL IsInStaticControl (CControlUI *pControl);
 
 	protected:
-		virtual CDuiString GetSkinType () {
+		virtual string_view_t GetSkinType () {
 			return _T ("");
 		}
-		virtual CDuiString GetSkinFile () = 0;
-		virtual LPCTSTR GetWindowClassName (void) const = 0;
-		virtual LPCTSTR GetManagerName () {
-			return nullptr;
-		}
+		virtual string_view_t GetSkinFile () = 0;
+		virtual string_view_t GetWindowClassName (void) const = 0;
+		virtual string_view_t GetManagerName () { return nullptr; }
 		virtual LRESULT ResponseDefaultKeyEvent (WPARAM wParam);
 		CPaintManagerUI m_pm;
 

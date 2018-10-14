@@ -595,23 +595,23 @@ namespace DuiLib {
 
 		if ((m_uButtonState & UISTATE_DISABLED) != 0) {
 			if (!m_sDisabledImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sDisabledImage)) {
+				if (!DrawImage (hDC, m_sDisabledImage)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_FOCUSED) != 0) {
 			if (!m_sFocusedImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sFocusedImage)) {
+				if (!DrawImage (hDC, m_sFocusedImage)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sHotImage.empty ()) {
-				if (!DrawImage (hDC, (LPCTSTR) m_sHotImage)) {
+				if (!DrawImage (hDC, m_sHotImage)) {
 				} else return;
 			}
 		}
 
 		if (!m_sNormalImage.empty ()) {
-			if (!DrawImage (hDC, (LPCTSTR) m_sNormalImage)) {
+			if (!DrawImage (hDC, m_sNormalImage)) {
 			} else return;
 		}
 	}
@@ -631,7 +631,7 @@ namespace DuiLib {
 			CDuiString sTemp = sDrawText;
 			if (m_bPasswordMode) {
 				sDrawText.clear ();
-				LPCTSTR pStr = sTemp.c_str ();
+				LPCTSTR pStr = sTemp;
 				while (*pStr != _T ('\0')) {
 					sDrawText += m_cPasswordChar;
 					pStr = ::CharNext (pStr);

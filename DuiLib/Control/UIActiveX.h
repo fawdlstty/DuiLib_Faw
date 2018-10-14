@@ -32,7 +32,7 @@ namespace DuiLib {
 		CActiveXUI ();
 		virtual ~CActiveXUI ();
 
-		LPCTSTR GetClass () const;
+		string_view_t GetClass () const;
 		LPVOID GetInterface (LPCTSTR pstrName);
 
 		HWND GetHostWindow () const;
@@ -46,7 +46,7 @@ namespace DuiLib {
 		bool CreateControl (LPCTSTR pstrCLSID);
 		HRESULT GetControl (const IID iid, LPVOID* ppRet);
 		CLSID GetClisd () const;
-		CDuiString GetModuleName () const;
+		string_view_t GetModuleName () const;
 		void SetModuleName (LPCTSTR pstrText);
 
 		void SetVisible (bool bVisible = true);

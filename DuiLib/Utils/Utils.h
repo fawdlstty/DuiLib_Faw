@@ -6,19 +6,6 @@
 #include <vector>
 
 namespace DuiLib {
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-
-	class UILIB_API STRINGorID {
-	public:
-		STRINGorID (LPCTSTR lpString): m_lpstr (lpString) {}
-		STRINGorID (UINT nID): m_lpstr (MAKEINTRESOURCE (nID)) {}
-		LPCTSTR m_lpstr;
-	};
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-
 	class UILIB_API CDuiPoint: public tagPOINT {
 	public:
 		CDuiPoint ();
@@ -125,12 +112,12 @@ namespace DuiLib {
 	public:
 		CDuiString ();
 		CDuiString (const TCHAR ch);
+		CDuiString (LPCTSTR str);
 		CDuiString (const string_t& src);
-		CDuiString (LPCTSTR lpsz, int nLen = -1);
-		inline operator LPCTSTR() const { return c_str (); }
+		CDuiString (string_view_t lpsz, int nLen = -1);
 
-		inline int Compare (LPCTSTR pstr) const { return _tcscmp (c_str (), pstr); }
-		inline int CompareNoCase (LPCTSTR pstr) const { return _tcsicmp (c_str (), pstr); }
+		inline int Compare (string_view_t pstr) const { return _tcscmp (c_str (), pstr.data ()); }
+		inline int CompareNoCase (string_view_t pstr) const { return _tcsicmp (c_str (), pstr.data ()); }
 
 		inline void MakeUpper () { _tcsupr (&this->operator[] (0)); }
 		inline void MakeLower () { _tcslwr (&this->operator[] (0)); }
@@ -139,8 +126,8 @@ namespace DuiLib {
 		inline CDuiString Mid (size_t iPos, size_t nLength = string_t::npos) const { return substr (iPos, nLength); }
 		inline CDuiString Right (size_t nLength) const { return substr (length () - nLength); }
 
-		int Replace (LPCTSTR pstrFrom, LPCTSTR pstrTo);
-		int Format (LPCTSTR pstrFormat, ...);
+		int Replace (string_view_t pstrFrom, string_view_t pstrTo);
+		int Format (string_view_t pstrFormat, ...);
 	};
 
 	static std::vector<CDuiString> StrSplit (CDuiString text, CDuiString sp) {
@@ -171,14 +158,14 @@ namespace DuiLib {
 		virtual ~CStdStringPtrMap ();
 
 		void Resize (int nSize = 83);
-		LPVOID Find (LPCTSTR key, bool optimize = true) const;
-		bool Insert (LPCTSTR key, LPVOID pData);
-		LPVOID Set (LPCTSTR key, LPVOID pData);
-		bool Remove (LPCTSTR key);
+		LPVOID Find (string_view_t key, bool optimize = true) const;
+		bool Insert (string_view_t key, LPVOID pData);
+		LPVOID Set (string_view_t key, LPVOID pData);
+		bool Remove (string_view_t key);
 		void RemoveAll ();
 		int GetSize () const;
-		LPCTSTR GetAt (int iIndex) const;
-		LPCTSTR operator[] (int nIndex) const;
+		string_view_t GetAt (int iIndex) const;
+		string_view_t operator[] (int nIndex) const;
 
 	protected:
 		TITEM** m_aT;
