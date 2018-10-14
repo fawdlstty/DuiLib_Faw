@@ -401,16 +401,8 @@ namespace DuiLib {
 		if (m_bCachedResourceZip) {
 			CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 			sFile += CPaintManagerUI::GetResourceZip ();
-#ifdef UNICODE
-			char* pwd = w2a ((wchar_t*) password);
-			m_hResourceZip = (HANDLE) OpenZip (sFile, pwd);
-			if (pwd) {
-				delete[] pwd;
-				pwd = nullptr;
-			}
-#else
-			m_hResourceZip = (HANDLE) OpenZip (sFile, password);
-#endif
+			std::string pwd = FawTools::get_T (password);
+			m_hResourceZip = (HANDLE) OpenZip (sFile.c_str (), pwd.c_str ());
 		}
 	}
 
@@ -452,7 +444,7 @@ namespace DuiLib {
 		}
 	}
 
-	CPaintManagerUI* CPaintManagerUI::GetPaintManager (LPCTSTR pstrName) {
+	CPaintManagerUI* CPaintManagerUI::GetPaintManager (string_view_t pstrName) {
 		if (pstrName == nullptr) return nullptr;
 		CDuiString sName = pstrName;
 		if (sName.empty ()) return nullptr;
@@ -467,10 +459,10 @@ namespace DuiLib {
 		return &m_aPreMessages;
 	}
 
-	bool CPaintManagerUI::LoadPlugin (LPCTSTR pstrModuleName) {
-		ASSERT (!::IsBadStringPtr (pstrModuleName, (UINT_PTR) -1) || pstrModuleName == nullptr);
-		if (pstrModuleName == nullptr) return false;
-		HMODULE hModule = ::LoadLibrary (pstrModuleName);
+	bool CPaintManagerUI::LoadPlugin (string_view_t pstrModuleName) {
+		ASSERT (!pstrModuleName.empty ());
+		if (pstrModuleName.empty ()) return false;
+		HMODULE hModule = ::LoadLibrary (pstrModuleName.data ());
 		if (hModule != nullptr) {
 			LPCREATECONTROL lpCreateControl = (LPCREATECONTROL)::GetProcAddress (hModule, "CreateControl");
 			if (lpCreateControl != nullptr) {
@@ -660,11 +652,11 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	LPCTSTR CPaintManagerUI::GetLayeredImage () {
+	string_view_t CPaintManagerUI::GetLayeredImage () {
 		return m_diLayered.sDrawString;
 	}
 
-	void CPaintManagerUI::SetLayeredImage (LPCTSTR pstrImage) {
+	void CPaintManagerUI::SetLayeredImage (string_view_t pstrImage) {
 		m_diLayered.sDrawString = pstrImage;
 		RECT rcnullptr = { 0 };
 		CRenderEngine::DrawImageInfo (nullptr, this, rcnullptr, rcnullptr, &m_diLayered);
@@ -705,10 +697,10 @@ namespace DuiLib {
 		{
 			// Tabbing between controls
 			if (wParam == VK_TAB) {
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass (), _T ("RichEditUI")) != nullptr) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass ().data (), _T ("RichEditUI")) != nullptr) {
 					if (static_cast<CRichEditUI*>(m_pFocus)->IsWantTab ()) return false;
 				}
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass (), _T ("WkeWebkitUI")) != nullptr) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass ().data (), _T ("WkeWebkitUI")) != nullptr) {
 					return false;
 				}
 				SetNextTabControl (::GetKeyState (VK_SHIFT) >= 0);
@@ -1789,7 +1781,7 @@ namespace DuiLib {
 		}
 	}
 
-	bool CPaintManagerUI::AddOptionGroup (LPCTSTR pStrGroupName, CControlUI* pControl) {
+	bool CPaintManagerUI::AddOptionGroup (string_view_t pStrGroupName, CControlUI* pControl) {
 		LPVOID lp = m_mOptionGroup.Find (pStrGroupName);
 		if (lp) {
 			CStdPtrArray* aOptionGroup = static_cast<CStdPtrArray*>(lp);
@@ -1807,13 +1799,13 @@ namespace DuiLib {
 		return true;
 	}
 
-	CStdPtrArray* CPaintManagerUI::GetOptionGroup (LPCTSTR pStrGroupName) {
+	CStdPtrArray* CPaintManagerUI::GetOptionGroup (string_view_t pStrGroupName) {
 		LPVOID lp = m_mOptionGroup.Find (pStrGroupName);
 		if (lp) return static_cast<CStdPtrArray*>(lp);
 		return nullptr;
 	}
 
-	void CPaintManagerUI::RemoveOptionGroup (LPCTSTR pStrGroupName, CControlUI* pControl) {
+	void CPaintManagerUI::RemoveOptionGroup (string_view_t pStrGroupName, CControlUI* pControl) {
 		LPVOID lp = m_mOptionGroup.Find (pStrGroupName);
 		if (lp) {
 			CStdPtrArray* aOptionGroup = static_cast<CStdPtrArray*>(lp);
@@ -1834,7 +1826,8 @@ namespace DuiLib {
 	void CPaintManagerUI::RemoveAllOptionGroups () {
 		CStdPtrArray* aOptionGroup;
 		for (int i = 0; i < m_mOptionGroup.GetSize (); i++) {
-			if (LPCTSTR key = m_mOptionGroup.GetAt (i)) {
+			string_view_t key = m_mOptionGroup.GetAt (i);
+			if (!key.empty ()) {
 				aOptionGroup = static_cast<CStdPtrArray*>(m_mOptionGroup.Find (key));
 				delete aOptionGroup;
 			}
@@ -1869,7 +1862,8 @@ namespace DuiLib {
 		// 图片
 		TImageInfo* data;
 		for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-			if (LPCTSTR key = m_SharedResInfo.m_ImageHash.GetAt (i)) {
+			string_view_t key = m_SharedResInfo.m_ImageHash.GetAt (i);
+			if (!key.empty ()) {
 				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key, false));
 				if (data) {
 					CRenderEngine::FreeImage (data);
@@ -1881,7 +1875,8 @@ namespace DuiLib {
 		// 字体
 		TFontInfo* pFontInfo;
 		for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-			if (LPCTSTR key = m_SharedResInfo.m_CustomFonts.GetAt (i)) {
+			string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i);
+			if (!key.empty ()) {
 				pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key, false));
 				if (pFontInfo) {
 					::DeleteObject (pFontInfo->hFont);
@@ -1898,7 +1893,8 @@ namespace DuiLib {
 		// 样式
 		CDuiString* pStyle;
 		for (int i = 0; i < m_SharedResInfo.m_StyleHash.GetSize (); i++) {
-			if (LPCTSTR key = m_SharedResInfo.m_StyleHash.GetAt (i)) {
+			string_view_t key = m_SharedResInfo.m_StyleHash.GetAt (i);
+			if (!key.empty ()) {
 				pStyle = static_cast<CDuiString*>(m_SharedResInfo.m_StyleHash.Find (key, false));
 				if (pStyle) {
 					delete pStyle;
@@ -1911,7 +1907,8 @@ namespace DuiLib {
 		// 样式
 		CDuiString* pAttr;
 		for (int i = 0; i < m_SharedResInfo.m_AttrHash.GetSize (); i++) {
-			if (LPCTSTR key = m_SharedResInfo.m_AttrHash.GetAt (i)) {
+			string_view_t key = m_SharedResInfo.m_AttrHash.GetAt (i);
+			if (!key.empty ()) {
 				pAttr = static_cast<CDuiString*>(m_SharedResInfo.m_AttrHash.Find (key, false));
 				if (pAttr) {
 					delete pAttr;
@@ -1989,7 +1986,7 @@ namespace DuiLib {
 		::DeleteObject (pFontInfo->hFont);
 		LOGFONT lf = { 0 };
 		::GetObject (::GetStockObject (DEFAULT_GUI_FONT), sizeof (LOGFONT), &lf);
-		_tcsncpy (lf.lfFaceName, pFontInfo->sFontName, LF_FACESIZE);
+		_tcsncpy (lf.lfFaceName, pFontInfo->sFontName.data (), LF_FACESIZE);
 		lf.lfCharSet = DEFAULT_CHARSET;
 		lf.lfHeight = -GetDPIObj ()->Scale (pFontInfo->iSize);
 		lf.lfQuality = CLEARTYPE_QUALITY;
