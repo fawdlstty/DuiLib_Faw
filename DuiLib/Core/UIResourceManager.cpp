@@ -40,29 +40,25 @@ namespace DuiLib {
 	BOOL CResourceManager::LoadResource (CMarkupNode Root) {
 		if (!Root.IsValid ()) return FALSE;
 
-		LPCTSTR pstrClass = nullptr;
 		int nAttributes = 0;
-		LPCTSTR pstrName = nullptr;
-		LPCTSTR pstrValue = nullptr;
-		LPTSTR pstr = nullptr;
 
 		//加载图片资源
-		LPCTSTR pstrId = nullptr;
-		LPCTSTR pstrPath = nullptr;
+		string_view_t pstrId = nullptr;
+		string_view_t pstrPath = nullptr;
 		for (CMarkupNode node = Root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
-			pstrClass = node.GetName ();
+			string_view_t pstrClass = node.GetName (), pstrName = _T (""), pstrValue = _T ("");
 			CMarkupNode ChildNode = node.GetChild ();
 			if (ChildNode.IsValid ()) LoadResource (node);
-			else if ((_tcsicmp (pstrClass, _T ("Image")) == 0) && node.HasAttributes ()) {
+			else if (pstrClass == _T ("Image") && node.HasAttributes ()) {
 				//加载图片资源
 				nAttributes = node.GetAttributeCount ();
 				for (int i = 0; i < nAttributes; i++) {
 					pstrName = node.GetAttributeName (i);
 					pstrValue = node.GetAttributeValue (i);
 
-					if (_tcsicmp (pstrName, _T ("id")) == 0) {
+					if (pstrName == _T ("id")) {
 						pstrId = pstrValue;
-					} else if (_tcsicmp (pstrName, _T ("path")) == 0) {
+					} else if (pstrName == _T ("path")) {
 						pstrPath = pstrValue;
 					}
 				}
@@ -70,16 +66,16 @@ namespace DuiLib {
 				CDuiString * pstrFind = static_cast<CDuiString *>(m_mImageHashMap.Find (pstrId));
 				if (pstrFind != nullptr) continue;
 				m_mImageHashMap.Insert (pstrId, (LPVOID)new CDuiString (pstrPath));
-			} else if (_tcsicmp (pstrClass, _T ("Xml")) == 0 && node.HasAttributes ()) {
+			} else if (pstrClass == _T ("Xml") && node.HasAttributes ()) {
 				//加载XML配置文件
 				nAttributes = node.GetAttributeCount ();
 				for (int i = 0; i < nAttributes; i++) {
 					pstrName = node.GetAttributeName (i);
 					pstrValue = node.GetAttributeValue (i);
 
-					if (_tcsicmp (pstrName, _T ("id")) == 0) {
+					if (pstrName == _T ("id")) {
 						pstrId = pstrValue;
-					} else if (_tcsicmp (pstrName, _T ("path")) == 0) {
+					} else if (pstrName == _T ("path")) {
 						pstrPath = pstrValue;
 					}
 				}
@@ -104,17 +100,17 @@ namespace DuiLib {
 
 	void CResourceManager::ResetResourceMap () {
 		for (int i = 0; i < m_mImageHashMap.GetSize (); i++) {
-			string_view_t key = m_mImageHashMap.GetAt (i);
+			string_view_t key = m_mImageHashMap.GetAt (i)->Key;
 			if (!key.empty ())
 				delete static_cast<CDuiString *>(m_mImageHashMap.Find (key));
 		}
 		for (int i = 0; i < m_mXmlHashMap.GetSize (); i++) {
-			string_view_t key = m_mXmlHashMap.GetAt (i);
+			string_view_t key = m_mXmlHashMap.GetAt (i)->Key;
 			if (!key.empty ())
 				delete static_cast<CDuiString *>(m_mXmlHashMap.Find (key));
 		}
 		for (int i = 0; i < m_mTextResourceHashMap.GetSize (); i++) {
-			string_view_t key = m_mTextResourceHashMap.GetAt (i);
+			string_view_t key = m_mTextResourceHashMap.GetAt (i)->Key;
 			if (!key.empty ())
 				delete static_cast<CDuiString *>(m_mTextResourceHashMap.Find (key));
 		}
@@ -141,16 +137,16 @@ namespace DuiLib {
 		LPCTSTR pstrText = nullptr;
 		for (CMarkupNode node = Root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
 			pstrClass = node.GetName ();
-			if ((_tcsicmp (pstrClass, _T ("Text")) == 0) && node.HasAttributes ()) {
+			if (pstrClass == _T ("Text") && node.HasAttributes ()) {
 				//加载图片资源
 				nAttributes = node.GetAttributeCount ();
 				for (int i = 0; i < nAttributes; i++) {
 					pstrName = node.GetAttributeName (i);
 					pstrValue = node.GetAttributeValue (i);
 
-					if (_tcsicmp (pstrName, _T ("id")) == 0) {
+					if (pstrName == _T ("id")) {
 						pstrId = pstrValue;
-					} else if (_tcsicmp (pstrName, _T ("value")) == 0) {
+					} else if (pstrName == _T ("value")) {
 						pstrText = pstrValue;
 					}
 				}
@@ -183,7 +179,7 @@ namespace DuiLib {
 		if (m_pQuerypInterface == nullptr) return;
 		//重载文字描述
 		for (int i = 0; i < m_mTextResourceHashMap.GetSize (); i++) {
-			string_view_t lpstrId = m_mTextResourceHashMap.GetAt (i);
+			string_view_t lpstrId = m_mTextResourceHashMap.GetAt (i)->Key;
 			if (lpstrId == nullptr) continue;
 			string_view_t lpstrText = m_pQuerypInterface->QueryControlText (lpstrId, nullptr);
 			if (lpstrText != nullptr) {
@@ -195,7 +191,7 @@ namespace DuiLib {
 	void CResourceManager::ResetTextMap () {
 		CDuiString * lpStr;
 		for (int i = 0; i < m_mTextResourceHashMap.GetSize (); i++) {
-			string_view_t key = m_mTextResourceHashMap.GetAt (i);
+			string_view_t key = m_mTextResourceHashMap.GetAt (i)->Key;
 			if (!key.empty ()) {
 				lpStr = static_cast<CDuiString *>(m_mTextResourceHashMap.Find (key));
 				delete lpStr;

@@ -9,8 +9,8 @@ namespace DuiLib {
 	public:
 		CScrollBarUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 
 		CContainerUI* GetOwner () const;
 		void SetOwner (CContainerUI* pOwner);
@@ -30,56 +30,56 @@ namespace DuiLib {
 
 		bool GetShowButton1 ();
 		void SetShowButton1 (bool bShow);
-		LPCTSTR GetButton1NormalImage ();
-		void SetButton1NormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetButton1HotImage ();
-		void SetButton1HotImage (LPCTSTR pStrImage);
-		LPCTSTR GetButton1PushedImage ();
-		void SetButton1PushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetButton1DisabledImage ();
-		void SetButton1DisabledImage (LPCTSTR pStrImage);
+		string_view_t GetButton1NormalImage ();
+		void SetButton1NormalImage (string_view_t pStrImage);
+		string_view_t GetButton1HotImage ();
+		void SetButton1HotImage (string_view_t pStrImage);
+		string_view_t GetButton1PushedImage ();
+		void SetButton1PushedImage (string_view_t pStrImage);
+		string_view_t GetButton1DisabledImage ();
+		void SetButton1DisabledImage (string_view_t pStrImage);
 
 		bool GetShowButton2 ();
 		void SetShowButton2 (bool bShow);
-		LPCTSTR GetButton2NormalImage ();
-		void SetButton2NormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetButton2HotImage ();
-		void SetButton2HotImage (LPCTSTR pStrImage);
-		LPCTSTR GetButton2PushedImage ();
-		void SetButton2PushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetButton2DisabledImage ();
-		void SetButton2DisabledImage (LPCTSTR pStrImage);
+		string_view_t GetButton2NormalImage ();
+		void SetButton2NormalImage (string_view_t pStrImage);
+		string_view_t GetButton2HotImage ();
+		void SetButton2HotImage (string_view_t pStrImage);
+		string_view_t GetButton2PushedImage ();
+		void SetButton2PushedImage (string_view_t pStrImage);
+		string_view_t GetButton2DisabledImage ();
+		void SetButton2DisabledImage (string_view_t pStrImage);
 
-		LPCTSTR GetThumbNormalImage ();
-		void SetThumbNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetThumbHotImage ();
-		void SetThumbHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetThumbPushedImage ();
-		void SetThumbPushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetThumbDisabledImage ();
-		void SetThumbDisabledImage (LPCTSTR pStrImage);
+		string_view_t GetThumbNormalImage ();
+		void SetThumbNormalImage (string_view_t pStrImage);
+		string_view_t GetThumbHotImage ();
+		void SetThumbHotImage (string_view_t pStrImage);
+		string_view_t GetThumbPushedImage ();
+		void SetThumbPushedImage (string_view_t pStrImage);
+		string_view_t GetThumbDisabledImage ();
+		void SetThumbDisabledImage (string_view_t pStrImage);
 
-		LPCTSTR GetRailNormalImage ();
-		void SetRailNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetRailHotImage ();
-		void SetRailHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetRailPushedImage ();
-		void SetRailPushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetRailDisabledImage ();
-		void SetRailDisabledImage (LPCTSTR pStrImage);
+		string_view_t GetRailNormalImage ();
+		void SetRailNormalImage (string_view_t pStrImage);
+		string_view_t GetRailHotImage ();
+		void SetRailHotImage (string_view_t pStrImage);
+		string_view_t GetRailPushedImage ();
+		void SetRailPushedImage (string_view_t pStrImage);
+		string_view_t GetRailDisabledImage ();
+		void SetRailDisabledImage (string_view_t pStrImage);
 
-		LPCTSTR GetBkNormalImage ();
-		void SetBkNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetBkHotImage ();
-		void SetBkHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetBkPushedImage ();
-		void SetBkPushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetBkDisabledImage ();
-		void SetBkDisabledImage (LPCTSTR pStrImage);
+		string_view_t GetBkNormalImage ();
+		void SetBkNormalImage (string_view_t pStrImage);
+		string_view_t GetBkHotImage ();
+		void SetBkHotImage (string_view_t pStrImage);
+		string_view_t GetBkPushedImage ();
+		void SetBkPushedImage (string_view_t pStrImage);
+		string_view_t GetBkDisabledImage ();
+		void SetBkDisabledImage (string_view_t pStrImage);
 
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 		void DoEvent (TEventUI& event);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 

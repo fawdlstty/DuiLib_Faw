@@ -5,12 +5,12 @@ namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CTabLayoutUI)
 	CTabLayoutUI::CTabLayoutUI () {}
 
-	LPCTSTR CTabLayoutUI::GetClass () const {
+	string_view_t CTabLayoutUI::GetClass () const {
 		return _T ("TabLayoutUI");
 	}
 
-	LPVOID CTabLayoutUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_TABLAYOUT) == 0) return static_cast<CTabLayoutUI*>(this);
+	LPVOID CTabLayoutUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_TABLAYOUT) return static_cast<CTabLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -103,8 +103,8 @@ namespace DuiLib {
 			return SelectItem (iIndex);
 	}
 
-	void CTabLayoutUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("selectedid")) == 0) SelectItem (_ttoi (pstrValue));
+	void CTabLayoutUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("selectedid")) SelectItem (FawTools::parse_dec (pstrValue));
 		return CContainerUI::SetAttribute (pstrName, pstrValue);
 	}
 

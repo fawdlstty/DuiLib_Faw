@@ -8,7 +8,7 @@ namespace DuiLib {
 		m_szThumb.cx = m_szThumb.cy = 10;
 	}
 
-	LPCTSTR CSliderUI::GetClass () const {
+	string_view_t CSliderUI::GetClass () const {
 		return _T ("SliderUI");
 	}
 
@@ -17,8 +17,8 @@ namespace DuiLib {
 		else return 0;
 	}
 
-	LPVOID CSliderUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_SLIDER) == 0) return static_cast<CSliderUI*>(this);
+	LPVOID CSliderUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_SLIDER) == 0) return static_cast<CSliderUI*>(this);
 		return CProgressUI::GetInterface (pstrName);
 	}
 
@@ -62,29 +62,29 @@ namespace DuiLib {
 		return rcThumb;
 	}
 
-	LPCTSTR CSliderUI::GetThumbImage () const {
+	string_view_t CSliderUI::GetThumbImage () const {
 		return m_sThumbImage;
 	}
 
-	void CSliderUI::SetThumbImage (LPCTSTR pStrImage) {
+	void CSliderUI::SetThumbImage (string_view_t pStrImage) {
 		m_sThumbImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CSliderUI::GetThumbHotImage () const {
+	string_view_t CSliderUI::GetThumbHotImage () const {
 		return m_sThumbHotImage;
 	}
 
-	void CSliderUI::SetThumbHotImage (LPCTSTR pStrImage) {
+	void CSliderUI::SetThumbHotImage (string_view_t pStrImage) {
 		m_sThumbHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CSliderUI::GetThumbPushedImage () const {
+	string_view_t CSliderUI::GetThumbPushedImage () const {
 		return m_sThumbPushedImage;
 	}
 
-	void CSliderUI::SetThumbPushedImage (LPCTSTR pStrImage) {
+	void CSliderUI::SetThumbPushedImage (string_view_t pStrImage) {
 		m_sThumbPushedImage = pStrImage;
 		Invalidate ();
 	}
@@ -218,20 +218,20 @@ namespace DuiLib {
 		return m_bSendMove;
 	}
 
-	void CSliderUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("thumbimage")) == 0) SetThumbImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("thumbhotimage")) == 0) SetThumbHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("thumbpushedimage")) == 0) SetThumbPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("thumbsize")) == 0) {
+	void CSliderUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("thumbimage")) SetThumbImage (pstrValue);
+		else if (pstrName == _T ("thumbhotimage")) SetThumbHotImage (pstrValue);
+		else if (pstrName == _T ("thumbpushedimage")) SetThumbPushedImage (pstrValue);
+		else if (pstrName == _T ("thumbsize")) {
 			SIZE szXY = { 0 };
 			LPTSTR pstr = nullptr;
 			szXY.cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
 			szXY.cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 			SetThumbSize (szXY);
-		} else if (_tcsicmp (pstrName, _T ("step")) == 0) {
+		} else if (pstrName == _T ("step")) {
 			SetChangeStep (_ttoi (pstrValue));
-		} else if (_tcsicmp (pstrName, _T ("sendmove")) == 0) {
-			SetCanSendMove (_tcsicmp (pstrValue, _T ("true")) == 0);
+		} else if (pstrName == _T ("sendmove")) {
+			SetCanSendMove (FawTools::parse_bool (pstrValue));
 		} else CProgressUI::SetAttribute (pstrName, pstrValue);
 	}
 

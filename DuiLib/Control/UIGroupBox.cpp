@@ -12,12 +12,12 @@ namespace DuiLib {
 
 	CGroupBoxUI::~CGroupBoxUI () {}
 
-	LPCTSTR CGroupBoxUI::GetClass () const {
+	string_view_t CGroupBoxUI::GetClass () const {
 		return _T ("GroupBoxUI");
 	}
 
-	LPVOID CGroupBoxUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, _T ("GroupBox")) == 0) return static_cast<CGroupBoxUI*>(this);
+	LPVOID CGroupBoxUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("GroupBox")) return static_cast<CGroupBoxUI*>(this);
 		return CVerticalLayoutUI::GetInterface (pstrName);
 	}
 	void CGroupBoxUI::SetTextColor (DWORD dwTextColor) {
@@ -142,19 +142,13 @@ namespace DuiLib {
 		SIZE cXY = { rcText.right - rcText.left, rcText.bottom - rcText.top };
 		return cXY;
 	}
-	void CGroupBoxUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("textcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("disabledtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetDisabledTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("font")) == 0) {
-			SetFont (_ttoi (pstrValue));
+	void CGroupBoxUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("textcolor")) {
+			SetTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("disabledtextcolor")) {
+			SetDisabledTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("font")) {
+			SetFont (FawTools::parse_dec (pstrValue));
 		}
 
 		CVerticalLayoutUI::SetAttribute (pstrName, pstrValue);

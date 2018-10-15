@@ -9,12 +9,12 @@ namespace DuiLib {
 		if (!m_sGroupName.empty () && m_pManager) m_pManager->RemoveOptionGroup (m_sGroupName, this);
 	}
 
-	LPCTSTR COptionUI::GetClass () const {
+	string_view_t COptionUI::GetClass () const {
 		return _T ("OptionUI");
 	}
 
-	LPVOID COptionUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_OPTION) == 0) return static_cast<COptionUI*>(this);
+	LPVOID COptionUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_OPTION) == 0) return static_cast<COptionUI*>(this);
 		return CButtonUI::GetInterface (pstrName);
 	}
 
@@ -25,11 +25,11 @@ namespace DuiLib {
 		}
 	}
 
-	LPCTSTR COptionUI::GetGroup () const {
+	string_view_t COptionUI::GetGroup () const {
 		return m_sGroupName;
 	}
 
-	void COptionUI::SetGroup (LPCTSTR pStrGroupName) {
+	void COptionUI::SetGroup (string_view_t pStrGroupName) {
 		if (pStrGroupName == nullptr) {
 			if (m_sGroupName.empty ()) return;
 			m_sGroupName.clear ();
@@ -99,29 +99,29 @@ namespace DuiLib {
 		}
 	}
 
-	LPCTSTR COptionUI::GetSelectedImage () {
+	string_view_t COptionUI::GetSelectedImage () {
 		return m_sSelectedImage;
 	}
 
-	void COptionUI::SetSelectedImage (LPCTSTR pStrImage) {
+	void COptionUI::SetSelectedImage (string_view_t pStrImage) {
 		m_sSelectedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR COptionUI::GetSelectedHotImage () {
+	string_view_t COptionUI::GetSelectedHotImage () {
 		return m_sSelectedHotImage;
 	}
 
-	void COptionUI::SetSelectedHotImage (LPCTSTR pStrImage) {
+	void COptionUI::SetSelectedHotImage (string_view_t pStrImage) {
 		m_sSelectedHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR COptionUI::GetSelectedPushedImage () {
+	string_view_t COptionUI::GetSelectedPushedImage () {
 		return m_sSelectedPushedImage;
 	}
 
-	void COptionUI::SetSelectedPushedImage (LPCTSTR pStrImage) {
+	void COptionUI::SetSelectedPushedImage (string_view_t pStrImage) {
 		m_sSelectedPushedImage = pStrImage;
 		Invalidate ();
 	}
@@ -143,11 +143,11 @@ namespace DuiLib {
 		return m_dwSelectedBkColor;
 	}
 
-	LPCTSTR COptionUI::GetSelectedForedImage () {
+	string_view_t COptionUI::GetSelectedForedImage () {
 		return m_sSelectedForeImage;
 	}
 
-	void COptionUI::SetSelectedForedImage (LPCTSTR pStrImage) {
+	void COptionUI::SetSelectedForedImage (string_view_t pStrImage) {
 		m_sSelectedForeImage = pStrImage;
 		Invalidate ();
 	}
@@ -161,11 +161,11 @@ namespace DuiLib {
 		return m_nSelectedStateCount;
 	}
 
-	LPCTSTR COptionUI::GetSelectedStateImage () {
+	string_view_t COptionUI::GetSelectedStateImage () {
 		return m_sSelectedStateImage;
 	}
 
-	void COptionUI::SetSelectedStateImage (LPCTSTR pStrImage) {
+	void COptionUI::SetSelectedStateImage (string_view_t pStrImage) {
 		m_sSelectedStateImage = pStrImage;
 		Invalidate ();
 	}
@@ -177,26 +177,26 @@ namespace DuiLib {
 	int COptionUI::GetSelectedFont () const {
 		return m_iSelectedFont;
 	}
-	void COptionUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("group")) == 0) SetGroup (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("selected")) == 0) Selected (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("selectedimage")) == 0) SetSelectedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("selectedhotimage")) == 0) SetSelectedHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("selectedpushedimage")) == 0) SetSelectedPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("selectedforeimage")) == 0) SetSelectedForedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("selectedstateimage")) == 0) SetSelectedStateImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("selectedstatecount")) == 0) SetSelectedStateCount (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("selectedbkcolor")) == 0) {
+	void COptionUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("group")) SetGroup (pstrValue);
+		else if (pstrName == _T ("selected")) Selected (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("selectedimage")) SetSelectedImage (pstrValue);
+		else if (pstrName == _T ("selectedhotimage")) SetSelectedHotImage (pstrValue);
+		else if (pstrName == _T ("selectedpushedimage")) SetSelectedPushedImage (pstrValue);
+		else if (pstrName == _T ("selectedforeimage")) SetSelectedForedImage (pstrValue);
+		else if (pstrName == _T ("selectedstateimage")) SetSelectedStateImage (pstrValue);
+		else if (pstrName == _T ("selectedstatecount")) SetSelectedStateCount (_ttoi (pstrValue));
+		else if (pstrName == _T ("selectedbkcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetSelectedBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("selectedtextcolor")) == 0) {
+		} else if (pstrName == _T ("selectedtextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetSelectedTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("selectedfont")) == 0) SetSelectedFont (_ttoi (pstrValue));
+		} else if (pstrName == _T ("selectedfont")) SetSelectedFont (_ttoi (pstrValue));
 		else CButtonUI::SetAttribute (pstrName, pstrValue);
 	}
 
@@ -319,11 +319,11 @@ namespace DuiLib {
 
 	}
 
-	LPCTSTR CCheckBoxUI::GetClass () const {
+	string_view_t CCheckBoxUI::GetClass () const {
 		return _T ("CheckBoxUI");
 	}
-	LPVOID CCheckBoxUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_CHECKBOX) == 0) return static_cast<CCheckBoxUI*>(this);
+	LPVOID CCheckBoxUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_CHECKBOX) == 0) return static_cast<CCheckBoxUI*>(this);
 		return COptionUI::GetInterface (pstrName);
 	}
 
@@ -335,8 +335,8 @@ namespace DuiLib {
 		return IsSelected ();
 	}
 
-	void CCheckBoxUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("EnableAutoCheck")) == 0) SetAutoCheck (_tcsicmp (pstrValue, _T ("true")) == 0);
+	void CCheckBoxUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("EnableAutoCheck")) SetAutoCheck (FawTools::parse_bool (pstrValue));
 
 		COptionUI::SetAttribute (pstrName, pstrValue);
 	}

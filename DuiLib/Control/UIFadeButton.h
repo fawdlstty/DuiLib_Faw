@@ -12,9 +12,9 @@ namespace DuiLib {
 		CFadeButtonUI ();
 		virtual ~CFadeButtonUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
-		void SetNormalImage (LPCTSTR pStrImage);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
+		void SetNormalImage (string_view_t pStrImage);
 
 		void DoEvent (TEventUI& event);
 		void OnTimer (int nTimerID);

@@ -5,12 +5,12 @@ namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CTileLayoutUI)
 		CTileLayoutUI::CTileLayoutUI () {}
 
-	LPCTSTR CTileLayoutUI::GetClass () const {
+	string_view_t CTileLayoutUI::GetClass () const {
 		return _T ("TileLayoutUI");
 	}
 
-	LPVOID CTileLayoutUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_TILELAYOUT) == 0) return static_cast<CTileLayoutUI*>(this);
+	LPVOID CTileLayoutUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_TILELAYOUT) return static_cast<CTileLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -35,14 +35,11 @@ namespace DuiLib {
 		NeedUpdate ();
 	}
 
-	void CTileLayoutUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("itemsize")) == 0) {
-			SIZE szItem = { 0 };
-			LPTSTR pstr = nullptr;
-			szItem.cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			szItem.cy = _tcstol (pstr + 1, &pstr, 10);   ASSERT (pstr);
+	void CTileLayoutUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("itemsize")) {
+			SIZE szItem = FawTools::parse_size (pstrValue);
 			SetItemSize (szItem);
-		} else if (_tcsicmp (pstrName, _T ("columns")) == 0) SetColumns (_ttoi (pstrValue));
+		} else if (pstrName == _T ("columns")) SetColumns (FawTools::parse_dec (pstrValue));
 		else CContainerUI::SetAttribute (pstrName, pstrValue);
 	}
 

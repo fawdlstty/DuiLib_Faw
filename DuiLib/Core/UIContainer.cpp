@@ -27,8 +27,8 @@ namespace DuiLib {
 	}
 
 	LPVOID CContainerUI::GetInterface (string_view_t pstrName) {
-		if (_tcsicmp (pstrName.data (), _T ("IContainer")) == 0) return static_cast<IContainerUI*>(this);
-		else if (_tcsicmp (pstrName.data (), DUI_CTR_CONTAINER) == 0) return static_cast<CContainerUI*>(this);
+		if (pstrName == _T ("IContainer")) return static_cast<IContainerUI*>(this);
+		else if (pstrName == DUI_CTR_CONTAINER) == 0) return static_cast<CContainerUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -613,13 +613,13 @@ namespace DuiLib {
 	}
 
 	void CContainerUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
-		if (_tcsicmp (pstrName.data (), _T ("inset")) == 0) {
+		if (pstrName == _T ("inset")) {
 			RECT rcInset = FawTools::parse_rect (pstrValue);
 			SetInset (rcInset);
-		} else if (_tcsicmp (pstrName.data (), _T ("mousechild")) == 0) SetMouseChildEnabled (FawTools::parse_bool (pstrValue));
-		else if (_tcsicmp (pstrName.data (), _T ("vscrollbar")) == 0) {
+		} else if (pstrName == _T ("mousechild")) SetMouseChildEnabled (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("vscrollbar")) {
 			EnableScrollBar (FawTools::parse_bool (pstrValue), GetHorizontalScrollBar () != nullptr);
-		} else if (_tcsicmp (pstrName.data (), _T ("vscrollbarstyle")) == 0) {
+		} else if (pstrName == _T ("vscrollbarstyle")) {
 			m_sVerticalScrollBarStyle = pstrValue;
 			EnableScrollBar (TRUE, GetHorizontalScrollBar () != nullptr);
 			if (GetVerticalScrollBar ()) {
@@ -630,9 +630,9 @@ namespace DuiLib {
 					GetVerticalScrollBar ()->ApplyAttributeList (pstrValue);
 				}
 			}
-		} else if (_tcsicmp (pstrName.data (), _T ("hscrollbar")) == 0) {
+		} else if (pstrName == _T ("hscrollbar")) {
 			EnableScrollBar (GetVerticalScrollBar () != nullptr, FawTools::parse_bool (pstrValue));
-		} else if (_tcsicmp (pstrName.data (), _T ("hscrollbarstyle")) == 0) {
+		} else if (pstrName == _T ("hscrollbarstyle")) {
 			m_sHorizontalScrollBarStyle = pstrValue;
 			EnableScrollBar (TRUE, GetHorizontalScrollBar () != nullptr);
 			if (GetHorizontalScrollBar ()) {
@@ -643,16 +643,16 @@ namespace DuiLib {
 					GetHorizontalScrollBar ()->ApplyAttributeList (pstrValue);
 				}
 			}
-		} else if (_tcsicmp (pstrName.data (), _T ("childpadding")) == 0) SetChildPadding (_ttoi (pstrValue.data ()));
-		else if (_tcscmp (pstrName.data (), _T ("childalign")) == 0) {
-			if (_tcscmp (pstrValue.data (), _T ("left")) == 0) m_iChildAlign = DT_LEFT;
-			else if (_tcscmp (pstrValue.data (), _T ("center")) == 0) m_iChildAlign = DT_CENTER;
-			else if (_tcscmp (pstrValue.data (), _T ("right")) == 0) m_iChildAlign = DT_RIGHT;
-		} else if (_tcscmp (pstrName.data (), _T ("childvalign")) == 0) {
-			if (_tcscmp (pstrValue.data (), _T ("top")) == 0) m_iChildVAlign = DT_TOP;
-			else if (_tcscmp (pstrValue.data (), _T ("vcenter")) == 0) m_iChildVAlign = DT_VCENTER;
-			else if (_tcscmp (pstrValue.data (), _T ("bottom")) == 0) m_iChildVAlign = DT_BOTTOM;
-		} else if (_tcsicmp (pstrName.data (), _T ("scrollstepsize")) == 0) SetScrollStepSize (_ttoi (pstrValue.data ()));
+		} else if (pstrName == _T ("childpadding")) SetChildPadding (_ttoi (pstrValue.data ()));
+		else if (_tcscmp (pstrName.data (), _T ("childalign")) {
+			if (_tcscmp (pstrValue.data (), _T ("left")) m_iChildAlign = DT_LEFT;
+			else if (_tcscmp (pstrValue.data (), _T ("center")) m_iChildAlign = DT_CENTER;
+			else if (_tcscmp (pstrValue.data (), _T ("right")) m_iChildAlign = DT_RIGHT;
+		} else if (_tcscmp (pstrName.data (), _T ("childvalign")) {
+			if (_tcscmp (pstrValue.data (), _T ("top")) m_iChildVAlign = DT_TOP;
+			else if (_tcscmp (pstrValue.data (), _T ("vcenter")) m_iChildVAlign = DT_VCENTER;
+			else if (_tcscmp (pstrValue.data (), _T ("bottom")) m_iChildVAlign = DT_BOTTOM;
+		} else if (pstrName == _T ("scrollstepsize")) SetScrollStepSize (_ttoi (pstrValue.data ()));
 		else CControlUI::SetAttribute (pstrName, pstrValue);
 	}
 

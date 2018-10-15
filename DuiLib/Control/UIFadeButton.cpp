@@ -10,17 +10,17 @@ namespace DuiLib {
 		StopAnimation ();
 	}
 
-	LPCTSTR CFadeButtonUI::GetClass () const {
+	string_view_t CFadeButtonUI::GetClass () const {
 		return _T ("FadeButtonUI");
 	}
 
-	LPVOID CFadeButtonUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, _T ("FadeButton")) == 0)
+	LPVOID CFadeButtonUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("FadeButton"))
 			return static_cast<CFadeButtonUI*>(this);
 		return CButtonUI::GetInterface (pstrName);
 	}
 
-	void CFadeButtonUI::SetNormalImage (LPCTSTR pStrImage) {
+	void CFadeButtonUI::SetNormalImage (string_view_t pStrImage) {
 		m_sNormalImage = pStrImage;
 		m_sLastImage = m_sNormalImage;
 	}

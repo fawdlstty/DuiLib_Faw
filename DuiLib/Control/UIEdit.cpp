@@ -254,7 +254,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CEditUI::GetInterface (string_view_t pstrName) {
-		if (_tcsicmp (pstrName.data (), DUI_CTR_EDIT) == 0) return static_cast<CEditUI*>(this);
+		if (pstrName == DUI_CTR_EDIT) == 0) return static_cast<CEditUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 
@@ -558,20 +558,20 @@ namespace DuiLib {
 	}
 
 	void CEditUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
-		if (_tcsicmp (pstrName.data (), _T ("readonly")) == 0) SetReadOnly (FawTools::parse_bool (pstrValue));
-		else if (_tcsicmp (pstrName.data (), _T ("numberonly")) == 0) SetNumberOnly (FawTools::parse_bool (pstrValue));
-		else if (_tcscmp (pstrName.data (), _T ("autoselall")) == 0) SetAutoSelAll (FawTools::parse_bool (pstrValue));
-		else if (_tcsicmp (pstrName.data (), _T ("password")) == 0) SetPasswordMode (FawTools::parse_bool (pstrValue));
-		else if (_tcsicmp (pstrName.data (), _T ("passwordchar")) == 0) SetPasswordChar (pstrValue[0]);
-		else if (_tcsicmp (pstrName.data (), _T ("maxchar")) == 0) SetMaxChar (FawTools::parse_dec (pstrValue));
-		else if (_tcsicmp (pstrName.data (), _T ("normalimage")) == 0) SetNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("hotimage")) == 0) SetHotImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("disabledimage")) == 0) SetDisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("tipvalue")) == 0) SetTipValue (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("tipvaluecolor")) == 0) SetTipValueColor (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("nativetextcolor")) == 0) SetNativeEditTextColor (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("nativebkcolor")) == 0) {
+		if (pstrName == _T ("readonly")) SetReadOnly (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("numberonly")) SetNumberOnly (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("autoselall")) SetAutoSelAll (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("password")) SetPasswordMode (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("passwordchar")) SetPasswordChar (pstrValue[0]);
+		else if (pstrName == _T ("maxchar")) SetMaxChar (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("normalimage")) SetNormalImage (pstrValue);
+		else if (pstrName == _T ("hotimage")) SetHotImage (pstrValue);
+		else if (pstrName == _T ("focusedimage")) SetFocusedImage (pstrValue);
+		else if (pstrName == _T ("disabledimage")) SetDisabledImage (pstrValue);
+		else if (pstrName == _T ("tipvalue")) SetTipValue (pstrValue);
+		else if (pstrName == _T ("tipvaluecolor")) SetTipValueColor (pstrValue);
+		else if (pstrName == _T ("nativetextcolor")) SetNativeEditTextColor (pstrValue);
+		else if (pstrName == _T ("nativebkcolor")) {
 			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetNativeEditBkColor (clrColor);
 		} else CLabelUI::SetAttribute (pstrName, pstrValue);

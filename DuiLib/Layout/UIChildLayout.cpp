@@ -19,7 +19,7 @@ namespace DuiLib {
 	}
 
 	void CChildLayoutUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
-		if (_tcsicmp (pstrName.data (), _T ("xmlfile")) == 0)
+		if (pstrName == _T ("xmlfile"))
 			SetChildLayoutXML (pstrValue);
 		else
 			CContainerUI::SetAttribute (pstrName, pstrValue);
@@ -34,7 +34,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CChildLayoutUI::GetInterface (string_view_t pstrName) {
-		if (_tcsicmp (pstrName.data (), DUI_CTR_CHILDLAYOUT) == 0) return static_cast<CChildLayoutUI*>(this);
+		if (pstrName == DUI_CTR_CHILDLAYOUT) return static_cast<CChildLayoutUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 

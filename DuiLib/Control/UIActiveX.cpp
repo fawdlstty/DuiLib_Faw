@@ -825,7 +825,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CActiveXUI::GetInterface (string_view_t pstrName) {
-		if (_tcscmp (pstrName.data (), DUI_CTR_ACTIVEX) == 0) return static_cast<CActiveXUI*>(this);
+		if (pstrName == DUI_CTR_ACTIVEX) == 0) return static_cast<CActiveXUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -903,9 +903,9 @@ namespace DuiLib {
 	}
 
 	void CActiveXUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
-		if (_tcscmp (pstrName.data (), _T ("clsid")) == 0) CreateControl (pstrValue);
-		else if (_tcscmp (pstrName.data (), _T ("modulename")) == 0) SetModuleName (pstrValue);
-		else if (_tcscmp (pstrName.data (), _T ("delaycreate")) == 0) SetDelayCreate (FawTools::parse_bool (pstrValue));
+		if (pstrName == _T ("clsid")) CreateControl (pstrValue);
+		else if (pstrName == _T ("modulename")) SetModuleName (pstrValue);
+		else if (pstrName == _T ("delaycreate")) SetDelayCreate (FawTools::parse_bool (pstrValue));
 		else CControlUI::SetAttribute (pstrName, pstrValue);
 	}
 

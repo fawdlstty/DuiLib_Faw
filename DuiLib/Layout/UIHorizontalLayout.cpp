@@ -7,12 +7,12 @@ namespace DuiLib {
 		::ZeroMemory (&m_rcNewPos, sizeof (m_rcNewPos));
 	}
 
-	LPCTSTR CHorizontalLayoutUI::GetClass () const {
+	string_view_t CHorizontalLayoutUI::GetClass () const {
 		return _T ("HorizontalLayoutUI");
 	}
 
-	LPVOID CHorizontalLayoutUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_HORIZONTALLAYOUT) == 0) return static_cast<CHorizontalLayoutUI*>(this);
+	LPVOID CHorizontalLayoutUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_HORIZONTALLAYOUT) return static_cast<CHorizontalLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -205,9 +205,9 @@ namespace DuiLib {
 		return m_bImmMode;
 	}
 
-	void CHorizontalLayoutUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("sepwidth")) == 0) SetSepWidth (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("sepimm")) == 0) SetSepImmMode (_tcsicmp (pstrValue, _T ("true")) == 0);
+	void CHorizontalLayoutUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("sepwidth")) SetSepWidth (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("sepimm")) SetSepImmMode (FawTools::parse_bool (pstrValue));
 		else CContainerUI::SetAttribute (pstrName, pstrValue);
 	}
 

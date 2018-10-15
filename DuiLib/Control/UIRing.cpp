@@ -12,21 +12,21 @@ namespace DuiLib {
 		DeleteImage ();
 	}
 
-	LPCTSTR CRingUI::GetClass () const {
+	string_view_t CRingUI::GetClass () const {
 		return _T ("RingUI");
 	}
 
-	LPVOID CRingUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, _T ("Ring")) == 0) return static_cast<CRingUI*>(this);
+	LPVOID CRingUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("Ring")) return static_cast<CRingUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 
-	void CRingUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcscmp (pstrName, _T ("bkimage")) == 0) SetBkImage (pstrValue);
+	void CRingUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("bkimage")) SetBkImage (pstrValue);
 		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 
-	void CRingUI::SetBkImage (LPCTSTR pStrImage) {
+	void CRingUI::SetBkImage (string_view_t pStrImage) {
 		if (m_sBkImage == pStrImage) return;
 		m_sBkImage = pStrImage;
 		DeleteImage ();

@@ -48,12 +48,12 @@ namespace DuiLib {
 
 	}
 
-	LPCTSTR CGifAnimUI::GetClass () const {
+	string_view_t CGifAnimUI::GetClass () const {
 		return _T ("GifAnimUI");
 	}
 
-	LPVOID CGifAnimUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_GIFANIM) == 0) return static_cast<CGifAnimUI*>(this);
+	LPVOID CGifAnimUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_GIFANIM) return static_cast<CGifAnimUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -83,17 +83,17 @@ namespace DuiLib {
 			StopGif ();
 	}
 
-	void CGifAnimUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("bkimage")) == 0) SetBkImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("autoplay")) == 0) {
-			SetAutoPlay (_tcsicmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcsicmp (pstrName, _T ("autosize")) == 0) {
-			SetAutoSize (_tcsicmp (pstrValue, _T ("true")) == 0);
+	void CGifAnimUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("bkimage")) SetBkImage (pstrValue);
+		else if (pstrName == _T ("autoplay")) {
+			SetAutoPlay (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("autosize")) {
+			SetAutoSize (FawTools::parse_bool (pstrValue));
 		} else
 			CControlUI::SetAttribute (pstrName, pstrValue);
 	}
 
-	void CGifAnimUI::SetBkImage (LPCTSTR pStrImage) {
+	void CGifAnimUI::SetBkImage (string_view_t pStrImage) {
 		if (m_sBkImage == pStrImage || nullptr == pStrImage) return;
 
 		m_sBkImage = pStrImage;
@@ -105,7 +105,7 @@ namespace DuiLib {
 
 	}
 
-	LPCTSTR CGifAnimUI::GetBkImage () {
+	string_view_t CGifAnimUI::GetBkImage () {
 		return m_sBkImage;
 	}
 
@@ -222,7 +222,7 @@ namespace DuiLib {
 		m_pGifImage->SelectActiveFrame (&pageGuid, m_nFramePosition);
 	}
 
-	Gdiplus::Image* CGifAnimUI::LoadGifFromFile (LPCTSTR pstrGifPath) {
+	Gdiplus::Image* CGifAnimUI::LoadGifFromFile (string_view_t pstrGifPath) {
 		LPBYTE pData = NULL;
 		DWORD dwSize = 0;
 
@@ -230,7 +230,7 @@ namespace DuiLib {
 			CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 			if (CPaintManagerUI::GetResourceZip ().empty ()) {
 				sFile += pstrGifPath;
-				HANDLE hFile = ::CreateFile (sFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
+				HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
 					FILE_ATTRIBUTE_NORMAL, NULL);
 				if (hFile == INVALID_HANDLE_VALUE) break;
 				dwSize = ::GetFileSize (hFile, NULL);
@@ -251,11 +251,11 @@ namespace DuiLib {
 				HZIP hz = NULL;
 				if (CPaintManagerUI::IsCachedResourceZip ()) hz = (HZIP) CPaintManagerUI::GetResourceZipHandle ();
 				//else hz = OpenZip ((void*) sFile, 0, 2);
-				else hz = OpenZip (sFile);
+				else hz = OpenZip (sFile.c_str ());
 				if (hz == NULL) break;
 				ZIPENTRY ze;
 				int i;
-				if (FindZipItem (hz, pstrGifPath, true, &i, &ze) != 0) break;
+				if (FindZipItem (hz, pstrGifPath.data (), true, &i, &ze) != 0) break;
 				dwSize = ze.unc_size;
 				if (dwSize == 0) break;
 				pData = new BYTE[dwSize];
@@ -274,7 +274,7 @@ namespace DuiLib {
 
 		while (!pData) {
 			//读不到图片, 则直接去读取bitmap.m_lpstr指向的路径
-			HANDLE hFile = ::CreateFile (pstrGifPath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
+			HANDLE hFile = ::CreateFile (pstrGifPath.data (), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
 				FILE_ATTRIBUTE_NORMAL, NULL);
 			if (hFile == INVALID_HANDLE_VALUE) break;
 			dwSize = ::GetFileSize (hFile, NULL);

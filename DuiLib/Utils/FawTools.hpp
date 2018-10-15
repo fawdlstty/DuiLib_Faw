@@ -5,11 +5,11 @@ class FawTools {
 public:
 	// "1,2,3,4" -> RECT
 	template <typename T>
-	static RECT parse_rect (T &str) { auto v = split_number (str, 4); return { v[0], v[1], v[2], v[3] }; }
+	static RECT parse_rect (T &str) { auto v = split_number (str, 4); return { (LONG) v[0], (LONG) v[1], (LONG) v[2], (LONG) v[3] }; }
 
 	// "1,2" -> SIZE
 	template <typename T>
-	static SIZE parse_size (T &str) { auto v = split_number (str, 2); return { v[0], v[1] }; }
+	static SIZE parse_size (T &str) { auto v = split_number (str, 2); return { (LONG) v[0], (LONG) v[1] }; }
 
 	// "#FFFF0000" or "FF0000" -> size_t
 	template <typename T>
@@ -27,15 +27,17 @@ public:
 				break;
 			}
 		}
-		if constexpr (!std::is_const<str>::value)
+		if constexpr (!std::is_const<T>::value)
 			str = str.substr (i);
 		return n;
 	}
 
 	// "12345" -> size_t
 	template <typename T>
-	static size_t parse_dec (T &str) {
-		size_t n = 0, i = 0;
+	static int parse_dec (T &str) {
+		int n = 0;
+		bool is_sign = (str.size () > 0 && str[0] == _T ('-'));
+		size_t i = is_sign ? 1 : 0;
 		for (; i < str.length (); ++i) {
 			TCHAR ch = str[i];
 			if (ch >= _T ('0') && ch <= _T ('9')) {
@@ -44,9 +46,9 @@ public:
 				break;
 			}
 		}
-		if constexpr (!std::is_const<str>::value)
+		if constexpr (!std::is_const<T>::value)
 			str = str.substr (i);
-		return n;
+		return is_sign ? 0 - n : n;
 	}
 
 	// "true" or "True" or "TRUE" -> true
@@ -147,7 +149,7 @@ private:
 			v.push_back (n);
 		while (expect != string_t::npos && v.size () < expect)
 			v.push_back (0);
-		if constexpr (!std::is_const<str>::value)
+		if constexpr (!std::is_const<T>::value)
 			str = str.substr (i);
 		return v;
 	}

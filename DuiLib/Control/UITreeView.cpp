@@ -54,21 +54,21 @@ namespace DuiLib {
 
 	//************************************
 	// 函数名称: GetClass
-	// 返回类型: LPCTSTR
+	// 返回类型: LPCTstring_view_t
 	// 函数说明: 
 	//************************************
-	LPCTSTR CTreeNodeUI::GetClass () const {
+	string_view_t CTreeNodeUI::GetClass () const {
 		return _T ("TreeNodeUI");
 	}
 
 	//************************************
 	// 函数名称: GetInterface
 	// 返回类型: LPVOID
-	// 参数信息: LPCTSTR pstrName
+	// 参数信息: LPCstring_view_ttrName
 	// 函数说明: 
 	//************************************
-	LPVOID CTreeNodeUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, _T ("TreeNode")) == 0)
+	LPVOID CTreeNodeUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("TreeNode"))
 			return static_cast<CTreeNodeUI*>(this);
 		return CListContainerElementUI::GetInterface (pstrName);
 	}
@@ -264,10 +264,10 @@ namespace DuiLib {
 	//************************************
 	// 函数名称: SetItemText
 	// 返回类型: void
-	// 参数信息: LPCTSTR pstrValue
+	// 参数信息: LPCstring_view_ttrValue
 	// 函数说明: 
 	//************************************
-	void CTreeNodeUI::SetItemText (LPCTSTR pstrValue) {
+	void CTreeNodeUI::SetItemText (string_view_t pstrValue) {
 		pItemButton->SetText (pstrValue);
 	}
 
@@ -411,42 +411,42 @@ namespace DuiLib {
 	//************************************
 	// 函数名称: SetAttribute
 	// 返回类型: void
-	// 参数信息: LPCTSTR pstrName
-	// 参数信息: LPCTSTR pstrValue
+	// 参数信息: LPCstring_view_ttrName
+	// 参数信息: LPCstring_view_ttrValue
 	// 函数说明: 
 	//************************************
-	void CTreeNodeUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("text")) == 0)
+	void CTreeNodeUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("text"))
 			pItemButton->SetText (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("horizattr")) == 0)
+		else if (pstrName == _T ("horizattr"))
 			pHoriz->ApplyAttributeList (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("dotlineattr")) == 0)
+		else if (pstrName == _T ("dotlineattr"))
 			pDottedLine->ApplyAttributeList (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("folderattr")) == 0)
+		else if (pstrName == _T ("folderattr"))
 			pFolderButton->ApplyAttributeList (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("checkboxattr")) == 0)
+		else if (pstrName == _T ("checkboxattr"))
 			pCheckBox->ApplyAttributeList (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemattr")) == 0)
+		else if (pstrName == _T ("itemattr"))
 			pItemButton->ApplyAttributeList (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemtextcolor")) == 0) {
+		else if (pstrName == _T ("itemtextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemhottextcolor")) == 0) {
+		} else if (pstrName == _T ("itemhottextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetItemHotTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("selitemtextcolor")) == 0) {
+		} else if (pstrName == _T ("selitemtextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetSelItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("selitemhottextcolor")) == 0) {
+		} else if (pstrName == _T ("selitemhottextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetSelItemHotTextColor (clrColor);
 		} else CListContainerElementUI::SetAttribute (pstrName, pstrValue);
 	}
@@ -684,10 +684,10 @@ namespace DuiLib {
 
 	//************************************
 	// 函数名称: GetClass
-	// 返回类型: LPCTSTR
+	// 返回类型: LPCTstring_view_t
 	// 函数说明: 
 	//************************************
-	LPCTSTR CTreeViewUI::GetClass () const {
+	string_view_t CTreeViewUI::GetClass () const {
 		return _T ("TreeViewUI");
 	}
 
@@ -699,11 +699,11 @@ namespace DuiLib {
 	//************************************
 	// 函数名称: GetInterface
 	// 返回类型: LPVOID
-	// 参数信息: LPCTSTR pstrName
+	// 参数信息: LPCstring_view_ttrName
 	// 函数说明: 
 	//************************************
-	LPVOID CTreeViewUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, _T ("TreeView")) == 0) return static_cast<CTreeViewUI*>(this);
+	LPVOID CTreeViewUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("TreeView")) return static_cast<CTreeViewUI*>(this);
 		return CListUI::GetInterface (pstrName);
 	}
 
@@ -1106,36 +1106,36 @@ namespace DuiLib {
 	//************************************
 	// 函数名称: SetAttribute
 	// 返回类型: void
-	// 参数信息: LPCTSTR pstrName
-	// 参数信息: LPCTSTR pstrValue
+	// 参数信息: LPCstring_view_ttrName
+	// 参数信息: LPCstring_view_ttrValue
 	// 函数说明: 
 	//************************************
-	void CTreeViewUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("visiblefolderbtn")) == 0)
-			SetVisibleFolderBtn (_tcsicmp (pstrValue, _T ("TRUE")) == 0);
-		else if (_tcsicmp (pstrName, _T ("visiblecheckbtn")) == 0)
-			SetVisibleCheckBtn (_tcsicmp (pstrValue, _T ("TRUE")) == 0);
-		else if (_tcsicmp (pstrName, _T ("itemminwidth")) == 0)
+	void CTreeViewUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("visiblefolderbtn"))
+			SetVisibleFolderBtn (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("visiblecheckbtn"))
+			SetVisibleCheckBtn (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("itemminwidth"))
 			SetItemMinWidth (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("itemtextcolor")) == 0) {
+		else if (pstrName == _T ("itemtextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemhottextcolor")) == 0) {
+		} else if (pstrName == _T ("itemhottextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetItemHotTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("selitemtextcolor")) == 0) {
+		} else if (pstrName == _T ("selitemtextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetSelItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("selitemhottextcolor")) == 0) {
+		} else if (pstrName == _T ("selitemhottextcolor")) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetSelItemHotTextColor (clrColor);
 		} else CListUI::SetAttribute (pstrName, pstrValue);
 	}

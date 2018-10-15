@@ -215,8 +215,8 @@ namespace DuiLib {
 		CMenuUI ();
 		virtual ~CMenuUI ();
 		CMenuWnd	*m_pWindow	= nullptr;
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetListType ();
 
 		virtual void DoEvent (TEventUI& event);
@@ -230,7 +230,7 @@ namespace DuiLib {
 
 		SIZE EstimateSize (SIZE szAvailable);
 
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ namespace DuiLib {
 			CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo = nullptr,
 			DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top);
 		static void DestroyMenu ();
-		static MenuItemInfo* SetMenuItemInfo (LPCTSTR pstrName, bool bChecked);
+		static MenuItemInfo* SetMenuItemInfo (string_view_t pstrName, bool bChecked);
 
 	public:
 		CMenuWnd ();
@@ -266,10 +266,10 @@ namespace DuiLib {
 		void Init (CMenuElementUI* pOwner, std::variant<UINT, string_t> xml, POINT point,
 			CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo = nullptr,
 			DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top);
-		LPCTSTR GetWindowClassName () const;
+		string_view_t GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
 		void Notify (TNotifyUI& msg);
-		CControlUI* CreateControl (LPCTSTR pstrClassName);
+		CControlUI* CreateControl (string_view_t pstrClassName);
 
 		LRESULT OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		LRESULT OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -306,8 +306,8 @@ namespace DuiLib {
 		CMenuElementUI ();
 		virtual ~CMenuElementUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 		void DrawItemText (HDC hDC, const RECT& rcItem);
 		SIZE EstimateSize (SIZE szAvailable);
@@ -322,7 +322,7 @@ namespace DuiLib {
 		DWORD GetLineColor () const;
 		void SetLinePadding (RECT rcInset);
 		RECT GetLinePadding () const;
-		void SetIcon (LPCTSTR strIcon);
+		void SetIcon (string_view_t strIcon);
 		void SetIconSize (LONG cx, LONG cy);
 		void DrawItemIcon (HDC hDC, const RECT& rcItem);
 		void SetChecked (bool bCheck = true);
@@ -333,10 +333,10 @@ namespace DuiLib {
 		void SetShowExplandIcon (bool bShow);
 		void DrawItemExpland (HDC hDC, const RECT& rcItem);
 
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
-		MenuItemInfo* GetItemInfo (LPCTSTR pstrName);
-		MenuItemInfo* SetItemInfo (LPCTSTR pstrName, bool bChecked);
+		MenuItemInfo* GetItemInfo (string_view_t pstrName);
+		MenuItemInfo* SetItemInfo (string_view_t pstrName, bool bChecked);
 	protected:
 		CMenuWnd	*m_pWindow			= nullptr;
 

@@ -63,7 +63,7 @@ namespace DuiLib {
 
 #if defined(WIN32) && !defined(UNDER_CE)
 	LRESULT WindowImplBase::OnNcActivate (UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled) {
-		if (::IsIconic (*this)) bHandled = FALSE;
+		if (::IsIconic (GetHWND ())) bHandled = FALSE;
 		return (wParam == 0) ? TRUE : FALSE;
 	}
 
@@ -119,12 +119,12 @@ namespace DuiLib {
 
 	LRESULT WindowImplBase::OnNcHitTest (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
 		POINT pt; pt.x = GET_X_LPARAM (lParam); pt.y = GET_Y_LPARAM (lParam);
-		::ScreenToClient (*this, &pt);
+		::ScreenToClient (GetHWND (), &pt);
 
 		RECT rcClient;
-		::GetClientRect (*this, &rcClient);
+		::GetClientRect (GetHWND (), &rcClient);
 
-		if (!::IsZoomed (*this)) {
+		if (!::IsZoomed (GetHWND ())) {
 			RECT rcSizeBox = m_pm.GetSizeBox ();
 			if (pt.y < rcClient.top + rcSizeBox.top) {
 				if (pt.x < rcClient.left + rcSizeBox.left) return HTTOPLEFT;
@@ -193,13 +193,13 @@ namespace DuiLib {
 	LRESULT WindowImplBase::OnSize (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
 		SIZE szRoundCorner = m_pm.GetRoundCorner ();
 #if defined(WIN32) && !defined(UNDER_CE)
-		if (!::IsIconic (*this)) {
+		if (!::IsIconic (GetHWND ())) {
 			CDuiRect rcWnd;
-			::GetWindowRect (*this, &rcWnd);
+			::GetWindowRect (GetHWND (), &rcWnd);
 			rcWnd.Offset (-rcWnd.left, -rcWnd.top);
 			rcWnd.right++; rcWnd.bottom++;
 			HRGN hRgn = ::CreateRoundRectRgn (rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom, szRoundCorner.cx, szRoundCorner.cy);
-			::SetWindowRgn (*this, hRgn, TRUE);
+			::SetWindowRgn (GetHWND (), hRgn, TRUE);
 			::DeleteObject (hRgn);
 		}
 #endif
@@ -219,9 +219,9 @@ namespace DuiLib {
 			return 0;
 		}
 #if defined(WIN32) && !defined(UNDER_CE)
-		BOOL bZoomed = ::IsZoomed (*this);
+		BOOL bZoomed = ::IsZoomed (GetHWND ());
 		LRESULT lRes = CWindowWnd::HandleMessage (uMsg, wParam, lParam);
-		if (::IsZoomed (*this) != bZoomed) {
+		if (::IsZoomed (GetHWND ()) != bZoomed) {
 			if (!bZoomed) {
 				CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl (_T ("maxbtn")));
 				if (pControl) pControl->SetVisible (false);
@@ -242,9 +242,9 @@ namespace DuiLib {
 
 	LRESULT WindowImplBase::OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
 		// 调整窗口样式
-		LONG styleValue = ::GetWindowLong (*this, GWL_STYLE);
+		LONG styleValue = ::GetWindowLong (GetHWND (), GWL_STYLE);
 		styleValue &= ~WS_CAPTION;
-		::SetWindowLong (*this, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+		::SetWindowLong (GetHWND (), GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 
 		// 关联UI管理器
 		m_pm.Init (m_hWnd, GetManagerName ());
@@ -256,16 +256,16 @@ namespace DuiLib {
 		CDialogBuilder builder;
 		CDuiString sSkinType = GetSkinType ();
 		if (!sSkinType.empty ()) {
-			std::variant<UINT, string_t> xml (_ttoi (GetSkinFile ()));
+			std::variant<UINT, string_t> xml (FawTools::parse_dec (GetSkinFile ()));
 			pRoot = builder.Create (xml, sSkinType, this, &m_pm);
 		} else {
-			pRoot = builder.Create (GetSkinFile (), (UINT) 0, this, &m_pm);
+			pRoot = builder.Create (string_t (GetSkinFile ()), (UINT) 0, this, &m_pm);
 		}
 
 		if (pRoot == nullptr) {
 			CDuiString sError = _T ("加载资源文件失败：");
 			sError += GetSkinFile ();
-			MessageBox (nullptr, sError, _T ("Duilib"), MB_OK | MB_ICONERROR);
+			MessageBox (nullptr, sError.c_str (), _T ("Duilib"), MB_OK | MB_ICONERROR);
 			ExitProcess (1);
 			return 0;
 		}
@@ -350,7 +350,7 @@ namespace DuiLib {
 	}
 
 	LONG WindowImplBase::GetStyle () {
-		LONG styleValue = ::GetWindowLong (*this, GWL_STYLE);
+		LONG styleValue = ::GetWindowLong (GetHWND (), GWL_STYLE);
 		styleValue &= ~WS_CAPTION;
 
 		return styleValue;

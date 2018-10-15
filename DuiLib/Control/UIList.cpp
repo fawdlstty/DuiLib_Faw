@@ -36,7 +36,7 @@ namespace DuiLib {
 		::ZeroMemory (&m_ListInfo.rcColumn, sizeof (m_ListInfo.rcColumn));
 	}
 
-	LPCTSTR CListUI::GetClass () const {
+	string_view_t CListUI::GetClass () const {
 		return _T ("ListUI");
 	}
 
@@ -44,10 +44,10 @@ namespace DuiLib {
 		return UIFLAG_TABSTOP;
 	}
 
-	LPVOID CListUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_LIST) == 0) return static_cast<CListUI*>(this);
-		if (_tcsicmp (pstrName, _T ("IList")) == 0) return static_cast<IListUI*>(this);
-		if (_tcsicmp (pstrName, _T ("IListOwner")) == 0) return static_cast<IListOwnerUI*>(this);
+	LPVOID CListUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_LIST) return static_cast<CListUI*>(this);
+		if (pstrName ==  _T ("IList")) return static_cast<IListUI*>(this);
+		if (pstrName == _T ("IListOwner")) return static_cast<IListOwnerUI*>(this);
 		return CVerticalLayoutUI::GetInterface (pstrName);
 	}
 
@@ -58,7 +58,7 @@ namespace DuiLib {
 	int CListUI::GetItemIndex (CControlUI* pControl) const {
 		if (pControl->GetInterface (_T ("ListHeader")) != nullptr) return CVerticalLayoutUI::GetItemIndex (pControl);
 		// We also need to recognize header sub-items
-		if (_tcsstr (pControl->GetClass (), _T ("ListHeaderItemUI")) != nullptr) return m_pHeader->GetItemIndex (pControl);
+		if (pControl->GetClass ().find (_T ("ListHeaderItemUI")) != string_t::npos) return m_pHeader->GetItemIndex (pControl);
 
 		return m_pList->GetItemIndex (pControl);
 	}
@@ -66,7 +66,7 @@ namespace DuiLib {
 	bool CListUI::SetItemIndex (CControlUI* pControl, int iIndex) {
 		if (pControl->GetInterface (_T ("ListHeader")) != nullptr) return CVerticalLayoutUI::SetItemIndex (pControl, iIndex);
 		// We also need to recognize header sub-items
-		if (_tcsstr (pControl->GetClass (), _T ("ListHeaderItemUI")) != nullptr) return m_pHeader->SetItemIndex (pControl, iIndex);
+		if (pControl->GetClass ().find (_T ("ListHeaderItemUI")) != string_t::npos) return m_pHeader->SetItemIndex (pControl, iIndex);
 
 		int iOrginIndex = m_pList->GetItemIndex (pControl);
 		if (iOrginIndex == -1) return false;
@@ -106,7 +106,7 @@ namespace DuiLib {
 			return CVerticalLayoutUI::AddAt (pControl, 0);
 		}
 		// We also need to recognize header sub-items
-		if (_tcsstr (pControl->GetClass (), _T ("ListHeaderItemUI")) != nullptr) {
+		if (pControl->GetClass ().find (_T ("ListHeaderItemUI")) != string_t::npos) {
 			bool ret = m_pHeader->Add (pControl);
 			m_ListInfo.nColumns = MIN (m_pHeader->GetCount (), UILIST_MAX_COLUMNS);
 			return ret;
@@ -134,7 +134,7 @@ namespace DuiLib {
 			return CVerticalLayoutUI::AddAt (pControl, 0);
 		}
 		// We also need to recognize header sub-items
-		if (_tcsstr (pControl->GetClass (), _T ("ListHeaderItemUI")) != nullptr) {
+		if (pControl->GetClass ().find (_T ("ListHeaderItemUI")) != string_t::npos) {
 			bool ret = m_pHeader->AddAt (pControl, iIndex);
 			m_ListInfo.nColumns = MIN (m_pHeader->GetCount (), UILIST_MAX_COLUMNS);
 			return ret;
@@ -162,7 +162,7 @@ namespace DuiLib {
 	bool CListUI::Remove (CControlUI* pControl) {
 		if (pControl->GetInterface (_T ("ListHeader")) != nullptr) return CVerticalLayoutUI::Remove (pControl);
 		// We also need to recognize header sub-items
-		if (_tcsstr (pControl->GetClass (), _T ("ListHeaderItemUI")) != nullptr) return m_pHeader->Remove (pControl);
+		if (pControl->GetClass ().find (_T ("ListHeaderItemUI")) != string_t::npos) return m_pHeader->Remove (pControl);
 
 		int iIndex = m_pList->GetItemIndex (pControl);
 		if (iIndex == -1) return false;
@@ -584,7 +584,7 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	void CListUI::SetItemBkImage (LPCTSTR pStrImage) {
+	void CListUI::SetItemBkImage (string_view_t pStrImage) {
 		m_ListInfo.sBkImage = pStrImage;
 		Invalidate ();
 	}
@@ -602,7 +602,7 @@ namespace DuiLib {
 		return m_ListInfo.dwBkColor;
 	}
 
-	LPCTSTR CListUI::GetItemBkImage () const {
+	string_view_t CListUI::GetItemBkImage () const {
 		return m_ListInfo.sBkImage;
 	}
 
@@ -620,7 +620,7 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	void CListUI::SetSelectedItemImage (LPCTSTR pStrImage) {
+	void CListUI::SetSelectedItemImage (string_view_t pStrImage) {
 		m_ListInfo.sSelectedImage = pStrImage;
 		Invalidate ();
 	}
@@ -633,7 +633,7 @@ namespace DuiLib {
 		return m_ListInfo.dwSelectedBkColor;
 	}
 
-	LPCTSTR CListUI::GetSelectedItemImage () const {
+	string_view_t CListUI::GetSelectedItemImage () const {
 		return m_ListInfo.sSelectedImage;
 	}
 
@@ -647,7 +647,7 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	void CListUI::SetHotItemImage (LPCTSTR pStrImage) {
+	void CListUI::SetHotItemImage (string_view_t pStrImage) {
 		m_ListInfo.sHotImage = pStrImage;
 		Invalidate ();
 	}
@@ -659,7 +659,7 @@ namespace DuiLib {
 		return m_ListInfo.dwHotBkColor;
 	}
 
-	LPCTSTR CListUI::GetHotItemImage () const {
+	string_view_t CListUI::GetHotItemImage () const {
 		return m_ListInfo.sHotImage;
 	}
 
@@ -673,7 +673,7 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	void CListUI::SetDisabledItemImage (LPCTSTR pStrImage) {
+	void CListUI::SetDisabledItemImage (string_view_t pStrImage) {
 		m_ListInfo.sDisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -686,7 +686,7 @@ namespace DuiLib {
 		return m_ListInfo.dwDisabledBkColor;
 	}
 
-	LPCTSTR CListUI::GetDisabledItemImage () const {
+	string_view_t CListUI::GetDisabledItemImage () const {
 		return m_ListInfo.sDisabledImage;
 	}
 
@@ -789,105 +789,64 @@ namespace DuiLib {
 		m_pList->SetScrollPos (CDuiSize (sz.cx + dx, sz.cy + dy));
 	}
 
-	void CListUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("header")) == 0) GetHeader ()->SetVisible (_tcsicmp (pstrValue, _T ("hidden")) != 0);
-		else if (_tcsicmp (pstrName, _T ("headerbkimage")) == 0) GetHeader ()->SetBkImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("scrollselect")) == 0) SetScrollSelect (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("fixedscrollbar")) == 0) SetFixedScrollbar (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("multiexpanding")) == 0) SetMultiExpanding (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("itemfont")) == 0) m_ListInfo.nFont = _ttoi (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemalign")) == 0) {
-			if (_tcsstr (pstrValue, _T ("left")) != nullptr) {
+	void CListUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("header")) GetHeader ()->SetVisible (pstrValue != _T ("hidden"));
+		else if (pstrName == _T ("headerbkimage")) GetHeader ()->SetBkImage (pstrValue);
+		else if (pstrName == _T ("scrollselect")) SetScrollSelect (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("fixedscrollbar")) SetFixedScrollbar (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("multiexpanding")) SetMultiExpanding (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("itemfont")) m_ListInfo.nFont = FawTools::parse_dec (pstrValue);
+		else if (pstrName == _T ("itemalign")) {
+			if (pstrValue.find (_T ("left")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_CENTER | DT_RIGHT);
 				m_ListInfo.uTextStyle |= DT_LEFT;
 			}
-			if (_tcsstr (pstrValue, _T ("center")) != nullptr) {
+			if (pstrValue.find (_T ("center")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_ListInfo.uTextStyle |= DT_CENTER;
 			}
-			if (_tcsstr (pstrValue, _T ("right")) != nullptr) {
+			if (pstrValue.find (_T ("right")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_LEFT | DT_CENTER);
 				m_ListInfo.uTextStyle |= DT_RIGHT;
 			}
-		} else if (_tcsicmp (pstrName, _T ("itemvalign")) == 0) {
-			if (_tcsstr (pstrValue, _T ("top")) != nullptr) {
+		} else if (pstrName == _T ("itemvalign")) {
+			if (pstrValue.find (_T ("top")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_VCENTER | DT_BOTTOM);
 				m_ListInfo.uTextStyle |= DT_TOP;
 			}
-			if (_tcsstr (pstrValue, _T ("vcenter")) != nullptr) {
+			if (pstrValue.find (_T ("vcenter")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_TOP | DT_BOTTOM | DT_WORDBREAK);
 				m_ListInfo.uTextStyle |= DT_VCENTER | DT_SINGLELINE;
 			}
-			if (_tcsstr (pstrValue, _T ("bottom")) != nullptr) {
+			if (pstrValue.find (_T ("bottom")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_TOP | DT_VCENTER);
 				m_ListInfo.uTextStyle |= DT_BOTTOM;
 			}
-		} else if (_tcsicmp (pstrName, _T ("itemendellipsis")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0) m_ListInfo.uTextStyle |= DT_END_ELLIPSIS;
+		} else if (pstrName == _T ("itemendellipsis")) {
+			if (FawTools::parse_bool (pstrValue)) m_ListInfo.uTextStyle |= DT_END_ELLIPSIS;
 			else m_ListInfo.uTextStyle &= ~DT_END_ELLIPSIS;
-		} else if (_tcsicmp (pstrName, _T ("itemtextpadding")) == 0) {
-			RECT rcTextPadding = { 0 };
-			LPTSTR pstr = nullptr;
-			rcTextPadding.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcTextPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+		} else if (pstrName == _T ("itemtextpadding")) {
+			RECT rcTextPadding = FawTools::parse_rect (pstrValue);
 			SetItemTextPadding (rcTextPadding);
-		} else if (_tcsicmp (pstrName, _T ("itemtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itembkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetItemBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itembkimage")) == 0) SetItemBkImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemaltbk")) == 0) SetAlternateBk (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("itemselectedtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetSelectedItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemselectedbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetSelectedItemBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemselectedimage")) == 0) SetSelectedItemImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemhottextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetHotItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemhotbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetHotItemBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemhotimage")) == 0) SetHotItemImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemdisabledtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetDisabledItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemdisabledbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetDisabledItemBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemdisabledimage")) == 0) SetDisabledItemImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemlinecolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetItemLineColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemshowrowline")) == 0) SetItemShowRowLine (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("itemshowcolumnline")) == 0) SetItemShowColumnLine (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("itemshowhtml")) == 0) SetItemShowHtml (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcscmp (pstrName, _T ("multiselect")) == 0) SetMultiSelect (_tcscmp (pstrValue, _T ("true")) == 0);
-		else if (_tcscmp (pstrName, _T ("itemrselected")) == 0) SetItemRSelected (_tcscmp (pstrValue, _T ("true")) == 0);
+		} else if (pstrName == _T ("itemtextcolor")) { SetItemTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itembkcolor")) { SetItemBkColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itembkimage")) SetItemBkImage (pstrValue);
+		else if (pstrName == _T ("itemaltbk")) SetAlternateBk (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("itemselectedtextcolor")) { SetSelectedItemTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itemselectedbkcolor")) { SetSelectedItemBkColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itemselectedimage")) SetSelectedItemImage (pstrValue);
+		else if (pstrName == _T ("itemhottextcolor")) { SetHotItemTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itemhotbkcolor")) { SetHotItemBkColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itemhotimage")) SetHotItemImage (pstrValue);
+		else if (pstrName == _T ("itemdisabledtextcolor")) { SetDisabledItemTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itemdisabledbkcolor")) { SetDisabledItemBkColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itemdisabledimage")) SetDisabledItemImage (pstrValue);
+		else if (pstrName == _T ("itemlinecolor")) { SetItemLineColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("itemshowrowline")) SetItemShowRowLine (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("itemshowcolumnline")) SetItemShowColumnLine (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("itemshowhtml")) SetItemShowHtml (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("multiselect")) SetMultiSelect (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("itemrselected")) SetItemRSelected (FawTools::parse_bool (pstrValue));
 		else CVerticalLayoutUI::SetAttribute (pstrName, pstrValue);
 	}
 
@@ -1256,12 +1215,12 @@ namespace DuiLib {
 		CListHeaderUI::CListHeaderUI ():
 		m_bIsScaleHeader (false) {}
 
-	LPCTSTR CListHeaderUI::GetClass () const {
+	string_view_t CListHeaderUI::GetClass () const {
 		return _T ("ListHeaderUI");
 	}
 
-	LPVOID CListHeaderUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_LISTHEADER) == 0) return this;
+	LPVOID CListHeaderUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_LISTHEADER) == 0) return this;
 		return CHorizontalLayoutUI::GetInterface (pstrName);
 	}
 
@@ -1385,8 +1344,8 @@ namespace DuiLib {
 		cxNeeded += (nEstimateNum - 1) * m_iChildPadding;
 	}
 
-	void CListHeaderUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("scaleheader")) == 0) SetScaleHeader (_tcsicmp (pstrValue, _T ("true")) == 0);
+	void CListHeaderUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("scaleheader")) SetScaleHeader (FawTools::parse_bool (pstrValue));
 		else CHorizontalLayoutUI::SetAttribute (pstrName, pstrValue);
 	}
 
@@ -1409,12 +1368,12 @@ namespace DuiLib {
 		SetMinWidth (16);
 	}
 
-	LPCTSTR CListHeaderItemUI::GetClass () const {
+	string_view_t CListHeaderItemUI::GetClass () const {
 		return _T ("ListHeaderItemUI");
 	}
 
-	LPVOID CListHeaderItemUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_LISTHEADERITEM) == 0) return this;
+	LPVOID CListHeaderItemUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_LISTHEADERITEM) return this;
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -1489,47 +1448,47 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	LPCTSTR CListHeaderItemUI::GetNormalImage () const {
+	string_view_t CListHeaderItemUI::GetNormalImage () const {
 		return m_sNormalImage;
 	}
 
-	void CListHeaderItemUI::SetNormalImage (LPCTSTR pStrImage) {
+	void CListHeaderItemUI::SetNormalImage (string_view_t pStrImage) {
 		m_sNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CListHeaderItemUI::GetHotImage () const {
+	string_view_t CListHeaderItemUI::GetHotImage () const {
 		return m_sHotImage;
 	}
 
-	void CListHeaderItemUI::SetHotImage (LPCTSTR pStrImage) {
+	void CListHeaderItemUI::SetHotImage (string_view_t pStrImage) {
 		m_sHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CListHeaderItemUI::GetPushedImage () const {
+	string_view_t CListHeaderItemUI::GetPushedImage () const {
 		return m_sPushedImage;
 	}
 
-	void CListHeaderItemUI::SetPushedImage (LPCTSTR pStrImage) {
+	void CListHeaderItemUI::SetPushedImage (string_view_t pStrImage) {
 		m_sPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CListHeaderItemUI::GetFocusedImage () const {
+	string_view_t CListHeaderItemUI::GetFocusedImage () const {
 		return m_sFocusedImage;
 	}
 
-	void CListHeaderItemUI::SetFocusedImage (LPCTSTR pStrImage) {
+	void CListHeaderItemUI::SetFocusedImage (string_view_t pStrImage) {
 		m_sFocusedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CListHeaderItemUI::GetSepImage () const {
+	string_view_t CListHeaderItemUI::GetSepImage () const {
 		return m_sSepImage;
 	}
 
-	void CListHeaderItemUI::SetSepImage (LPCTSTR pStrImage) {
+	void CListHeaderItemUI::SetSepImage (string_view_t pStrImage) {
 		m_sSepImage = pStrImage;
 		Invalidate ();
 	}
@@ -1542,48 +1501,39 @@ namespace DuiLib {
 		return m_nScale;
 	}
 
-	void CListHeaderItemUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("dragable")) == 0) SetDragable (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("sepwidth")) == 0) SetSepWidth (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("align")) == 0) {
-			if (_tcsstr (pstrValue, _T ("left")) != nullptr) {
+	void CListHeaderItemUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("dragable")) SetDragable (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("sepwidth")) SetSepWidth (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("align")) {
+			if (pstrValue.find (_T ("left")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_CENTER | DT_RIGHT);
 				m_uTextStyle |= DT_LEFT;
 			}
-			if (_tcsstr (pstrValue, _T ("center")) != nullptr) {
+			if (pstrValue.find (_T ("center")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_uTextStyle |= DT_CENTER;
 			}
-			if (_tcsstr (pstrValue, _T ("right")) != nullptr) {
+			if (pstrValue.find (_T ("right")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_LEFT | DT_CENTER);
 				m_uTextStyle |= DT_RIGHT;
 			}
-		} else if (_tcsicmp (pstrName, _T ("endellipsis")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0) m_uTextStyle |= DT_END_ELLIPSIS;
+		} else if (pstrName == _T ("endellipsis")) {
+			if (FawTools::parse_bool (pstrValue)) m_uTextStyle |= DT_END_ELLIPSIS;
 			else m_uTextStyle &= ~DT_END_ELLIPSIS;
-		} else if (_tcsicmp (pstrName, _T ("font")) == 0) SetFont (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("textcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("textpadding")) == 0) {
-			RECT rcTextPadding = { 0 };
-			LPTSTR pstr = nullptr;
-			rcTextPadding.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcTextPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+		} else if (pstrName == _T ("font")) SetFont ((int) FawTools::parse_hex (pstrValue));
+		else if (pstrName == _T ("textcolor")) {
+			SetTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("textpadding")) {
+			RECT rcTextPadding = FawTools::parse_rect (pstrValue);
 			SetTextPadding (rcTextPadding);
-		} else if (_tcsicmp (pstrName, _T ("showhtml")) == 0) SetShowHtml (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("normalimage")) == 0) SetNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("hotimage")) == 0) SetHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("pushedimage")) == 0) SetPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("sepimage")) == 0) SetSepImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("scale")) == 0) {
-			LPTSTR pstr = nullptr;
-			SetScale (_tcstol (pstrValue, &pstr, 10));
+		} else if (pstrName == _T ("showhtml")) SetShowHtml (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("normalimage")) SetNormalImage (pstrValue);
+		else if (pstrName == _T ("hotimage")) SetHotImage (pstrValue);
+		else if (pstrName == _T ("pushedimage")) SetPushedImage (pstrValue);
+		else if (pstrName == _T ("focusedimage")) SetFocusedImage (pstrValue);
+		else if (pstrName == _T ("sepimage")) SetSepImage (pstrValue);
+		else if (pstrName == _T ("scale")) {
+			SetScale (FawTools::parse_dec (pstrValue));
 
 		} else CContainerUI::SetAttribute (pstrName, pstrValue);
 	}
@@ -1752,7 +1702,7 @@ namespace DuiLib {
 		m_bSelected (false),
 		m_uButtonState (0) {}
 
-	LPCTSTR CListElementUI::GetClass () const {
+	string_view_t CListElementUI::GetClass () const {
 		return _T ("ListElementUI");
 	}
 
@@ -1760,9 +1710,9 @@ namespace DuiLib {
 		return UIFLAG_WANTRETURN;
 	}
 
-	LPVOID CListElementUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_LISTITEM) == 0) return static_cast<IListItemUI*>(this);
-		if (_tcsicmp (pstrName, DUI_CTR_LISTELEMENT) == 0) return static_cast<CListElementUI*>(this);
+	LPVOID CListElementUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_LISTITEM) return static_cast<IListItemUI*>(this);
+		if (pstrName == DUI_CTR_LISTELEMENT) return static_cast<CListElementUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -1905,8 +1855,8 @@ namespace DuiLib {
 		if (m_pOwner != nullptr) m_pOwner->DoEvent (event); else CControlUI::DoEvent (event);
 	}
 
-	void CListElementUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("selected")) == 0) Select ();
+	void CListElementUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("selected")) Select ();
 		else CControlUI::SetAttribute (pstrName, pstrValue);
 	}
 
@@ -1983,17 +1933,17 @@ namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CListLabelElementUI)
 
 	CListLabelElementUI::CListLabelElementUI () { SetMaxHeight (20); }
-	CListLabelElementUI::CListLabelElementUI (LPCTSTR text, int height) {
+	CListLabelElementUI::CListLabelElementUI (string_view_t text, int height) {
 		SetText (text);
 		SetMaxHeight (height);
 	}
 
-	LPCTSTR CListLabelElementUI::GetClass () const {
+	string_view_t CListLabelElementUI::GetClass () const {
 		return _T ("ListLabelElementUI");
 	}
 
-	LPVOID CListLabelElementUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_LISTLABELELEMENT) == 0) return static_cast<CListLabelElementUI*>(this);
+	LPVOID CListLabelElementUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_LISTLABELELEMENT) return static_cast<CListLabelElementUI*>(this);
 		return CListElementUI::GetInterface (pstrName);
 	}
 
@@ -2135,12 +2085,12 @@ namespace DuiLib {
 		m_aTexts.Empty ();
 	}
 
-	LPCTSTR CListTextElementUI::GetClass () const {
+	string_view_t CListTextElementUI::GetClass () const {
 		return _T ("ListTextElementUI");
 	}
 
-	LPVOID CListTextElementUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_LISTTEXTELEMENT) == 0) return static_cast<CListTextElementUI*>(this);
+	LPVOID CListTextElementUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_LISTTEXTELEMENT) return static_cast<CListTextElementUI*>(this);
 		return CListLabelElementUI::GetInterface (pstrName);
 	}
 
@@ -2148,7 +2098,7 @@ namespace DuiLib {
 		return UIFLAG_WANTRETURN | ((IsEnabled () && m_nLinks > 0) ? UIFLAG_SETCURSOR : 0);
 	}
 
-	LPCTSTR CListTextElementUI::GetText (int iIndex) const {
+	string_view_t CListTextElementUI::GetText (int iIndex) const {
 		CDuiString* pText = static_cast<CDuiString*>(m_aTexts.GetAt (iIndex));
 		if (pText) {
 			if (!IsResourceText ())
@@ -2158,7 +2108,7 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	void CListTextElementUI::SetText (int iIndex, LPCTSTR pstrText) {
+	void CListTextElementUI::SetText (int iIndex, string_view_t pstrText) {
 		if (m_pOwner == nullptr) return;
 
 		TListInfoUI* pInfo = m_pOwner->GetListInfo ();
@@ -2306,7 +2256,7 @@ namespace DuiLib {
 		m_bSelected (false),
 		m_uButtonState (0) {}
 
-	LPCTSTR CListContainerElementUI::GetClass () const {
+	string_view_t CListContainerElementUI::GetClass () const {
 		return _T ("ListContainerElementUI");
 	}
 
@@ -2314,9 +2264,9 @@ namespace DuiLib {
 		return UIFLAG_WANTRETURN;
 	}
 
-	LPVOID CListContainerElementUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_LISTITEM) == 0) return static_cast<IListItemUI*>(this);
-		if (_tcsicmp (pstrName, DUI_CTR_LISTCONTAINERELEMENT) == 0) return static_cast<CListContainerElementUI*>(this);
+	LPVOID CListContainerElementUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_LISTITEM) return static_cast<IListItemUI*>(this);
+		if (pstrName == DUI_CTR_LISTCONTAINERELEMENT) return static_cast<CListContainerElementUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -2513,9 +2463,9 @@ namespace DuiLib {
 		if (m_pOwner != nullptr) m_pOwner->DoEvent (event); else CControlUI::DoEvent (event);
 	}
 
-	void CListContainerElementUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("selected")) == 0) Select ();
-		//else if( _tcscmp(pstrName, _T("expandable")) == 0 ) SetExpandable(_tcscmp(pstrValue, _T("true")) == 0);
+	void CListContainerElementUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("selected")) Select ();
+		//else if( _tcscmp(pstrName, _T("expandable")) == 0 ) SetExpandable(_tcscmp(pstrValue, _T("true"));
 		else CContainerUI::SetAttribute (pstrName, pstrValue);
 	}
 

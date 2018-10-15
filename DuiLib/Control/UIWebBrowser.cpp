@@ -143,7 +143,7 @@ namespace DuiLib {
 		return ulRefCount;
 	}
 
-	void CWebBrowserUI::Navigate2 (LPCTSTR lpszUrl) {
+	void CWebBrowserUI::Navigate2 (string_view_t lpszUrl) {
 		if (lpszUrl == nullptr)
 			return;
 
@@ -392,11 +392,11 @@ namespace DuiLib {
 		m_pWebBrowser2->Refresh2 (&vLevel);
 	}
 
-	void CWebBrowserUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("homepage")) == 0) {
+	void CWebBrowserUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("homepage")) {
 			m_sHomePage = pstrValue;
-		} else if (_tcsicmp (pstrName, _T ("autonavi")) == 0) {
-			m_bAutoNavi = (_tcsicmp (pstrValue, _T ("true")) == 0);
+		} else if (pstrName == _T ("autonavi")) {
+			m_bAutoNavi = (FawTools::parse_bool (pstrValue));
 		} else
 			CActiveXUI::SetAttribute (pstrName, pstrValue);
 	}
@@ -406,26 +406,26 @@ namespace DuiLib {
 			this->NavigateUrl (m_sHomePage);
 	}
 
-	void CWebBrowserUI::NavigateUrl (LPCTSTR lpszUrl) {
+	void CWebBrowserUI::NavigateUrl (string_view_t lpszUrl) {
 		if (m_pWebBrowser2 && lpszUrl) {
 			m_pWebBrowser2->Navigate ((BSTR) SysAllocString (T2BSTR (lpszUrl)), nullptr, nullptr, nullptr, nullptr);
 		}
 	}
 
-	LPCTSTR CWebBrowserUI::GetClass () const {
+	string_view_t CWebBrowserUI::GetClass () const {
 		return _T ("WebBrowserUI");
 	}
 
-	LPVOID CWebBrowserUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_WEBBROWSER) == 0) return static_cast<CWebBrowserUI*>(this);
+	LPVOID CWebBrowserUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_WEBBROWSER) == 0) return static_cast<CWebBrowserUI*>(this);
 		return CActiveXUI::GetInterface (pstrName);
 	}
 
-	void CWebBrowserUI::SetHomePage (LPCTSTR lpszUrl) {
+	void CWebBrowserUI::SetHomePage (string_view_t lpszUrl) {
 		m_sHomePage.Format (_T ("%s"), lpszUrl);
 	}
 
-	LPCTSTR CWebBrowserUI::GetHomePage () {
+	string_view_t CWebBrowserUI::GetHomePage () {
 		return m_sHomePage;
 	}
 

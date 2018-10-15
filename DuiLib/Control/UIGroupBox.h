@@ -10,8 +10,8 @@ namespace DuiLib {
 	public:
 		CGroupBoxUI ();
 		virtual ~CGroupBoxUI ();
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		void SetTextColor (DWORD dwTextColor);
 		DWORD GetTextColor () const;
 		void SetDisabledTextColor (DWORD dwTextColor);
@@ -23,7 +23,7 @@ namespace DuiLib {
 		//Paint
 		virtual void PaintText (HDC hDC);
 		virtual void PaintBorder (HDC hDC);
-		virtual void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		virtual void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 	private:
 		SIZE CalcrectSize (SIZE szAvailable);

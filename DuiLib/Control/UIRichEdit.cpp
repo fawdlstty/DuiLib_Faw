@@ -8,16 +8,6 @@
 // These constants are for backward compatibility. They are the 
 // sizes used for initialization and reset in RichEdit 1.0
 
-static std::string _conv_to_multi (std::wstring _old) {
-	int lenOld = lstrlenW (_old);
-	int lenNew = ::WideCharToMultiByte (CP_ACP, 0, _old, lenOld, NULL, 0, NULL, NULL);
-	std::string s;
-	s.resize (lenNew);
-	if (!::WideCharToMultiByte (CP_ACP, 0, _old, lenOld, const_cast<char*>(s), lenNew, NULL, NULL))
-		return "";
-	return s;
-}
-
 namespace DuiLib {
 
 #define ID_RICH_UNDO			101
@@ -991,12 +981,12 @@ namespace DuiLib {
 		}
 	}
 
-	LPCTSTR CRichEditUI::GetClass () const {
+	string_view_t CRichEditUI::GetClass () const {
 		return DUI_CTR_RICHEDIT;
 	}
 
-	LPVOID CRichEditUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, DUI_CTR_RICHEDIT) == 0) return static_cast<CRichEditUI*>(this);
+	LPVOID CRichEditUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_RICHEDIT) return static_cast<CRichEditUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -1086,11 +1076,11 @@ namespace DuiLib {
 		}
 	}
 
-	void CRichEditUI::SetFont (LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) {
+	void CRichEditUI::SetFont (string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) {
 		if (m_pTwh) {
 			LOGFONT lf = { 0 };
 			::GetObject (::GetStockObject (DEFAULT_GUI_FONT), sizeof (LOGFONT), &lf);
-			_tcsncpy (lf.lfFaceName, pStrFontName, LF_FACESIZE);
+			_tcsncpy (lf.lfFaceName, pStrFontName.data (), LF_FACESIZE);
 			lf.lfCharSet = DEFAULT_CHARSET;
 			lf.lfHeight = -nSize;
 			if (bBold) lf.lfWeight += FW_BOLD;
@@ -1170,7 +1160,7 @@ namespace DuiLib {
 		return sText;
 	}
 
-	void CRichEditUI::SetText (LPCTSTR pstrText) {
+	void CRichEditUI::SetText (string_view_t pstrText) {
 		m_sText = pstrText;
 		if (!m_pTwh) return;
 		SetSel (0, -1);
@@ -1214,9 +1204,9 @@ namespace DuiLib {
 		return (int) lResult;
 	}
 
-	void CRichEditUI::ReplaceSel (LPCTSTR lpszNewText, bool bCanUndo) {
+	void CRichEditUI::ReplaceSel (string_view_t lpszNewText, bool bCanUndo) {
 #ifdef _UNICODE		
-		TxSendMessage (EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM) lpszNewText, 0);
+		TxSendMessage (EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM) lpszNewText.data (), 0);
 #else
 		size_t iLen = _tcslen (lpszNewText);
 		LPWSTR lpText = new WCHAR[iLen + 1];
@@ -1335,13 +1325,13 @@ namespace DuiLib {
 		TxSendMessage (EM_SCROLLCARET, 0, 0, 0);
 	}
 
-	int CRichEditUI::InsertText (long nInsertAfterChar, LPCTSTR lpstrText, bool bCanUndo) {
+	int CRichEditUI::InsertText (long nInsertAfterChar, string_view_t lpstrText, bool bCanUndo) {
 		int nRet = SetSel (nInsertAfterChar, nInsertAfterChar);
 		ReplaceSel (lpstrText, bCanUndo);
 		return nRet;
 	}
 
-	int CRichEditUI::AppendText (LPCTSTR lpstrText, bool bCanUndo) {
+	int CRichEditUI::AppendText (string_view_t lpstrText, bool bCanUndo) {
 		int nRet = SetSel (-1, -1);
 		ReplaceSel (lpstrText, bCanUndo);
 		return nRet;
@@ -1572,7 +1562,7 @@ namespace DuiLib {
 		cs.y = 0;
 		cs.cy = 0;
 		cs.cx = 0;
-		cs.lpszName = m_sText;
+		cs.lpszName = m_sText.c_str ();
 		CreateHost (this, &cs, &m_pTwh);
 		if (m_pTwh) {
 			if (m_bTransparent) m_pTwh->SetTransparent (TRUE);
@@ -2064,38 +2054,38 @@ namespace DuiLib {
 		return true;
 	}
 
-	LPCTSTR CRichEditUI::GetNormalImage () {
+	string_view_t CRichEditUI::GetNormalImage () {
 		return m_sNormalImage;
 	}
 
-	void CRichEditUI::SetNormalImage (LPCTSTR pStrImage) {
+	void CRichEditUI::SetNormalImage (string_view_t pStrImage) {
 		m_sNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CRichEditUI::GetHotImage () {
+	string_view_t CRichEditUI::GetHotImage () {
 		return m_sHotImage;
 	}
 
-	void CRichEditUI::SetHotImage (LPCTSTR pStrImage) {
+	void CRichEditUI::SetHotImage (string_view_t pStrImage) {
 		m_sHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CRichEditUI::GetFocusedImage () {
+	string_view_t CRichEditUI::GetFocusedImage () {
 		return m_sFocusedImage;
 	}
 
-	void CRichEditUI::SetFocusedImage (LPCTSTR pStrImage) {
+	void CRichEditUI::SetFocusedImage (string_view_t pStrImage) {
 		m_sFocusedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CRichEditUI::GetDisabledImage () {
+	string_view_t CRichEditUI::GetDisabledImage () {
 		return m_sDisabledImage;
 	}
 
-	void CRichEditUI::SetDisabledImage (LPCTSTR pStrImage) {
+	void CRichEditUI::SetDisabledImage (string_view_t pStrImage) {
 		m_sDisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -2109,20 +2099,16 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	void CRichEditUI::SetTipValue (LPCTSTR pStrTipValue) {
+	void CRichEditUI::SetTipValue (string_view_t pStrTipValue) {
 		m_sTipValue = pStrTipValue;
 	}
 
-	LPCTSTR CRichEditUI::GetTipValue () {
+	string_view_t CRichEditUI::GetTipValue () {
 		return m_sTipValue;
 	}
 
-	void CRichEditUI::SetTipValueColor (LPCTSTR pStrColor) {
-		if (*pStrColor == _T ('#')) pStrColor = ::CharNext (pStrColor);
-		LPTSTR pstr = nullptr;
-		DWORD clrColor = _tcstoul (pStrColor, &pstr, 16);
-
-		m_dwTipValueColor = clrColor;
+	void CRichEditUI::SetTipValueColor (string_view_t pStrColor) {
+		m_dwTipValueColor = (DWORD) FawTools::parse_hex (pStrColor);
 	}
 
 	DWORD CRichEditUI::GetTipValueColor () {
@@ -2167,80 +2153,71 @@ namespace DuiLib {
 		}
 	}
 
-	void CRichEditUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcscmp (pstrName, _T ("vscrollbar")) == 0) {
-			if (_tcscmp (pstrValue, _T ("true")) == 0) m_lTwhStyle |= ES_DISABLENOSCROLL | WS_VSCROLL;
+	void CRichEditUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("vscrollbar")) {
+			if (FawTools::parse_bool (pstrValue)) m_lTwhStyle |= ES_DISABLENOSCROLL | WS_VSCROLL;
 		}
-		if (_tcscmp (pstrName, _T ("autovscroll")) == 0) {
-			if (_tcscmp (pstrValue, _T ("true")) == 0) m_lTwhStyle |= ES_AUTOVSCROLL;
-		} else if (_tcscmp (pstrName, _T ("hscrollbar")) == 0) {
-			if (_tcscmp (pstrValue, _T ("true")) == 0) m_lTwhStyle |= ES_DISABLENOSCROLL | WS_HSCROLL;
+		if (pstrName == _T ("autovscroll")) {
+			if (FawTools::parse_bool (pstrValue)) m_lTwhStyle |= ES_AUTOVSCROLL;
+		} else if (pstrName == _T ("hscrollbar")) {
+			if (FawTools::parse_bool (pstrValue)) m_lTwhStyle |= ES_DISABLENOSCROLL | WS_HSCROLL;
 		}
-		if (_tcscmp (pstrName, _T ("autohscroll")) == 0) {
-			if (_tcscmp (pstrValue, _T ("true")) == 0) m_lTwhStyle |= ES_AUTOHSCROLL;
-		} else if (_tcsicmp (pstrName, _T ("multiline")) == 0) {
-			SetMultiLine (_tcscmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcscmp (pstrName, _T ("wanttab")) == 0) {
-			SetWantTab (_tcscmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcscmp (pstrName, _T ("wantreturn")) == 0) {
-			SetWantReturn (_tcscmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcscmp (pstrName, _T ("wantctrlreturn")) == 0) {
-			SetWantCtrlReturn (_tcscmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcscmp (pstrName, _T ("transparent")) == 0) {
-			SetTransparent (_tcscmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcscmp (pstrName, _T ("rich")) == 0) {
-			SetRich (_tcscmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcscmp (pstrName, _T ("multiline")) == 0) {
-			if (_tcscmp (pstrValue, _T ("false")) == 0) m_lTwhStyle &= ~ES_MULTILINE;
-		} else if (_tcscmp (pstrName, _T ("readonly")) == 0) {
-			if (_tcscmp (pstrValue, _T ("true")) == 0) {
+		if (pstrName == _T ("autohscroll")) {
+			if (FawTools::parse_bool (pstrValue)) m_lTwhStyle |= ES_AUTOHSCROLL;
+		} else if (pstrName == _T ("multiline")) {
+			SetMultiLine (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("wanttab")) {
+			SetWantTab (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("wantreturn")) {
+			SetWantReturn (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("wantctrlreturn")) {
+			SetWantCtrlReturn (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("transparent")) {
+			SetTransparent (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("rich")) {
+			SetRich (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("multiline")) {
+			if (!FawTools::parse_bool (pstrValue)) m_lTwhStyle &= ~ES_MULTILINE;
+		} else if (pstrName == _T ("readonly")) {
+			if (FawTools::parse_bool (pstrValue)) {
 				m_lTwhStyle |= ES_READONLY; m_bReadOnly = true;
 			}
-		} else if (_tcscmp (pstrName, _T ("password")) == 0) {
-			if (_tcscmp (pstrValue, _T ("true")) == 0) m_lTwhStyle |= ES_PASSWORD;
-		} else if (_tcscmp (pstrName, _T ("align")) == 0) {
-			if (_tcsstr (pstrValue, _T ("left")) != nullptr) {
+		} else if (pstrName == _T ("password")) {
+			if (FawTools::parse_bool (pstrValue)) m_lTwhStyle |= ES_PASSWORD;
+		} else if (pstrName == _T ("align")) {
+			if (pstrValue.find (_T ("left")) != string_t::npos) {
 				m_lTwhStyle &= ~(ES_CENTER | ES_RIGHT);
 				m_lTwhStyle |= ES_LEFT;
 			}
-			if (_tcsstr (pstrValue, _T ("center")) != nullptr) {
+			if (pstrValue.find (_T ("center")) != string_t::npos) {
 				m_lTwhStyle &= ~(ES_LEFT | ES_RIGHT);
 				m_lTwhStyle |= ES_CENTER;
 			}
-			if (_tcsstr (pstrValue, _T ("right")) != nullptr) {
+			if (pstrValue.find (_T ("right")) != string_t::npos) {
 				m_lTwhStyle &= ~(ES_LEFT | ES_CENTER);
 				m_lTwhStyle |= ES_RIGHT;
 			}
-		} else if (_tcscmp (pstrName, _T ("font")) == 0) SetFont (_ttoi (pstrValue));
-		else if (_tcscmp (pstrName, _T ("textcolor")) == 0) {
-			while (*pstrValue > _T ('\0') && *pstrValue <= _T (' ')) pstrValue = ::CharNext (pstrValue);
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("maxchar")) == 0) SetLimitText (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("normalimage")) == 0) SetNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("hotimage")) == 0) SetHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("disabledimage")) == 0) SetDisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("textpadding")) == 0) {
-			RECT rcTextPadding = { 0 };
-			LPTSTR pstr = nullptr;
-			rcTextPadding.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcTextPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+		} else if (pstrName == _T ("font")) SetFont (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("textcolor")) {
+			SetTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("maxchar")) SetLimitText (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("normalimage")) SetNormalImage (pstrValue);
+		else if (pstrName == _T ("hotimage")) SetHotImage (pstrValue);
+		else if (pstrName == _T ("focusedimage")) SetFocusedImage (pstrValue);
+		else if (pstrName == _T ("disabledimage")) SetDisabledImage (pstrValue);
+		else if (pstrName == _T ("textpadding")) {
+			RECT rcTextPadding = FawTools::parse_rect (pstrValue);
 			SetTextPadding (rcTextPadding);
-		} else if (_tcsicmp (pstrName, _T ("tipvalue")) == 0) SetTipValue (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("tipvaluecolor")) == 0) SetTipValueColor (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("tipvaluealign")) == 0) {
-			if (_tcsstr (pstrValue, _T ("left")) != nullptr) {
+		} else if (pstrName == _T ("tipvalue")) SetTipValue (pstrValue);
+		else if (pstrName == _T ("tipvaluecolor")) SetTipValueColor (pstrValue);
+		else if (pstrName == _T ("tipvaluealign")) {
+			if (pstrValue.find (_T ("left")) != string_t::npos) {
 				m_uTipValueAlign = DT_SINGLELINE | DT_LEFT;
 			}
-			if (_tcsstr (pstrValue, _T ("center")) != nullptr) {
+			if (pstrValue.find (_T ("center")) != string_t::npos) {
 				m_uTipValueAlign = DT_SINGLELINE | DT_CENTER;
 			}
-			if (_tcsstr (pstrValue, _T ("right")) != nullptr) {
+			if (pstrValue.find (_T ("right")) != string_t::npos) {
 				m_uTipValueAlign = DT_SINGLELINE | DT_RIGHT;
 			}
 		} else CContainerUI::SetAttribute (pstrName, pstrValue);

@@ -7,12 +7,12 @@ namespace DuiLib {
 		::ZeroMemory (&m_rcNewPos, sizeof (m_rcNewPos));
 	}
 
-	LPCTSTR CVerticalLayoutUI::GetClass () const {
+	string_view_t CVerticalLayoutUI::GetClass () const {
 		return _T ("VerticalLayoutUI");
 	}
 
-	LPVOID CVerticalLayoutUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_VERTICALLAYOUT) == 0) return static_cast<CVerticalLayoutUI*>(this);
+	LPVOID CVerticalLayoutUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_VERTICALLAYOUT) return static_cast<CVerticalLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -206,9 +206,9 @@ namespace DuiLib {
 		return m_bImmMode;
 	}
 
-	void CVerticalLayoutUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("sepheight")) == 0) SetSepHeight (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("sepimm")) == 0) SetSepImmMode (_tcsicmp (pstrValue, _T ("true")) == 0);
+	void CVerticalLayoutUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("sepheight")) SetSepHeight (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("sepimm")) SetSepImmMode (FawTools::parse_bool (pstrValue));
 		else CContainerUI::SetAttribute (pstrName, pstrValue);
 	}
 

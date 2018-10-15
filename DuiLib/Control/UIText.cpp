@@ -13,12 +13,12 @@ namespace DuiLib {
 
 	CTextUI::~CTextUI () {}
 
-	LPCTSTR CTextUI::GetClass () const {
+	string_view_t CTextUI::GetClass () const {
 		return _T ("TextUI");
 	}
 
-	LPVOID CTextUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_TEXT) == 0) return static_cast<CTextUI*>(this);
+	LPVOID CTextUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_TEXT) == 0) return static_cast<CTextUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 

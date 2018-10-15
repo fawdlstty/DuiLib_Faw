@@ -11,12 +11,12 @@ namespace DuiLib {
 		m_pManager->KillTimer (this, ROLLTEXT_TIMERID);
 	}
 
-	LPCTSTR CRollTextUI::GetClass () const {
+	string_view_t CRollTextUI::GetClass () const {
 		return _T ("RollTextUI");
 	}
 
-	LPVOID CRollTextUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, _T ("RollText")) == 0) return static_cast<CRollTextUI*>(this);
+	LPVOID CRollTextUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("RollText")) return static_cast<CRollTextUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 
@@ -50,7 +50,7 @@ namespace DuiLib {
 		m_nText_W_H = 0;			//布局变化重新计算
 	}
 
-	void CRollTextUI::SetText (LPCTSTR pstrText) {
+	void CRollTextUI::SetText (string_view_t pstrText) {
 		CLabelUI::SetText (pstrText);
 		m_nText_W_H = 0;			//文本变化重新计算
 	}

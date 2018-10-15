@@ -1492,10 +1492,10 @@ namespace DuiLib {
 			if (fonticonpos != string_t::npos) {
 				CDuiString strUnicode = CDuiString (pstrText).Mid (fonticonpos + 3);
 				if (strUnicode.length () > 4) strUnicode = strUnicode.Mid (0, 4);
-				if (strUnicode.Right (1).CompareNoCase (_T (" ")) == 0) {
+				if (strUnicode.Right (1) != _T (" ")) {
 					strUnicode = strUnicode.Mid (0, strUnicode.length () - 1);
 				}
-				if (strUnicode.Right (1).CompareNoCase (_T (";")) == 0) {
+				if (strUnicode.Right (1) != _T (";")) {
 					strUnicode = strUnicode.Mid (0, strUnicode.length () - 1);
 				}
 				wchar_t wch[2] = { 0 };
@@ -1650,7 +1650,6 @@ namespace DuiLib {
 				case _T ('a'):  // Link
 				{
 					pstrText = pstrText.substr (1);
-					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
 					if (iLinkIndex < nLinkRects && !bLineDraw) {
 						CDuiString *pStr = (CDuiString*) (sLinks + iLinkIndex);
 						pStr->clear ();
@@ -1709,9 +1708,7 @@ namespace DuiLib {
 				case _T ('c'):  // Color
 				{
 					pstrText = pstrText.substr (1);
-					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
-					if (pstrText[0] == _T ('#')) pstrText = pstrText.substr (1);
-					DWORD clrColor = static_cast<decltype (clrColor)> (FawTools::parse_hex (pstrText));
+					DWORD clrColor = (DWORD) (FawTools::parse_hex (pstrText));
 					aColorArray.Add ((LPVOID) clrColor);
 					::SetTextColor (hDC, RGB (GetBValue (clrColor), GetGValue (clrColor), GetRValue (clrColor)));
 				}
@@ -1719,7 +1716,6 @@ namespace DuiLib {
 				case _T ('f'):  // Font
 				{
 					pstrText = pstrText.substr (1);
-					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
 					string_view_t pstrTemp = pstrText;
 					int _iFont = _ttoi (pstrText.data ());
 					if (pstrTemp != pstrText) {
@@ -1735,20 +1731,20 @@ namespace DuiLib {
 						bool bUnderline = false;
 						bool bItalic = false;
 						while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}') && pstrText[0] != _T (' ')) {
-							pstrTemp = ::CharNext (pstrText);
+							pstrTemp = pstrText.substr (1);
 							while (pstrText < pstrTemp) {
-								sFontName += pstrText[0]++;
+								sFontName += pstrText[0];
+								pstrText = pstrText.substr (1);
 							}
 						}
-						while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
 						if (isdigit (pstrText[0])) {
-							iFontSize = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
+							iFontSize = FawTools::parse_dec (pstrText);
 						}
-						while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
 						while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) {
-							pstrTemp = ::CharNext (pstrText);
+							pstrTemp = pstrText.substr (1);
 							while (pstrText < pstrTemp) {
-								sFontAttr += pstrText[0]++;
+								sFontAttr += pstrText[0];
+								pstrText = pstrText.substr (1);
 							}
 						}
 						sFontAttr.MakeLower ();
@@ -1772,11 +1768,10 @@ namespace DuiLib {
 					CDuiString sImageString = pstrText;
 					int iWidth = 0;
 					int iHeight = 0;
-					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
 					const TImageInfo* pImageInfo = nullptr;
 					CDuiString sName;
 					while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}') && pstrText[0] != _T (' ')) {
-						LPCTSTR pstrTemp = ::CharNext (pstrText);
+						string_view_t pstrTemp = pstrText.substr (1);
 						while (pstrText < pstrTemp) {
 							sName += pstrText[0];
 							pstrText = pstrText.substr (1);
@@ -1796,12 +1791,9 @@ namespace DuiLib {
 							cyLine = MAX (cyLine, pTm->tmHeight + pTm->tmExternalLeading + (int) aPIndentArray.GetAt (aPIndentArray.GetSize () - 1));
 						}
 					} else {
-						while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
-						int iImageListNum = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
-						int iImageListNum = (int) 
+						int iImageListNum = (int) FawTools::parse_dec (pstrText);
 						if (iImageListNum <= 0) iImageListNum = 1;
-						while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
-						int iImageListIndex = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
+						int iImageListIndex = (int) FawTools::parse_dec (pstrText);
 						if (iImageListIndex < 0 || iImageListIndex >= iImageListNum) iImageListIndex = 0;
 
 						if (_tcsstr (sImageString.c_str (), _T ("file=\'")) != nullptr || _tcsstr (sImageString.c_str (), _T ("res=\'")) != nullptr) {
@@ -1810,27 +1802,29 @@ namespace DuiLib {
 							string_view_t pStrImage = sImageString;
 							CDuiString sItem;
 							CDuiString sValue;
-							while (*pStrImage != _T ('\0')) {
+							while (!pStrImage.empty ()) {
 								sItem.clear ();
 								sValue.clear ();
-								while (*pStrImage > _T ('\0') && *pStrImage <= _T (' ')) pStrImage = ::CharNext (pStrImage);
-								while (*pStrImage != _T ('\0') && *pStrImage != _T ('=') && *pStrImage > _T (' ')) {
-									LPTSTR pstrTemp = ::CharNext (pStrImage);
+								while (pStrImage[0] != _T ('\0') && pStrImage[0] != _T ('=') && pStrImage[0] > _T (' ')) {
+									string_view_t pstrTemp = pStrImage.substr (1);
 									while (pStrImage < pstrTemp) {
-										sItem += *pStrImage++;
+										sItem += pStrImage[0];
+										pStrImage = pStrImage.substr (1);
 									}
 								}
-								while (*pStrImage > _T ('\0') && *pStrImage <= _T (' ')) pStrImage = ::CharNext (pStrImage);
-								if (*pStrImage++ != _T ('=')) break;
-								while (*pStrImage > _T ('\0') && *pStrImage <= _T (' ')) pStrImage = ::CharNext (pStrImage);
-								if (*pStrImage++ != _T ('\'')) break;
-								while (*pStrImage != _T ('\0') && *pStrImage != _T ('\'')) {
-									LPTSTR pstrTemp = ::CharNext (pStrImage);
+								if (pStrImage[0] != _T ('=')) break;
+								pStrImage = pStrImage.substr (1);
+								if (pStrImage[0] != _T ('\'')) break;
+								pStrImage = pStrImage.substr (1);
+								while (pStrImage[0] != _T ('\0') && pStrImage[0] != _T ('\'')) {
+									string_view_t pstrTemp = pStrImage.substr (1);
 									while (pStrImage < pstrTemp) {
-										sValue += *pStrImage++;
+										sValue += pStrImage[0];
+										pStrImage = pStrImage.substr (1);
 									}
 								}
-								if (*pStrImage++ != _T ('\'')) break;
+								if (pStrImage[0] != _T ('\'')) break;
+								pStrImage = pStrImage.substr (1);
 								if (!sValue.empty ()) {
 									if (sItem == _T ("file") || sItem == _T ("res")) {
 										sImageName = sValue;
@@ -1838,7 +1832,8 @@ namespace DuiLib {
 										sImageResType = sValue;
 									}
 								}
-								if (*pStrImage++ != _T (' ')) break;
+								if (pStrImage[0] != _T (' ')) break;
+								pStrImage = pStrImage.substr (1);
 							}
 
 							pImageInfo = pManager->GetImageEx (sImageName, sImageResType);
@@ -1879,14 +1874,14 @@ namespace DuiLib {
 				break;
 				case _T ('n'):  // Newline
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					if ((uStyle & DT_SINGLELINE) != 0) break;
 					bLineEnd = true;
 				}
 				break;
 				case _T ('p'):  // Paragraph
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					if (pt.x > rc.left) bLineEnd = true;
 					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
 					int cyLineExtra = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
@@ -1896,13 +1891,13 @@ namespace DuiLib {
 				break;
 				case _T ('r'):  // Raw Text
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					bInRaw = true;
 				}
 				break;
 				case _T ('s'):  // Selected text background color
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					bInSelected = !bInSelected;
 					if (bDraw && bLineDraw) {
 						if (bInSelected) ::SetBkMode (hDC, OPAQUE);
@@ -1912,7 +1907,7 @@ namespace DuiLib {
 				break;
 				case _T ('u'):  // Underline text
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					TFontInfo* pFontInfo = pDefFontInfo;
 					if (aFontArray.GetSize () > 0) pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
 					if (pFontInfo->bUnderline == false) {
@@ -1928,7 +1923,7 @@ namespace DuiLib {
 				break;
 				case _T ('x'):  // X Indent
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
 					int iWidth = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
 					pt.x += iWidth;
@@ -1937,7 +1932,7 @@ namespace DuiLib {
 				break;
 				case _T ('y'):  // Y Indent
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
 					cyLine = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
 				}
@@ -1949,12 +1944,11 @@ namespace DuiLib {
 					pstrText = ::CharNext (pstrText);
 				}
 			} else if (!bInRaw && (pstrText[0] == _T ('<') || pstrText[0] == _T ('{')) && pstrText[1] == _T ('/')) {
-				pstrText++;
-				pstrText++;
+				pstrText = pstrText.substr (2);
 				switch (pstrText[0]) {
 				case _T ('c'):
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					aColorArray.Remove (aColorArray.GetSize () - 1);
 					DWORD clrColor = dwTextColor;
 					if (aColorArray.GetSize () > 0) clrColor = (int) aColorArray.GetAt (aColorArray.GetSize () - 1);
@@ -1962,14 +1956,14 @@ namespace DuiLib {
 				}
 				break;
 				case _T ('p'):
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					if (pt.x > rc.left) bLineEnd = true;
 					aPIndentArray.Remove (aPIndentArray.GetSize () - 1);
 					cyLine = MAX (cyLine, pTm->tmHeight + pTm->tmExternalLeading + (int) aPIndentArray.GetAt (aPIndentArray.GetSize () - 1));
 					break;
 				case _T ('s'):
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					bInSelected = !bInSelected;
 					if (bDraw && bLineDraw) {
 						if (bInSelected) ::SetBkMode (hDC, OPAQUE);
@@ -1994,7 +1988,7 @@ namespace DuiLib {
 				case _T ('i'):
 				case _T ('u'):
 				{
-					pstrText++;
+					pstrText = pstrText.substr (1);
 					aFontArray.Remove (aFontArray.GetSize () - 1);
 					TFontInfo* pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
 					if (pFontInfo == nullptr) pFontInfo = pDefFontInfo;
@@ -2017,14 +2011,14 @@ namespace DuiLib {
 				if (bDraw && bLineDraw) ::TextOut (hDC, pt.x, pt.y + cyLineHeight - pTm->tmHeight - pTm->tmExternalLeading, &pstrText[1], 1);
 				pt.x += szSpace.cx;
 				cxMaxWidth = MAX (cxMaxWidth, pt.x);
-				pstrText++; pstrText++; pstrText++;
+				pstrText = pstrText.substr (3);
 			} else if (!bInRaw &&  pstrText[0] == _T ('{') && pstrText[2] == _T ('}') && (pstrText[1] == _T ('<') || pstrText[1] == _T ('>'))) {
 				SIZE szSpace = { 0 };
 				::GetTextExtentPoint32 (hDC, &pstrText[1], 1, &szSpace);
 				if (bDraw && bLineDraw) ::TextOut (hDC, pt.x, pt.y + cyLineHeight - pTm->tmHeight - pTm->tmExternalLeading, &pstrText[1], 1);
 				pt.x += szSpace.cx;
 				cxMaxWidth = MAX (cxMaxWidth, pt.x);
-				pstrText++; pstrText++; pstrText++;
+				pstrText = pstrText.substr (3);
 			} else if (!bInRaw &&  pstrText[0] == _T (' ')) {
 				SIZE szSpace = { 0 };
 				::GetTextExtentPoint32 (hDC, _T (" "), 1, &szSpace);
@@ -2033,7 +2027,7 @@ namespace DuiLib {
 				if (bDraw && bLineDraw) ::TextOut (hDC, pt.x, pt.y + cyLineHeight - pTm->tmHeight - pTm->tmExternalLeading, _T (" "), 1);
 				pt.x += szSpace.cx;
 				cxMaxWidth = MAX (cxMaxWidth, pt.x);
-				pstrText++;
+				pstrText = pstrText.substr (1);
 			} else {
 				POINT ptPos = pt;
 				int cchChars = 0;

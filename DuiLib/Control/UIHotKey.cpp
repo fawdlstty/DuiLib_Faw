@@ -41,7 +41,7 @@ namespace DuiLib {
 	}
 
 
-	LPCTSTR CHotKeyWnd::GetWindowClassName () const {
+	string_view_t CHotKeyWnd::GetWindowClassName () const {
 		return _T ("HotKeyClass");
 	}
 
@@ -83,8 +83,8 @@ namespace DuiLib {
 			::DeleteObject (hBrush);
 			HFONT hOldFont = (HFONT) SelectObject (hDC, GetWindowFont (m_hWnd));
 			::SIZE size = { 0 };
-			::GetTextExtentPoint32 (hDC, strText, (int) strText.length (), &size);
-			::DrawText (hDC, strText, -1, &rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			::GetTextExtentPoint32 (hDC, strText.c_str (), (int) strText.length (), &size);
+			::DrawText (hDC, strText.c_str (), -1, &rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 			::SelectObject (hDC, hOldFont);
 			::SetCaretPos (size.cx, 0);
 			::EndPaint (m_hWnd, &ps);
@@ -95,7 +95,7 @@ namespace DuiLib {
 	}
 
 
-	LPCTSTR CHotKeyWnd::GetSuperClassName () const {
+	string_view_t CHotKeyWnd::GetSuperClassName () const {
 		return HOTKEY_CLASS;
 	}
 
@@ -213,12 +213,12 @@ namespace DuiLib {
 		SetBkColor (0xFFFFFFFF);
 	}
 
-	LPCTSTR CHotKeyUI::GetClass () const {
+	string_view_t CHotKeyUI::GetClass () const {
 		return _T ("HotKeyUI");
 	}
 
-	LPVOID CHotKeyUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, _T ("HotKey")) == 0) return static_cast<CHotKeyUI *>(this);
+	LPVOID CHotKeyUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("HotKey")) return static_cast<CHotKeyUI *>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 
@@ -299,44 +299,44 @@ namespace DuiLib {
 		}
 	}
 
-	void CHotKeyUI::SetText (LPCTSTR pstrText) {
+	void CHotKeyUI::SetText (string_view_t pstrText) {
 		m_sText = pstrText;
-		if (m_pWindow != nullptr) Edit_SetText (*m_pWindow, m_sText);
+		if (m_pWindow != nullptr) Edit_SetText (m_pWindow->GetHWND (), m_sText.data ());
 		Invalidate ();
 	}
 
-	LPCTSTR CHotKeyUI::GetNormalImage () {
+	string_view_t CHotKeyUI::GetNormalImage () {
 		return m_sNormalImage;
 	}
 
-	void CHotKeyUI::SetNormalImage (LPCTSTR pStrImage) {
+	void CHotKeyUI::SetNormalImage (string_view_t pStrImage) {
 		m_sNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CHotKeyUI::GetHotImage () {
+	string_view_t CHotKeyUI::GetHotImage () {
 		return m_sHotImage;
 	}
 
-	void CHotKeyUI::SetHotImage (LPCTSTR pStrImage) {
+	void CHotKeyUI::SetHotImage (string_view_t pStrImage) {
 		m_sHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CHotKeyUI::GetFocusedImage () {
+	string_view_t CHotKeyUI::GetFocusedImage () {
 		return m_sFocusedImage;
 	}
 
-	void CHotKeyUI::SetFocusedImage (LPCTSTR pStrImage) {
+	void CHotKeyUI::SetFocusedImage (string_view_t pStrImage) {
 		m_sFocusedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CHotKeyUI::GetDisabledImage () {
+	string_view_t CHotKeyUI::GetDisabledImage () {
 		return m_sDisabledImage;
 	}
 
-	void CHotKeyUI::SetDisabledImage (LPCTSTR pStrImage) {
+	void CHotKeyUI::SetDisabledImage (string_view_t pStrImage) {
 		m_sDisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -372,17 +372,13 @@ namespace DuiLib {
 		return CControlUI::EstimateSize (szAvailable);
 	}
 
-	void CHotKeyUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcscmp (pstrName, _T ("normalimage")) == 0) SetNormalImage (pstrValue);
-		else if (_tcscmp (pstrName, _T ("hotimage")) == 0) SetHotImage (pstrValue);
-		else if (_tcscmp (pstrName, _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
-		else if (_tcscmp (pstrName, _T ("disabledimage")) == 0) SetDisabledImage (pstrValue);
-		else if (_tcscmp (pstrName, _T ("nativebkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
-			SetNativeBkColor (clrColor);
-		} else CLabelUI::SetAttribute (pstrName, pstrValue);
+	void CHotKeyUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("normalimage")) SetNormalImage (pstrValue);
+		else if (pstrName == _T ("hotimage")) SetHotImage (pstrValue);
+		else if (pstrName == _T ("focusedimage")) SetFocusedImage (pstrValue);
+		else if (pstrName == _T ("disabledimage")) SetDisabledImage (pstrValue);
+		else if (pstrName == _T ("nativebkcolor")) SetNativeBkColor ((DWORD) FawTools::parse_hex (pstrValue));
+		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 
 	void CHotKeyUI::PaintStatusImage (HDC hDC) {

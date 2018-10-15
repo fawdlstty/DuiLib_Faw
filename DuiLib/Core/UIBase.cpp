@@ -177,13 +177,11 @@ namespace DuiLib {
 		///±éÀúÐéÄâ´°¿Ú
 		if (!msg.sVirtualWnd.empty ()) {
 			for (int i = 0; i < m_VirtualWndMap.GetSize (); i++) {
-				string_view_t key = m_VirtualWndMap.GetAt (i);
-				if (!key.empty ()) {
-					if (_tcsicmp (key.data (), msg.sVirtualWnd.c_str ()) == 0) {
-						CNotifyPump* pObject = static_cast<CNotifyPump*>(m_VirtualWndMap.Find (key, false));
-						if (pObject && pObject->LoopDispatch (msg))
-							return;
-					}
+				string_view_t key = m_VirtualWndMap.GetAt (i)->Key;
+				if (!key.empty () && key == msg.sVirtualWnd) {
+					CNotifyPump* pObject = static_cast<CNotifyPump*>(m_VirtualWndMap.Find (key, false));
+					if (pObject && pObject->LoopDispatch (msg))
+						return;
 				}
 			}
 		}

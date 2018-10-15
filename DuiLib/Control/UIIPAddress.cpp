@@ -31,8 +31,8 @@ namespace DuiLib {
 		void Init (CIPAddressUI* pOwner);
 		RECT CalPos ();
 
-		LPCTSTR GetWindowClassName () const;
-		LPCTSTR GetSuperClassName () const;
+		string_view_t GetWindowClassName () const;
+		string_view_t GetSuperClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -76,11 +76,11 @@ namespace DuiLib {
 		return rcPos;
 	}
 
-	LPCTSTR CIPAddressWnd::GetWindowClassName () const {
+	string_view_t CIPAddressWnd::GetWindowClassName () const {
 		return _T ("IPAddressWnd");
 	}
 
-	LPCTSTR CIPAddressWnd::GetSuperClassName () const {
+	string_view_t CIPAddressWnd::GetSuperClassName () const {
 		return WC_IPADDRESS;
 	}
 
@@ -149,12 +149,12 @@ namespace DuiLib {
 		m_nIPUpdateFlag = IP_NONE;
 	}
 
-	LPCTSTR CIPAddressUI::GetClass () const {
+	string_view_t CIPAddressUI::GetClass () const {
 		return _T ("DateTimeUI");
 	}
 
-	LPVOID CIPAddressUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, DUI_CTR_IPADDRESS) == 0) return static_cast<CIPAddressUI*>(this);
+	LPVOID CIPAddressUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_IPADDRESS) return static_cast<CIPAddressUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 
@@ -230,7 +230,7 @@ namespace DuiLib {
 		CLabelUI::DoEvent (event);
 	}
 
-	void CIPAddressUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
+	void CIPAddressUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
 		CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 }

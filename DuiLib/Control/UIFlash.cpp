@@ -33,7 +33,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CFlashUI::GetInterface (string_view_t pstrName) {
-		if (_tcsicmp (pstrName.data (), DUI_CTR_FLASH) == 0) return static_cast<CFlashUI*>(this);
+		if (pstrName == DUI_CTR_FLASH) == 0) return static_cast<CFlashUI*>(this);
 		return CActiveXUI::GetInterface (pstrName);
 	}
 

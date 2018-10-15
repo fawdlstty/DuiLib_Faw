@@ -10,9 +10,9 @@ namespace DuiLib {
 		CTextUI ();
 		virtual ~CTextUI ();
 
-		LPCTSTR GetClass () const;
+		string_view_t GetClass () const;
 		UINT GetControlFlags () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		LPVOID GetInterface (string_view_t pstrName);
 
 		CDuiString* GetLinkContent (int iIndex);
 

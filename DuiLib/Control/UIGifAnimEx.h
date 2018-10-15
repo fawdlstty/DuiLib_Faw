@@ -17,10 +17,10 @@ namespace DuiLib {
 		CGifAnimExUI (void);
 		virtual ~CGifAnimExUI (void);
 	public:
-		virtual LPCTSTR	GetClass () const;
-		virtual LPVOID	GetInterface (LPCTSTR pstrName);
+		virtual string_view_t	GetClass () const;
+		virtual LPVOID	GetInterface (string_view_t pstrName);
 		virtual void Init ();
-		virtual void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		virtual void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 		virtual void SetVisible (bool bVisible = true);
 		virtual void SetInternVisible (bool bVisible = true);
 		virtual bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);

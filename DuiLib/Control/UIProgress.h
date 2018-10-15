@@ -9,8 +9,8 @@ namespace DuiLib {
 	public:
 		CProgressUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 
 		bool IsShowText ();
 		void SetShowText (bool bShowText = true);
@@ -24,7 +24,7 @@ namespace DuiLib {
 		void SetMaxValue (int nMax);
 		int GetValue () const;
 		void SetValue (int nValue);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 		void PaintForeColor (HDC hDC);
 		void PaintForeImage (HDC hDC);
 		virtual void UpdateText ();

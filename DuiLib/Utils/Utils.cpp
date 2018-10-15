@@ -561,7 +561,7 @@ namespace DuiLib {
 		return m_nCount;
 	}
 
-	string_view_t CStdStringPtrMap::GetAt (int iIndex) const {
+	TITEM *CStdStringPtrMap::GetAt (int iIndex) const {
 		if (m_nBuckets == 0 || GetSize () == 0) return false;
 
 		int pos = 0;
@@ -569,7 +569,7 @@ namespace DuiLib {
 		while (len--) {
 			for (TITEM* pItem = m_aT[len]; pItem; pItem = pItem->pNext) {
 				if (pos++ == iIndex) {
-					return pItem->Key;
+					return pItem;
 				}
 			}
 		}
@@ -577,7 +577,7 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	string_view_t CStdStringPtrMap::operator[] (int nIndex) const {
+	TITEM * CStdStringPtrMap::operator[] (int nIndex) const {
 		return GetAt (nIndex);
 	}
 
@@ -814,15 +814,15 @@ namespace DuiLib {
 	//			}
 	//			else if (sItem == _T("hole"))
 	//			{
-	//				m_bHole = (_tcscmp(sValue.c_str(), _T("true")) == 0);
+	//				m_bHole = (_tcscmp(sValue.c_str(), _T("true"));
 	//			}
 	//			else if (sItem == _T("xtiled"))
 	//			{
-	//				m_bTiledX = (_tcscmp(sValue.c_str(), _T("true")) == 0);
+	//				m_bTiledX = (_tcscmp(sValue.c_str(), _T("true"));
 	//			}
 	//			else if (sItem == _T("ytiled"))
 	//			{
-	//				m_bTiledY = (_tcscmp(sValue.c_str(), _T("true")) == 0);
+	//				m_bTiledY = (_tcscmp(sValue.c_str(), _T("true"));
 	//			}
 	//		}
 	//		if (*pStrImage++ != _T(' ')) break;

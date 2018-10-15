@@ -15,12 +15,12 @@ namespace DuiLib {
 
 	CMenuUI::~CMenuUI () {}
 
-	LPCTSTR CMenuUI::GetClass () const {
+	string_view_t CMenuUI::GetClass () const {
 		return _T ("MenuUI");
 	}
 
-	LPVOID CMenuUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, _T ("Menu")) == 0) return static_cast<CMenuUI*>(this);
+	LPVOID CMenuUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("Menu")) return static_cast<CMenuUI*>(this);
 		return CListUI::GetInterface (pstrName);
 	}
 
@@ -104,7 +104,7 @@ namespace DuiLib {
 		return CDuiSize (cxFixed, cyFixed);
 	}
 
-	void CMenuUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
+	void CMenuUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
 		CListUI::SetAttribute (pstrName, pstrValue);
 	}
 
@@ -165,7 +165,7 @@ namespace DuiLib {
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
 		if (mCheckInfos != nullptr) {
 			for (int i = 0; i < mCheckInfos->GetSize (); i++) {
-				MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (mCheckInfos->GetAt (i));
+				MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->GetAt (i)->Data;
 				if (pItemInfo != nullptr) {
 					delete pItemInfo;
 					pItemInfo = nullptr;
@@ -175,15 +175,15 @@ namespace DuiLib {
 		}
 	}
 
-	MenuItemInfo* CMenuWnd::SetMenuItemInfo (LPCTSTR pstrName, bool bChecked) {
-		if (pstrName == nullptr || lstrlen (pstrName) <= 0) return nullptr;
+	MenuItemInfo* CMenuWnd::SetMenuItemInfo (string_view_t pstrName, bool bChecked) {
+		if (pstrName.empty ()) return nullptr;
 
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
 		if (mCheckInfos != nullptr) {
 			MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (pstrName);
 			if (pItemInfo == nullptr) {
 				pItemInfo = new MenuItemInfo;
-				lstrcpy (pItemInfo->szName, pstrName);
+				lstrcpy (pItemInfo->szName, pstrName.data ());
 				pItemInfo->bChecked = bChecked;
 				mCheckInfos->Insert (pstrName, pItemInfo);
 			} else {
@@ -225,7 +225,7 @@ namespace DuiLib {
 		::SendMessage (hWndParent, WM_NCACTIVATE, TRUE, 0L);
 	}
 
-	LPCTSTR CMenuWnd::GetWindowClassName () const {
+	string_view_t CMenuWnd::GetWindowClassName () const {
 		return _T ("DuiMenuWnd");
 	}
 
@@ -239,10 +239,10 @@ namespace DuiLib {
 
 	}
 
-	CControlUI* CMenuWnd::CreateControl (LPCTSTR pstrClassName) {
-		if (_tcsicmp (pstrClassName, _T ("Menu")) == 0) {
+	CControlUI* CMenuWnd::CreateControl (string_view_t pstrClassName) {
+		if (pstrClassName == _T ("Menu")) {
 			return new CMenuUI ();
-		} else if (_tcsicmp (pstrClassName, _T ("MenuElement")) == 0) {
+		} else if (pstrClassName == _T ("MenuElement")) {
 			return new CMenuElementUI ();
 		}
 		return nullptr;
@@ -271,12 +271,12 @@ namespace DuiLib {
 	LRESULT CMenuWnd::OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
 		bool bShowShadow = false;
 		if (m_pOwner != nullptr) {
-			LONG styleValue = ::GetWindowLong (*this, GWL_STYLE);
+			LONG styleValue = ::GetWindowLong (GetHWND (), GWL_STYLE);
 			styleValue &= ~WS_CAPTION;
-			::SetWindowLong (*this, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+			::SetWindowLong (GetHWND (), GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 			RECT rcClient;
-			::GetClientRect (*this, &rcClient);
-			::SetWindowPos (*this, nullptr, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
+			::GetClientRect (GetHWND (), &rcClient);
+			::SetWindowPos (GetHWND (), nullptr, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
 				rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
 
 			m_pm.Init (m_hWnd);
@@ -287,8 +287,8 @@ namespace DuiLib {
 			m_pLayout = new CMenuUI ();
 			m_pm.SetForceUseSharedRes (true);
 			m_pLayout->SetManager (&m_pm, nullptr, true);
-			LPCTSTR pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("Menu"));
-			if (pDefaultAttributes) {
+			string_view_t pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("Menu"));
+			if (!pDefaultAttributes.empty ()) {
 				m_pLayout->ApplyAttributeList (pDefaultAttributes);
 			}
 			m_pLayout->GetList ()->SetAutoDestroy (false);
@@ -338,7 +338,7 @@ namespace DuiLib {
 #if defined(WIN32) && !defined(UNDER_CE)
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof (oMonitor);
-		::GetMonitorInfo (::MonitorFromWindow (*this, MONITOR_DEFAULTTOPRIMARY), &oMonitor);
+		::GetMonitorInfo (::MonitorFromWindow (GetHWND (), MONITOR_DEFAULTTOPRIMARY), &oMonitor);
 		CDuiRect rcWork = oMonitor.rcWork;
 #else
 		CDuiRect rcWork;
@@ -389,7 +389,7 @@ namespace DuiLib {
 #if defined(WIN32) && !defined(UNDER_CE)
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof (oMonitor);
-		::GetMonitorInfo (::MonitorFromWindow (*this, MONITOR_DEFAULTTOPRIMARY), &oMonitor);
+		::GetMonitorInfo (::MonitorFromWindow (GetHWND (), MONITOR_DEFAULTTOPRIMARY), &oMonitor);
 		CDuiRect rcWork = oMonitor.rcWork;
 #else
 		CDuiRect rcWork;
@@ -502,13 +502,13 @@ namespace DuiLib {
 	}
 	LRESULT CMenuWnd::OnSize (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
 		SIZE szRoundCorner = m_pm.GetRoundCorner ();
-		if (!::IsIconic (*this)) {
+		if (!::IsIconic (GetHWND ())) {
 			CDuiRect rcWnd;
-			::GetWindowRect (*this, &rcWnd);
+			::GetWindowRect (GetHWND (), &rcWnd);
 			rcWnd.Offset (-rcWnd.left, -rcWnd.top);
 			rcWnd.right++; rcWnd.bottom++;
 			HRGN hRgn = ::CreateRoundRectRgn (rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom, szRoundCorner.cx, szRoundCorner.cy);
-			::SetWindowRgn (*this, hRgn, TRUE);
+			::SetWindowRgn (GetHWND (), hRgn, TRUE);
 			::DeleteObject (hRgn);
 		}
 		bHandled = FALSE;
@@ -571,12 +571,12 @@ namespace DuiLib {
 
 	CMenuElementUI::~CMenuElementUI () {}
 
-	LPCTSTR CMenuElementUI::GetClass () const {
+	string_view_t CMenuElementUI::GetClass () const {
 		return _T ("MenuElementUI");
 	}
 
-	LPVOID CMenuElementUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, _T ("MenuElement")) == 0) return static_cast<CMenuElementUI*>(this);
+	LPVOID CMenuElementUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("MenuElement")) return static_cast<CMenuElementUI*>(this);
 		return CListContainerElementUI::GetInterface (pstrName);
 	}
 
@@ -890,9 +890,9 @@ namespace DuiLib {
 						if (CMenuWnd::GetGlobalContextMenuObserver ().GetManager () != nullptr) {
 
 							MenuCmd* pMenuCmd = new MenuCmd ();
-							lstrcpy (pMenuCmd->szName, GetName ());
-							lstrcpy (pMenuCmd->szUserData, GetUserData ());
-							lstrcpy (pMenuCmd->szText, GetText ());
+							lstrcpy (pMenuCmd->szName, GetName ().data ());
+							lstrcpy (pMenuCmd->szUserData, GetUserData ().c_str ());
+							lstrcpy (pMenuCmd->szText, GetText ().data ());
 							pMenuCmd->bChecked = GetChecked ();
 							if (!PostMessage (CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()->GetPaintWindow (), WM_MENUCLICK, (WPARAM) pMenuCmd, (LPARAM) this)) {
 								delete pMenuCmd;
@@ -980,8 +980,8 @@ namespace DuiLib {
 		return m_rcLinePadding;
 	}
 
-	void CMenuElementUI::SetIcon (LPCTSTR strIcon) {
-		if (lstrlen (strIcon) > 0)
+	void CMenuElementUI::SetIcon (string_view_t strIcon) {
+		if (!strIcon.empty ())
 			m_strIcon = strIcon;
 	}
 
@@ -995,8 +995,8 @@ namespace DuiLib {
 	}
 
 	bool CMenuElementUI::GetChecked () const {
-		LPCTSTR pstrName = GetName ();
-		if (pstrName == nullptr || lstrlen (pstrName) <= 0) return false;
+		string_view_t pstrName = GetName ();
+		if (pstrName.empty ()) return false;
 
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
 		if (mCheckInfos != nullptr) {
@@ -1021,56 +1021,46 @@ namespace DuiLib {
 		m_bShowExplandIcon = bShow;
 	}
 
-	void CMenuElementUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("icon")) == 0) {
+	void CMenuElementUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("icon")) {
 			SetIcon (pstrValue);
-		} else if (_tcsicmp (pstrName, _T ("iconsize")) == 0) {
-			LPTSTR pstr = nullptr;
-			LONG cx = 0, cy = 0;
-			cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			SetIconSize (cx, cy);
-		} else if (_tcsicmp (pstrName, _T ("checkitem")) == 0) {
-			SetCheckItem (_tcsicmp (pstrValue, _T ("true")) == 0 ? true : false);
-		} else if (_tcsicmp (pstrName, _T ("ischeck")) == 0) {
+		} else if (pstrName == _T ("iconsize")) {
+			SIZE sz = FawTools::parse_size (pstrValue);
+			SetIconSize (sz.cx, sz.cy);
+		} else if (pstrName == _T ("checkitem")) {
+			SetCheckItem (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("ischeck")) {
 			CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
 			if (mCheckInfos != nullptr) {
 				bool bFind = false;
 				for (int i = 0; i < mCheckInfos->GetSize (); i++) {
-					MenuItemInfo* itemInfo = (MenuItemInfo*) mCheckInfos->GetAt (i);
-					if (lstrcmpi (itemInfo->szName, GetName ()) == 0) {
+					MenuItemInfo* itemInfo = (MenuItemInfo*) mCheckInfos->GetAt (i)->Data;
+					if (GetName () == itemInfo->szName) {
 						bFind = true;
 						break;
 					}
 				}
-				if (!bFind) SetChecked (_tcsicmp (pstrValue, _T ("true")) == 0 ? true : false);
+				if (!bFind) SetChecked (FawTools::parse_bool (pstrValue));
 			}
-		} else if (_tcsicmp (pstrName, _T ("linetype")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0)
+		} else if (pstrName == _T ("linetype")) {
+			if (FawTools::parse_bool (pstrValue))
 				SetLineType ();
-		} else if (_tcsicmp (pstrName, _T ("expland")) == 0) {
-			SetShowExplandIcon (_tcsicmp (pstrValue, _T ("true")) == 0 ? true : false);
-		} else if (_tcsicmp (pstrName, _T ("linecolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			SetLineColor (_tcstoul (pstrValue, &pstr, 16));
-		} else if (_tcsicmp (pstrName, _T ("linepadding")) == 0) {
-			RECT rcInset = { 0 };
-			LPTSTR pstr = nullptr;
-			rcInset.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			rcInset.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcInset.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcInset.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+		} else if (pstrName == _T ("expland")) {
+			SetShowExplandIcon (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("linecolor")) {
+			SetLineColor ((DWORD) FawTools::parse_hex (pstrValue));
+		} else if (pstrName == _T ("linepadding")) {
+			RECT rcInset = FawTools::parse_rect (pstrValue);
 			SetLinePadding (rcInset);
-		} else if (_tcsicmp (pstrName, _T ("height")) == 0) {
-			SetFixedHeight (_ttoi (pstrValue));
+		} else if (pstrName == _T ("height")) {
+			SetFixedHeight (FawTools::parse_dec (pstrValue));
 		} else
 			CListContainerElementUI::SetAttribute (pstrName, pstrValue);
 	}
 
 
-	MenuItemInfo* CMenuElementUI::GetItemInfo (LPCTSTR pstrName) {
-		if (pstrName == nullptr || lstrlen (pstrName) <= 0) return nullptr;
+	MenuItemInfo* CMenuElementUI::GetItemInfo (string_view_t pstrName) {
+		if (pstrName.empty ()) return nullptr;
 
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
 		if (mCheckInfos != nullptr) {
@@ -1083,15 +1073,15 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	MenuItemInfo* CMenuElementUI::SetItemInfo (LPCTSTR pstrName, bool bChecked) {
-		if (pstrName == nullptr || lstrlen (pstrName) <= 0) return nullptr;
+	MenuItemInfo* CMenuElementUI::SetItemInfo (string_view_t pstrName, bool bChecked) {
+		if (pstrName.empty ()) return nullptr;
 
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
 		if (mCheckInfos != nullptr) {
 			MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (pstrName);
 			if (pItemInfo == nullptr) {
 				pItemInfo = new MenuItemInfo;
-				lstrcpy (pItemInfo->szName, pstrName);
+				lstrcpy (pItemInfo->szName, pstrName.data ());
 				pItemInfo->bChecked = bChecked;
 				mCheckInfos->Insert (pstrName, pItemInfo);
 			} else {

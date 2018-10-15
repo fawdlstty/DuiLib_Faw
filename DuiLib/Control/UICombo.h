@@ -21,7 +21,7 @@ namespace DuiLib {
 		void DoInit ();
 		UINT GetControlFlags () const;
 
-		string_view_t GetText () const;
+		CDuiString GetText () const;
 		void SetText (string_view_t pstrText) override;
 		void SetEnabled (bool bEnable = true);
 

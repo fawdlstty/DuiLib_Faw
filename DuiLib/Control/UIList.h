@@ -44,7 +44,7 @@ namespace DuiLib {
 
 	class IListCallbackUI {
 	public:
-		virtual LPCTSTR GetItemText (CControlUI* pList, int iItem, int iSubItem) = 0;
+		virtual string_view_t GetItemText (CControlUI* pList, int iItem, int iSubItem) = 0;
 	};
 
 	class IListOwnerUI {
@@ -103,9 +103,9 @@ namespace DuiLib {
 	public:
 		CListUI ();
 
-		LPCTSTR GetClass () const;
+		string_view_t GetClass () const;
 		UINT GetControlFlags () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		LPVOID GetInterface (string_view_t pstrName);
 
 		bool GetScrollSelect ();
 		void SetScrollSelect (bool bScrollSelect);
@@ -154,17 +154,17 @@ namespace DuiLib {
 		void SetItemTextPadding (RECT rc);
 		void SetItemTextColor (DWORD dwTextColor);
 		void SetItemBkColor (DWORD dwBkColor);
-		void SetItemBkImage (LPCTSTR pStrImage);
+		void SetItemBkImage (string_view_t pStrImage);
 		void SetAlternateBk (bool bAlternateBk);
 		void SetSelectedItemTextColor (DWORD dwTextColor);
 		void SetSelectedItemBkColor (DWORD dwBkColor);
-		void SetSelectedItemImage (LPCTSTR pStrImage);
+		void SetSelectedItemImage (string_view_t pStrImage);
 		void SetHotItemTextColor (DWORD dwTextColor);
 		void SetHotItemBkColor (DWORD dwBkColor);
-		void SetHotItemImage (LPCTSTR pStrImage);
+		void SetHotItemImage (string_view_t pStrImage);
 		void SetDisabledItemTextColor (DWORD dwTextColor);
 		void SetDisabledItemBkColor (DWORD dwBkColor);
-		void SetDisabledItemImage (LPCTSTR pStrImage);
+		void SetDisabledItemImage (string_view_t pStrImage);
 		void SetItemLineColor (DWORD dwLineColor);
 		void SetItemShowRowLine (bool bShowLine = false);
 		void SetItemShowColumnLine (bool bShowLine = false);
@@ -175,17 +175,17 @@ namespace DuiLib {
 		RECT GetItemTextPadding () const;
 		DWORD GetItemTextColor () const;
 		DWORD GetItemBkColor () const;
-		LPCTSTR GetItemBkImage () const;
+		string_view_t GetItemBkImage () const;
 		bool IsAlternateBk () const;
 		DWORD GetSelectedItemTextColor () const;
 		DWORD GetSelectedItemBkColor () const;
-		LPCTSTR GetSelectedItemImage () const;
+		string_view_t GetSelectedItemImage () const;
 		DWORD GetHotItemTextColor () const;
 		DWORD GetHotItemBkColor () const;
-		LPCTSTR GetHotItemImage () const;
+		string_view_t GetHotItemImage () const;
 		DWORD GetDisabledItemTextColor () const;
 		DWORD GetDisabledItemBkColor () const;
-		LPCTSTR GetDisabledItemImage () const;
+		string_view_t GetDisabledItemImage () const;
 		DWORD GetItemLineColor () const;
 
 		void SetMultiExpanding (bool bMultiExpandable);
@@ -195,7 +195,7 @@ namespace DuiLib {
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 		void Move (SIZE szOffset, bool bNeedInvalidate = true);
 		void DoEvent (TEventUI& event);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		IListCallbackUI* GetTextCallback () const;
 		void SetTextCallback (IListCallbackUI* pCallback);
@@ -282,12 +282,12 @@ namespace DuiLib {
 	public:
 		CListHeaderUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 
 		SIZE EstimateSize (SIZE szAvailable);
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		void SetScaleHeader (bool bIsScale);
 		bool IsScaleHeader () const;
@@ -306,8 +306,8 @@ namespace DuiLib {
 	public:
 		CListHeaderItemUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 
 		void SetEnabled (bool bEnable = true);
@@ -325,22 +325,22 @@ namespace DuiLib {
 		void SetFont (int index);
 		bool IsShowHtml ();
 		void SetShowHtml (bool bShowHtml = true);
-		LPCTSTR GetNormalImage () const;
-		void SetNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetHotImage () const;
-		void SetHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetPushedImage () const;
-		void SetPushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetFocusedImage () const;
-		void SetFocusedImage (LPCTSTR pStrImage);
-		LPCTSTR GetSepImage () const;
-		void SetSepImage (LPCTSTR pStrImage);
+		string_view_t GetNormalImage () const;
+		void SetNormalImage (string_view_t pStrImage);
+		string_view_t GetHotImage () const;
+		void SetHotImage (string_view_t pStrImage);
+		string_view_t GetPushedImage () const;
+		void SetPushedImage (string_view_t pStrImage);
+		string_view_t GetFocusedImage () const;
+		void SetFocusedImage (string_view_t pStrImage);
+		string_view_t GetSepImage () const;
+		void SetSepImage (string_view_t pStrImage);
 		void SetScale (int nScale);
 		int GetScale () const;
 
 		void DoEvent (TEventUI& event);
 		SIZE EstimateSize (SIZE szAvailable);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 		RECT GetThumbRect () const;
 
 		void PaintText (HDC hDC);
@@ -373,9 +373,9 @@ namespace DuiLib {
 	public:
 		CListElementUI ();
 
-		LPCTSTR GetClass () const;
+		string_view_t GetClass () const;
 		UINT GetControlFlags () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		LPVOID GetInterface (string_view_t pstrName);
 
 		void SetEnabled (bool bEnable = true);
 
@@ -396,7 +396,7 @@ namespace DuiLib {
 		bool Activate ();
 
 		void DoEvent (TEventUI& event);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		void DrawItemBk (HDC hDC, const RECT& rcItem);
 
@@ -415,10 +415,10 @@ namespace DuiLib {
 		DECLARE_DUICONTROL (CListLabelElementUI)
 	public:
 		CListLabelElementUI ();
-		CListLabelElementUI (LPCTSTR text, int height = 20);
+		CListLabelElementUI (string_view_t text, int height = 20);
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 
 		void DoEvent (TEventUI& event);
 		SIZE EstimateSize (SIZE szAvailable);
@@ -437,12 +437,12 @@ namespace DuiLib {
 		CListTextElementUI ();
 		virtual ~CListTextElementUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 
-		LPCTSTR GetText (int iIndex) const;
-		void SetText (int iIndex, LPCTSTR pstrText);
+		string_view_t GetText (int iIndex) const;
+		void SetText (int iIndex, string_view_t pstrText);
 
 		void SetOwner (CControlUI* pOwner);
 		CDuiString* GetLinkContent (int iIndex);
@@ -472,9 +472,9 @@ namespace DuiLib {
 	public:
 		CListContainerElementUI ();
 
-		LPCTSTR GetClass () const;
+		string_view_t GetClass () const;
 		UINT GetControlFlags () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		LPVOID GetInterface (string_view_t pstrName);
 
 		int GetIndex () const;
 		void SetIndex (int iIndex);
@@ -494,7 +494,7 @@ namespace DuiLib {
 		bool Activate ();
 
 		void DoEvent (TEventUI& event);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 
 		virtual void DrawItemText (HDC hDC, const RECT& rcItem);

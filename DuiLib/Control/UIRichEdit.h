@@ -13,8 +13,8 @@ namespace DuiLib {
 		CRichEditUI ();
 		virtual ~CRichEditUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 
 		bool IsMultiLine ();
@@ -35,7 +35,7 @@ namespace DuiLib {
 		void SetWordWrap (bool bWordWrap = true);
 		int GetFont ();
 		void SetFont (int index);
-		void SetFont (LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
+		void SetFont (string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
 		LONG GetWinStyle ();
 		void SetWinStyle (LONG lStyle);
 		DWORD GetTextColor ();
@@ -44,14 +44,14 @@ namespace DuiLib {
 		void SetLimitText (int iChars);
 		long GetTextLength (DWORD dwFlags = GTL_DEFAULT) const;
 		CDuiString GetText () const;
-		void SetText (LPCTSTR pstrText);
+		void SetText (string_view_t pstrText);
 		bool IsModify () const;
 		void SetModify (bool bModified = true) const;
 		void GetSel (CHARRANGE &cr) const;
 		void GetSel (long& nStartChar, long& nEndChar) const;
 		int SetSel (CHARRANGE &cr);
 		int SetSel (long nStartChar, long nEndChar);
-		void ReplaceSel (LPCTSTR lpszNewText, bool bCanUndo);
+		void ReplaceSel (string_view_t lpszNewText, bool bCanUndo);
 		void ReplaceSelW (LPCWSTR lpszNewText, bool bCanUndo = false);
 		CDuiString GetSelText () const;
 		int SetSelAll ();
@@ -67,8 +67,8 @@ namespace DuiLib {
 		CDuiString GetTextRange (long nStartChar, long nEndChar) const;
 		void HideSelection (bool bHide = true, bool bChangeStyle = false);
 		void ScrollCaret ();
-		int InsertText (long nInsertAfterChar, LPCTSTR lpstrText, bool bCanUndo = false);
-		int AppendText (LPCTSTR lpstrText, bool bCanUndo = false);
+		int InsertText (long nInsertAfterChar, string_view_t lpstrText, bool bCanUndo = false);
+		int AppendText (string_view_t lpstrText, bool bCanUndo = false);
 		DWORD GetDefaultCharFormat (CHARFORMAT2 &cf) const;
 		bool SetDefaultCharFormat (CHARFORMAT2 &cf);
 		DWORD GetSelectionCharFormat (CHARFORMAT2 &cf) const;
@@ -103,19 +103,19 @@ namespace DuiLib {
 
 		RECT GetTextPadding () const;
 		void SetTextPadding (RECT rc);
-		LPCTSTR GetNormalImage ();
-		void SetNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetHotImage ();
-		void SetHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetFocusedImage ();
-		void SetFocusedImage (LPCTSTR pStrImage);
-		LPCTSTR GetDisabledImage ();
-		void SetDisabledImage (LPCTSTR pStrImage);
+		string_view_t GetNormalImage ();
+		void SetNormalImage (string_view_t pStrImage);
+		string_view_t GetHotImage ();
+		void SetHotImage (string_view_t pStrImage);
+		string_view_t GetFocusedImage ();
+		void SetFocusedImage (string_view_t pStrImage);
+		string_view_t GetDisabledImage ();
+		void SetDisabledImage (string_view_t pStrImage);
 		void PaintStatusImage (HDC hDC);
 
-		void SetTipValue (LPCTSTR pStrTipValue);
-		LPCTSTR GetTipValue ();
-		void SetTipValueColor (LPCTSTR pStrColor);
+		void SetTipValue (string_view_t pStrTipValue);
+		string_view_t GetTipValue ();
+		void SetTipValueColor (string_view_t pStrColor);
 		DWORD GetTipValueColor ();
 		void SetTipValueAlign (UINT uAlign);
 		UINT GetTipValueAlign ();
@@ -149,7 +149,7 @@ namespace DuiLib {
 		void DoEvent (TEventUI& event);
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		LRESULT MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 

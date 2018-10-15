@@ -111,17 +111,17 @@ namespace DuiLib {
 		delete m_pImp;
 		m_pImp = nullptrptr;
 	}
-	LPCTSTR CGifAnimExUI::GetClass () const {
+	string_view_t CGifAnimExUI::GetClass () const {
 		return _T ("GifAnimUI");
 	}
-	LPVOID CGifAnimExUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, _T ("GifAnim")) == 0)
+	LPVOID CGifAnimExUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == _T ("GifAnim"))
 			return static_cast<CGifAnimExUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
-	void CGifAnimExUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcscmp (pstrName, _T ("auto")) == 0)
-			m_pImp->SetAutoStart (_tcscmp (pstrValue, _T ("true")) == 0);
+	void CGifAnimExUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("auto"))
+			m_pImp->SetAutoStart (FawTools::parse_bool (pstrValue));
 		else
 			__super::SetAttribute (pstrName, pstrValue);
 	}

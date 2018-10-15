@@ -13,15 +13,15 @@ namespace DuiLib {
 		CGifAnimUI (void);
 		virtual ~CGifAnimUI (void);
 
-		LPCTSTR	GetClass () const;
-		LPVOID	GetInterface (LPCTSTR pstrName);
+		string_view_t	GetClass () const;
+		LPVOID	GetInterface (string_view_t pstrName);
 		void	DoInit () override;
 		bool	DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 		void	DoEvent (TEventUI& event);
 		void	SetVisible (bool bVisible = true);
-		void	SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
-		void	SetBkImage (LPCTSTR pStrImage);
-		LPCTSTR GetBkImage ();
+		void	SetAttribute (string_view_t pstrName, string_view_t pstrValue);
+		void	SetBkImage (string_view_t pStrImage);
+		string_view_t GetBkImage ();
 
 		void	SetAutoPlay (bool bIsAuto = true);
 		bool	IsAutoPlay () const;
@@ -36,7 +36,7 @@ namespace DuiLib {
 		void	DeleteGif ();
 		void    OnTimer (UINT_PTR idEvent);
 		void	DrawFrame (HDC hDC);		// ªÊ÷∆GIF√ø÷°
-		Gdiplus::Image*	LoadGifFromFile (LPCTSTR pstrGifPath);
+		Gdiplus::Image*	LoadGifFromFile (string_view_t pstrGifPath);
 		Gdiplus::Image* LoadGifFromMemory (LPVOID pBuf, size_t dwSize);
 	private:
 		Gdiplus::Image			*m_pGifImage		= nullptr;

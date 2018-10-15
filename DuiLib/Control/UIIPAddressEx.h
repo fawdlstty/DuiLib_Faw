@@ -12,8 +12,8 @@ namespace DuiLib {
 		DECLARE_DUICONTROL (CIPAddressExUI)
 	public:
 		CIPAddressExUI ();
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 		void DoEvent (TEventUI& event);
 		void PaintText (HDC hDC);

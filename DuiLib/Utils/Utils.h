@@ -164,8 +164,8 @@ namespace DuiLib {
 		bool Remove (string_view_t key);
 		void RemoveAll ();
 		int GetSize () const;
-		string_view_t GetAt (int iIndex) const;
-		string_view_t operator[] (int nIndex) const;
+		TITEM *GetAt (int iIndex) const;
+		TITEM *operator[] (int nIndex) const;
 
 	protected:
 		TITEM** m_aT;

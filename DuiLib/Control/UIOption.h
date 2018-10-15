@@ -10,22 +10,22 @@ namespace DuiLib {
 		COptionUI ();
 		virtual ~COptionUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 
 		void SetManager (CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true);
 
 		bool Activate ();
 		void SetEnabled (bool bEnable = true);
 
-		LPCTSTR GetSelectedImage ();
-		void SetSelectedImage (LPCTSTR pStrImage);
+		string_view_t GetSelectedImage ();
+		void SetSelectedImage (string_view_t pStrImage);
 
-		LPCTSTR GetSelectedHotImage ();
-		void SetSelectedHotImage (LPCTSTR pStrImage);
+		string_view_t GetSelectedHotImage ();
+		void SetSelectedHotImage (string_view_t pStrImage);
 
-		LPCTSTR GetSelectedPushedImage ();
-		void SetSelectedPushedImage (LPCTSTR pStrImage);
+		string_view_t GetSelectedPushedImage ();
+		void SetSelectedPushedImage (string_view_t pStrImage);
 
 		void SetSelectedTextColor (DWORD dwTextColor);
 		DWORD GetSelectedTextColor ();
@@ -33,23 +33,23 @@ namespace DuiLib {
 		void SetSelectedBkColor (DWORD dwBkColor);
 		DWORD GetSelectedBkColor ();
 
-		LPCTSTR GetSelectedForedImage ();
-		void SetSelectedForedImage (LPCTSTR pStrImage);
+		string_view_t GetSelectedForedImage ();
+		void SetSelectedForedImage (string_view_t pStrImage);
 
 		void SetSelectedStateCount (int nCount);
 		int GetSelectedStateCount () const;
-		virtual LPCTSTR GetSelectedStateImage ();
-		virtual void SetSelectedStateImage (LPCTSTR pStrImage);
+		virtual string_view_t GetSelectedStateImage ();
+		virtual void SetSelectedStateImage (string_view_t pStrImage);
 
 		void SetSelectedFont (int index);
 		int GetSelectedFont () const;
 
-		LPCTSTR GetGroup () const;
-		void SetGroup (LPCTSTR pStrGroupName = nullptr);
+		string_view_t GetGroup () const;
+		void SetGroup (string_view_t pStrGroupName = nullptr);
 		bool IsSelected () const;
 		virtual void Selected (bool bSelected, bool bMsg = true);
 
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		void PaintBkColor (HDC hDC);
 		void PaintStatusImage (HDC hDC);
@@ -80,14 +80,14 @@ namespace DuiLib {
 		CCheckBoxUI ();
 
 	public:
-		virtual LPCTSTR GetClass () const;
-		virtual LPVOID GetInterface (LPCTSTR pstrName);
+		virtual string_view_t GetClass () const;
+		virtual LPVOID GetInterface (string_view_t pstrName);
 
 		void SetCheck (bool bCheck);
 		bool GetCheck () const;
 
 	public:
-		virtual void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		virtual void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 		void SetAutoCheck (bool bEnable);
 		virtual void DoEvent (TEventUI& event);
 		virtual void Selected (bool bSelected, bool bMsg = true);

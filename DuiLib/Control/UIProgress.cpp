@@ -9,12 +9,12 @@ namespace DuiLib {
 		SetFixedHeight (12);
 	}
 
-	LPCTSTR CProgressUI::GetClass () const {
+	string_view_t CProgressUI::GetClass () const {
 		return _T ("ProgressUI");
 	}
 
-	LPVOID CProgressUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_PROGRESS) == 0) return static_cast<CProgressUI*>(this);
+	LPVOID CProgressUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_PROGRESS) == 0) return static_cast<CProgressUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 
@@ -70,12 +70,12 @@ namespace DuiLib {
 		UpdateText ();
 	}
 
-	void CProgressUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("hor")) == 0) SetHorizontal (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("min")) == 0) SetMinValue (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("max")) == 0) SetMaxValue (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("value")) == 0) SetValue (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("isstretchfore")) == 0) SetStretchForeImage (_tcsicmp (pstrValue, _T ("true")) == 0 ? true : false);
+	void CProgressUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("hor")) SetHorizontal (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("min")) SetMinValue (_ttoi (pstrValue));
+		else if (pstrName == _T ("max")) SetMaxValue (_ttoi (pstrValue));
+		else if (pstrName == _T ("value")) SetValue (_ttoi (pstrValue));
+		else if (pstrName == _T ("isstretchfore")) SetStretchForeImage (FawTools::parse_bool (pstrValue));
 		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 

@@ -9,12 +9,12 @@ namespace DuiLib {
 		ptLastMouse.x = ptLastMouse.y = 0;
 	}
 
-	LPCTSTR CScrollBarUI::GetClass () const {
+	string_view_t CScrollBarUI::GetClass () const {
 		return _T ("ScrollBarUI");
 	}
 
-	LPVOID CScrollBarUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_SCROLLBAR) == 0) return static_cast<CScrollBarUI*>(this);
+	LPVOID CScrollBarUI::GetInterface (string_view_t pstrName) {
+		if (pstrName == DUI_CTR_SCROLLBAR) return static_cast<CScrollBarUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -115,38 +115,38 @@ namespace DuiLib {
 		SetPos (m_rcItem);
 	}
 
-	LPCTSTR CScrollBarUI::GetButton1NormalImage () {
+	string_view_t CScrollBarUI::GetButton1NormalImage () {
 		return m_sButton1NormalImage;
 	}
 
-	void CScrollBarUI::SetButton1NormalImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetButton1NormalImage (string_view_t pStrImage) {
 		m_sButton1NormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetButton1HotImage () {
+	string_view_t CScrollBarUI::GetButton1HotImage () {
 		return m_sButton1HotImage;
 	}
 
-	void CScrollBarUI::SetButton1HotImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetButton1HotImage (string_view_t pStrImage) {
 		m_sButton1HotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetButton1PushedImage () {
+	string_view_t CScrollBarUI::GetButton1PushedImage () {
 		return m_sButton1PushedImage;
 	}
 
-	void CScrollBarUI::SetButton1PushedImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetButton1PushedImage (string_view_t pStrImage) {
 		m_sButton1PushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetButton1DisabledImage () {
+	string_view_t CScrollBarUI::GetButton1DisabledImage () {
 		return m_sButton1DisabledImage;
 	}
 
-	void CScrollBarUI::SetButton1DisabledImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetButton1DisabledImage (string_view_t pStrImage) {
 		m_sButton1DisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -160,146 +160,146 @@ namespace DuiLib {
 		SetPos (m_rcItem);
 	}
 
-	LPCTSTR CScrollBarUI::GetButton2NormalImage () {
+	string_view_t CScrollBarUI::GetButton2NormalImage () {
 		return m_sButton2NormalImage;
 	}
 
-	void CScrollBarUI::SetButton2NormalImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetButton2NormalImage (string_view_t pStrImage) {
 		m_sButton2NormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetButton2HotImage () {
+	string_view_t CScrollBarUI::GetButton2HotImage () {
 		return m_sButton2HotImage;
 	}
 
-	void CScrollBarUI::SetButton2HotImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetButton2HotImage (string_view_t pStrImage) {
 		m_sButton2HotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetButton2PushedImage () {
+	string_view_t CScrollBarUI::GetButton2PushedImage () {
 		return m_sButton2PushedImage;
 	}
 
-	void CScrollBarUI::SetButton2PushedImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetButton2PushedImage (string_view_t pStrImage) {
 		m_sButton2PushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetButton2DisabledImage () {
+	string_view_t CScrollBarUI::GetButton2DisabledImage () {
 		return m_sButton2DisabledImage;
 	}
 
-	void CScrollBarUI::SetButton2DisabledImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetButton2DisabledImage (string_view_t pStrImage) {
 		m_sButton2DisabledImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetThumbNormalImage () {
+	string_view_t CScrollBarUI::GetThumbNormalImage () {
 		return m_sThumbNormalImage;
 	}
 
-	void CScrollBarUI::SetThumbNormalImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetThumbNormalImage (string_view_t pStrImage) {
 		m_sThumbNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetThumbHotImage () {
+	string_view_t CScrollBarUI::GetThumbHotImage () {
 		return m_sThumbHotImage;
 	}
 
-	void CScrollBarUI::SetThumbHotImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetThumbHotImage (string_view_t pStrImage) {
 		m_sThumbHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetThumbPushedImage () {
+	string_view_t CScrollBarUI::GetThumbPushedImage () {
 		return m_sThumbPushedImage;
 	}
 
-	void CScrollBarUI::SetThumbPushedImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetThumbPushedImage (string_view_t pStrImage) {
 		m_sThumbPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetThumbDisabledImage () {
+	string_view_t CScrollBarUI::GetThumbDisabledImage () {
 		return m_sThumbDisabledImage;
 	}
 
-	void CScrollBarUI::SetThumbDisabledImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetThumbDisabledImage (string_view_t pStrImage) {
 		m_sThumbDisabledImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetRailNormalImage () {
+	string_view_t CScrollBarUI::GetRailNormalImage () {
 		return m_sRailNormalImage;
 	}
 
-	void CScrollBarUI::SetRailNormalImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetRailNormalImage (string_view_t pStrImage) {
 		m_sRailNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetRailHotImage () {
+	string_view_t CScrollBarUI::GetRailHotImage () {
 		return m_sRailHotImage;
 	}
 
-	void CScrollBarUI::SetRailHotImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetRailHotImage (string_view_t pStrImage) {
 		m_sRailHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetRailPushedImage () {
+	string_view_t CScrollBarUI::GetRailPushedImage () {
 		return m_sRailPushedImage;
 	}
 
-	void CScrollBarUI::SetRailPushedImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetRailPushedImage (string_view_t pStrImage) {
 		m_sRailPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetRailDisabledImage () {
+	string_view_t CScrollBarUI::GetRailDisabledImage () {
 		return m_sRailDisabledImage;
 	}
 
-	void CScrollBarUI::SetRailDisabledImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetRailDisabledImage (string_view_t pStrImage) {
 		m_sRailDisabledImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetBkNormalImage () {
+	string_view_t CScrollBarUI::GetBkNormalImage () {
 		return m_sBkNormalImage;
 	}
 
-	void CScrollBarUI::SetBkNormalImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetBkNormalImage (string_view_t pStrImage) {
 		m_sBkNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetBkHotImage () {
+	string_view_t CScrollBarUI::GetBkHotImage () {
 		return m_sBkHotImage;
 	}
 
-	void CScrollBarUI::SetBkHotImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetBkHotImage (string_view_t pStrImage) {
 		m_sBkHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetBkPushedImage () {
+	string_view_t CScrollBarUI::GetBkPushedImage () {
 		return m_sBkPushedImage;
 	}
 
-	void CScrollBarUI::SetBkPushedImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetBkPushedImage (string_view_t pStrImage) {
 		m_sBkPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CScrollBarUI::GetBkDisabledImage () {
+	string_view_t CScrollBarUI::GetBkDisabledImage () {
 		return m_sBkDisabledImage;
 	}
 
-	void CScrollBarUI::SetBkDisabledImage (LPCTSTR pStrImage) {
+	void CScrollBarUI::SetBkDisabledImage (string_view_t pStrImage) {
 		m_sBkDisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -634,33 +634,33 @@ namespace DuiLib {
 		if (m_pOwner != nullptr) m_pOwner->DoEvent (event); else CControlUI::DoEvent (event);
 	}
 
-	void CScrollBarUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("button1normalimage")) == 0) SetButton1NormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("button1hotimage")) == 0) SetButton1HotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("button1pushedimage")) == 0) SetButton1PushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("button1disabledimage")) == 0) SetButton1DisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("button2normalimage")) == 0) SetButton2NormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("button2hotimage")) == 0) SetButton2HotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("button2pushedimage")) == 0) SetButton2PushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("button2disabledimage")) == 0) SetButton2DisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("thumbnormalimage")) == 0) SetThumbNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("thumbhotimage")) == 0) SetThumbHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("thumbpushedimage")) == 0) SetThumbPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("thumbdisabledimage")) == 0) SetThumbDisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("railnormalimage")) == 0) SetRailNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("railhotimage")) == 0) SetRailHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("railpushedimage")) == 0) SetRailPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("raildisabledimage")) == 0) SetRailDisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("bknormalimage")) == 0) SetBkNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("bkhotimage")) == 0) SetBkHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("bkpushedimage")) == 0) SetBkPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("bkdisabledimage")) == 0) SetBkDisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("hor")) == 0) SetHorizontal (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("linesize")) == 0) SetLineSize (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("range")) == 0) SetScrollRange (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("value")) == 0) SetScrollPos (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("showbutton1")) == 0) SetShowButton1 (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("showbutton2")) == 0) SetShowButton2 (_tcsicmp (pstrValue, _T ("true")) == 0);
+	void CScrollBarUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (pstrName == _T ("button1normalimage")) SetButton1NormalImage (pstrValue);
+		else if (pstrName == _T ("button1hotimage")) SetButton1HotImage (pstrValue);
+		else if (pstrName == _T ("button1pushedimage")) SetButton1PushedImage (pstrValue);
+		else if (pstrName == _T ("button1disabledimage")) SetButton1DisabledImage (pstrValue);
+		else if (pstrName == _T ("button2normalimage")) SetButton2NormalImage (pstrValue);
+		else if (pstrName == _T ("button2hotimage")) SetButton2HotImage (pstrValue);
+		else if (pstrName == _T ("button2pushedimage")) SetButton2PushedImage (pstrValue);
+		else if (pstrName == _T ("button2disabledimage")) SetButton2DisabledImage (pstrValue);
+		else if (pstrName == _T ("thumbnormalimage")) SetThumbNormalImage (pstrValue);
+		else if (pstrName == _T ("thumbhotimage")) SetThumbHotImage (pstrValue);
+		else if (pstrName == _T ("thumbpushedimage")) SetThumbPushedImage (pstrValue);
+		else if (pstrName == _T ("thumbdisabledimage")) SetThumbDisabledImage (pstrValue);
+		else if (pstrName == _T ("railnormalimage")) SetRailNormalImage (pstrValue);
+		else if (pstrName == _T ("railhotimage")) SetRailHotImage (pstrValue);
+		else if (pstrName == _T ("railpushedimage")) SetRailPushedImage (pstrValue);
+		else if (pstrName == _T ("raildisabledimage")) SetRailDisabledImage (pstrValue);
+		else if (pstrName == _T ("bknormalimage")) SetBkNormalImage (pstrValue);
+		else if (pstrName == _T ("bkhotimage")) SetBkHotImage (pstrValue);
+		else if (pstrName == _T ("bkpushedimage")) SetBkPushedImage (pstrValue);
+		else if (pstrName == _T ("bkdisabledimage")) SetBkDisabledImage (pstrValue);
+		else if (pstrName == _T ("hor")) SetHorizontal (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("linesize")) SetLineSize (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("range")) SetScrollRange (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("value")) SetScrollPos (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("showbutton1")) SetShowButton1 (FawTools::parse_bool (pstrValue));
+		else if (pstrName == _T ("showbutton2")) SetShowButton2 (FawTools::parse_bool (pstrValue));
 		else CControlUI::SetAttribute (pstrName, pstrValue);
 	}
 

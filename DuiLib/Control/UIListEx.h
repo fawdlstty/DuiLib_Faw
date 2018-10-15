@@ -22,9 +22,9 @@ namespace DuiLib {
 	public:
 		CListExUI ();
 
-		LPCTSTR GetClass () const;
+		string_view_t GetClass () const;
 		UINT GetControlFlags () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		LPVOID GetInterface (string_view_t pstrName);
 
 	public:
 		virtual void DoEvent (TEventUI& event);
@@ -60,7 +60,7 @@ namespace DuiLib {
 		virtual void SetTextArrayCallback (IListComboCallbackUI* pCallback);
 
 	public:
-		void OnListItemClicked (int nIndex, int nColum, RECT* lpRCColum, LPCTSTR lpstrText);
+		void OnListItemClicked (int nIndex, int nColum, RECT* lpRCColum, string_view_t lpstrText);
 		void OnListItemChecked (int nIndex, int nColum, BOOL bChecked);
 
 	public:
@@ -79,8 +79,8 @@ namespace DuiLib {
 	public:
 		CListContainerHeaderItemUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 
 		void SetEnabled (BOOL bEnable = TRUE);
@@ -98,20 +98,20 @@ namespace DuiLib {
 		void SetFont (int index);
 		BOOL IsShowHtml ();
 		void SetShowHtml (BOOL bShowHtml = TRUE);
-		LPCTSTR GetNormalImage () const;
-		void SetNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetHotImage () const;
-		void SetHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetPushedImage () const;
-		void SetPushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetFocusedImage () const;
-		void SetFocusedImage (LPCTSTR pStrImage);
-		LPCTSTR GetSepImage () const;
-		void SetSepImage (LPCTSTR pStrImage);
+		string_view_t GetNormalImage () const;
+		void SetNormalImage (string_view_t pStrImage);
+		string_view_t GetHotImage () const;
+		void SetHotImage (string_view_t pStrImage);
+		string_view_t GetPushedImage () const;
+		void SetPushedImage (string_view_t pStrImage);
+		string_view_t GetFocusedImage () const;
+		void SetFocusedImage (string_view_t pStrImage);
+		string_view_t GetSepImage () const;
+		void SetSepImage (string_view_t pStrImage);
 
 		void DoEvent (TEventUI& event);
 		SIZE EstimateSize (SIZE szAvailable);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 		RECT GetThumbRect () const;
 
 		void PaintText (HDC hDC);
@@ -173,22 +173,22 @@ namespace DuiLib {
 		SIZE m_cxyCheckBox;
 
 	public:
-		BOOL DrawCheckBoxImage (HDC hDC, LPCTSTR pStrImage, LPCTSTR pStrModify = nullptr);
-		LPCTSTR GetCheckBoxNormalImage ();
-		void SetCheckBoxNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxHotImage ();
-		void SetCheckBoxHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxPushedImage ();
-		void SetCheckBoxPushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxFocusedImage ();
-		void SetCheckBoxFocusedImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxDisabledImage ();
-		void SetCheckBoxDisabledImage (LPCTSTR pStrImage);
+		BOOL DrawCheckBoxImage (HDC hDC, string_view_t pStrImage, string_view_t pStrModify = nullptr);
+		string_view_t GetCheckBoxNormalImage ();
+		void SetCheckBoxNormalImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxHotImage ();
+		void SetCheckBoxHotImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxPushedImage ();
+		void SetCheckBoxPushedImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxFocusedImage ();
+		void SetCheckBoxFocusedImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxDisabledImage ();
+		void SetCheckBoxDisabledImage (string_view_t pStrImage);
 
-		LPCTSTR GetCheckBoxSelectedImage ();
-		void SetCheckBoxSelectedImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxForeImage ();
-		void SetCheckBoxForeImage (LPCTSTR pStrImage);
+		string_view_t GetCheckBoxSelectedImage ();
+		void SetCheckBoxSelectedImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxForeImage ();
+		void SetCheckBoxForeImage (string_view_t pStrImage);
 
 		void GetCheckBoxRect (RECT &rc);
 
@@ -217,12 +217,12 @@ namespace DuiLib {
 		CListTextExtElementUI ();
 		virtual ~CListTextExtElementUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 
-		LPCTSTR GetText (int iIndex) const;
-		void SetText (int iIndex, LPCTSTR pstrText);
+		string_view_t GetText (int iIndex) const;
+		void SetText (int iIndex, string_view_t pstrText);
 
 		void SetOwner (CControlUI* pOwner);
 		CDuiString* GetLinkContent (int iIndex);
@@ -260,24 +260,24 @@ namespace DuiLib {
 
 	public:
 		virtual bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
-		virtual void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		virtual void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 		virtual void PaintStatusImage (HDC hDC);
-		BOOL DrawCheckBoxImage (HDC hDC, LPCTSTR pStrImage, LPCTSTR pStrModify, RECT& rcCheckBox);
-		LPCTSTR GetCheckBoxNormalImage ();
-		void SetCheckBoxNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxHotImage ();
-		void SetCheckBoxHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxPushedImage ();
-		void SetCheckBoxPushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxFocusedImage ();
-		void SetCheckBoxFocusedImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxDisabledImage ();
-		void SetCheckBoxDisabledImage (LPCTSTR pStrImage);
+		BOOL DrawCheckBoxImage (HDC hDC, string_view_t pStrImage, string_view_t pStrModify, RECT& rcCheckBox);
+		string_view_t GetCheckBoxNormalImage ();
+		void SetCheckBoxNormalImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxHotImage ();
+		void SetCheckBoxHotImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxPushedImage ();
+		void SetCheckBoxPushedImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxFocusedImage ();
+		void SetCheckBoxFocusedImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxDisabledImage ();
+		void SetCheckBoxDisabledImage (string_view_t pStrImage);
 
-		LPCTSTR GetCheckBoxSelectedImage ();
-		void SetCheckBoxSelectedImage (LPCTSTR pStrImage);
-		LPCTSTR GetCheckBoxForeImage ();
-		void SetCheckBoxForeImage (LPCTSTR pStrImage);
+		string_view_t GetCheckBoxSelectedImage ();
+		void SetCheckBoxSelectedImage (string_view_t pStrImage);
+		string_view_t GetCheckBoxForeImage ();
+		void SetCheckBoxForeImage (string_view_t pStrImage);
 
 		void GetCheckBoxRect (int nIndex, RECT &rc);
 		void GetColumRect (int nColum, RECT &rc);

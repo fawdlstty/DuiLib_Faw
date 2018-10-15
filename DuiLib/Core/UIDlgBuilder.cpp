@@ -58,7 +58,7 @@ namespace DuiLib {
 			LPTSTR pstr = nullptr;
 			for (CMarkupNode node = root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
 				pstrClass = node.GetName ();
-				if (_tcsicmp (pstrClass, _T ("Image")) == 0) {
+				if (_tcsicmp (pstrClass, _T ("Image")) {
 					nAttributes = node.GetAttributeCount ();
 					LPCTSTR pImageName = nullptr;
 					LPCTSTR pImageResType = nullptr;
@@ -67,19 +67,19 @@ namespace DuiLib {
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("name")) == 0) {
+						if (_tcsicmp (pstrName, _T ("name")) {
 							pImageName = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("restype")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("restype")) {
 							pImageResType = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("mask")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("mask")) {
 							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-							mask = _tcstoul (pstrValue, &pstr, 16);
-						} else if (_tcsicmp (pstrName, _T ("shared")) == 0) {
-							shared = (_tcsicmp (pstrValue, _T ("true")) == 0);
+							mask = FawTools::parse_hex (pstrValue);
+						} else if (_tcsicmp (pstrName, _T ("shared")) {
+							shared = (_tcsicmp (pstrValue, _T ("true"));
 						}
 					}
 					if (pImageName) pManager->AddImage (pImageName, pImageResType, mask, false, shared);
-				} else if (_tcsicmp (pstrClass, _T ("Font")) == 0) {
+				} else if (_tcsicmp (pstrClass, _T ("Font")) {
 					nAttributes = node.GetAttributeCount ();
 					int id = -1;
 					LPCTSTR pFontName = nullptr;
@@ -92,29 +92,29 @@ namespace DuiLib {
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("id")) == 0) {
+						if (_tcsicmp (pstrName, _T ("id")) {
 							id = _tcstol (pstrValue, &pstr, 10);
-						} else if (_tcsicmp (pstrName, _T ("name")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("name")) {
 							pFontName = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("size")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("size")) {
 							size = _tcstol (pstrValue, &pstr, 10);
-						} else if (_tcsicmp (pstrName, _T ("bold")) == 0) {
-							bold = (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcsicmp (pstrName, _T ("underline")) == 0) {
-							underline = (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcsicmp (pstrName, _T ("italic")) == 0) {
-							italic = (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcsicmp (pstrName, _T ("default")) == 0) {
-							defaultfont = (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcsicmp (pstrName, _T ("shared")) == 0) {
-							shared = (_tcsicmp (pstrValue, _T ("true")) == 0);
+						} else if (_tcsicmp (pstrName, _T ("bold")) {
+							bold = (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcsicmp (pstrName, _T ("underline")) {
+							underline = (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcsicmp (pstrName, _T ("italic")) {
+							italic = (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcsicmp (pstrName, _T ("default")) {
+							defaultfont = (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcsicmp (pstrName, _T ("shared")) {
+							shared = (_tcsicmp (pstrValue, _T ("true"));
 						}
 					}
 					if (id >= 0) {
 						pManager->AddFont (id, pFontName, size, bold, underline, italic, shared);
 						if (defaultfont) pManager->SetDefaultFont (pFontName, pManager->GetDPIObj ()->Scale (size), bold, underline, italic, shared);
 					}
-				} else if (_tcsicmp (pstrClass, _T ("Default")) == 0) {
+				} else if (_tcsicmp (pstrClass, _T ("Default")) {
 					nAttributes = node.GetAttributeCount ();
 					LPCTSTR pControlName = nullptr;
 					LPCTSTR pControlValue = nullptr;
@@ -122,18 +122,18 @@ namespace DuiLib {
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("name")) == 0) {
+						if (_tcsicmp (pstrName, _T ("name")) {
 							pControlName = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("value")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("value")) {
 							pControlValue = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("shared")) == 0) {
-							shared = (_tcsicmp (pstrValue, _T ("true")) == 0);
+						} else if (_tcsicmp (pstrName, _T ("shared")) {
+							shared = (_tcsicmp (pstrValue, _T ("true"));
 						}
 					}
 					if (pControlName) {
 						pManager->AddDefaultAttributeList (pControlName, pControlValue, shared);
 					}
-				} else if (_tcsicmp (pstrClass, _T ("Style")) == 0) {
+				} else if (_tcsicmp (pstrClass, _T ("Style")) {
 					nAttributes = node.GetAttributeCount ();
 					LPCTSTR pName = nullptr;
 					LPCTSTR pStyle = nullptr;
@@ -141,24 +141,24 @@ namespace DuiLib {
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("name")) == 0) {
+						if (_tcsicmp (pstrName, _T ("name")) {
 							pName = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("value")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("value")) {
 							pStyle = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("shared")) == 0) {
-							shared = (_tcsicmp (pstrValue, _T ("true")) == 0);
+						} else if (_tcsicmp (pstrName, _T ("shared")) {
+							shared = (_tcsicmp (pstrValue, _T ("true"));
 						}
 					}
 					if (pName) {
 						pManager->AddStyle (pName, pStyle, shared);
 					}
-				} else if (_tcsicmp (pstrClass, _T ("Import")) == 0) {
+				} else if (_tcsicmp (pstrClass, _T ("Import")) {
 					nAttributes = node.GetAttributeCount ();
 					LPCTSTR pstrPath = nullptr;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("fontfile")) == 0) {
+						if (_tcsicmp (pstrName, _T ("fontfile")) {
 							pstrPath = pstrValue;
 						}
 					}
@@ -169,18 +169,18 @@ namespace DuiLib {
 			}
 
 			pstrClass = root.GetName ();
-			if (_tcsicmp (pstrClass, _T ("Window")) == 0) {
+			if (_tcsicmp (pstrClass, _T ("Window")) {
 				if (pManager->GetPaintWindow ()) {
 					nAttributes = root.GetAttributeCount ();
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = root.GetAttributeName (i);
 						pstrValue = root.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("size")) == 0) {
+						if (_tcsicmp (pstrName, _T ("size")) {
 							pstr = nullptr;
 							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->SetInitSize (pManager->GetDPIObj ()->Scale (cx), pManager->GetDPIObj ()->Scale (cy));
-						} else if (_tcsicmp (pstrName, _T ("sizebox")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("sizebox")) {
 							RECT rcSizeBox = { 0 };
 							pstr = nullptr;
 							rcSizeBox.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
@@ -188,7 +188,7 @@ namespace DuiLib {
 							rcSizeBox.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 							rcSizeBox.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 							pManager->SetSizeBox (rcSizeBox);
-						} else if (_tcsicmp (pstrName, _T ("caption")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("caption")) {
 							RECT rcCaption = { 0 };
 							pstr = nullptr;
 							rcCaption.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
@@ -196,76 +196,76 @@ namespace DuiLib {
 							rcCaption.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 							rcCaption.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 							pManager->SetCaptionRect (rcCaption);
-						} else if (_tcsicmp (pstrName, _T ("roundcorner")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("roundcorner")) {
 							pstr = nullptr;
 							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->SetRoundCorner (cx, cy);
-						} else if (_tcsicmp (pstrName, _T ("mininfo")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("mininfo")) {
 							pstr = nullptr;
 							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->SetMinInfo (cx, cy);
-						} else if (_tcsicmp (pstrName, _T ("maxinfo")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("maxinfo")) {
 							pstr = nullptr;
 							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->SetMaxInfo (cx, cy);
-						} else if (_tcsicmp (pstrName, _T ("showdirty")) == 0) {
-							pManager->SetShowUpdateRect (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcsicmp (pstrName, _T ("opacity")) == 0 || _tcsicmp (pstrName, _T ("alpha")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("showdirty")) {
+							pManager->SetShowUpdateRect (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcsicmp (pstrName, _T ("opacity")) == 0 || _tcsicmp (pstrName, _T ("alpha")) {
 							pManager->SetOpacity ((BYTE) _ttoi (pstrValue));
-						} else if (_tcscmp (pstrName, _T ("layeredopacity")) == 0) {
+						} else if (_tcscmp (pstrName, _T ("layeredopacity")) {
 							pManager->SetLayeredOpacity ((BYTE) _ttoi (pstrValue));
-						} else if (_tcscmp (pstrName, _T ("layered")) == 0 || _tcscmp (pstrName, _T ("bktrans")) == 0) {
-							pManager->SetLayered (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcscmp (pstrName, _T ("layeredimage")) == 0) {
+						} else if (_tcscmp (pstrName, _T ("layered")) == 0 || _tcscmp (pstrName, _T ("bktrans")) {
+							pManager->SetLayered (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcscmp (pstrName, _T ("layeredimage")) {
 							pManager->SetLayered (true);
 							pManager->SetLayeredImage (pstrValue);
-						} else if (_tcscmp (pstrName, _T ("noactivate")) == 0) {
-							pManager->SetNoActivate (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcsicmp (pstrName, _T ("disabledfontcolor")) == 0) {
+						} else if (_tcscmp (pstrName, _T ("noactivate")) {
+							pManager->SetNoActivate (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcsicmp (pstrName, _T ("disabledfontcolor")) {
 							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 							pstr = nullptr;
-							DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+							DWORD clrColor = FawTools::parse_hex (pstrValue);
 							pManager->SetDefaultDisabledColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("defaultfontcolor")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("defaultfontcolor")) {
 							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 							pstr = nullptr;
-							DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+							DWORD clrColor = FawTools::parse_hex (pstrValue);
 							pManager->SetDefaultFontColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("linkfontcolor")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("linkfontcolor")) {
 							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 							pstr = nullptr;
-							DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+							DWORD clrColor = FawTools::parse_hex (pstrValue);
 							pManager->SetDefaultLinkFontColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("linkhoverfontcolor")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("linkhoverfontcolor")) {
 							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 							pstr = nullptr;
-							DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+							DWORD clrColor = FawTools::parse_hex (pstrValue);
 							pManager->SetDefaultLinkHoverFontColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("selectedcolor")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("selectedcolor")) {
 							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 							pstr = nullptr;
-							DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+							DWORD clrColor = FawTools::parse_hex (pstrValue);
 							pManager->SetDefaultSelectedBkColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("shadowsize")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("shadowsize")) {
 							pManager->GetShadow ()->SetSize (_ttoi (pstrValue));
-						} else if (_tcsicmp (pstrName, _T ("shadowsharpness")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("shadowsharpness")) {
 							pManager->GetShadow ()->SetSharpness (_ttoi (pstrValue));
-						} else if (_tcsicmp (pstrName, _T ("shadowdarkness")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("shadowdarkness")) {
 							pManager->GetShadow ()->SetDarkness (_ttoi (pstrValue));
-						} else if (_tcsicmp (pstrName, _T ("shadowposition")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("shadowposition")) {
 							pstr = nullptr;
 							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->GetShadow ()->SetPosition (cx, cy);
-						} else if (_tcsicmp (pstrName, _T ("shadowcolor")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("shadowcolor")) {
 							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 							pstr = nullptr;
-							DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+							DWORD clrColor = FawTools::parse_hex (pstrValue);
 							pManager->GetShadow ()->SetColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("shadowcorner")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("shadowcorner")) {
 							RECT rcCorner = { 0 };
 							pstr = nullptr;
 							rcCorner.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
@@ -273,15 +273,15 @@ namespace DuiLib {
 							rcCorner.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 							rcCorner.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 							pManager->GetShadow ()->SetShadowCorner (rcCorner);
-						} else if (_tcsicmp (pstrName, _T ("shadowimage")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("shadowimage")) {
 							pManager->GetShadow ()->SetImage (pstrValue);
-						} else if (_tcsicmp (pstrName, _T ("showshadow")) == 0) {
-							pManager->GetShadow ()->ShowShadow (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcsicmp (pstrName, _T ("gdiplustext")) == 0) {
-							pManager->SetUseGdiplusText (_tcsicmp (pstrValue, _T ("true")) == 0);
-						} else if (_tcsicmp (pstrName, _T ("textrenderinghint")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("showshadow")) {
+							pManager->GetShadow ()->ShowShadow (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcsicmp (pstrName, _T ("gdiplustext")) {
+							pManager->SetUseGdiplusText (_tcsicmp (pstrValue, _T ("true"));
+						} else if (_tcsicmp (pstrName, _T ("textrenderinghint")) {
 							pManager->SetGdiplusTextRenderingHint (_ttoi (pstrValue));
-						} else if (_tcsicmp (pstrName, _T ("tooltiphovertime")) == 0) {
+						} else if (_tcsicmp (pstrName, _T ("tooltiphovertime")) {
 							pManager->SetHoverTime (_ttoi (pstrValue));
 						}
 					}
@@ -309,11 +309,11 @@ namespace DuiLib {
 		for (CMarkupNode node = pRoot->GetChild (); node.IsValid (); node = node.GetSibling ()) {
 			LPCTSTR pstrClass = node.GetName ();
 			if (_tcsicmp (pstrClass, _T ("Image")) == 0 || _tcsicmp (pstrClass, _T ("Font")) == 0 \
-				|| _tcsicmp (pstrClass, _T ("Default")) == 0 || _tcsicmp (pstrClass, _T ("Style")) == 0) continue;
+				|| _tcsicmp (pstrClass, _T ("Default")) == 0 || _tcsicmp (pstrClass, _T ("Style")) continue;
 
 			CControlUI* pControl = nullptr;
-			if (_tcsicmp (pstrClass, _T ("Import")) == 0) continue;
-			if (_tcsicmp (pstrClass, _T ("Include")) == 0) {
+			if (_tcsicmp (pstrClass, _T ("Import")) continue;
+			if (_tcsicmp (pstrClass, _T ("Include")) {
 				if (!node.HasAttributes ()) continue;
 				int count = 1;
 				LPTSTR pstr = nullptr;

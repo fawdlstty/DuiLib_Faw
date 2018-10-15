@@ -13,7 +13,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CButtonUI::GetInterface (string_view_t pstrName) {
-		if (_tcsicmp (pstrName.data (), DUI_CTR_BUTTON) == 0) return static_cast<CButtonUI*>(this);
+		if (pstrName == DUI_CTR_BUTTON) == 0) return static_cast<CButtonUI*>(this);
 		return CLabelUI::GetInterface (pstrName.data ());
 	}
 
@@ -280,37 +280,37 @@ namespace DuiLib {
 	}
 
 	void CButtonUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
-		if (_tcsicmp (pstrName.data (), _T ("normalimage")) == 0) SetNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("hotimage")) == 0) SetHotImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("pushedimage")) == 0) SetPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("disabledimage")) == 0) SetDisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("hotforeimage")) == 0) SetHotForeImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("stateimage")) == 0) SetStateImage (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("statecount")) == 0) SetStateCount (_ttoi (pstrValue.data ()));
-		else if (_tcsicmp (pstrName.data (), _T ("bindtabindex")) == 0) BindTabIndex (_ttoi (pstrValue.data ()));
-		else if (_tcsicmp (pstrName.data (), _T ("bindtablayoutname")) == 0) BindTabLayoutName (pstrValue);
-		else if (_tcsicmp (pstrName.data (), _T ("hotbkcolor")) == 0) {
+		if (pstrName == _T ("normalimage")) SetNormalImage (pstrValue);
+		else if (pstrName == _T ("hotimage")) SetHotImage (pstrValue);
+		else if (pstrName == _T ("pushedimage")) SetPushedImage (pstrValue);
+		else if (pstrName == _T ("focusedimage")) SetFocusedImage (pstrValue);
+		else if (pstrName == _T ("disabledimage")) SetDisabledImage (pstrValue);
+		else if (pstrName == _T ("hotforeimage")) SetHotForeImage (pstrValue);
+		else if (pstrName == _T ("stateimage")) SetStateImage (pstrValue);
+		else if (pstrName == _T ("statecount")) SetStateCount (_ttoi (pstrValue.data ()));
+		else if (pstrName == _T ("bindtabindex")) BindTabIndex (_ttoi (pstrValue.data ()));
+		else if (pstrName == _T ("bindtablayoutname")) BindTabLayoutName (pstrValue);
+		else if (pstrName == _T ("hotbkcolor")) {
 			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetHotBkColor (clrColor);
-		} else if (_tcsicmp (pstrName.data (), _T ("pushedbkcolor")) == 0) {
+		} else if (pstrName == _T ("pushedbkcolor")) {
 			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetPushedBkColor (clrColor);
-		} else if (_tcsicmp (pstrName.data (), _T ("disabledbkcolor")) == 0) {
+		} else if (pstrName == _T ("disabledbkcolor")) {
 			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetDisabledBkColor (clrColor);
-		} else if (_tcsicmp (pstrName.data (), _T ("hottextcolor")) == 0) {
+		} else if (pstrName == _T ("hottextcolor")) {
 			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetHotTextColor (clrColor);
-		} else if (_tcsicmp (pstrName.data (), _T ("pushedtextcolor")) == 0) {
+		} else if (pstrName == _T ("pushedtextcolor")) {
 			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetPushedTextColor (clrColor);
-		} else if (_tcsicmp (pstrName.data (), _T ("focusedtextcolor")) == 0) {
+		} else if (pstrName == _T ("focusedtextcolor")) {
 			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetFocusedTextColor (clrColor);
-		} else if (_tcsicmp (pstrName.data (), _T ("hotfont")) == 0) SetHotFont (FawTools::parse_dec (pstrValue));
-		else if (_tcsicmp (pstrName.data (), _T ("pushedfont")) == 0) SetPushedFont (FawTools::parse_dec (pstrValue));
-		else if (_tcsicmp (pstrName.data (), _T ("focuedfont")) == 0) SetFocusedFont (FawTools::parse_dec (pstrValue));
+		} else if (pstrName == _T ("hotfont")) SetHotFont (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("pushedfont")) SetPushedFont (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("focuedfont")) SetFocusedFont (FawTools::parse_dec (pstrValue));
 
 		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}

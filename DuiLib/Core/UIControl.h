@@ -36,7 +36,7 @@ namespace DuiLib {
 		void KillTimer (UINT nTimerID);
 
 		// 文本相关
-		virtual string_view_t GetText () const;
+		virtual CDuiString GetText () const;
 		virtual void SetText (string_view_t pstrText);
 
 		virtual bool IsResourceText () const;

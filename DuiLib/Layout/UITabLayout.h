@@ -9,8 +9,8 @@ namespace DuiLib {
 	public:
 		CTabLayoutUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 
 		bool Add (CControlUI* pControl);
 		bool AddAt (CControlUI* pControl, int iIndex);
@@ -22,7 +22,7 @@ namespace DuiLib {
 
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 	protected:
 		int m_iCurSel = -1;
