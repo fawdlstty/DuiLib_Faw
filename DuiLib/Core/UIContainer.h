@@ -74,7 +74,7 @@ namespace DuiLib {
 		void Move (SIZE szOffset, bool bNeedInvalidate = true);
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		void SetManager (CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true);
 		CControlUI* FindControl (FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags);

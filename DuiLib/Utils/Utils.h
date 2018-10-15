@@ -219,34 +219,6 @@ namespace DuiLib {
 		}
 	};
 
-	//////////////////////////////////////////////////////////////////////////////////////
-	//
-	static char* w2a (wchar_t* lpszSrc, UINT   CodePage = CP_ACP) {
-		if (lpszSrc != nullptr) {
-			int  nANSILen = WideCharToMultiByte (CodePage, 0, lpszSrc, -1, nullptr, 0, nullptr, nullptr);
-			char* pANSI = new char[nANSILen + 1];
-			if (pANSI != nullptr) {
-				ZeroMemory (pANSI, nANSILen + 1);
-				WideCharToMultiByte (CodePage, 0, lpszSrc, -1, pANSI, nANSILen, nullptr, nullptr);
-				return pANSI;
-			}
-		}
-		return nullptr;
-	}
-
-	static wchar_t* a2w (char* lpszSrc, UINT   CodePage = CP_ACP) {
-		if (lpszSrc != nullptr) {
-			int nUnicodeLen = MultiByteToWideChar (CodePage, 0, lpszSrc, -1, nullptr, 0);
-			LPWSTR pUnicode = new WCHAR[nUnicodeLen + 1];
-			if (pUnicode != nullptr) {
-				ZeroMemory ((void*) pUnicode, (nUnicodeLen + 1) * sizeof (WCHAR));
-				MultiByteToWideChar (CodePage, 0, lpszSrc, -1, pUnicode, nUnicodeLen);
-				return pUnicode;
-			}
-		}
-		return nullptr;
-	}
-
 	///////////////////////////////////////////////////////////////////////////////////////
 	////
 	//struct TImageInfo;

@@ -33,7 +33,7 @@ namespace DuiLib {
 		virtual ~CActiveXUI ();
 
 		string_view_t GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		LPVOID GetInterface (string_view_t pstrName);
 
 		HWND GetHostWindow () const;
 
@@ -43,11 +43,11 @@ namespace DuiLib {
 		virtual void SetMFC (bool bMFC = false);
 
 		bool CreateControl (const CLSID clsid);
-		bool CreateControl (LPCTSTR pstrCLSID);
+		bool CreateControl (string_view_t pstrCLSID);
 		HRESULT GetControl (const IID iid, LPVOID* ppRet);
 		CLSID GetClisd () const;
 		string_view_t GetModuleName () const;
-		void SetModuleName (LPCTSTR pstrText);
+		void SetModuleName (string_view_t pstrText);
 
 		void SetVisible (bool bVisible = true);
 		void SetInternVisible (bool bVisible = true);
@@ -55,7 +55,7 @@ namespace DuiLib {
 		void Move (SIZE szOffset, bool bNeedInvalidate = true);
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		LRESULT MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 

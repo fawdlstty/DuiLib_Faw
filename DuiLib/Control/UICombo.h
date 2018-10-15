@@ -15,14 +15,14 @@ namespace DuiLib {
 	public:
 		CComboUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 
 		void DoInit ();
 		UINT GetControlFlags () const;
 
 		string_view_t GetText () const;
-		void SetText (LPCTSTR pstrText) override;
+		void SetText (string_view_t pstrText) override;
 		void SetEnabled (bool bEnable = true);
 
 		void SetTextStyle (UINT uStyle);
@@ -41,7 +41,7 @@ namespace DuiLib {
 		void SetShowShadow (bool bShow = true);
 
 		string_view_t GetDropBoxAttributeList ();
-		void SetDropBoxAttributeList (LPCTSTR pstrList);
+		void SetDropBoxAttributeList (string_view_t pstrList);
 		SIZE GetDropBoxSize () const;
 		void SetDropBoxSize (SIZE szDropBox);
 
@@ -61,16 +61,16 @@ namespace DuiLib {
 
 		bool Activate ();
 
-		LPCTSTR GetNormalImage () const;
-		void SetNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetHotImage () const;
-		void SetHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetPushedImage () const;
-		void SetPushedImage (LPCTSTR pStrImage);
-		LPCTSTR GetFocusedImage () const;
-		void SetFocusedImage (LPCTSTR pStrImage);
-		LPCTSTR GetDisabledImage () const;
-		void SetDisabledImage (LPCTSTR pStrImage);
+		string_view_t GetNormalImage () const;
+		void SetNormalImage (string_view_t pStrImage);
+		string_view_t GetHotImage () const;
+		void SetHotImage (string_view_t pStrImage);
+		string_view_t GetPushedImage () const;
+		void SetPushedImage (string_view_t pStrImage);
+		string_view_t GetFocusedImage () const;
+		void SetFocusedImage (string_view_t pStrImage);
+		string_view_t GetDisabledImage () const;
+		void SetDisabledImage (string_view_t pStrImage);
 
 		bool GetScrollSelect ();
 		void SetScrollSelect (bool bScrollSelect);
@@ -83,28 +83,28 @@ namespace DuiLib {
 		void SetItemTextColor (DWORD dwTextColor);
 		DWORD GetItemBkColor () const;
 		void SetItemBkColor (DWORD dwBkColor);
-		LPCTSTR GetItemBkImage () const;
-		void SetItemBkImage (LPCTSTR pStrImage);
+		string_view_t GetItemBkImage () const;
+		void SetItemBkImage (string_view_t pStrImage);
 		bool IsAlternateBk () const;
 		void SetAlternateBk (bool bAlternateBk);
 		DWORD GetSelectedItemTextColor () const;
 		void SetSelectedItemTextColor (DWORD dwTextColor);
 		DWORD GetSelectedItemBkColor () const;
 		void SetSelectedItemBkColor (DWORD dwBkColor);
-		LPCTSTR GetSelectedItemImage () const;
-		void SetSelectedItemImage (LPCTSTR pStrImage);
+		string_view_t GetSelectedItemImage () const;
+		void SetSelectedItemImage (string_view_t pStrImage);
 		DWORD GetHotItemTextColor () const;
 		void SetHotItemTextColor (DWORD dwTextColor);
 		DWORD GetHotItemBkColor () const;
 		void SetHotItemBkColor (DWORD dwBkColor);
-		LPCTSTR GetHotItemImage () const;
-		void SetHotItemImage (LPCTSTR pStrImage);
+		string_view_t GetHotItemImage () const;
+		void SetHotItemImage (string_view_t pStrImage);
 		DWORD GetDisabledItemTextColor () const;
 		void SetDisabledItemTextColor (DWORD dwTextColor);
 		DWORD GetDisabledItemBkColor () const;
 		void SetDisabledItemBkColor (DWORD dwBkColor);
-		LPCTSTR GetDisabledItemImage () const;
-		void SetDisabledItemImage (LPCTSTR pStrImage);
+		string_view_t GetDisabledItemImage () const;
+		void SetDisabledItemImage (string_view_t pStrImage);
 		DWORD GetItemLineColor () const;
 		void SetItemLineColor (DWORD dwLineColor);
 		bool IsItemShowHtml ();
@@ -114,7 +114,7 @@ namespace DuiLib {
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 		void Move (SIZE szOffset, bool bNeedInvalidate = true);
 		void DoEvent (TEventUI& event);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 		void PaintText (HDC hDC);

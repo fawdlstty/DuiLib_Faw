@@ -9,7 +9,7 @@ namespace DuiLib {
 	class CComboWnd: public CWindowWnd, public INotifyUI {
 	public:
 		void Init (CComboUI* pOwner);
-		LPCTSTR GetWindowClassName () const;
+		string_view_t GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -77,7 +77,7 @@ namespace DuiLib {
 
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof (oMonitor);
-		::GetMonitorInfo (::MonitorFromWindow (*this, MONITOR_DEFAULTTOPRIMARY), &oMonitor);
+		::GetMonitorInfo (::MonitorFromWindow (GetHWND (), MONITOR_DEFAULTTOPRIMARY), &oMonitor);
 		CDuiRect rcWork = oMonitor.rcWork;
 		if (rc.bottom > rcWork.bottom) {
 			rc.left = rcOwner.left;
@@ -96,7 +96,7 @@ namespace DuiLib {
 		::SendMessage (hWndParent, WM_NCACTIVATE, TRUE, 0L);
 	}
 
-	LPCTSTR CComboWnd::GetWindowClassName () const {
+	string_view_t CComboWnd::GetWindowClassName () const {
 		return _T ("ComboWnd");
 	}
 
@@ -134,8 +134,8 @@ namespace DuiLib {
 			// the items back to the righfull owner/manager when the window closes.
 			m_pLayout = new CVerticalLayoutUI;
 			m_pLayout->SetManager (&m_pm, nullptr, true);
-			LPCTSTR pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("VerticalLayout"));
-			if (pDefaultAttributes) {
+			string_view_t pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("VerticalLayout"));
+			if (!pDefaultAttributes.empty ()) {
 				m_pLayout->ApplyAttributeList (pDefaultAttributes);
 			}
 			m_pLayout->SetInset (CDuiRect (1, 1, 1, 1));
@@ -269,13 +269,13 @@ namespace DuiLib {
 		::ZeroMemory (&m_ListInfo.rcColumn, sizeof (m_ListInfo.rcColumn));
 	}
 
-	LPCTSTR CComboUI::GetClass () const {
+	string_view_t CComboUI::GetClass () const {
 		return _T ("ComboUI");
 	}
 
-	LPVOID CComboUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_COMBO) == 0) return static_cast<CComboUI*>(this);
-		if (_tcsicmp (pstrName, _T ("IListOwner")) == 0) return static_cast<IListOwnerUI*>(this);
+	LPVOID CComboUI::GetInterface (string_view_t pstrName) {
+		if (_tcsicmp (pstrName.data (), DUI_CTR_COMBO) == 0) return static_cast<CComboUI*>(this);
+		if (_tcsicmp (pstrName.data (), _T ("IListOwner")) == 0) return static_cast<IListOwnerUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -536,7 +536,7 @@ namespace DuiLib {
 		}
 	}
 
-	void CComboUI::SetText (LPCTSTR pstrText) {
+	void CComboUI::SetText (string_view_t pstrText) {
 		int iOldSel = m_iCurSel;
 		m_iCurSel = -2;
 		for (int i = 0; i < m_items.GetSize (); ++i) {
@@ -563,7 +563,7 @@ namespace DuiLib {
 		return string_view_t ((string_t) m_sDropBoxAttributes);
 	}
 
-	void CComboUI::SetDropBoxAttributeList (LPCTSTR pstrList) {
+	void CComboUI::SetDropBoxAttributeList (string_view_t pstrList) {
 		m_sDropBoxAttributes = pstrList;
 	}
 
@@ -642,47 +642,47 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	LPCTSTR CComboUI::GetNormalImage () const {
+	string_view_t CComboUI::GetNormalImage () const {
 		return m_sNormalImage;
 	}
 
-	void CComboUI::SetNormalImage (LPCTSTR pStrImage) {
+	void CComboUI::SetNormalImage (string_view_t pStrImage) {
 		m_sNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CComboUI::GetHotImage () const {
+	string_view_t CComboUI::GetHotImage () const {
 		return m_sHotImage;
 	}
 
-	void CComboUI::SetHotImage (LPCTSTR pStrImage) {
+	void CComboUI::SetHotImage (string_view_t pStrImage) {
 		m_sHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CComboUI::GetPushedImage () const {
+	string_view_t CComboUI::GetPushedImage () const {
 		return m_sPushedImage;
 	}
 
-	void CComboUI::SetPushedImage (LPCTSTR pStrImage) {
+	void CComboUI::SetPushedImage (string_view_t pStrImage) {
 		m_sPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CComboUI::GetFocusedImage () const {
+	string_view_t CComboUI::GetFocusedImage () const {
 		return m_sFocusedImage;
 	}
 
-	void CComboUI::SetFocusedImage (LPCTSTR pStrImage) {
+	void CComboUI::SetFocusedImage (string_view_t pStrImage) {
 		m_sFocusedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CComboUI::GetDisabledImage () const {
+	string_view_t CComboUI::GetDisabledImage () const {
 		return m_sDisabledImage;
 	}
 
-	void CComboUI::SetDisabledImage (LPCTSTR pStrImage) {
+	void CComboUI::SetDisabledImage (string_view_t pStrImage) {
 		m_sDisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -723,7 +723,7 @@ namespace DuiLib {
 		m_ListInfo.dwBkColor = dwBkColor;
 	}
 
-	void CComboUI::SetItemBkImage (LPCTSTR pStrImage) {
+	void CComboUI::SetItemBkImage (string_view_t pStrImage) {
 		m_ListInfo.sBkImage = pStrImage;
 	}
 
@@ -735,7 +735,7 @@ namespace DuiLib {
 		return m_ListInfo.dwBkColor;
 	}
 
-	LPCTSTR CComboUI::GetItemBkImage () const {
+	string_view_t CComboUI::GetItemBkImage () const {
 		return m_ListInfo.sBkImage;
 	}
 
@@ -755,7 +755,7 @@ namespace DuiLib {
 		m_ListInfo.dwSelectedBkColor = dwBkColor;
 	}
 
-	void CComboUI::SetSelectedItemImage (LPCTSTR pStrImage) {
+	void CComboUI::SetSelectedItemImage (string_view_t pStrImage) {
 		m_ListInfo.sSelectedImage = pStrImage;
 	}
 
@@ -767,7 +767,7 @@ namespace DuiLib {
 		return m_ListInfo.dwSelectedBkColor;
 	}
 
-	LPCTSTR CComboUI::GetSelectedItemImage () const {
+	string_view_t CComboUI::GetSelectedItemImage () const {
 		return m_ListInfo.sSelectedImage;
 	}
 
@@ -779,7 +779,7 @@ namespace DuiLib {
 		m_ListInfo.dwHotBkColor = dwBkColor;
 	}
 
-	void CComboUI::SetHotItemImage (LPCTSTR pStrImage) {
+	void CComboUI::SetHotItemImage (string_view_t pStrImage) {
 		m_ListInfo.sHotImage = pStrImage;
 	}
 
@@ -790,7 +790,7 @@ namespace DuiLib {
 		return m_ListInfo.dwHotBkColor;
 	}
 
-	LPCTSTR CComboUI::GetHotItemImage () const {
+	string_view_t CComboUI::GetHotItemImage () const {
 		return m_ListInfo.sHotImage;
 	}
 
@@ -802,7 +802,7 @@ namespace DuiLib {
 		m_ListInfo.dwDisabledBkColor = dwBkColor;
 	}
 
-	void CComboUI::SetDisabledItemImage (LPCTSTR pStrImage) {
+	void CComboUI::SetDisabledItemImage (string_view_t pStrImage) {
 		m_ListInfo.sDisabledImage = pStrImage;
 	}
 
@@ -814,7 +814,7 @@ namespace DuiLib {
 		return m_ListInfo.dwDisabledBkColor;
 	}
 
-	LPCTSTR CComboUI::GetDisabledItemImage () const {
+	string_view_t CComboUI::GetDisabledItemImage () const {
 		return m_ListInfo.sDisabledImage;
 	}
 
@@ -852,167 +852,137 @@ namespace DuiLib {
 	void CComboUI::Move (SIZE szOffset, bool bNeedInvalidate) {
 		CControlUI::Move (szOffset, bNeedInvalidate);
 	}
-	void CComboUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("align")) == 0) {
-			if (_tcsstr (pstrValue, _T ("left")) != nullptr) {
+	void CComboUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (_tcsicmp (pstrName.data (), _T ("align")) == 0) {
+			if (_tcsstr (pstrValue.data (), _T ("left")) != nullptr) {
 				m_uTextStyle &= ~(DT_CENTER | DT_RIGHT | DT_SINGLELINE);
 				m_uTextStyle |= DT_LEFT;
 			}
-			if (_tcsstr (pstrValue, _T ("center")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("center")) != nullptr) {
 				m_uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_uTextStyle |= DT_CENTER;
 			}
-			if (_tcsstr (pstrValue, _T ("right")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("right")) != nullptr) {
 				m_uTextStyle &= ~(DT_LEFT | DT_CENTER | DT_SINGLELINE);
 				m_uTextStyle |= DT_RIGHT;
 			}
-		} else if (_tcsicmp (pstrName, _T ("valign")) == 0) {
-			if (_tcsstr (pstrValue, _T ("top")) != nullptr) {
+		} else if (_tcsicmp (pstrName.data (), _T ("valign")) == 0) {
+			if (_tcsstr (pstrValue.data (), _T ("top")) != nullptr) {
 				m_uTextStyle &= ~(DT_BOTTOM | DT_VCENTER);
 				m_uTextStyle |= (DT_TOP | DT_SINGLELINE);
 			}
-			if (_tcsstr (pstrValue, _T ("vcenter")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("vcenter")) != nullptr) {
 				m_uTextStyle &= ~(DT_TOP | DT_BOTTOM);
 				m_uTextStyle |= (DT_VCENTER | DT_SINGLELINE);
 			}
-			if (_tcsstr (pstrValue, _T ("bottom")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("bottom")) != nullptr) {
 				m_uTextStyle &= ~(DT_TOP | DT_VCENTER);
 				m_uTextStyle |= (DT_BOTTOM | DT_SINGLELINE);
 			}
-		} else if (_tcsicmp (pstrName, _T ("endellipsis")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0) m_uTextStyle |= DT_END_ELLIPSIS;
+		} else if (_tcsicmp (pstrName.data (), _T ("endellipsis")) == 0) {
+			if (_tcsicmp (pstrValue.data (), _T ("true")) == 0) m_uTextStyle |= DT_END_ELLIPSIS;
 			else m_uTextStyle &= ~DT_END_ELLIPSIS;
-		} else if (_tcsicmp (pstrName, _T ("wordbreak")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0) {
+		} else if (_tcsicmp (pstrName.data (), _T ("wordbreak")) == 0) {
+			if (_tcsicmp (pstrValue.data (), _T ("true")) == 0) {
 				m_uTextStyle &= ~DT_SINGLELINE;
 				m_uTextStyle |= DT_WORDBREAK | DT_EDITCONTROL;
 			} else {
 				m_uTextStyle &= ~DT_WORDBREAK & ~DT_EDITCONTROL;
 				m_uTextStyle |= DT_SINGLELINE;
 			}
-		} else if (_tcsicmp (pstrName, _T ("font")) == 0) SetFont (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("textcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("font")) == 0) SetFont (_ttoi (pstrValue.data ()));
+		else if (_tcsicmp (pstrName.data (), _T ("textcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("disabledtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("disabledtextcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetDisabledTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("textpadding")) == 0) {
+		} else if (_tcsicmp (pstrName.data (), _T ("textpadding")) == 0) {
 			RECT rcTextPadding = { 0 };
 			LPTSTR pstr = nullptr;
-			rcTextPadding.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
+			rcTextPadding.left = _tcstol (pstrValue.data (), &pstr, 10);  ASSERT (pstr);
 			rcTextPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 			rcTextPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 			rcTextPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 			SetTextPadding (rcTextPadding);
-		} else if (_tcsicmp (pstrName, _T ("showhtml")) == 0) SetShowHtml (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("showshadow")) == 0) SetShowShadow (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("normalimage")) == 0) SetNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("hotimage")) == 0) SetHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("pushedimage")) == 0) SetPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("disabledimage")) == 0) SetDisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("scrollselect")) == 0) SetScrollSelect (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("dropbox")) == 0) SetDropBoxAttributeList (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("dropboxsize")) == 0) {
-			SIZE szDropBoxSize = { 0 };
-			LPTSTR pstr = nullptr;
-			szDropBoxSize.cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			szDropBoxSize.cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
+		} else if (_tcsicmp (pstrName.data (), _T ("showhtml")) == 0) SetShowHtml (FawTools::parse_bool (pstrValue));
+		else if (_tcsicmp (pstrName.data (), _T ("showshadow")) == 0) SetShowShadow (FawTools::parse_bool (pstrValue));
+		else if (_tcsicmp (pstrName.data (), _T ("normalimage")) == 0) SetNormalImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("hotimage")) == 0) SetHotImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("pushedimage")) == 0) SetPushedImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("disabledimage")) == 0) SetDisabledImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("scrollselect")) == 0) SetScrollSelect (FawTools::parse_bool (pstrValue));
+		else if (_tcsicmp (pstrName.data (), _T ("dropbox")) == 0) SetDropBoxAttributeList (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("dropboxsize")) == 0) {
+			SIZE szDropBoxSize = FawTools::parse_size (pstrValue);
 			SetDropBoxSize (szDropBoxSize);
-		} else if (_tcsicmp (pstrName, _T ("itemfont")) == 0) SetItemFont (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("itemalign")) == 0) {
-			if (_tcsstr (pstrValue, _T ("left")) != nullptr) {
+		} else if (_tcsicmp (pstrName.data (), _T ("itemfont")) == 0) SetItemFont (_ttoi (pstrValue.data ()));
+		else if (_tcsicmp (pstrName.data (), _T ("itemalign")) == 0) {
+			if (_tcsstr (pstrValue.data (), _T ("left")) != nullptr) {
 				m_ListInfo.uTextStyle &= ~(DT_CENTER | DT_RIGHT);
 				m_ListInfo.uTextStyle |= DT_LEFT;
 			}
-			if (_tcsstr (pstrValue, _T ("center")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("center")) != nullptr) {
 				m_ListInfo.uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_ListInfo.uTextStyle |= DT_CENTER;
 			}
-			if (_tcsstr (pstrValue, _T ("right")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("right")) != nullptr) {
 				m_ListInfo.uTextStyle &= ~(DT_LEFT | DT_CENTER);
 				m_ListInfo.uTextStyle |= DT_RIGHT;
 			}
-		} else if (_tcsicmp (pstrName, _T ("itemvalign")) == 0) {
-			if (_tcsstr (pstrValue, _T ("top")) != nullptr) {
+		} else if (_tcsicmp (pstrName.data (), _T ("itemvalign")) == 0) {
+			if (_tcsstr (pstrValue.data (), _T ("top")) != nullptr) {
 				m_ListInfo.uTextStyle &= ~(DT_VCENTER | DT_BOTTOM);
 				m_ListInfo.uTextStyle |= DT_TOP;
 			}
-			if (_tcsstr (pstrValue, _T ("vcenter")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("vcenter")) != nullptr) {
 				m_ListInfo.uTextStyle &= ~(DT_TOP | DT_BOTTOM | DT_WORDBREAK);
 				m_ListInfo.uTextStyle |= DT_VCENTER | DT_SINGLELINE;
 			}
-			if (_tcsstr (pstrValue, _T ("bottom")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("bottom")) != nullptr) {
 				m_ListInfo.uTextStyle &= ~(DT_TOP | DT_VCENTER);
 				m_ListInfo.uTextStyle |= DT_BOTTOM;
 			}
-		} else if (_tcsicmp (pstrName, _T ("itemendellipsis")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0) m_ListInfo.uTextStyle |= DT_END_ELLIPSIS;
+		} else if (_tcsicmp (pstrName.data (), _T ("itemendellipsis")) == 0) {
+			if (FawTools::parse_bool (pstrValue)) m_ListInfo.uTextStyle |= DT_END_ELLIPSIS;
 			else m_ListInfo.uTextStyle &= ~DT_END_ELLIPSIS;
-		} else if (_tcsicmp (pstrName, _T ("itemtextpadding")) == 0) {
-			RECT rcTextPadding = { 0 };
-			LPTSTR pstr = nullptr;
-			rcTextPadding.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcTextPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemtextpadding")) == 0) {
+			RECT rcTextPadding = FawTools::parse_rect (pstrValue);
 			SetItemTextPadding (rcTextPadding);
-		} else if (_tcsicmp (pstrName, _T ("itemtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemtextcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itembkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itembkcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetItemBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itembkimage")) == 0) SetItemBkImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemaltbk")) == 0) SetAlternateBk (_tcsicmp (pstrValue, _T ("true")) == 0);
-		else if (_tcsicmp (pstrName, _T ("itemselectedtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itembkimage")) == 0) SetItemBkImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("itemaltbk")) == 0) SetAlternateBk (_tcsicmp (pstrValue.data (), _T ("true")) == 0);
+		else if (_tcsicmp (pstrName.data (), _T ("itemselectedtextcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetSelectedItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemselectedbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemselectedbkcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetSelectedItemBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemselectedimage")) == 0) SetSelectedItemImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemhottextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemselectedimage")) == 0) SetSelectedItemImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("itemhottextcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetHotItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemhotbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemhotbkcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetHotItemBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemhotimage")) == 0) SetHotItemImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemdisabledtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemhotimage")) == 0) SetHotItemImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("itemdisabledtextcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetDisabledItemTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemdisabledbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemdisabledbkcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetDisabledItemBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemdisabledimage")) == 0) SetDisabledItemImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("itemlinecolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemdisabledimage")) == 0) SetDisabledItemImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("itemlinecolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetItemLineColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("itemshowhtml")) == 0) SetItemShowHtml (_tcsicmp (pstrValue, _T ("true")) == 0);
+		} else if (_tcsicmp (pstrName.data (), _T ("itemshowhtml")) == 0) SetItemShowHtml (FawTools::parse_bool (pstrValue));
 		else CContainerUI::SetAttribute (pstrName, pstrValue);
 	}
 

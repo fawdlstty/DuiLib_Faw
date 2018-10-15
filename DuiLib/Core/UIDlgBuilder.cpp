@@ -418,8 +418,8 @@ namespace DuiLib {
 				} else {
 					pControl->SetManager (pManager, nullptr, false);
 				}
-				LPCTSTR pDefaultAttributes = pManager->GetDefaultAttributeList (pstrClass);
-				if (pDefaultAttributes) {
+				string_view_t pDefaultAttributes = pManager->GetDefaultAttributeList (pstrClass);
+				if (!pDefaultAttributes.empty ()) {
 					pControl->ApplyAttributeList (pDefaultAttributes);
 				}
 			}

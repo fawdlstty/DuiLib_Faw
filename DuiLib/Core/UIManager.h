@@ -270,9 +270,9 @@ namespace DuiLib {
 		static CDuiString GetInstancePath();
 		static CDuiString GetCurrentPath();
 		static HINSTANCE GetResourceDll();
-		static const CDuiString& GetResourcePath();
-		static const CDuiString& GetResourceZip();
-		static const CDuiString& GetResourceZipPwd();
+		static const string_view_t GetResourcePath();
+		static const string_view_t GetResourceZip();
+		static const string_view_t GetResourceZipPwd();
 		static bool IsCachedResourceZip();
 		static HANDLE GetResourceZipHandle();
 		static void SetInstance(HINSTANCE hInst);

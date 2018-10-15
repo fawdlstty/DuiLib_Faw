@@ -11,9 +11,9 @@ namespace DuiLib {
 		DECLARE_DUICONTROL (CComboBoxUI)
 	public:
 		CComboBoxUI ();
-		LPCTSTR GetClass () const;
+		string_view_t GetClass () const;
 
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		void PaintText (HDC hDC);
 		void PaintStatusImage (HDC hDC);

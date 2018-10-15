@@ -125,12 +125,12 @@ namespace DuiLib {
 		NeedUpdate ();
 	}
 
-	LPCTSTR CColorPaletteUI::GetClass () const {
+	string_view_t CColorPaletteUI::GetClass () const {
 		return _T ("ColorPaletteUI");
 	}
 
-	LPVOID CColorPaletteUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, DUI_CTR_COLORPALETTE) == 0) return static_cast<CColorPaletteUI*>(this);
+	LPVOID CColorPaletteUI::GetInterface (string_view_t pstrName) {
+		if (_tcscmp (pstrName.data (), DUI_CTR_COLORPALETTE) == 0) return static_cast<CColorPaletteUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -150,21 +150,21 @@ namespace DuiLib {
 		return m_nBarHeight;
 	}
 
-	void CColorPaletteUI::SetThumbImage (LPCTSTR pszImage) {
+	void CColorPaletteUI::SetThumbImage (string_view_t pszImage) {
 		if (m_strThumbImage != pszImage) {
 			m_strThumbImage = pszImage;
 			NeedUpdate ();
 		}
 	}
 
-	LPCTSTR CColorPaletteUI::GetThumbImage () const {
+	string_view_t CColorPaletteUI::GetThumbImage () const {
 		return m_strThumbImage;
 	}
 
-	void CColorPaletteUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcscmp (pstrName, _T ("palletheight")) == 0) SetPalletHeight (_ttoi (pstrValue));
-		else if (_tcscmp (pstrName, _T ("barheight")) == 0) SetBarHeight (_ttoi (pstrValue));
-		else if (_tcscmp (pstrName, _T ("thumbimage")) == 0) SetThumbImage (pstrValue);
+	void CColorPaletteUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (_tcscmp (pstrName.data (), _T ("palletheight")) == 0) SetPalletHeight (_ttoi (pstrValue.data ()));
+		else if (_tcscmp (pstrName.data (), _T ("barheight")) == 0) SetBarHeight (_ttoi (pstrValue.data ()));
+		else if (_tcscmp (pstrName.data (), _T ("thumbimage")) == 0) SetThumbImage (pstrValue);
 		else CControlUI::SetAttribute (pstrName, pstrValue);
 	}
 

@@ -6,12 +6,12 @@ namespace DuiLib {
 
 	CComboBoxUI::CComboBoxUI () {}
 
-	LPCTSTR CComboBoxUI::GetClass () const {
+	string_view_t CComboBoxUI::GetClass () const {
 		return _T ("ComboBoxUI");
 	}
 
-	void CComboBoxUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("arrowimage")) == 0)
+	void CComboBoxUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (_tcsicmp (pstrName.data (), _T ("arrowimage")) == 0)
 			m_sArrowImage = pstrValue;
 		else
 			CComboUI::SetAttribute (pstrName, pstrValue);
@@ -46,12 +46,7 @@ namespace DuiLib {
 			size_t nPos3 = sModify.find (_T ("'"), nPos2 + 1);
 			if (nPos3 == string_t::npos) return; //second
 
-			CDuiRect rcBmpPart;
-			LPTSTR lpszValue = nullptr;
-			rcBmpPart.left = _tcstol (sModify + nPos2 + 1, &lpszValue, 10);  ASSERT (lpszValue);
-			rcBmpPart.top = _tcstol (lpszValue + 1, &lpszValue, 10);    ASSERT (lpszValue);
-			rcBmpPart.right = _tcstol (lpszValue + 1, &lpszValue, 10);  ASSERT (lpszValue);
-			rcBmpPart.bottom = _tcstol (lpszValue + 1, &lpszValue, 10); ASSERT (lpszValue);
+			CDuiRect rcBmpPart = FawTools::parse_rect (string_view_t (&sModify[nPos2 + 1]));
 
 			m_nArrowWidth = rcBmpPart.GetWidth () / 5;
 			rcBmpPart.left += nIndex * m_nArrowWidth;

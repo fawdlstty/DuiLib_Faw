@@ -18,8 +18,8 @@ namespace DuiLib {
 		}
 	}
 
-	void CChildLayoutUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("xmlfile")) == 0)
+	void CChildLayoutUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (_tcsicmp (pstrName.data (), _T ("xmlfile")) == 0)
 			SetChildLayoutXML (pstrValue);
 		else
 			CContainerUI::SetAttribute (pstrName, pstrValue);
@@ -33,12 +33,12 @@ namespace DuiLib {
 		return m_pstrXMLFile;
 	}
 
-	LPVOID CChildLayoutUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_CHILDLAYOUT) == 0) return static_cast<CChildLayoutUI*>(this);
+	LPVOID CChildLayoutUI::GetInterface (string_view_t pstrName) {
+		if (_tcsicmp (pstrName.data (), DUI_CTR_CHILDLAYOUT) == 0) return static_cast<CChildLayoutUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
-	LPCTSTR CChildLayoutUI::GetClass () const {
+	string_view_t CChildLayoutUI::GetClass () const {
 		return _T ("ChildLayoutUI");
 	}
 } // namespace DuiLib

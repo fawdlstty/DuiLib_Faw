@@ -28,12 +28,12 @@ namespace DuiLib {
 		ReleaseControl ();
 	}
 
-	LPCTSTR CFlashUI::GetClass () const {
+	string_view_t CFlashUI::GetClass () const {
 		return DUI_CTR_FLASH;
 	}
 
-	LPVOID CFlashUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_FLASH) == 0) return static_cast<CFlashUI*>(this);
+	LPVOID CFlashUI::GetInterface (string_view_t pstrName) {
+		if (_tcsicmp (pstrName.data (), DUI_CTR_FLASH) == 0) return static_cast<CFlashUI*>(this);
 		return CActiveXUI::GetInterface (pstrName);
 	}
 

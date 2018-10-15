@@ -15,9 +15,9 @@ namespace DuiLib {
 		DWORD GetSelectColor ();
 		void SetSelectColor (DWORD dwColor);
 
-		virtual LPCTSTR GetClass () const;
-		virtual LPVOID GetInterface (LPCTSTR pstrName);
-		virtual void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		virtual string_view_t GetClass () const;
+		virtual LPVOID GetInterface (string_view_t pstrName);
+		virtual void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		//设置/获取 Pallet（调色板主界面）的高度
 		void SetPalletHeight (int nHeight);
@@ -27,8 +27,8 @@ namespace DuiLib {
 		void SetBarHeight (int nHeight);
 		int GetBarHeight () const;
 		//设置/获取 选择图标的路径
-		void SetThumbImage (LPCTSTR pszImage);
-		LPCTSTR GetThumbImage () const;
+		void SetThumbImage (string_view_t pszImage);
+		string_view_t GetThumbImage () const;
 
 		virtual void SetPos (RECT rc, bool bNeedInvalidate = true);
 		virtual void DoInit ();

@@ -18,7 +18,7 @@ namespace DuiLib {
 		CActiveXWnd (): m_iLayeredTick (0), m_bDrawCaret (false) {}
 		HWND Init (CActiveXCtrl* pOwner, HWND hWndParent);
 
-		LPCTSTR GetWindowClassName () const;
+		string_view_t GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -287,7 +287,7 @@ namespace DuiLib {
 
 	CActiveXCtrl::~CActiveXCtrl () {
 		if (m_pWindow != nullptr) {
-			::DestroyWindow (*m_pWindow);
+			::DestroyWindow (m_pWindow->GetHWND ());
 			delete m_pWindow;
 		}
 		if (m_pUnkSite != nullptr) m_pUnkSite->Release ();
@@ -503,7 +503,7 @@ namespace DuiLib {
 			m_pInPlaceObject = nullptr;
 		}
 		if (m_pWindow != nullptr) {
-			::DestroyWindow (*m_pWindow);
+			::DestroyWindow (m_pWindow->GetHWND ());
 			delete m_pWindow;
 			m_pWindow = nullptr;
 		}
@@ -677,7 +677,7 @@ namespace DuiLib {
 		return m_hWnd;
 	}
 
-	LPCTSTR CActiveXWnd::GetWindowClassName () const {
+	string_view_t CActiveXWnd::GetWindowClassName () const {
 		return _T ("ActiveXWnd");
 	}
 
@@ -824,8 +824,8 @@ namespace DuiLib {
 		return _T ("ActiveXUI");
 	}
 
-	LPVOID CActiveXUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, DUI_CTR_ACTIVEX) == 0) return static_cast<CActiveXUI*>(this);
+	LPVOID CActiveXUI::GetInterface (string_view_t pstrName) {
+		if (_tcscmp (pstrName.data (), DUI_CTR_ACTIVEX) == 0) return static_cast<CActiveXUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -883,7 +883,7 @@ namespace DuiLib {
 		}
 		if (!m_pControl->m_bWindowless) {
 			ASSERT (m_pControl->m_pWindow);
-			::MoveWindow (*m_pControl->m_pWindow, m_rcItem.left, m_rcItem.top, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top, TRUE);
+			::MoveWindow (m_pControl->m_pWindow->GetHWND (), m_rcItem.left, m_rcItem.top, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top, TRUE);
 		}
 	}
 
@@ -891,7 +891,7 @@ namespace DuiLib {
 		CControlUI::Move (szOffset, bNeedInvalidate);
 		if (!m_pControl->m_bWindowless) {
 			ASSERT (m_pControl->m_pWindow);
-			::MoveWindow (*m_pControl->m_pWindow, m_rcItem.left, m_rcItem.top, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top, TRUE);
+			::MoveWindow (m_pControl->m_pWindow->GetHWND (), m_rcItem.left, m_rcItem.top, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top, TRUE);
 		}
 	}
 
@@ -902,10 +902,10 @@ namespace DuiLib {
 		return true;
 	}
 
-	void CActiveXUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcscmp (pstrName, _T ("clsid")) == 0) CreateControl (pstrValue);
-		else if (_tcscmp (pstrName, _T ("modulename")) == 0) SetModuleName (pstrValue);
-		else if (_tcscmp (pstrName, _T ("delaycreate")) == 0) SetDelayCreate (_tcscmp (pstrValue, _T ("true")) == 0);
+	void CActiveXUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (_tcscmp (pstrName.data (), _T ("clsid")) == 0) CreateControl (pstrValue);
+		else if (_tcscmp (pstrName.data (), _T ("modulename")) == 0) SetModuleName (pstrValue);
+		else if (_tcscmp (pstrName.data (), _T ("delaycreate")) == 0) SetDelayCreate (FawTools::parse_bool (pstrValue));
 		else CControlUI::SetAttribute (pstrName, pstrValue);
 	}
 
@@ -970,11 +970,11 @@ namespace DuiLib {
 		m_bMFC = bMFC;
 	}
 
-	bool CActiveXUI::CreateControl (LPCTSTR pstrCLSID) {
+	bool CActiveXUI::CreateControl (string_view_t pstrCLSID) {
 		CLSID clsid = { 0 };
 		OLECHAR szCLSID[100] = { 0 };
 #ifndef _UNICODE
-		::MultiByteToWideChar (::GetACP (), 0, pstrCLSID, -1, szCLSID, lengthof (szCLSID) - 1);
+		::MultiByteToWideChar (::GetACP (), 0, pstrCLSID.data (), -1, szCLSID, lengthof (szCLSID) - 1);
 #else
 		_tcsncpy (szCLSID, pstrCLSID, lengthof (szCLSID) - 1);
 #endif
@@ -1030,7 +1030,7 @@ namespace DuiLib {
 
 		HRESULT Hr = -1;
 		if (!m_sModuleName.empty ()) {
-			HMODULE hModule = ::LoadLibrary (m_sModuleName);
+			HMODULE hModule = ::LoadLibrary (m_sModuleName.c_str ());
 			if (hModule != nullptr) {
 				IClassFactory* aClassFactory = nullptr;
 				DllGetClassObjectFunc aDllGetClassObjectFunc = (DllGetClassObjectFunc)::GetProcAddress (hModule, "DllGetClassObject");
@@ -1106,7 +1106,7 @@ namespace DuiLib {
 		return m_sModuleName;
 	}
 
-	void CActiveXUI::SetModuleName (LPCTSTR pstrText) {
+	void CActiveXUI::SetModuleName (string_view_t pstrText) {
 		m_sModuleName = pstrText;
 	}
 

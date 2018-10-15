@@ -29,6 +29,10 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
+#include <map>
+#include <tuple>
+#include <type_traits>
 #include <variant>
 #include <Windows.h>
 #include <windowsx.h>
@@ -52,11 +56,11 @@
 //#define USE_XIMAGE_EFFECT
 
 #ifdef _UNICODE
-using string_t = std::wstring;
-using string_view_t = std::wstring_view;
+typedef std::wstring string_t;
+typedef std::wstring_view string_view_t;
 #else
-using string_t = std::string;
-using string_view_t = std::string_view;
+typedef std::string string_t;
+typedef std::string_view string_view_t;
 #endif
 
 #include "Utils/FawTools.hpp"

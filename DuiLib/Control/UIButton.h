@@ -10,37 +10,37 @@ namespace DuiLib {
 	public:
 		CButtonUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 
 		bool Activate ();
 		void SetEnabled (bool bEnable = true);
 		void DoEvent (TEventUI& event);
 
-		virtual LPCTSTR GetNormalImage ();
-		virtual void SetNormalImage (LPCTSTR pStrImage);
-		virtual LPCTSTR GetHotImage ();
-		virtual void SetHotImage (LPCTSTR pStrImage);
-		virtual LPCTSTR GetPushedImage ();
-		virtual void SetPushedImage (LPCTSTR pStrImage);
-		virtual LPCTSTR GetFocusedImage ();
-		virtual void SetFocusedImage (LPCTSTR pStrImage);
-		virtual LPCTSTR GetDisabledImage ();
-		virtual void SetDisabledImage (LPCTSTR pStrImage);
-		virtual LPCTSTR GetHotForeImage ();
-		virtual void SetHotForeImage (LPCTSTR pStrImage);
+		virtual string_view_t GetNormalImage ();
+		virtual void SetNormalImage (string_view_t pStrImage);
+		virtual string_view_t GetHotImage ();
+		virtual void SetHotImage (string_view_t pStrImage);
+		virtual string_view_t GetPushedImage ();
+		virtual void SetPushedImage (string_view_t pStrImage);
+		virtual string_view_t GetFocusedImage ();
+		virtual void SetFocusedImage (string_view_t pStrImage);
+		virtual string_view_t GetDisabledImage ();
+		virtual void SetDisabledImage (string_view_t pStrImage);
+		virtual string_view_t GetHotForeImage ();
+		virtual void SetHotForeImage (string_view_t pStrImage);
 		void SetStateCount (int nCount);
 		int GetStateCount () const;
-		virtual LPCTSTR GetStateImage ();
-		virtual void SetStateImage (LPCTSTR pStrImage);
+		virtual string_view_t GetStateImage ();
+		virtual void SetStateImage (string_view_t pStrImage);
 
 		void BindTabIndex (int _BindTabIndex);
-		void BindTabLayoutName (LPCTSTR _TabLayoutName);
+		void BindTabLayoutName (string_view_t _TabLayoutName);
 		void BindTriggerTabSel (int _SetSelectIndex = -1);
 		void RemoveBindTabIndex ();
 		int	 GetBindTabLayoutIndex ();
-		LPCTSTR GetBindTabLayoutName ();
+		string_view_t GetBindTabLayoutName ();
 
 		void SetHotFont (int index);
 		int GetHotFont () const;
@@ -61,7 +61,7 @@ namespace DuiLib {
 		DWORD GetPushedTextColor () const;
 		void SetFocusedTextColor (DWORD dwColor);
 		DWORD GetFocusedTextColor () const;
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		void PaintText (HDC hDC);
 

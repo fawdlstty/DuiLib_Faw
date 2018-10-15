@@ -8,13 +8,13 @@ namespace DuiLib {
 		m_uTextStyle = DT_SINGLELINE | DT_VCENTER | DT_CENTER;
 	}
 
-	LPCTSTR CButtonUI::GetClass () const {
+	string_view_t CButtonUI::GetClass () const {
 		return _T ("ButtonUI");
 	}
 
-	LPVOID CButtonUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, DUI_CTR_BUTTON) == 0) return static_cast<CButtonUI*>(this);
-		return CLabelUI::GetInterface (pstrName);
+	LPVOID CButtonUI::GetInterface (string_view_t pstrName) {
+		if (_tcsicmp (pstrName.data (), DUI_CTR_BUTTON) == 0) return static_cast<CButtonUI*>(this);
+		return CLabelUI::GetInterface (pstrName.data ());
 	}
 
 	UINT CButtonUI::GetControlFlags () const {
@@ -173,56 +173,56 @@ namespace DuiLib {
 		return m_dwFocusedTextColor;
 	}
 
-	LPCTSTR CButtonUI::GetNormalImage () {
+	string_view_t CButtonUI::GetNormalImage () {
 		return m_sNormalImage;
 	}
 
-	void CButtonUI::SetNormalImage (LPCTSTR pStrImage) {
+	void CButtonUI::SetNormalImage (string_view_t pStrImage) {
 		m_sNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CButtonUI::GetHotImage () {
+	string_view_t CButtonUI::GetHotImage () {
 		return m_sHotImage;
 	}
 
-	void CButtonUI::SetHotImage (LPCTSTR pStrImage) {
+	void CButtonUI::SetHotImage (string_view_t pStrImage) {
 		m_sHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CButtonUI::GetPushedImage () {
+	string_view_t CButtonUI::GetPushedImage () {
 		return m_sPushedImage;
 	}
 
-	void CButtonUI::SetPushedImage (LPCTSTR pStrImage) {
+	void CButtonUI::SetPushedImage (string_view_t pStrImage) {
 		m_sPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CButtonUI::GetFocusedImage () {
+	string_view_t CButtonUI::GetFocusedImage () {
 		return m_sFocusedImage;
 	}
 
-	void CButtonUI::SetFocusedImage (LPCTSTR pStrImage) {
+	void CButtonUI::SetFocusedImage (string_view_t pStrImage) {
 		m_sFocusedImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CButtonUI::GetDisabledImage () {
+	string_view_t CButtonUI::GetDisabledImage () {
 		return m_sDisabledImage;
 	}
 
-	void CButtonUI::SetDisabledImage (LPCTSTR pStrImage) {
+	void CButtonUI::SetDisabledImage (string_view_t pStrImage) {
 		m_sDisabledImage = pStrImage;
 		Invalidate ();
 	}
 
-	LPCTSTR CButtonUI::GetHotForeImage () {
+	string_view_t CButtonUI::GetHotForeImage () {
 		return m_sHotForeImage;
 	}
 
-	void CButtonUI::SetHotForeImage (LPCTSTR pStrImage) {
+	void CButtonUI::SetHotForeImage (string_view_t pStrImage) {
 		m_sHotForeImage = pStrImage;
 		Invalidate ();
 	}
@@ -236,11 +236,11 @@ namespace DuiLib {
 		return m_nStateCount;
 	}
 
-	LPCTSTR CButtonUI::GetStateImage () {
+	string_view_t CButtonUI::GetStateImage () {
 		return m_sStateImage;
 	}
 
-	void CButtonUI::SetStateImage (LPCTSTR pStrImage) {
+	void CButtonUI::SetStateImage (string_view_t pStrImage) {
 		m_sNormalImage.clear ();
 		m_sStateImage = pStrImage;
 		Invalidate ();
@@ -251,13 +251,13 @@ namespace DuiLib {
 			m_iBindTabIndex = _BindTabIndex;
 	}
 
-	void CButtonUI::BindTabLayoutName (LPCTSTR _TabLayoutName) {
-		if (_TabLayoutName)
+	void CButtonUI::BindTabLayoutName (string_view_t _TabLayoutName) {
+		if (!_TabLayoutName.empty ())
 			m_sBindTabLayoutName = _TabLayoutName;
 	}
 
 	void CButtonUI::BindTriggerTabSel (int _SetSelectIndex /*= -1*/) {
-		LPCTSTR pstrName = GetBindTabLayoutName ();
+		string_view_t pstrName = GetBindTabLayoutName ();
 		if (pstrName == nullptr || (GetBindTabLayoutIndex () < 0 && _SetSelectIndex < 0))
 			return;
 
@@ -275,22 +275,22 @@ namespace DuiLib {
 		return m_iBindTabIndex;
 	}
 
-	LPCTSTR CButtonUI::GetBindTabLayoutName () {
+	string_view_t CButtonUI::GetBindTabLayoutName () {
 		return m_sBindTabLayoutName;
 	}
 
-	void CButtonUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("normalimage")) == 0) SetNormalImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("hotimage")) == 0) SetHotImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("pushedimage")) == 0) SetPushedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("disabledimage")) == 0) SetDisabledImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("hotforeimage")) == 0) SetHotForeImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("stateimage")) == 0) SetStateImage (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("statecount")) == 0) SetStateCount (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("bindtabindex")) == 0) BindTabIndex (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("bindtablayoutname")) == 0) BindTabLayoutName (pstrValue);
-		else if (_tcsicmp (pstrName, _T ("hotbkcolor")) == 0) {
+	void CButtonUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (_tcsicmp (pstrName.data (), _T ("normalimage")) == 0) SetNormalImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("hotimage")) == 0) SetHotImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("pushedimage")) == 0) SetPushedImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("focusedimage")) == 0) SetFocusedImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("disabledimage")) == 0) SetDisabledImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("hotforeimage")) == 0) SetHotForeImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("stateimage")) == 0) SetStateImage (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("statecount")) == 0) SetStateCount (_ttoi (pstrValue.data ()));
+		else if (_tcsicmp (pstrName.data (), _T ("bindtabindex")) == 0) BindTabIndex (_ttoi (pstrValue.data ()));
+		else if (_tcsicmp (pstrName.data (), _T ("bindtablayoutname")) == 0) BindTabLayoutName (pstrValue);
+		else if (_tcsicmp (pstrName.data (), _T ("hotbkcolor")) == 0) {
 			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
 			LPTSTR pstr = nullptr;
 			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
