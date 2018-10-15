@@ -12,8 +12,8 @@ namespace DuiLib {
 		friend class CDateTimeWnd;
 	public:
 		CDateTimeUI ();
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 
 		SYSTEMTIME& GetTime ();
 		void SetTime (SYSTEMTIME* pst);

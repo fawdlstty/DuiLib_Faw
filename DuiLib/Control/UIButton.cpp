@@ -291,38 +291,26 @@ namespace DuiLib {
 		else if (_tcsicmp (pstrName.data (), _T ("bindtabindex")) == 0) BindTabIndex (_ttoi (pstrValue.data ()));
 		else if (_tcsicmp (pstrName.data (), _T ("bindtablayoutname")) == 0) BindTabLayoutName (pstrValue);
 		else if (_tcsicmp (pstrName.data (), _T ("hotbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetHotBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("pushedbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("pushedbkcolor")) == 0) {
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetPushedBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("disabledbkcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("disabledbkcolor")) == 0) {
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetDisabledBkColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("hottextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("hottextcolor")) == 0) {
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetHotTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("pushedtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("pushedtextcolor")) == 0) {
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetPushedTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("focusedtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("focusedtextcolor")) == 0) {
+			DWORD clrColor = FawTools::parse_hex (pstrValue);
 			SetFocusedTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("hotfont")) == 0) SetHotFont (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("pushedfont")) == 0) SetPushedFont (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("focuedfont")) == 0) SetFocusedFont (_ttoi (pstrValue));
+		} else if (_tcsicmp (pstrName.data (), _T ("hotfont")) == 0) SetHotFont (FawTools::parse_dec (pstrValue));
+		else if (_tcsicmp (pstrName.data (), _T ("pushedfont")) == 0) SetPushedFont (FawTools::parse_dec (pstrValue));
+		else if (_tcsicmp (pstrName.data (), _T ("focuedfont")) == 0) SetFocusedFont (FawTools::parse_dec (pstrValue));
 
 		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}

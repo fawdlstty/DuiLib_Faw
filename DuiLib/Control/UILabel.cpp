@@ -9,12 +9,12 @@ namespace DuiLib {
 
 	CLabelUI::~CLabelUI () {}
 
-	LPCTSTR CLabelUI::GetClass () const {
+	string_view_t CLabelUI::GetClass () const {
 		return _T ("LabelUI");
 	}
 
-	LPVOID CLabelUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcsicmp (pstrName, _T ("Label")) == 0) return static_cast<CLabelUI*>(this);
+	LPVOID CLabelUI::GetInterface (string_view_t pstrName) {
+		if (_tcsicmp (pstrName.data (), _T ("Label")) == 0) return static_cast<CLabelUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -148,75 +148,66 @@ namespace DuiLib {
 		CControlUI::DoEvent (event);
 	}
 
-	void CLabelUI::SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue) {
-		if (_tcsicmp (pstrName, _T ("align")) == 0) {
-			if (_tcsstr (pstrValue, _T ("left")) != nullptr) {
+	void CLabelUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
+		if (_tcsicmp (pstrName.data (), _T ("align")) == 0) {
+			if (_tcsstr (pstrValue.data (), _T ("left")) != nullptr) {
 				m_uTextStyle &= ~(DT_CENTER | DT_RIGHT);
 				m_uTextStyle |= DT_LEFT;
 			}
-			if (_tcsstr (pstrValue, _T ("center")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("center")) != nullptr) {
 				m_uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_uTextStyle |= DT_CENTER;
 			}
-			if (_tcsstr (pstrValue, _T ("right")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("right")) != nullptr) {
 				m_uTextStyle &= ~(DT_LEFT | DT_CENTER);
 				m_uTextStyle |= DT_RIGHT;
 			}
-		} else if (_tcsicmp (pstrName, _T ("valign")) == 0) {
-			if (_tcsstr (pstrValue, _T ("top")) != nullptr) {
+		} else if (_tcsicmp (pstrName.data (), _T ("valign")) == 0) {
+			if (_tcsstr (pstrValue.data (), _T ("top")) != nullptr) {
 				m_uTextStyle &= ~(DT_BOTTOM | DT_VCENTER | DT_WORDBREAK);
 				m_uTextStyle |= (DT_TOP | DT_SINGLELINE);
 			}
-			if (_tcsstr (pstrValue, _T ("vcenter")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("vcenter")) != nullptr) {
 				m_uTextStyle &= ~(DT_TOP | DT_BOTTOM | DT_WORDBREAK);
 				m_uTextStyle |= (DT_VCENTER | DT_SINGLELINE);
 			}
-			if (_tcsstr (pstrValue, _T ("bottom")) != nullptr) {
+			if (_tcsstr (pstrValue.data (), _T ("bottom")) != nullptr) {
 				m_uTextStyle &= ~(DT_TOP | DT_VCENTER | DT_WORDBREAK);
 				m_uTextStyle |= (DT_BOTTOM | DT_SINGLELINE);
 			}
-		} else if (_tcsicmp (pstrName, _T ("endellipsis")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0) m_uTextStyle |= DT_END_ELLIPSIS;
+		} else if (_tcsicmp (pstrName.data (), _T ("endellipsis")) == 0) {
+			if (_tcsicmp (pstrValue.data (), _T ("true")) == 0) m_uTextStyle |= DT_END_ELLIPSIS;
 			else m_uTextStyle &= ~DT_END_ELLIPSIS;
-		} else if (_tcsicmp (pstrName, _T ("wordbreak")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0) {
+		} else if (_tcsicmp (pstrName.data (), _T ("wordbreak")) == 0) {
+			if (FawTools::parse_bool (pstrValue)) {
 				m_uTextStyle &= ~DT_SINGLELINE;
 				m_uTextStyle |= DT_WORDBREAK | DT_EDITCONTROL;
 			} else {
 				m_uTextStyle &= ~DT_WORDBREAK & ~DT_EDITCONTROL;
 				m_uTextStyle |= DT_SINGLELINE;
 			}
-		} else if (_tcsicmp (pstrName, _T ("noprefix")) == 0) {
-			if (_tcsicmp (pstrValue, _T ("true")) == 0) {
+		} else if (_tcsicmp (pstrName.data (), _T ("noprefix")) == 0) {
+			if (FawTools::parse_bool (pstrValue)) {
 				m_uTextStyle |= DT_NOPREFIX;
 			} else {
 				m_uTextStyle = m_uTextStyle & ~DT_NOPREFIX;
 			}
-		} else if (_tcsicmp (pstrName, _T ("font")) == 0) SetFont (_ttoi (pstrValue));
-		else if (_tcsicmp (pstrName, _T ("textcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("font")) == 0) SetFont (FawTools::parse_dec (pstrValue));
+		else if (_tcsicmp (pstrName.data (), _T ("textcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("disabledtextcolor")) == 0) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue, &pstr, 16);
+		} else if (_tcsicmp (pstrName.data (), _T ("disabledtextcolor")) == 0) {
+			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetDisabledTextColor (clrColor);
-		} else if (_tcsicmp (pstrName, _T ("textpadding")) == 0) {
-			RECT rcTextPadding = { 0 };
-			LPTSTR pstr = nullptr;
-			rcTextPadding.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcTextPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+		} else if (_tcsicmp (pstrName.data (), _T ("textpadding")) == 0) {
+			RECT rcTextPadding = FawTools::parse_rect (pstrValue);
 			SetTextPadding (rcTextPadding);
-		} else if (_tcsicmp (pstrName, _T ("showhtml")) == 0) {
-			SetShowHtml (_tcsicmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcsicmp (pstrName, _T ("autocalcwidth")) == 0) {
-			SetAutoCalcWidth (_tcsicmp (pstrValue, _T ("true")) == 0);
-		} else if (_tcsicmp (pstrName, _T ("autocalcheight")) == 0) {
-			SetAutoCalcHeight (_tcsicmp (pstrValue, _T ("true")) == 0);
+		} else if (_tcsicmp (pstrName.data (), _T ("showhtml")) == 0) {
+			SetShowHtml (FawTools::parse_bool (pstrValue));
+		} else if (_tcsicmp (pstrName.data (), _T ("autocalcwidth")) == 0) {
+			SetAutoCalcWidth (FawTools::parse_bool (pstrValue));
+		} else if (_tcsicmp (pstrName.data (), _T ("autocalcheight")) == 0) {
+			SetAutoCalcHeight (FawTools::parse_bool (pstrValue));
 		} else {
 			CControlUI::SetAttribute (pstrName, pstrValue);
 		}
@@ -270,7 +261,7 @@ namespace DuiLib {
 		m_bAutoCalcHeight = bAutoCalcHeight;
 	}
 
-	void CLabelUI::SetText (LPCTSTR pstrText) {
+	void CLabelUI::SetText (string_view_t pstrText) {
 		CControlUI::SetText (pstrText);
 		if (GetAutoCalcWidth () || GetAutoCalcHeight ()) {
 			NeedParentUpdate ();

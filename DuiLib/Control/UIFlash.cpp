@@ -15,7 +15,7 @@ namespace DuiLib {
 #ifndef _UNICODE
 		::MultiByteToWideChar (::GetACP (), 0, strFlashCLSID, -1, szCLSID, lengthof (szCLSID) - 1);
 #else
-		_tcsncpy (szCLSID, strFlashCLSID, lengthof (szCLSID) - 1);
+		_tcsncpy (szCLSID, strFlashCLSID.c_str (), lengthof (szCLSID) - 1);
 #endif
 		::CLSIDFromString (szCLSID, &m_clsid);
 	}

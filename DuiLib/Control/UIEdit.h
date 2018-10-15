@@ -12,12 +12,12 @@ namespace DuiLib {
 	public:
 		CEditUI ();
 
-		LPCTSTR GetClass () const;
-		LPVOID GetInterface (LPCTSTR pstrName);
+		string_view_t GetClass () const;
+		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 
 		void SetEnabled (bool bEnable = true);
-		void SetText (LPCTSTR pstrText);
+		void SetText (string_view_t pstrText);
 		void SetMaxChar (UINT uMax);
 		UINT GetMaxChar ();
 		void SetReadOnly (bool bReadOnly);
@@ -30,28 +30,28 @@ namespace DuiLib {
 		bool IsNumberOnly () const;
 		int GetWindowStyls () const;
 
-		LPCTSTR GetNormalImage ();
-		void SetNormalImage (LPCTSTR pStrImage);
-		LPCTSTR GetHotImage ();
-		void SetHotImage (LPCTSTR pStrImage);
-		LPCTSTR GetFocusedImage ();
-		void SetFocusedImage (LPCTSTR pStrImage);
-		LPCTSTR GetDisabledImage ();
-		void SetDisabledImage (LPCTSTR pStrImage);
+		string_view_t GetNormalImage ();
+		void SetNormalImage (string_view_t pStrImage);
+		string_view_t GetHotImage ();
+		void SetHotImage (string_view_t pStrImage);
+		string_view_t GetFocusedImage ();
+		void SetFocusedImage (string_view_t pStrImage);
+		string_view_t GetDisabledImage ();
+		void SetDisabledImage (string_view_t pStrImage);
 		void SetNativeEditBkColor (DWORD dwBkColor);
 		DWORD GetNativeEditBkColor () const;
-		void SetNativeEditTextColor (LPCTSTR pStrColor);
+		void SetNativeEditTextColor (string_view_t pStrColor);
 		DWORD GetNativeEditTextColor () const;
 
 		bool IsAutoSelAll ();
 		void SetAutoSelAll (bool bAutoSelAll);
 		void SetSel (long nStartChar, long nEndChar);
 		void SetSelAll ();
-		void SetReplaceSel (LPCTSTR lpszReplace);
+		void SetReplaceSel (string_view_t lpszReplace);
 
-		void SetTipValue (LPCTSTR pStrTipValue);
-		LPCTSTR GetTipValue ();
-		void SetTipValueColor (LPCTSTR pStrColor);
+		void SetTipValue (string_view_t pStrTipValue);
+		string_view_t GetTipValue ();
+		void SetTipValueColor (string_view_t pStrColor);
 		DWORD GetTipValueColor ();
 
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
@@ -60,7 +60,7 @@ namespace DuiLib {
 		void SetInternVisible (bool bVisible = true);
 		SIZE EstimateSize (SIZE szAvailable);
 		void DoEvent (TEventUI& event);
-		void SetAttribute (LPCTSTR pstrName, LPCTSTR pstrValue);
+		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
 		void PaintStatusImage (HDC hDC);
 		void PaintText (HDC hDC);

@@ -15,8 +15,8 @@ namespace DuiLib {
 		void Init (CDateTimeUI* pOwner);
 		RECT CalPos ();
 
-		LPCTSTR GetWindowClassName () const;
-		LPCTSTR GetSuperClassName () const;
+		string_view_t GetWindowClassName () const;
+		string_view_t GetSuperClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -72,11 +72,11 @@ namespace DuiLib {
 		return rcPos;
 	}
 
-	LPCTSTR CDateTimeWnd::GetWindowClassName () const {
+	string_view_t CDateTimeWnd::GetWindowClassName () const {
 		return _T ("DateTimeWnd");
 	}
 
-	LPCTSTR CDateTimeWnd::GetSuperClassName () const {
+	string_view_t CDateTimeWnd::GetSuperClassName () const {
 		return DATETIMEPICK_CLASS;
 	}
 
@@ -137,7 +137,7 @@ namespace DuiLib {
 	//
 	IMPLEMENT_DUICONTROL (CDateTimeUI)
 
-		CDateTimeUI::CDateTimeUI () {
+	CDateTimeUI::CDateTimeUI () {
 		::GetLocalTime (&m_sysTime);
 		m_bReadOnly = false;
 		m_pWindow = nullptr;
@@ -146,12 +146,12 @@ namespace DuiLib {
 		m_nDTUpdateFlag = DT_NONE;
 	}
 
-	LPCTSTR CDateTimeUI::GetClass () const {
+	string_view_t CDateTimeUI::GetClass () const {
 		return _T ("DateTimeUI");
 	}
 
-	LPVOID CDateTimeUI::GetInterface (LPCTSTR pstrName) {
-		if (_tcscmp (pstrName, DUI_CTR_DATETIME) == 0) return static_cast<CDateTimeUI*>(this);
+	LPVOID CDateTimeUI::GetInterface (string_view_t pstrName) {
+		if (_tcscmp (pstrName.data (), DUI_CTR_DATETIME) == 0) return static_cast<CDateTimeUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 

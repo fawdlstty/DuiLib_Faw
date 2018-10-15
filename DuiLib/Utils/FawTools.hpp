@@ -51,11 +51,9 @@ public:
 
 	// "true" or "True" or "TRUE" -> true
 	static bool parse_bool (string_view_t str) {
-		static std::map<string_t, bool> mbool { { _T ("true"), true }, { _T ("false"), false }, { _T ("on"), true }, { _T ("off"), false }, { _T ("yes"), true }, { _T ("no"), false }, { _T ("ok"), true }, { _T ("cancel"), false }, { _T ("1"), true }, { _T ("0"), false } };
-		string_t str_lwr = str.data ();
-		str_lwr = ::_tcslwr (&str_lwr[0]);
-		if (mbool.find (str_lwr) != mbool.end ())
-			return mbool[str_lwr];
+		static std::map<string_view_t, bool> mbool { { _T ("true"), true }, { _T ("false"), false }, { _T ("on"), true }, { _T ("off"), false }, { _T ("yes"), true }, { _T ("no"), false }, { _T ("ok"), true }, { _T ("cancel"), false }, { _T ("1"), true }, { _T ("0"), false } };
+		if (mbool.find (str) != mbool.end ())
+			return mbool[str];
 		return !str.empty ();
 	}
 
