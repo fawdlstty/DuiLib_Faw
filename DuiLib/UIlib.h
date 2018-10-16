@@ -63,7 +63,6 @@ typedef std::string string_t;
 typedef std::string_view string_view_t;
 #endif
 
-#include "Utils/FawTools.hpp"
 #include "Utils/Utils.h"
 #include "Utils/unzip.h"
 #include "Utils/VersionHelpers.h"
@@ -130,6 +129,8 @@ typedef std::string_view string_view_t;
 #include "Control/UIHotKey.h"
 #include "Control/UIFadeButton.h"
 #include "Control/UIRing.h"
+
+#include "Utils/FawTools.hpp"
 
 #pragma comment (lib, "comctl32.lib")
 #pragma comment (lib, "GdiPlus.lib")

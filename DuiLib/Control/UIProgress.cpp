@@ -14,7 +14,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CProgressUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_PROGRESS) == 0) return static_cast<CProgressUI*>(this);
+		if (pstrName == DUI_CTR_PROGRESS) return static_cast<CProgressUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 
@@ -72,9 +72,9 @@ namespace DuiLib {
 
 	void CProgressUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
 		if (pstrName == _T ("hor")) SetHorizontal (FawTools::parse_bool (pstrValue));
-		else if (pstrName == _T ("min")) SetMinValue (_ttoi (pstrValue));
-		else if (pstrName == _T ("max")) SetMaxValue (_ttoi (pstrValue));
-		else if (pstrName == _T ("value")) SetValue (_ttoi (pstrValue));
+		else if (pstrName == _T ("min")) SetMinValue (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("max")) SetMaxValue (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("value")) SetValue (FawTools::parse_dec (pstrValue));
 		else if (pstrName == _T ("isstretchfore")) SetStretchForeImage (FawTools::parse_bool (pstrValue));
 		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}

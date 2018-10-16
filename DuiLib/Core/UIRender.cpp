@@ -803,7 +803,7 @@ namespace DuiLib {
 	}
 
 	TImageInfo* CRenderEngine::LoadImage (UINT nID, string_view_t type, DWORD mask, HINSTANCE instance) {
-		return LoadImage (nID, type, mask, instance);
+		return LoadImage (std::variant<UINT, string_t> (nID), type, mask, instance);
 	}
 
 	void CRenderEngine::DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, string_view_t pstrText, DWORD dwTextColor, \
@@ -1645,7 +1645,7 @@ namespace DuiLib {
 				&& (pstrText[1] >= _T ('a') && pstrText[1] <= _T ('z'))
 				&& (pstrText[2] == _T (' ') || pstrText[2] == _T ('>') || pstrText[2] == _T ('}'))) {
 				pstrText = pstrText.substr (1);
-				LPCTSTR pstrNextStart = nullptr;
+				string_view_t pstrNextStart = nullptr;
 				switch (pstrText[0]) {
 				case _T ('a'):  // Link
 				{
@@ -1654,7 +1654,7 @@ namespace DuiLib {
 						CDuiString *pStr = (CDuiString*) (sLinks + iLinkIndex);
 						pStr->clear ();
 						while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) {
-							LPCTSTR pstrTemp = ::CharNext (pstrText);
+							string_view_t pstrTemp = pstrText.substr (1);
 							while (pstrText < pstrTemp) {
 								*pStr += pstrText[0];
 								pstrText = pstrText.substr (1);
@@ -1763,7 +1763,7 @@ namespace DuiLib {
 				break;
 				case _T ('i'):  // Italic or Image
 				{
-					pstrNextStart = &pstrText[-1];
+					pstrNextStart = &pstrText.data ()[-1];
 					pstrText = pstrText.substr (1);
 					CDuiString sImageString = pstrText;
 					int iWidth = 0;
@@ -1778,7 +1778,7 @@ namespace DuiLib {
 						}
 					}
 					if (sName.empty ()) { // Italic
-						pstrNextStart = nullptr;
+						pstrNextStart = _T ("");
 						TFontInfo* pFontInfo = pDefFontInfo;
 						if (aFontArray.GetSize () > 0) pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
 						if (pFontInfo->bItalic == false) {
@@ -1848,7 +1848,7 @@ namespace DuiLib {
 							if (pt.x + iWidth > rc.right && pt.x > rc.left && (uStyle & DT_SINGLELINE) == 0) {
 								bLineEnd = true;
 							} else {
-								pstrNextStart = nullptr;
+								pstrNextStart = _T ("");
 								if (bDraw && bLineDraw) {
 									CDuiRect rcImage (pt.x, pt.y + cyLineHeight - iHeight, pt.x + iWidth, pt.y + cyLineHeight);
 									if (iHeight < cyLineHeight) {
@@ -1868,7 +1868,7 @@ namespace DuiLib {
 								cyMinHeight = pt.y + iHeight;
 								cxMaxWidth = MAX (cxMaxWidth, pt.x);
 							}
-						} else pstrNextStart = nullptr;
+						} else pstrNextStart = _T ("");
 					}
 				}
 				break;
@@ -1883,8 +1883,7 @@ namespace DuiLib {
 				{
 					pstrText = pstrText.substr (1);
 					if (pt.x > rc.left) bLineEnd = true;
-					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
-					int cyLineExtra = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
+					int cyLineExtra = (int) FawTools::parse_dec (pstrText);
 					aPIndentArray.Add ((LPVOID) cyLineExtra);
 					cyLine = MAX (cyLine, pTm->tmHeight + pTm->tmExternalLeading + cyLineExtra);
 				}
@@ -1924,8 +1923,7 @@ namespace DuiLib {
 				case _T ('x'):  // X Indent
 				{
 					pstrText = pstrText.substr (1);
-					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
-					int iWidth = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
+					int iWidth = (int) FawTools::parse_dec (pstrText);
 					pt.x += iWidth;
 					cxMaxWidth = MAX (cxMaxWidth, pt.x);
 				}
@@ -1933,15 +1931,14 @@ namespace DuiLib {
 				case _T ('y'):  // Y Indent
 				{
 					pstrText = pstrText.substr (1);
-					while (pstrText[0] > _T ('\0') && pstrText[0] <= _T (' ')) pstrText = ::CharNext (pstrText);
-					cyLine = (int) _tcstol (pstrText, const_cast<LPTSTR*>(&pstrText), 10);
+					int iWidth = (int) FawTools::parse_dec (pstrText);
 				}
 				break;
 				}
-				if (pstrNextStart != nullptr) pstrText = pstrNextStart;
+				if (!pstrNextStart.empty ()) pstrText = pstrNextStart;
 				else {
-					while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) pstrText = ::CharNext (pstrText);
-					pstrText = ::CharNext (pstrText);
+					while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) pstrText = pstrText.substr (1);
+					pstrText = pstrText.substr (1);
 				}
 			} else if (!bInRaw && (pstrText[0] == _T ('<') || pstrText[0] == _T ('{')) && pstrText[1] == _T ('/')) {
 				pstrText = pstrText.substr (2);
@@ -2003,8 +2000,8 @@ namespace DuiLib {
 				}
 				break;
 				}
-				while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) pstrText = ::CharNext (pstrText);
-				pstrText = ::CharNext (pstrText);
+				while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) pstrText = pstrText.substr (1);
+				pstrText = pstrText.substr (1);
 			} else if (!bInRaw &&  pstrText[0] == _T ('<') && pstrText[2] == _T ('>') && (pstrText[1] == _T ('{') || pstrText[1] == _T ('}'))) {
 				SIZE szSpace = { 0 };
 				::GetTextExtentPoint32 (hDC, &pstrText[1], 1, &szSpace);
@@ -2034,36 +2031,36 @@ namespace DuiLib {
 				int cchSize = 0;
 				int cchLastGoodWord = 0;
 				int cchLastGoodSize = 0;
-				LPCTSTR p = pstrText;
-				LPCTSTR pstrNext;
+				string_view_t p = pstrText;
+				string_view_t pstrNext;
 				SIZE szText = { 0 };
-				if (!bInRaw && *p == _T ('<') || *p == _T ('{')) p++, cchChars++, cchSize++;
-				while (*p != _T ('\0') && *p != _T ('\n')) {
+				if (!bInRaw && p[0] == _T ('<') || p[0] == _T ('{')) p = p.substr (1), cchChars++, cchSize++;
+				while (p[0] != _T ('\0') && p[0] != _T ('\n')) {
 					// This part makes sure that we're word-wrapping if needed or providing support
 					// for DT_END_ELLIPSIS. Unfortunately the GetTextExtentPoint32() call is pretty
 					// slow when repeated so often.
 					// TODO: Rewrite and use GetTextExtentExPoint() instead!
 					if (bInRaw) {
-						if ((*p == _T ('<') || *p == _T ('{')) && p[1] == _T ('/')
+						if ((p[0] == _T ('<') || p[0] == _T ('{')) && p[1] == _T ('/')
 							&& p[2] == _T ('r') && (p[3] == _T ('>') || p[3] == _T ('}'))) {
-							p += 4;
+							p = p.substr (4);
 							bInRaw = false;
 							break;
 						}
 					} else {
-						if (*p == _T ('<') || *p == _T ('{')) break;
+						if (p[0] == _T ('<') || p[0] == _T ('{')) break;
 					}
-					pstrNext = ::CharNext (p);
+					pstrNext = p.substr (1);
 					cchChars++;
-					cchSize += (int) (pstrNext - p);
+					cchSize += (int) (pstrNext.data () - p.data ());
 					szText.cx = cchChars * pTm->tmMaxCharWidth;
 					if (pt.x + szText.cx >= rc.right) {
-						::GetTextExtentPoint32 (hDC, pstrText, cchSize, &szText);
+						::GetTextExtentPoint32 (hDC, pstrText.data (), cchSize, &szText);
 					}
 					if (pt.x + szText.cx > rc.right) {
 						if (pt.x + szText.cx > rc.right && pt.x != rc.left) {
 							cchChars--;
-							cchSize -= (int) (pstrNext - p);
+							cchSize -= (int) (pstrNext.data () - p.data ());
 						}
 						if ((uStyle & DT_WORDBREAK) != 0 && cchLastGoodWord > 0) {
 							cchChars = cchLastGoodWord;
@@ -2071,13 +2068,13 @@ namespace DuiLib {
 						}
 						if ((uStyle & DT_END_ELLIPSIS) != 0 && cchChars > 0) {
 							cchChars -= 1;
-							LPCTSTR pstrPrev = ::CharPrev (pstrText, p);
+							string_view_t pstrPrev = &p.data ()[-1];
 							if (cchChars > 0) {
 								cchChars -= 1;
-								pstrPrev = ::CharPrev (pstrText, pstrPrev);
-								cchSize -= (int) (p - pstrPrev);
+								pstrPrev = &pstrPrev.data ()[-1];
+								cchSize -= (int) (p.data () - pstrPrev.data ());
 							} else
-								cchSize -= (int) (p - pstrPrev);
+								cchSize -= (int) (p.data () - pstrPrev.data ());
 							pt.x = rc.right;
 						}
 						bLineEnd = true;
@@ -2088,27 +2085,27 @@ namespace DuiLib {
 						cchLastGoodWord = cchChars;
 						cchLastGoodSize = cchSize;
 					}
-					if (*p == _T (' ')) {
+					if (p[0] == _T (' ')) {
 						cchLastGoodWord = cchChars;
 						cchLastGoodSize = cchSize;
 					}
-					p = ::CharNext (p);
+					p = p.substr (1);
 				}
 
-				::GetTextExtentPoint32 (hDC, pstrText, cchSize, &szText);
+				::GetTextExtentPoint32 (hDC, pstrText.data (), cchSize, &szText);
 				if (bDraw && bLineDraw) {
 					if ((uStyle & DT_SINGLELINE) == 0 && (uStyle & DT_CENTER) != 0) {
 						ptPos.x += (rc.right - rc.left - szText.cx) / 2;
 					} else if ((uStyle & DT_SINGLELINE) == 0 && (uStyle & DT_RIGHT) != 0) {
 						ptPos.x += (rc.right - rc.left - szText.cx);
 					}
-					::TextOut (hDC, ptPos.x, ptPos.y + cyLineHeight - pTm->tmHeight - pTm->tmExternalLeading, pstrText, cchSize);
+					::TextOut (hDC, ptPos.x, ptPos.y + cyLineHeight - pTm->tmHeight - pTm->tmExternalLeading, pstrText.data (), cchSize);
 					if (pt.x >= rc.right && (uStyle & DT_END_ELLIPSIS) != 0)
 						::TextOut (hDC, ptPos.x + szText.cx, ptPos.y, _T ("..."), 3);
 				}
 				pt.x += szText.cx;
 				cxMaxWidth = MAX (cxMaxWidth, pt.x);
-				pstrText += cchSize;
+				pstrText = pstrText.substr (cchSize);
 			}
 
 			if (pt.x >= rc.right || pstrText[0] == _T ('\n') || pstrText[0] == _T ('\0')) bLineEnd = true;
@@ -2260,13 +2257,13 @@ namespace DuiLib {
 		return hBitmap;
 	}
 
-	SIZE CRenderEngine::GetTextSize (HDC hDC, CPaintManagerUI* pManager, LPCTSTR pstrText, int iFont, UINT uStyle) {
+	SIZE CRenderEngine::GetTextSize (HDC hDC, CPaintManagerUI* pManager, string_view_t pstrText, int iFont, UINT uStyle) {
 		SIZE size = { 0, 0 };
 		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
 		if (pstrText == nullptr || pManager == nullptr) return size;
 		::SetBkMode (hDC, TRANSPARENT);
 		HFONT hOldFont = (HFONT)::SelectObject (hDC, pManager->GetFont (iFont));
-		GetTextExtentPoint32 (hDC, pstrText, (int) _tcslen (pstrText), &size);
+		GetTextExtentPoint32 (hDC, pstrText.data (), (int) pstrText.length (), &size);
 		::SelectObject (hDC, hOldFont);
 		return size;
 	}

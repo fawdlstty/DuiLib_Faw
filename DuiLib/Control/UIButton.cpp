@@ -13,7 +13,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CButtonUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_BUTTON) == 0) return static_cast<CButtonUI*>(this);
+		if (pstrName == DUI_CTR_BUTTON) return static_cast<CButtonUI*>(this);
 		return CLabelUI::GetInterface (pstrName.data ());
 	}
 
@@ -291,23 +291,17 @@ namespace DuiLib {
 		else if (pstrName == _T ("bindtabindex")) BindTabIndex (_ttoi (pstrValue.data ()));
 		else if (pstrName == _T ("bindtablayoutname")) BindTabLayoutName (pstrValue);
 		else if (pstrName == _T ("hotbkcolor")) {
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetHotBkColor (clrColor);
+			SetHotBkColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("pushedbkcolor")) {
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetPushedBkColor (clrColor);
+			SetPushedBkColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("disabledbkcolor")) {
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetDisabledBkColor (clrColor);
+			SetDisabledBkColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("hottextcolor")) {
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetHotTextColor (clrColor);
+			SetHotTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("pushedtextcolor")) {
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetPushedTextColor (clrColor);
+			SetPushedTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("focusedtextcolor")) {
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetFocusedTextColor (clrColor);
+			SetFocusedTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("hotfont")) SetHotFont (FawTools::parse_dec (pstrValue));
 		else if (pstrName == _T ("pushedfont")) SetPushedFont (FawTools::parse_dec (pstrValue));
 		else if (pstrName == _T ("focuedfont")) SetFocusedFont (FawTools::parse_dec (pstrValue));

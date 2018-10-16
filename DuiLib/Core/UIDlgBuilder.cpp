@@ -51,38 +51,37 @@ namespace DuiLib {
 		if (!root.IsValid ()) return nullptr;
 
 		if (pManager) {
-			LPCTSTR pstrClass = nullptr;
+			string_view_t pstrClass = nullptr;
 			int nAttributes = 0;
-			LPCTSTR pstrName = nullptr;
-			LPCTSTR pstrValue = nullptr;
+			string_view_t pstrName = nullptr;
+			string_view_t pstrValue = nullptr;
 			LPTSTR pstr = nullptr;
 			for (CMarkupNode node = root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
 				pstrClass = node.GetName ();
-				if (_tcsicmp (pstrClass, _T ("Image")) {
+				if (pstrClass == _T ("Image")) {
 					nAttributes = node.GetAttributeCount ();
-					LPCTSTR pImageName = nullptr;
-					LPCTSTR pImageResType = nullptr;
+					string_view_t pImageName = nullptr;
+					string_view_t pImageResType = nullptr;
 					bool shared = false;
 					DWORD mask = 0;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("name")) {
+						if (pstrName == _T ("name")) {
 							pImageName = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("restype")) {
+						} else if (pstrName == _T ("restype")) {
 							pImageResType = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("mask")) {
-							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-							mask = FawTools::parse_hex (pstrValue);
-						} else if (_tcsicmp (pstrName, _T ("shared")) {
-							shared = (_tcsicmp (pstrValue, _T ("true"));
+						} else if (pstrName == _T ("mask")) {
+							mask = (DWORD) FawTools::parse_hex (pstrValue);
+						} else if (pstrName == _T ("shared")) {
+							shared = FawTools::parse_bool (pstrValue);
 						}
 					}
-					if (pImageName) pManager->AddImage (pImageName, pImageResType, mask, false, shared);
-				} else if (_tcsicmp (pstrClass, _T ("Font")) {
+					if (!pImageName.empty ()) pManager->AddImage (pImageName, pImageResType, mask, false, shared);
+				} else if (pstrClass == _T ("Font")) {
 					nAttributes = node.GetAttributeCount ();
 					int id = -1;
-					LPCTSTR pFontName = nullptr;
+					string_view_t pFontName = nullptr;
 					int size = 12;
 					bool bold = false;
 					bool underline = false;
@@ -92,197 +91,177 @@ namespace DuiLib {
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("id")) {
-							id = _tcstol (pstrValue, &pstr, 10);
-						} else if (_tcsicmp (pstrName, _T ("name")) {
+						if (pstrName == _T ("id")) {
+							id = FawTools::parse_dec (pstrValue);
+						} else if (pstrName == _T ("name")) {
 							pFontName = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("size")) {
-							size = _tcstol (pstrValue, &pstr, 10);
-						} else if (_tcsicmp (pstrName, _T ("bold")) {
-							bold = (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcsicmp (pstrName, _T ("underline")) {
-							underline = (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcsicmp (pstrName, _T ("italic")) {
-							italic = (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcsicmp (pstrName, _T ("default")) {
-							defaultfont = (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcsicmp (pstrName, _T ("shared")) {
-							shared = (_tcsicmp (pstrValue, _T ("true"));
+						} else if (pstrName == _T ("size")) {
+							size = FawTools::parse_dec (pstrValue);
+						} else if (pstrName == _T ("bold")) {
+							bold = FawTools::parse_bool (pstrValue);
+						} else if (pstrName == _T ("underline")) {
+							underline = FawTools::parse_bool (pstrValue);
+						} else if (pstrName == _T ("italic")) {
+							italic = FawTools::parse_bool (pstrValue);
+						} else if (pstrName == _T ("default")) {
+							defaultfont = FawTools::parse_bool (pstrValue);
+						} else if (pstrName == _T ("shared")) {
+							shared = FawTools::parse_bool (pstrValue);
 						}
 					}
 					if (id >= 0) {
 						pManager->AddFont (id, pFontName, size, bold, underline, italic, shared);
 						if (defaultfont) pManager->SetDefaultFont (pFontName, pManager->GetDPIObj ()->Scale (size), bold, underline, italic, shared);
 					}
-				} else if (_tcsicmp (pstrClass, _T ("Default")) {
+				} else if (pstrClass == _T ("Default")) {
 					nAttributes = node.GetAttributeCount ();
-					LPCTSTR pControlName = nullptr;
-					LPCTSTR pControlValue = nullptr;
+					string_view_t pControlName = nullptr;
+					string_view_t pControlValue = nullptr;
 					bool shared = false;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("name")) {
+						if (pstrName == _T ("name")) {
 							pControlName = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("value")) {
+						} else if (pstrName == _T ("value")) {
 							pControlValue = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("shared")) {
-							shared = (_tcsicmp (pstrValue, _T ("true"));
+						} else if (pstrName == _T ("shared")) {
+							shared = FawTools::parse_bool (pstrValue);
 						}
 					}
-					if (pControlName) {
+					if (!pControlName.empty ()) {
 						pManager->AddDefaultAttributeList (pControlName, pControlValue, shared);
 					}
-				} else if (_tcsicmp (pstrClass, _T ("Style")) {
+				} else if (pstrClass == _T ("Style")) {
 					nAttributes = node.GetAttributeCount ();
-					LPCTSTR pName = nullptr;
-					LPCTSTR pStyle = nullptr;
+					string_view_t pName = nullptr;
+					string_view_t pStyle = nullptr;
 					bool shared = false;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("name")) {
+						if (pstrName == _T ("name")) {
 							pName = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("value")) {
+						} else if (pstrName == _T ("value")) {
 							pStyle = pstrValue;
-						} else if (_tcsicmp (pstrName, _T ("shared")) {
-							shared = (_tcsicmp (pstrValue, _T ("true"));
+						} else if (pstrName == _T ("shared")) {
+							shared = FawTools::parse_bool (pstrValue);
 						}
 					}
-					if (pName) {
+					if (!pName.empty ()) {
 						pManager->AddStyle (pName, pStyle, shared);
 					}
-				} else if (_tcsicmp (pstrClass, _T ("Import")) {
+				} else if (pstrClass == _T ("Import")) {
 					nAttributes = node.GetAttributeCount ();
-					LPCTSTR pstrPath = nullptr;
+					string_view_t pstrPath = nullptr;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("fontfile")) {
+						if (pstrName == _T ("fontfile")) {
 							pstrPath = pstrValue;
 						}
 					}
-					if (pstrPath) {
+					if (!pstrPath.empty ()) {
 						pManager->AddFontArray (pstrPath);
 					}
 				}
 			}
 
 			pstrClass = root.GetName ();
-			if (_tcsicmp (pstrClass, _T ("Window")) {
+			if (pstrClass == _T ("Window")) {
 				if (pManager->GetPaintWindow ()) {
 					nAttributes = root.GetAttributeCount ();
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = root.GetAttributeName (i);
 						pstrValue = root.GetAttributeValue (i);
-						if (_tcsicmp (pstrName, _T ("size")) {
+						if (pstrName == _T ("size")) {
 							pstr = nullptr;
-							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
+							int cx = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->SetInitSize (pManager->GetDPIObj ()->Scale (cx), pManager->GetDPIObj ()->Scale (cy));
-						} else if (_tcsicmp (pstrName, _T ("sizebox")) {
+						} else if (pstrName == _T ("sizebox")) {
 							RECT rcSizeBox = { 0 };
 							pstr = nullptr;
-							rcSizeBox.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
+							rcSizeBox.left = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
 							rcSizeBox.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							rcSizeBox.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 							rcSizeBox.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 							pManager->SetSizeBox (rcSizeBox);
-						} else if (_tcsicmp (pstrName, _T ("caption")) {
+						} else if (pstrName == _T ("caption")) {
 							RECT rcCaption = { 0 };
 							pstr = nullptr;
-							rcCaption.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
+							rcCaption.left = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
 							rcCaption.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							rcCaption.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 							rcCaption.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 							pManager->SetCaptionRect (rcCaption);
-						} else if (_tcsicmp (pstrName, _T ("roundcorner")) {
+						} else if (pstrName == _T ("roundcorner")) {
 							pstr = nullptr;
-							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
+							int cx = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->SetRoundCorner (cx, cy);
-						} else if (_tcsicmp (pstrName, _T ("mininfo")) {
+						} else if (pstrName == _T ("mininfo")) {
 							pstr = nullptr;
-							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
+							int cx = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->SetMinInfo (cx, cy);
-						} else if (_tcsicmp (pstrName, _T ("maxinfo")) {
+						} else if (pstrName == _T ("maxinfo")) {
 							pstr = nullptr;
-							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
+							int cx = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
 							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							pManager->SetMaxInfo (cx, cy);
-						} else if (_tcsicmp (pstrName, _T ("showdirty")) {
-							pManager->SetShowUpdateRect (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcsicmp (pstrName, _T ("opacity")) == 0 || _tcsicmp (pstrName, _T ("alpha")) {
-							pManager->SetOpacity ((BYTE) _ttoi (pstrValue));
-						} else if (_tcscmp (pstrName, _T ("layeredopacity")) {
-							pManager->SetLayeredOpacity ((BYTE) _ttoi (pstrValue));
-						} else if (_tcscmp (pstrName, _T ("layered")) == 0 || _tcscmp (pstrName, _T ("bktrans")) {
-							pManager->SetLayered (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcscmp (pstrName, _T ("layeredimage")) {
+						} else if (pstrName == _T ("showdirty")) {
+							pManager->SetShowUpdateRect (FawTools::parse_bool (pstrValue));
+						} else if (pstrName == _T ("opacity") || pstrName == _T ("alpha")) {
+							pManager->SetOpacity ((BYTE) FawTools::parse_dec (pstrValue));
+						} else if (pstrName == _T ("layeredopacity")) {
+							pManager->SetLayeredOpacity ((BYTE) FawTools::parse_dec (pstrValue));
+						} else if (pstrName == _T ("layered") || pstrName == _T ("bktrans")) {
+							pManager->SetLayered (FawTools::parse_bool (pstrValue));
+						} else if (pstrName == _T ("layeredimage")) {
 							pManager->SetLayered (true);
 							pManager->SetLayeredImage (pstrValue);
-						} else if (_tcscmp (pstrName, _T ("noactivate")) {
-							pManager->SetNoActivate (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcsicmp (pstrName, _T ("disabledfontcolor")) {
-							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-							pstr = nullptr;
-							DWORD clrColor = FawTools::parse_hex (pstrValue);
-							pManager->SetDefaultDisabledColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("defaultfontcolor")) {
-							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-							pstr = nullptr;
-							DWORD clrColor = FawTools::parse_hex (pstrValue);
-							pManager->SetDefaultFontColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("linkfontcolor")) {
-							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-							pstr = nullptr;
-							DWORD clrColor = FawTools::parse_hex (pstrValue);
-							pManager->SetDefaultLinkFontColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("linkhoverfontcolor")) {
-							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-							pstr = nullptr;
-							DWORD clrColor = FawTools::parse_hex (pstrValue);
-							pManager->SetDefaultLinkHoverFontColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("selectedcolor")) {
-							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-							pstr = nullptr;
-							DWORD clrColor = FawTools::parse_hex (pstrValue);
-							pManager->SetDefaultSelectedBkColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("shadowsize")) {
-							pManager->GetShadow ()->SetSize (_ttoi (pstrValue));
-						} else if (_tcsicmp (pstrName, _T ("shadowsharpness")) {
-							pManager->GetShadow ()->SetSharpness (_ttoi (pstrValue));
-						} else if (_tcsicmp (pstrName, _T ("shadowdarkness")) {
-							pManager->GetShadow ()->SetDarkness (_ttoi (pstrValue));
-						} else if (_tcsicmp (pstrName, _T ("shadowposition")) {
-							pstr = nullptr;
-							int cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-							pManager->GetShadow ()->SetPosition (cx, cy);
-						} else if (_tcsicmp (pstrName, _T ("shadowcolor")) {
-							if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-							pstr = nullptr;
-							DWORD clrColor = FawTools::parse_hex (pstrValue);
-							pManager->GetShadow ()->SetColor (clrColor);
-						} else if (_tcsicmp (pstrName, _T ("shadowcorner")) {
+						} else if (pstrName == _T ("noactivate")) {
+							pManager->SetNoActivate (FawTools::parse_bool (pstrValue));
+						} else if (pstrName == _T ("disabledfontcolor")) {
+							pManager->SetDefaultDisabledColor ((DWORD) FawTools::parse_hex (pstrValue));
+						} else if (pstrName == _T ("defaultfontcolor")) {
+							pManager->SetDefaultFontColor ((DWORD) FawTools::parse_hex (pstrValue));
+						} else if (pstrName == _T ("linkfontcolor")) {
+							pManager->SetDefaultLinkFontColor ((DWORD) FawTools::parse_hex (pstrValue));
+						} else if (pstrName == _T ("linkhoverfontcolor")) {
+							pManager->SetDefaultLinkHoverFontColor ((DWORD) FawTools::parse_hex (pstrValue));
+						} else if (pstrName == _T ("selectedcolor")) {
+							pManager->SetDefaultSelectedBkColor ((DWORD) FawTools::parse_hex (pstrValue));
+						} else if (pstrName == _T ("shadowsize")) {
+							pManager->GetShadow ()->SetSize (FawTools::parse_dec (pstrValue));
+						} else if (pstrName == _T ("shadowsharpness")) {
+							pManager->GetShadow ()->SetSharpness (FawTools::parse_dec (pstrValue));
+						} else if (pstrName == _T ("shadowdarkness")) {
+							pManager->GetShadow ()->SetDarkness (FawTools::parse_dec (pstrValue));
+						} else if (pstrName == _T ("shadowposition")) {
+							SIZE sz = FawTools::parse_size (pstrValue);
+							pManager->GetShadow ()->SetPosition (sz.cx, sz.cy);
+						} else if (pstrName == _T ("shadowcolor")) {
+							pManager->GetShadow ()->SetColor ((DWORD) FawTools::parse_hex (pstrValue));
+						} else if (pstrName == _T ("shadowcorner")) {
 							RECT rcCorner = { 0 };
 							pstr = nullptr;
-							rcCorner.left = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
+							rcCorner.left = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
 							rcCorner.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
 							rcCorner.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
 							rcCorner.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 							pManager->GetShadow ()->SetShadowCorner (rcCorner);
-						} else if (_tcsicmp (pstrName, _T ("shadowimage")) {
+						} else if (pstrName == _T ("shadowimage")) {
 							pManager->GetShadow ()->SetImage (pstrValue);
-						} else if (_tcsicmp (pstrName, _T ("showshadow")) {
-							pManager->GetShadow ()->ShowShadow (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcsicmp (pstrName, _T ("gdiplustext")) {
-							pManager->SetUseGdiplusText (_tcsicmp (pstrValue, _T ("true"));
-						} else if (_tcsicmp (pstrName, _T ("textrenderinghint")) {
-							pManager->SetGdiplusTextRenderingHint (_ttoi (pstrValue));
-						} else if (_tcsicmp (pstrName, _T ("tooltiphovertime")) {
-							pManager->SetHoverTime (_ttoi (pstrValue));
+						} else if (pstrName == _T ("showshadow")) {
+							pManager->GetShadow ()->ShowShadow (FawTools::parse_bool (pstrValue));
+						} else if (pstrName == _T ("gdiplustext")) {
+							pManager->SetUseGdiplusText (FawTools::parse_bool (pstrValue));
+						} else if (pstrName == _T ("textrenderinghint")) {
+							pManager->SetGdiplusTextRenderingHint (FawTools::parse_dec (pstrValue));
+						} else if (pstrName == _T ("tooltiphovertime")) {
+							pManager->SetHoverTime (FawTools::parse_dec (pstrValue));
 						}
 					}
 				}
@@ -307,13 +286,12 @@ namespace DuiLib {
 		IContainerUI* pContainer = nullptr;
 		CControlUI* pReturn = nullptr;
 		for (CMarkupNode node = pRoot->GetChild (); node.IsValid (); node = node.GetSibling ()) {
-			LPCTSTR pstrClass = node.GetName ();
-			if (_tcsicmp (pstrClass, _T ("Image")) == 0 || _tcsicmp (pstrClass, _T ("Font")) == 0 \
-				|| _tcsicmp (pstrClass, _T ("Default")) == 0 || _tcsicmp (pstrClass, _T ("Style")) continue;
+			string_view_t pstrClass = node.GetName ();
+			if (pstrClass == _T ("Image") || pstrClass == _T ("Font") || pstrClass == _T ("Default") || pstrClass == _T ("Style")) continue;
 
 			CControlUI* pControl = nullptr;
-			if (_tcsicmp (pstrClass, _T ("Import")) continue;
-			if (_tcsicmp (pstrClass, _T ("Include")) {
+			if (pstrClass == _T ("Import")) continue;
+			if (pstrClass == _T ("Include")) {
 				if (!node.HasAttributes ()) continue;
 				int count = 1;
 				LPTSTR pstr = nullptr;

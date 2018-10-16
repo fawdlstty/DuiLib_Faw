@@ -1826,7 +1826,7 @@ namespace DuiLib {
 	void CPaintManagerUI::RemoveAllOptionGroups () {
 		CStdPtrArray* aOptionGroup;
 		for (int i = 0; i < m_mOptionGroup.GetSize (); i++) {
-			string_view_t key = m_mOptionGroup.GetAt (i);
+			string_view_t key = m_mOptionGroup.GetAt (i)->Key;
 			if (!key.empty ()) {
 				aOptionGroup = static_cast<CStdPtrArray*>(m_mOptionGroup.Find (key));
 				delete aOptionGroup;
@@ -1862,7 +1862,7 @@ namespace DuiLib {
 		// 图片
 		TImageInfo* data;
 		for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-			string_view_t key = m_SharedResInfo.m_ImageHash.GetAt (i);
+			string_view_t key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!key.empty ()) {
 				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key, false));
 				if (data) {
@@ -1875,7 +1875,7 @@ namespace DuiLib {
 		// 字体
 		TFontInfo* pFontInfo;
 		for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-			string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i);
+			string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key, false));
 				if (pFontInfo) {
@@ -1893,7 +1893,7 @@ namespace DuiLib {
 		// 样式
 		CDuiString* pStyle;
 		for (int i = 0; i < m_SharedResInfo.m_StyleHash.GetSize (); i++) {
-			string_view_t key = m_SharedResInfo.m_StyleHash.GetAt (i);
+			string_view_t key = m_SharedResInfo.m_StyleHash.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pStyle = static_cast<CDuiString*>(m_SharedResInfo.m_StyleHash.Find (key, false));
 				if (pStyle) {
@@ -1907,7 +1907,7 @@ namespace DuiLib {
 		// 样式
 		CDuiString* pAttr;
 		for (int i = 0; i < m_SharedResInfo.m_AttrHash.GetSize (); i++) {
-			string_view_t key = m_SharedResInfo.m_AttrHash.GetAt (i);
+			string_view_t key = m_SharedResInfo.m_AttrHash.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pAttr = static_cast<CDuiString*>(m_SharedResInfo.m_AttrHash.Find (key, false));
 				if (pAttr) {
@@ -1963,13 +1963,13 @@ namespace DuiLib {
 		RemoveAllImages ();;
 
 		for (int it = 0; it < m_ResInfo.m_CustomFonts.GetSize (); it++) {
-			TFontInfo* pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (m_ResInfo.m_CustomFonts[it]));
+			TFontInfo* pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts[it]->Data);
 			RebuildFont (pFontInfo);
 		}
 		RebuildFont (&m_ResInfo.m_DefaultFontInfo);
 
 		for (int it = 0; it < m_SharedResInfo.m_CustomFonts.GetSize (); it++) {
-			TFontInfo* pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (m_SharedResInfo.m_CustomFonts[it]));
+			TFontInfo* pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts[it]->Data);
 			RebuildFont (pFontInfo);
 		}
 		RebuildFont (&m_SharedResInfo.m_DefaultFontInfo);
@@ -2661,7 +2661,7 @@ namespace DuiLib {
 	HFONT CPaintManagerUI::GetFont (string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) {
 		TFontInfo* pFontInfo = nullptr;
 		for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-			string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i);
+			string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 				if (pFontInfo && pFontInfo->sFontName == pStrFontName && pFontInfo->iSize == nSize &&
@@ -2670,7 +2670,7 @@ namespace DuiLib {
 			}
 		}
 		for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-			string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i);
+			string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 				if (pFontInfo && pFontInfo->sFontName == pStrFontName && pFontInfo->iSize == nSize &&
@@ -2686,7 +2686,7 @@ namespace DuiLib {
 		TFontInfo* pFontInfo = nullptr;
 		if (bShared) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) return _ttoi (key.data ());
@@ -2694,7 +2694,7 @@ namespace DuiLib {
 			}
 		} else {
 			for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) return _ttoi (key.data ());
@@ -2709,7 +2709,7 @@ namespace DuiLib {
 		TFontInfo* pFontInfo = nullptr;
 		if (bShared) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->sFontName == pStrFontName && pFontInfo->iSize == nSize &&
@@ -2719,7 +2719,7 @@ namespace DuiLib {
 			}
 		} else {
 			for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->sFontName == pStrFontName && pFontInfo->iSize == nSize &&
@@ -2736,7 +2736,7 @@ namespace DuiLib {
 		TFontInfo* pFontInfo = nullptr;
 		if (bShared) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) {
@@ -2749,7 +2749,7 @@ namespace DuiLib {
 			}
 		} else {
 			for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) {
@@ -2790,7 +2790,7 @@ namespace DuiLib {
 		TFontInfo* pFontInfo;
 		if (bShared) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key, false));
 					if (pFontInfo) {
@@ -2802,7 +2802,7 @@ namespace DuiLib {
 			m_SharedResInfo.m_CustomFonts.RemoveAll ();
 		} else {
 			for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key, false));
 					if (pFontInfo) {
@@ -2835,7 +2835,7 @@ namespace DuiLib {
 	TFontInfo* CPaintManagerUI::GetFontInfo (HFONT hFont) {
 		TFontInfo* pFontInfo = nullptr;
 		for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-			string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i);
+			string_view_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 				if (pFontInfo && pFontInfo->hFont == hFont) break;
@@ -2843,7 +2843,7 @@ namespace DuiLib {
 		}
 		if (!pFontInfo) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i);
+				string_view_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) break;
@@ -2983,7 +2983,7 @@ namespace DuiLib {
 		if (bShared) {
 			TImageInfo* data;
 			for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-				string_view_t key = m_SharedResInfo.m_ImageHash.GetAt (i);
+				string_view_t key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 				if (!key.empty ()) {
 					data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key, false));
 					if (data) {
@@ -2995,7 +2995,7 @@ namespace DuiLib {
 		} else {
 			TImageInfo* data;
 			for (int i = 0; i < m_ResInfo.m_ImageHash.GetSize (); i++) {
-				string_view_t key = m_ResInfo.m_ImageHash.GetAt (i);
+				string_view_t key = m_ResInfo.m_ImageHash.GetAt (i)->Key;
 				if (!key.empty ()) {
 					data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (key, false));
 					if (data) {
@@ -3010,7 +3010,7 @@ namespace DuiLib {
 	void CPaintManagerUI::AdjustSharedImagesHSL () {
 		TImageInfo* data;
 		for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-			string_view_t key = m_SharedResInfo.m_ImageHash.GetAt (i);
+			string_view_t key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!key.empty ()) {
 				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key));
 				if (data && data->bUseHSL) {
@@ -3023,7 +3023,7 @@ namespace DuiLib {
 	void CPaintManagerUI::AdjustImagesHSL () {
 		TImageInfo* data;
 		for (int i = 0; i < m_ResInfo.m_ImageHash.GetSize (); i++) {
-			string_view_t key = m_ResInfo.m_ImageHash.GetAt (i);
+			string_view_t key = m_ResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!key.empty ()) {
 				data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (key));
 				if (data && data->bUseHSL) {
@@ -3044,7 +3044,7 @@ namespace DuiLib {
 		TImageInfo *data = nullptr;
 		TImageInfo *pNewData = nullptr;
 		for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-			string_view_t bitmap = m_SharedResInfo.m_ImageHash.GetAt (i);
+			string_view_t bitmap = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!bitmap.empty ()) {
 				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (bitmap));
 				if (data != nullptr) {
@@ -3083,7 +3083,7 @@ namespace DuiLib {
 		TImageInfo *data = nullptr;
 		TImageInfo *pNewData = nullptr;
 		for (int i = 0; i < m_ResInfo.m_ImageHash.GetSize (); i++) {
-			string_view_t bitmap = m_ResInfo.m_ImageHash.GetAt (i);
+			string_view_t bitmap = m_ResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!bitmap.empty ()) {
 				data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (bitmap));
 				if (data != nullptr) {
@@ -3149,7 +3149,7 @@ namespace DuiLib {
 	void CPaintManagerUI::RemoveAllDrawInfos () {
 		TDrawInfo* pDrawInfo = nullptr;
 		for (int i = 0; i < m_ResInfo.m_DrawInfoHash.GetSize (); i++) {
-			string_view_t key = m_ResInfo.m_DrawInfoHash.GetAt (i);
+			string_view_t key = m_ResInfo.m_DrawInfoHash.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (key, false));
 				if (pDrawInfo) {
@@ -3204,7 +3204,7 @@ namespace DuiLib {
 		if (bShared) {
 			CDuiString* pDefaultAttr;
 			for (int i = 0; i < m_SharedResInfo.m_AttrHash.GetSize (); i++) {
-				string_view_t key = m_SharedResInfo.m_AttrHash.GetAt (i);
+				string_view_t key = m_SharedResInfo.m_AttrHash.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pDefaultAttr = static_cast<CDuiString*>(m_SharedResInfo.m_AttrHash.Find (key));
 					if (pDefaultAttr) delete pDefaultAttr;
@@ -3214,7 +3214,7 @@ namespace DuiLib {
 		} else {
 			CDuiString* pDefaultAttr;
 			for (int i = 0; i < m_ResInfo.m_AttrHash.GetSize (); i++) {
-				string_view_t key = m_ResInfo.m_AttrHash.GetAt (i);
+				string_view_t key = m_ResInfo.m_AttrHash.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pDefaultAttr = static_cast<CDuiString*>(m_ResInfo.m_AttrHash.Find (key));
 					if (pDefaultAttr) delete pDefaultAttr;
@@ -3252,7 +3252,7 @@ namespace DuiLib {
 	void CPaintManagerUI::RemoveAllWindowCustomAttribute () {
 		CDuiString* pCostomAttr;
 		for (int i = 0; i < m_mWindowCustomAttrHash.GetSize (); i++) {
-			string_view_t key = m_mWindowCustomAttrHash.GetAt (i);
+			string_view_t key = m_mWindowCustomAttrHash.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pCostomAttr = static_cast<CDuiString*>(m_mWindowCustomAttrHash.Find (key));
 				delete pCostomAttr;
@@ -3499,7 +3499,7 @@ namespace DuiLib {
 		if (bShared) {
 			CDuiString* pStyle;
 			for (int i = 0; i < m_SharedResInfo.m_StyleHash.GetSize (); i++) {
-				string_view_t key = m_SharedResInfo.m_StyleHash.GetAt (i);
+				string_view_t key = m_SharedResInfo.m_StyleHash.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pStyle = static_cast<CDuiString*>(m_SharedResInfo.m_StyleHash.Find (key));
 					delete pStyle;
@@ -3509,7 +3509,7 @@ namespace DuiLib {
 		} else {
 			CDuiString* pStyle;
 			for (int i = 0; i < m_ResInfo.m_StyleHash.GetSize (); i++) {
-				string_view_t key = m_ResInfo.m_StyleHash.GetAt (i);
+				string_view_t key = m_ResInfo.m_StyleHash.GetAt (i)->Key;
 				if (!key.empty ()) {
 					pStyle = static_cast<CDuiString*>(m_ResInfo.m_StyleHash.Find (key));
 					delete pStyle;

@@ -578,8 +578,8 @@ namespace DuiLib {
 		return true;
 	}
 
-	bool CShadowUI::SetImage (LPCTSTR szImage) {
-		if (szImage == nullptr)
+	bool CShadowUI::SetImage (string_view_t szImage) {
+		if (!szImage.empty ())
 			return false;
 
 		m_bIsImageMode = true;

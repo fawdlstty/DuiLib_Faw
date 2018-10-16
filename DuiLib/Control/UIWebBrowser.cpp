@@ -150,7 +150,7 @@ namespace DuiLib {
 		if (m_pWebBrowser2) {
 			CDuiVariant url;
 			url.vt = VT_BSTR;
-			url.bstrVal = T2BSTR (lpszUrl);
+			url.bstrVal = _bstr_t (FawTools::get_utf16 (lpszUrl).c_str ());
 			HRESULT hr = m_pWebBrowser2->Navigate2 (&url, nullptr, nullptr, nullptr, nullptr);
 		}
 	}
@@ -407,8 +407,8 @@ namespace DuiLib {
 	}
 
 	void CWebBrowserUI::NavigateUrl (string_view_t lpszUrl) {
-		if (m_pWebBrowser2 && lpszUrl) {
-			m_pWebBrowser2->Navigate ((BSTR) SysAllocString (T2BSTR (lpszUrl)), nullptr, nullptr, nullptr, nullptr);
+		if (m_pWebBrowser2 && !lpszUrl.empty ()) {
+			m_pWebBrowser2->Navigate ((BSTR) SysAllocString (_bstr_t (FawTools::get_utf16 (lpszUrl).c_str ())), nullptr, nullptr, nullptr, nullptr);
 		}
 	}
 
@@ -417,7 +417,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CWebBrowserUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_WEBBROWSER) == 0) return static_cast<CWebBrowserUI*>(this);
+		if (pstrName == DUI_CTR_WEBBROWSER) return static_cast<CWebBrowserUI*>(this);
 		return CActiveXUI::GetInterface (pstrName);
 	}
 

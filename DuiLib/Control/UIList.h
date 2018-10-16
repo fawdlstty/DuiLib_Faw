@@ -441,7 +441,7 @@ namespace DuiLib {
 		LPVOID GetInterface (string_view_t pstrName);
 		UINT GetControlFlags () const;
 
-		string_view_t GetText (int iIndex) const;
+		CDuiString GetText (int iIndex) const;
 		void SetText (int iIndex, string_view_t pstrText);
 
 		void SetOwner (CControlUI* pOwner);

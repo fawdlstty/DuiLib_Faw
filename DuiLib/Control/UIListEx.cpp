@@ -890,9 +890,9 @@ namespace DuiLib {
 		return UIFLAG_WANTRETURN | ((IsEnabled () && m_nLinks > 0) ? UIFLAG_SETCURSOR : 0);
 	}
 
-	string_view_t CListTextExtElementUI::GetText (int iIndex) const {
+	CDuiString CListTextExtElementUI::GetText (int iIndex) const {
 		CDuiString* pText = static_cast<CDuiString*>(m_aTexts.GetAt (iIndex));
-		if (pText) return pText->c_str ();
+		if (pText) return *pText;
 		return nullptr;
 	}
 

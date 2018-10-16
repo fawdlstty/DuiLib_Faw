@@ -1220,7 +1220,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CListHeaderUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_LISTHEADER) == 0) return this;
+		if (pstrName == DUI_CTR_LISTHEADER) return this;
 		return CHorizontalLayoutUI::GetInterface (pstrName);
 	}
 
@@ -2098,7 +2098,7 @@ namespace DuiLib {
 		return UIFLAG_WANTRETURN | ((IsEnabled () && m_nLinks > 0) ? UIFLAG_SETCURSOR : 0);
 	}
 
-	string_view_t CListTextElementUI::GetText (int iIndex) const {
+	CDuiString CListTextElementUI::GetText (int iIndex) const {
 		CDuiString* pText = static_cast<CDuiString*>(m_aTexts.GetAt (iIndex));
 		if (pText) {
 			if (!IsResourceText ())

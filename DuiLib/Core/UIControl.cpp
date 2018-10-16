@@ -461,7 +461,7 @@ namespace DuiLib {
 		return m_uFloatAlign;
 	}
 
-	string_view_t CControlUI::GetToolTip () const {
+	CDuiString CControlUI::GetToolTip () const {
 		if (!IsResourceText ()) return m_sToolTip;
 		return CResourceManager::GetInstance ()->GetText (m_sToolTip);
 	}
@@ -741,7 +741,7 @@ namespace DuiLib {
 	void CControlUI::RemoveAllCustomAttribute () {
 		CDuiString* pCostomAttr;
 		for (int i = 0; i < m_mCustomAttrHash.GetSize (); i++) {
-			string_view_t key = m_mCustomAttrHash.GetAt (i);
+			string_view_t key = m_mCustomAttrHash.GetAt (i)->Key;
 			if (!key.empty ()) {
 				pCostomAttr = static_cast<CDuiString*>(m_mCustomAttrHash.Find (key));
 				delete pCostomAttr;
@@ -753,19 +753,14 @@ namespace DuiLib {
 	void CControlUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
 		// 是否样式表
 		if (m_pManager != nullptr) {
-			LPCTSTR pStyle = m_pManager->GetStyle (pstrValue);
-			if (pStyle != nullptr) {
+			string_view_t pStyle = m_pManager->GetStyle (pstrValue);
+			if (!pStyle.empty ()) {
 				ApplyAttributeList (pStyle);
 				return;
 			}
 		}
 		if (pstrName == _T ("pos")) {
-			RECT rcPos = { 0 };
-			LPTSTR pstr = nullptr;
-			rcPos.left = _tcstol (pstrValue.data (), &pstr, 10);  ASSERT (pstr);
-			rcPos.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcPos.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcPos.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+			RECT rcPos = FawTools::parse_rect (pstrValue);
 			SIZE szXY = { rcPos.left >= 0 ? rcPos.left : rcPos.right, rcPos.top >= 0 ? rcPos.top : rcPos.bottom };
 			SetFixedXY (szXY);
 			SetFixedWidth (rcPos.right - rcPos.left);
@@ -776,12 +771,7 @@ namespace DuiLib {
 			if (nValue.find (',') == string_t::npos) {
 				SetFloat (FawTools::parse_bool (pstrValue));
 			} else {
-				TPercentInfo piFloatPercent = { 0 };
-				LPTSTR pstr = nullptr;
-				piFloatPercent.left = _tcstod (pstrValue.data (), &pstr);  ASSERT (pstr);
-				piFloatPercent.top = _tcstod (pstr + 1, &pstr);    ASSERT (pstr);
-				piFloatPercent.right = _tcstod (pstr + 1, &pstr);  ASSERT (pstr);
-				piFloatPercent.bottom = _tcstod (pstr + 1, &pstr); ASSERT (pstr);
+				TPercentInfo piFloatPercent = FawTools::parse_TPercentInfo (pstrValue);
 				SetFloatPercent (piFloatPercent);
 				SetFloat (true);
 			}
@@ -795,28 +785,29 @@ namespace DuiLib {
 				while (pstrValue[0] != _T ('\0') && pstrValue[0] != _T (',') && pstrValue[0] != _T (' ')) {
 					LPTSTR pstrTemp = ::CharNext (pstrValue.data ());
 					while (pstrValue < pstrTemp) {
-						sValue += pstrValue[0]++;
+						sValue += pstrValue[0];
+						pstrValue = pstrValue.substr (1);
 					}
 				}
-				if (sValue.CompareNoCase (_T ("nullptr")) {
+				if (sValue.CompareNoCase (_T ("nullptr")) == 0) {
 					uAlign = 0;
 				}
-				if (sValue.CompareNoCase (_T ("left")) {
+				if (sValue.CompareNoCase (_T ("left")) == 0) {
 					uAlign &= ~(DT_CENTER | DT_RIGHT);
 					uAlign |= DT_LEFT;
-				} else if (sValue.CompareNoCase (_T ("center")) {
+				} else if (sValue.CompareNoCase (_T ("center")) == 0) {
 					uAlign &= ~(DT_LEFT | DT_RIGHT);
 					uAlign |= DT_CENTER;
-				} else if (sValue.CompareNoCase (_T ("right")) {
+				} else if (sValue.CompareNoCase (_T ("right")) == 0) {
 					uAlign &= ~(DT_LEFT | DT_CENTER);
 					uAlign |= DT_RIGHT;
-				} else if (sValue.CompareNoCase (_T ("top")) {
+				} else if (sValue.CompareNoCase (_T ("top")) == 0) {
 					uAlign &= ~(DT_BOTTOM | DT_VCENTER);
 					uAlign |= DT_TOP;
-				} else if (sValue.CompareNoCase (_T ("vcenter")) {
+				} else if (sValue.CompareNoCase (_T ("vcenter")) == 0) {
 					uAlign &= ~(DT_TOP | DT_BOTTOM);
 					uAlign |= DT_VCENTER;
-				} else if (sValue.CompareNoCase (_T ("bottom")) {
+				} else if (sValue.CompareNoCase (_T ("bottom")) == 0) {
 					uAlign &= ~(DT_TOP | DT_VCENTER);
 					uAlign |= DT_BOTTOM;
 				}
@@ -831,7 +822,7 @@ namespace DuiLib {
 			rcPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
 			SetPadding (rcPadding);
 		} else if (pstrName == _T ("gradient")) SetGradient (pstrValue);
-		else if (pstrName == _T ("bkcolor")) == 0 || pstrName == _T ("bkcolor1")) {
+		else if (pstrName == _T ("bkcolor") || pstrName == _T ("bkcolor1")) {
 			while (pstrValue[0] > _T ('\0') && pstrValue[0] <= _T (' ')) pstrValue = ::CharNext (pstrValue.data ());
 			if (pstrValue[0] == _T ('#')) pstrValue = ::CharNext (pstrValue.data ());
 			LPTSTR pstr = nullptr;
@@ -914,51 +905,59 @@ namespace DuiLib {
 		else if (pstrName == _T ("float")) SetFloat (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("shortcut")) SetShortcut (pstrValue[0]);
 		else if (pstrName == _T ("menu")) SetContextMenuUsed (FawTools::parse_bool (pstrValue));
-		else if (pstrName == _T ("cursor")) == 0 && !pstrValue.empty ()) {
-			if (_tcsicmp (pstrValue.data (), _T ("arrow"))			SetCursor (DUI_ARROW);
-			else if (_tcsicmp (pstrValue.data (), _T ("ibeam"))	SetCursor (DUI_IBEAM);
-			else if (_tcsicmp (pstrValue.data (), _T ("wait"))		SetCursor (DUI_WAIT);
-			else if (_tcsicmp (pstrValue.data (), _T ("cross"))	SetCursor (DUI_CROSS);
-			else if (_tcsicmp (pstrValue.data (), _T ("uparrow"))	SetCursor (DUI_UPARROW);
-			else if (_tcsicmp (pstrValue.data (), _T ("size"))		SetCursor (DUI_SIZE);
-			else if (_tcsicmp (pstrValue.data (), _T ("icon"))		SetCursor (DUI_ICON);
-			else if (_tcsicmp (pstrValue.data (), _T ("sizenwse"))	SetCursor (DUI_SIZENWSE);
-			else if (_tcsicmp (pstrValue.data (), _T ("sizenesw"))	SetCursor (DUI_SIZENESW);
-			else if (_tcsicmp (pstrValue.data (), _T ("sizewe"))	SetCursor (DUI_SIZEWE);
-			else if (_tcsicmp (pstrValue.data (), _T ("sizens"))	SetCursor (DUI_SIZENS);
-			else if (_tcsicmp (pstrValue.data (), _T ("sizeall"))	SetCursor (DUI_SIZEALL);
-			else if (_tcsicmp (pstrValue.data (), _T ("no"))		SetCursor (DUI_NO);
-			else if (_tcsicmp (pstrValue.data (), _T ("hand"))		SetCursor (DUI_HAND);
+		else if (pstrName == _T ("cursor") && !pstrValue.empty ()) {
+			if (pstrValue == _T ("arrow"))			SetCursor (DUI_ARROW);
+			else if (pstrValue == _T ("ibeam"))	SetCursor (DUI_IBEAM);
+			else if (pstrValue == _T ("wait"))		SetCursor (DUI_WAIT);
+			else if (pstrValue == _T ("cross"))	SetCursor (DUI_CROSS);
+			else if (pstrValue == _T ("uparrow"))	SetCursor (DUI_UPARROW);
+			else if (pstrValue == _T ("size"))		SetCursor (DUI_SIZE);
+			else if (pstrValue == _T ("icon"))		SetCursor (DUI_ICON);
+			else if (pstrValue == _T ("sizenwse"))	SetCursor (DUI_SIZENWSE);
+			else if (pstrValue == _T ("sizenesw"))	SetCursor (DUI_SIZENESW);
+			else if (pstrValue == _T ("sizewe"))	SetCursor (DUI_SIZEWE);
+			else if (pstrValue == _T ("sizens"))	SetCursor (DUI_SIZENS);
+			else if (pstrValue == _T ("sizeall"))	SetCursor (DUI_SIZEALL);
+			else if (pstrValue == _T ("no"))		SetCursor (DUI_NO);
+			else if (pstrValue == _T ("hand"))		SetCursor (DUI_HAND);
 		} else if (pstrName == _T ("virtualwnd")) SetVirtualWnd (pstrValue);
 		else if (pstrName == _T ("innerstyle")) {
 			CDuiString sXmlData = pstrValue;
 			sXmlData.Replace (_T ("&quot;"), _T ("\""));
-			LPCTSTR pstrList = sXmlData;
+			string_view_t pstrList = sXmlData;
 			CDuiString sItem;
 			CDuiString sValue;
-			while (*pstrList != _T ('\0')) {
+			while (!pstrList.empty ()) {
 				sItem.clear ();
 				sValue.clear ();
-				while (*pstrList != _T ('\0') && *pstrList != _T ('=')) {
-					LPTSTR pstrTemp = ::CharNext (pstrList);
+				while (!pstrList.empty () && pstrList[0] != _T ('=')) {
+					string_view_t pstrTemp = pstrList.substr (1);
 					while (pstrList < pstrTemp) {
-						sItem += *pstrList++;
+						sItem += pstrList[0];
+						pstrList = pstrList.substr (1);
 					}
 				}
-				ASSERT (*pstrList == _T ('='));
-				if (*pstrList++ != _T ('=')) return;
-				ASSERT (*pstrList == _T ('\"'));
-				if (*pstrList++ != _T ('\"')) return;
-				while (*pstrList != _T ('\0') && *pstrList != _T ('\"')) {
-					LPTSTR pstrTemp = ::CharNext (pstrList);
+				ASSERT (pstrList[0] == _T ('='));
+				if (pstrList[0] != _T ('=')) return;
+				pstrList = pstrList.substr (1);
+				ASSERT (pstrList[0] == _T ('\"'));
+				if (pstrList[0] != _T ('\"')) return;
+				pstrList = pstrList.substr (1);
+				while (pstrList[0] != _T ('\0') && pstrList[0] != _T ('\"')) {
+					string_view_t pstrTemp = pstrList.substr (1);
 					while (pstrList < pstrTemp) {
-						sValue += *pstrList++;
+						sValue += pstrList[0];
+						pstrList = pstrList.substr (1);
 					}
 				}
-				ASSERT (*pstrList == _T ('\"'));
-				if (*pstrList++ != _T ('\"')) return;
+				ASSERT (pstrList[0] == _T ('\"'));
+				if (pstrList[0] != _T ('\"')) return;
+				pstrList = pstrList.substr (1);
 				SetAttribute (sItem, sValue);
-				if (*pstrList++ != _T (' ') && *pstrList++ != _T (',')) return;
+				if (pstrList[0] != _T (' ')) return;
+				pstrList = pstrList.substr (1);
+				if (pstrList[0] != _T (',')) return;
+				pstrList = pstrList.substr (1);
 			}
 		} else {
 			AddCustomAttribute (pstrName, pstrValue);
@@ -968,40 +967,48 @@ namespace DuiLib {
 	CControlUI* CControlUI::ApplyAttributeList (string_view_t pstrValue) {
 		// 解析样式表
 		if (m_pManager != nullptr) {
-			LPCTSTR pStyle = m_pManager->GetStyle (pstrValue);
-			if (pStyle != nullptr) {
+			string_view_t pStyle = m_pManager->GetStyle (pstrValue);
+			if (!pStyle.empty ()) {
 				return ApplyAttributeList (pStyle);
 			}
 		}
 		CDuiString sXmlData = pstrValue;
 		sXmlData.Replace (_T ("&quot;"), _T ("\""));
-		LPCTSTR pstrList = sXmlData;
+		string_view_t pstrList = sXmlData;
 		// 解析样式属性
 		CDuiString sItem;
 		CDuiString sValue;
-		while (*pstrList != _T ('\0')) {
+		while (pstrList[0] != _T ('\0')) {
 			sItem.clear ();
 			sValue.clear ();
-			while (*pstrList != _T ('\0') && *pstrList != _T ('=')) {
-				LPTSTR pstrTemp = ::CharNext (pstrList);
+			while (pstrList[0] != _T ('\0') && pstrList[0] != _T ('=')) {
+				string_view_t pstrTemp = pstrList.substr (1);
 				while (pstrList < pstrTemp) {
-					sItem += *pstrList++;
+					sItem += pstrList[0];
+					pstrList = pstrList.substr (1);
 				}
 			}
-			ASSERT (*pstrList == _T ('='));
-			if (*pstrList++ != _T ('=')) return this;
-			ASSERT (*pstrList == _T ('\"'));
-			if (*pstrList++ != _T ('\"')) return this;
-			while (*pstrList != _T ('\0') && *pstrList != _T ('\"')) {
-				LPTSTR pstrTemp = ::CharNext (pstrList);
+			ASSERT (pstrList[0] == _T ('='));
+			if (pstrList[0] != _T ('=')) return this;
+			pstrList = pstrList.substr (1);
+			ASSERT (pstrList[0] == _T ('\"'));
+			if (pstrList[0] != _T ('\"')) return this;
+			pstrList = pstrList.substr (1);
+			while (pstrList[0] != _T ('\0') && pstrList[0] != _T ('\"')) {
+				string_view_t pstrTemp = pstrList.substr (1);
 				while (pstrList < pstrTemp) {
-					sValue += *pstrList++;
+					sValue += pstrList[0];
+					pstrList = pstrList.substr (1);
 				}
 			}
-			ASSERT (*pstrList == _T ('\"'));
-			if (*pstrList++ != _T ('\"')) return this;
+			ASSERT (pstrList[0] == _T ('\"'));
+			if (pstrList[0] != _T ('\"')) return this;
+			pstrList = pstrList.substr (1);
 			SetAttribute (sItem, sValue);
-			if (*pstrList++ != _T (' ') && *pstrList++ != _T (',')) return this;
+			if (pstrList[0] != _T (' ')) return this;
+			pstrList = pstrList.substr (1);
+			if (pstrList[0] != _T (',')) return this;
+			pstrList = pstrList.substr (1);
 		}
 		return this;
 	}

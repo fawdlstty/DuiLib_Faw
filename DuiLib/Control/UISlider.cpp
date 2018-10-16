@@ -18,7 +18,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CSliderUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_SLIDER) == 0) return static_cast<CSliderUI*>(this);
+		if (pstrName == DUI_CTR_SLIDER) return static_cast<CSliderUI*>(this);
 		return CProgressUI::GetInterface (pstrName);
 	}
 
@@ -223,13 +223,10 @@ namespace DuiLib {
 		else if (pstrName == _T ("thumbhotimage")) SetThumbHotImage (pstrValue);
 		else if (pstrName == _T ("thumbpushedimage")) SetThumbPushedImage (pstrValue);
 		else if (pstrName == _T ("thumbsize")) {
-			SIZE szXY = { 0 };
-			LPTSTR pstr = nullptr;
-			szXY.cx = _tcstol (pstrValue, &pstr, 10);  ASSERT (pstr);
-			szXY.cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
+			SIZE szXY = FawTools::parse_size (pstrValue);
 			SetThumbSize (szXY);
 		} else if (pstrName == _T ("step")) {
-			SetChangeStep (_ttoi (pstrValue));
+			SetChangeStep (FawTools::parse_dec (pstrValue));
 		} else if (pstrName == _T ("sendmove")) {
 			SetCanSendMove (FawTools::parse_bool (pstrValue));
 		} else CProgressUI::SetAttribute (pstrName, pstrValue);

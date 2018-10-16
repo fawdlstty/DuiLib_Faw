@@ -18,7 +18,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CTextUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_TEXT) == 0) return static_cast<CTextUI*>(this);
+		if (pstrName == DUI_CTR_TEXT) return static_cast<CTextUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 

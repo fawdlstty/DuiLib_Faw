@@ -28,7 +28,7 @@ namespace DuiLib {
 
 	LPVOID CContainerUI::GetInterface (string_view_t pstrName) {
 		if (pstrName == _T ("IContainer")) return static_cast<IContainerUI*>(this);
-		else if (pstrName == DUI_CTR_CONTAINER) == 0) return static_cast<CContainerUI*>(this);
+		else if (pstrName == DUI_CTR_CONTAINER) return static_cast<CContainerUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -644,14 +644,14 @@ namespace DuiLib {
 				}
 			}
 		} else if (pstrName == _T ("childpadding")) SetChildPadding (_ttoi (pstrValue.data ()));
-		else if (_tcscmp (pstrName.data (), _T ("childalign")) {
-			if (_tcscmp (pstrValue.data (), _T ("left")) m_iChildAlign = DT_LEFT;
-			else if (_tcscmp (pstrValue.data (), _T ("center")) m_iChildAlign = DT_CENTER;
-			else if (_tcscmp (pstrValue.data (), _T ("right")) m_iChildAlign = DT_RIGHT;
-		} else if (_tcscmp (pstrName.data (), _T ("childvalign")) {
-			if (_tcscmp (pstrValue.data (), _T ("top")) m_iChildVAlign = DT_TOP;
-			else if (_tcscmp (pstrValue.data (), _T ("vcenter")) m_iChildVAlign = DT_VCENTER;
-			else if (_tcscmp (pstrValue.data (), _T ("bottom")) m_iChildVAlign = DT_BOTTOM;
+		else if (pstrName == _T ("childalign")) {
+			if (pstrValue == _T ("left")) m_iChildAlign = DT_LEFT;
+			else if (pstrValue == _T ("center")) m_iChildAlign = DT_CENTER;
+			else if (pstrValue == _T ("right")) m_iChildAlign = DT_RIGHT;
+		} else if (pstrName == _T ("childvalign")) {
+			if (pstrValue == _T ("top")) m_iChildVAlign = DT_TOP;
+			else if (pstrValue == _T ("vcenter")) m_iChildVAlign = DT_VCENTER;
+			else if (pstrValue == _T ("bottom")) m_iChildVAlign = DT_BOTTOM;
 		} else if (pstrName == _T ("scrollstepsize")) SetScrollStepSize (_ttoi (pstrValue.data ()));
 		else CControlUI::SetAttribute (pstrName, pstrValue);
 	}

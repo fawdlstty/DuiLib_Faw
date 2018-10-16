@@ -254,7 +254,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CEditUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_EDIT) == 0) return static_cast<CEditUI*>(this);
+		if (pstrName == DUI_CTR_EDIT) return static_cast<CEditUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 
@@ -511,13 +511,13 @@ namespace DuiLib {
 		m_sTipValue = pStrTipValue;
 	}
 
-	string_view_t CEditUI::GetTipValue () {
+	CDuiString CEditUI::GetTipValue () {
 		if (!IsResourceText ()) return m_sTipValue;
 		return CResourceManager::GetInstance ()->GetText (m_sTipValue);
 	}
 
 	void CEditUI::SetTipValueColor (string_view_t pStrColor) {
-		m_dwTipValueColor = FawTools::parse_hex (pStrColor);
+		m_dwTipValueColor = (DWORD) FawTools::parse_hex (pStrColor);
 	}
 
 	DWORD CEditUI::GetTipValueColor () {
@@ -572,8 +572,7 @@ namespace DuiLib {
 		else if (pstrName == _T ("tipvaluecolor")) SetTipValueColor (pstrValue);
 		else if (pstrName == _T ("nativetextcolor")) SetNativeEditTextColor (pstrValue);
 		else if (pstrName == _T ("nativebkcolor")) {
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetNativeEditBkColor (clrColor);
+			SetNativeEditBkColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 

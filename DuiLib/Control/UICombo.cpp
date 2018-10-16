@@ -274,7 +274,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CComboUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_COMBO) == 0) return static_cast<CComboUI*>(this);
+		if (pstrName == DUI_CTR_COMBO) return static_cast<CComboUI*>(this);
 		if (pstrName == _T ("IListOwner")) return static_cast<IListOwnerUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
@@ -527,7 +527,7 @@ namespace DuiLib {
 		return true;
 	}
 
-	string_view_t CComboUI::GetText () const {
+	CDuiString CComboUI::GetText () const {
 		if (m_iCurSel < 0 || m_iCurSel >= m_items.GetSize ()) {
 			return __super::GetText ();
 		} else {
@@ -559,8 +559,8 @@ namespace DuiLib {
 		if (!IsEnabled ()) m_uButtonState = 0;
 	}
 
-	std::string_view CComboUI::GetDropBoxAttributeList () {
-		return string_view_t ((string_t) m_sDropBoxAttributes);
+	string_view_t CComboUI::GetDropBoxAttributeList () {
+		return m_sDropBoxAttributes;
 	}
 
 	void CComboUI::SetDropBoxAttributeList (string_view_t pstrList) {

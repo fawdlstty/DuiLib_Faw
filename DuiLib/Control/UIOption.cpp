@@ -14,7 +14,7 @@ namespace DuiLib {
 	}
 
 	LPVOID COptionUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_OPTION) == 0) return static_cast<COptionUI*>(this);
+		if (pstrName == DUI_CTR_OPTION) return static_cast<COptionUI*>(this);
 		return CButtonUI::GetInterface (pstrName);
 	}
 
@@ -185,18 +185,10 @@ namespace DuiLib {
 		else if (pstrName == _T ("selectedpushedimage")) SetSelectedPushedImage (pstrValue);
 		else if (pstrName == _T ("selectedforeimage")) SetSelectedForedImage (pstrValue);
 		else if (pstrName == _T ("selectedstateimage")) SetSelectedStateImage (pstrValue);
-		else if (pstrName == _T ("selectedstatecount")) SetSelectedStateCount (_ttoi (pstrValue));
-		else if (pstrName == _T ("selectedbkcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetSelectedBkColor (clrColor);
-		} else if (pstrName == _T ("selectedtextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetSelectedTextColor (clrColor);
-		} else if (pstrName == _T ("selectedfont")) SetSelectedFont (_ttoi (pstrValue));
+		else if (pstrName == _T ("selectedstatecount")) SetSelectedStateCount (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("selectedbkcolor")) SetSelectedBkColor ((DWORD) FawTools::parse_hex (pstrValue));
+		else if (pstrName == _T ("selectedtextcolor")) SetSelectedTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		else if (pstrName == _T ("selectedfont")) SetSelectedFont (FawTools::parse_dec (pstrValue));
 		else CButtonUI::SetAttribute (pstrName, pstrValue);
 	}
 
@@ -323,7 +315,7 @@ namespace DuiLib {
 		return _T ("CheckBoxUI");
 	}
 	LPVOID CCheckBoxUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_CHECKBOX) == 0) return static_cast<CCheckBoxUI*>(this);
+		if (pstrName == DUI_CTR_CHECKBOX) return static_cast<CCheckBoxUI*>(this);
 		return COptionUI::GetInterface (pstrName);
 	}
 

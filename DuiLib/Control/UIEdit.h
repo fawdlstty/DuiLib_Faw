@@ -50,7 +50,7 @@ namespace DuiLib {
 		void SetReplaceSel (string_view_t lpszReplace);
 
 		void SetTipValue (string_view_t pStrTipValue);
-		string_view_t GetTipValue ();
+		CDuiString GetTipValue ();
 		void SetTipValueColor (string_view_t pStrColor);
 		DWORD GetTipValueColor ();
 

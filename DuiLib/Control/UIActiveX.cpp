@@ -825,7 +825,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CActiveXUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_ACTIVEX) == 0) return static_cast<CActiveXUI*>(this);
+		if (pstrName == DUI_CTR_ACTIVEX) return static_cast<CActiveXUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -976,7 +976,7 @@ namespace DuiLib {
 #ifndef _UNICODE
 		::MultiByteToWideChar (::GetACP (), 0, pstrCLSID.data (), -1, szCLSID, lengthof (szCLSID) - 1);
 #else
-		_tcsncpy (szCLSID, pstrCLSID, lengthof (szCLSID) - 1);
+		_tcsncpy (szCLSID, pstrCLSID.data (), lengthof (szCLSID) - 1);
 #endif
 		if (pstrCLSID[0] == '{') ::CLSIDFromString (szCLSID, &clsid);
 		else ::CLSIDFromProgID (szCLSID, &clsid);

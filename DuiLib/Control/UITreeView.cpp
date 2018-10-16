@@ -29,7 +29,7 @@ namespace DuiLib {
 		pItemButton->SetMouseEnabled (FALSE);
 
 		if (_ParentNode) {
-			if (_tcsicmp (_ParentNode->GetClass (), _T ("TreeNodeUI")) != 0) return;
+			if (_ParentNode->GetClass () != _T ("TreeNodeUI")) return;
 			pDottedLine->SetVisible (_ParentNode->IsVisible ());
 			pDottedLine->SetFixedWidth (_ParentNode->GetDottedLine ()->GetFixedWidth () + 16);
 			this->SetParentNode (_ParentNode);
@@ -429,25 +429,13 @@ namespace DuiLib {
 		else if (pstrName == _T ("itemattr"))
 			pItemButton->ApplyAttributeList (pstrValue);
 		else if (pstrName == _T ("itemtextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetItemTextColor (clrColor);
+			SetItemTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("itemhottextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetItemHotTextColor (clrColor);
+			SetItemHotTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("selitemtextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetSelItemTextColor (clrColor);
+			SetSelItemTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("selitemhottextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetSelItemHotTextColor (clrColor);
+			SetSelItemHotTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else CListContainerElementUI::SetAttribute (pstrName, pstrValue);
 	}
 
@@ -889,7 +877,7 @@ namespace DuiLib {
 	//************************************
 	bool CTreeViewUI::OnDBClickItem (void* param) {
 		TNotifyUI* pMsg = (TNotifyUI*) param;
-		if (_tcsicmp (pMsg->sType, DUI_MSGTYPE_TREEITEMDBCLICK) == 0) {
+		if (pMsg->sType == DUI_MSGTYPE_TREEITEMDBCLICK) {
 			CTreeNodeUI* pItem = static_cast<CTreeNodeUI*>(pMsg->pSender);
 			CCheckBoxUI* pFolder = pItem->GetFolderButton ();
 			pFolder->Selected (!pFolder->IsSelected ());
@@ -1116,27 +1104,15 @@ namespace DuiLib {
 		else if (pstrName == _T ("visiblecheckbtn"))
 			SetVisibleCheckBtn (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("itemminwidth"))
-			SetItemMinWidth (_ttoi (pstrValue));
+			SetItemMinWidth (FawTools::parse_dec (pstrValue));
 		else if (pstrName == _T ("itemtextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetItemTextColor (clrColor);
+			SetItemTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("itemhottextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetItemHotTextColor (clrColor);
+			SetItemHotTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("selitemtextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetSelItemTextColor (clrColor);
+			SetSelItemTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("selitemhottextcolor")) {
-			if (*pstrValue == _T ('#')) pstrValue = ::CharNext (pstrValue);
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = FawTools::parse_hex (pstrValue);
-			SetSelItemHotTextColor (clrColor);
+			SetSelItemHotTextColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else CListUI::SetAttribute (pstrName, pstrValue);
 	}
 

@@ -214,7 +214,7 @@ namespace DuiLib {
 					pByte += 2;
 
 					for (DWORD nSwap = 0; nSwap < dwSize; nSwap++) {
-						register CHAR nTemp = pByte[(nSwap << 1) + 0];
+						CHAR nTemp = pByte[(nSwap << 1) + 0];
 						pByte[(nSwap << 1) + 0] = pByte[(nSwap << 1) + 1];
 						pByte[(nSwap << 1) + 1] = nTemp;
 					}
@@ -287,7 +287,7 @@ namespace DuiLib {
 		CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 		if (CPaintManagerUI::GetResourceZip ().empty ()) {
 			sFile += pstrFilename;
-			HANDLE hFile = ::CreateFile (sFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+			HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 			if (hFile == INVALID_HANDLE_VALUE) return _Failed (_T ("Error opening file"));
 			DWORD dwSize = ::GetFileSize (hFile, nullptr);
 			if (dwSize == 0) return _Failed (_T ("File is empty"));
@@ -315,20 +315,15 @@ namespace DuiLib {
 			if (CPaintManagerUI::IsCachedResourceZip ()) hz = (HZIP) CPaintManagerUI::GetResourceZipHandle ();
 			else {
 				CDuiString sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
-#ifdef UNICODE
-				char* pwd = w2a ((wchar_t*) sFilePwd);
-				hz = OpenZip (sFile, pwd);
-				if (pwd) delete[] pwd;
-#else
-				hz = OpenZip (sFile, sFilePwd);
-#endif
+				std::string pwd = FawTools::get_gb18030 (sFilePwd);
+				hz = OpenZip (sFile.c_str (), pwd.c_str ());
 			}
 			if (hz == nullptr) return _Failed (_T ("Error opening zip file"));
 			ZIPENTRY ze;
 			int i = 0;
 			CDuiString key = pstrFilename;
 			key.Replace (_T ("\\"), _T ("/"));
-			if (FindZipItem (hz, key, true, &i, &ze) != 0) return _Failed (_T ("Could not find ziped file"));
+			if (FindZipItem (hz, key.c_str (), true, &i, &ze) != 0) return _Failed (_T ("Could not find ziped file"));
 			DWORD dwSize = ze.unc_size;
 			if (dwSize == 0) return _Failed (_T ("File is empty"));
 			if (dwSize > 4096 * 1024) return _Failed (_T ("File too large"));

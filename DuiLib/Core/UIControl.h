@@ -120,7 +120,7 @@ namespace DuiLib {
 		virtual void SetFloatAlign (UINT uAlign);
 		virtual UINT GetFloatAlign () const;
 		// 鼠标提示
-		virtual string_view_t GetToolTip () const;
+		virtual CDuiString GetToolTip () const;
 		virtual void SetToolTip (string_view_t pstrText);
 		virtual void SetToolTipWidth (int nWidth);
 		virtual int GetToolTipWidth (void);	// 多行ToolTip单行最长宽度

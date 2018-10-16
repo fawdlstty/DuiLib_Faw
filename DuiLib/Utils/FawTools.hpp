@@ -1,11 +1,18 @@
 #ifndef __FAW_TOOLS_HPP__
 #define __FAW_TOOLS_HPP__
 
+#include "../Core/UIManager.h"
+
+struct TPercentInfo;
+
 class FawTools {
 public:
 	// "1,2,3,4" -> RECT
 	template <typename T>
 	static RECT parse_rect (T &str) { auto v = split_number (str, 4); return { (LONG) v[0], (LONG) v[1], (LONG) v[2], (LONG) v[3] }; }
+
+	template <typename T>
+	static DuiLib::TPercentInfo parse_TPercentInfo (T &str) { auto v = split_double (str, 4); return { v[0], v[1], v[2], v[3] }; }
 
 	// "1,2" -> SIZE
 	template <typename T>
@@ -149,6 +156,40 @@ private:
 			v.push_back (n);
 		while (expect != string_t::npos && v.size () < expect)
 			v.push_back (0);
+		if constexpr (!std::is_const<T>::value)
+			str = str.substr (i);
+		return v;
+	}
+	template <typename T>
+	static std::vector<double> split_double (T &str, size_t expect = string_t::npos) {
+		std::vector<double> v;
+		double n = 0.0, l = 1.0;
+		size_t i = 0;
+		bool has_num = false;
+		for (; i < str.length (); ++i) {
+			TCHAR ch = str[i];
+			if (ch >= _T ('0') && ch <= _T ('9')) {
+				if (l > 0.5) {
+					n = n * 10 + ch - _T ('0');
+				} else {
+					n += (ch - _T ('0')) * l;
+					l /= 10;
+				}
+				has_num = true;
+			} else if (ch == _T ('.')) {
+				l /= 10;
+			} else {
+				v.push_back (n);
+				n = 0.0;
+				has_num = false;
+				if (expect != string_t::npos && v.size () >= expect)
+					break;
+			}
+		}
+		if (has_num)
+			v.push_back (n);
+		while (expect != string_t::npos && v.size () < expect)
+			v.push_back (0.0);
 		if constexpr (!std::is_const<T>::value)
 			str = str.substr (i);
 		return v;
