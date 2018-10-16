@@ -30,11 +30,11 @@ namespace DuiLib {
 		return CS_DBLCLKS;
 	}
 
-	CControlUI* WindowImplBase::CreateControl (LPCTSTR pstrClass) {
+	CControlUI* WindowImplBase::CreateControl (string_view_t pstrClass) {
 		return nullptr;
 	}
 
-	LPCTSTR WindowImplBase::QueryControlText (LPCTSTR lpstrId, LPCTSTR lpstrType) {
+	string_view_t WindowImplBase::QueryControlText (string_view_t lpstrId, string_view_t lpstrType) {
 		return nullptr;
 	}
 
@@ -255,11 +255,13 @@ namespace DuiLib {
 		CControlUI* pRoot = nullptr;
 		CDialogBuilder builder;
 		CDuiString sSkinType = GetSkinType ();
+		std::variant<UINT, string_t> xml;
 		if (!sSkinType.empty ()) {
-			std::variant<UINT, string_t> xml (FawTools::parse_dec (GetSkinFile ()));
+			std::variant<UINT, string_t> xml = FawTools::parse_dec (GetSkinFile ());
 			pRoot = builder.Create (xml, sSkinType, this, &m_pm);
 		} else {
-			pRoot = builder.Create (string_t (GetSkinFile ()), (UINT) 0, this, &m_pm);
+			std::variant<UINT, string_t> xml = string_t (GetSkinFile ());
+			pRoot = builder.Create (xml, _T (""), this, &m_pm);
 		}
 
 		if (pRoot == nullptr) {

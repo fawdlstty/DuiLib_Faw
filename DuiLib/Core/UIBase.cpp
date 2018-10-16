@@ -195,18 +195,18 @@ namespace DuiLib {
 	///
 	CWindowWnd::CWindowWnd (): m_hWnd (nullptr), m_OldWndProc (::DefWindowProc), m_bSubclassed (false) {}
 
-	HWND CWindowWnd::CreateDuiWindow (HWND hwndParent, LPCTSTR pstrWindowName, DWORD dwStyle /*=0*/, DWORD dwExStyle /*=0*/) {
+	HWND CWindowWnd::CreateDuiWindow (HWND hwndParent, string_view_t pstrWindowName, DWORD dwStyle /*=0*/, DWORD dwExStyle /*=0*/) {
 		return Create (hwndParent, pstrWindowName, dwStyle, dwExStyle, 0, 0, 0, 0, nullptr);
 	}
 
-	HWND CWindowWnd::Create (HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, const RECT rc, HMENU hMenu) {
+	HWND CWindowWnd::Create (HWND hwndParent, string_view_t pstrName, DWORD dwStyle, DWORD dwExStyle, const RECT rc, HMENU hMenu) {
 		return Create (hwndParent, pstrName, dwStyle, dwExStyle, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, hMenu);
 	}
 
-	HWND CWindowWnd::Create (HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu) {
-		if (GetSuperClassName () != nullptr && !RegisterSuperclass ()) return nullptr;
-		if (GetSuperClassName () == nullptr && !RegisterWindowClass ()) return nullptr;
-		m_hWnd = ::CreateWindowEx (dwExStyle, GetWindowClassName ().data (), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance (), this);
+	HWND CWindowWnd::Create (HWND hwndParent, string_view_t pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu) {
+		if (!GetSuperClassName ().empty () && !RegisterSuperclass ()) return nullptr;
+		if (GetSuperClassName ().empty () && !RegisterWindowClass ()) return nullptr;
+		m_hWnd = ::CreateWindowEx (dwExStyle, GetWindowClassName ().data (), pstrName.data (), dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance (), this);
 		ASSERT (m_hWnd != nullptr);
 		return m_hWnd;
 	}

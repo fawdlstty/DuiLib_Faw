@@ -90,12 +90,12 @@ namespace DuiLib {
 
 	string_view_t CResourceManager::GetImagePath (string_view_t lpstrId) {
 		CDuiString * lpStr = static_cast<CDuiString *>(m_mImageHashMap.Find (lpstrId));
-		return lpStr == nullptr ? nullptr : lpStr->c_str ();
+		return lpStr == nullptr ? _T ("") : lpStr->c_str ();
 	}
 
 	string_view_t CResourceManager::GetXmlPath (string_view_t lpstrId) {
 		CDuiString * lpStr = static_cast<CDuiString *>(m_mXmlHashMap.Find (lpstrId));
-		return lpStr == nullptr ? nullptr : lpStr->c_str ();
+		return lpStr == nullptr ? _T ("") : lpStr->c_str ();
 	}
 
 	void CResourceManager::ResetResourceMap () {
@@ -126,15 +126,14 @@ namespace DuiLib {
 		CMarkupNode Root = xml.GetRoot ();
 		if (!Root.IsValid ()) return FALSE;
 
-		LPCTSTR pstrClass = nullptr;
+		string_view_t pstrClass = nullptr;
 		int nAttributes = 0;
-		LPCTSTR pstrName = nullptr;
-		LPCTSTR pstrValue = nullptr;
-		LPTSTR pstr = nullptr;
+		string_view_t pstrName = nullptr;
+		string_view_t pstrValue = nullptr;
 
 		//º”‘ÿÕº∆¨◊ ‘¥
-		LPCTSTR pstrId = nullptr;
-		LPCTSTR pstrText = nullptr;
+		string_view_t pstrId = nullptr;
+		string_view_t pstrText = nullptr;
 		for (CMarkupNode node = Root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
 			pstrClass = node.GetName ();
 			if (pstrClass == _T ("Text") && node.HasAttributes ()) {
@@ -150,7 +149,7 @@ namespace DuiLib {
 						pstrText = pstrValue;
 					}
 				}
-				if (pstrId == nullptr || pstrText == nullptr) continue;
+				if (pstrId.empty () || pstrText.empty ()) continue;
 
 				CDuiString *lpstrFind = static_cast<CDuiString *>(m_mTextResourceHashMap.Find (pstrId));
 				if (lpstrFind != nullptr) {
@@ -165,7 +164,7 @@ namespace DuiLib {
 	}
 
 	CDuiString CResourceManager::GetText (string_view_t lpstrId, string_view_t lpstrType) {
-		if (lpstrId == nullptr) return _T ("");
+		if (lpstrId.empty ()) return _T ("");
 
 		CDuiString *lpstrFind = static_cast<CDuiString *>(m_mTextResourceHashMap.Find (lpstrId));
 		if (lpstrFind == nullptr && m_pQuerypInterface) {

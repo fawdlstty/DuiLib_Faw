@@ -34,14 +34,14 @@ namespace DuiLib {
 		}
 		virtual string_view_t GetSkinFile () = 0;
 		virtual string_view_t GetWindowClassName (void) const = 0;
-		virtual string_view_t GetManagerName () { return nullptr; }
+		virtual string_view_t GetManagerName () { return _T (""); }
 		virtual LRESULT ResponseDefaultKeyEvent (WPARAM wParam);
 		CPaintManagerUI m_pm;
 
 	public:
 		virtual UINT GetClassStyle () const;
-		virtual CControlUI* CreateControl (LPCTSTR pstrClass);
-		virtual LPCTSTR QueryControlText (LPCTSTR lpstrId, LPCTSTR lpstrType);
+		virtual CControlUI* CreateControl (string_view_t pstrClass);
+		virtual string_view_t QueryControlText (string_view_t lpstrId, string_view_t lpstrType);
 
 		virtual LRESULT MessageHandler (UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, bool& /*bHandled*/);
 		virtual LRESULT OnClose (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);

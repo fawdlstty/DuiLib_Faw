@@ -18,18 +18,18 @@ namespace DuiLib {
 	class UILIB_API CMarkup {
 		friend class CMarkupNode;
 	public:
-		CMarkup (LPCTSTR pstrXML = nullptr);
+		CMarkup (string_view_t pstrXML = _T (""));
 		virtual ~CMarkup ();
 
-		bool Load (LPCTSTR pstrXML);
+		bool Load (string_view_t pstrXML);
 		bool LoadFromMem (BYTE* pByte, DWORD dwSize, int encoding = XMLFILE_ENCODING_UTF8);
-		bool LoadFromFile (LPCTSTR pstrFilename, int encoding = XMLFILE_ENCODING_UTF8);
+		bool LoadFromFile (string_view_t pstrFilename, int encoding = XMLFILE_ENCODING_UTF8);
 		void Release ();
 		bool IsValid () const;
 
 		void SetPreserveWhitespace (bool bPreserve = true);
-		void GetLastErrorMessage (LPTSTR pstrMessage, SIZE_T cchMax) const;
-		void GetLastErrorLocation (LPTSTR pstrSource, SIZE_T cchMax) const;
+		string_view_t GetLastErrorMessage () const;
+		string_view_t GetLastErrorLocation () const;
 
 		CMarkupNode GetRoot ();
 
@@ -42,12 +42,12 @@ namespace DuiLib {
 			ULONG iData;
 		} XMLELEMENT;
 
-		LPTSTR m_pstrXML;
+		string_t m_pstrXML;
 		XMLELEMENT* m_pElements;
 		ULONG m_nElements;
 		ULONG m_nReservedElements;
-		TCHAR m_szErrorMsg[100];
-		TCHAR m_szErrorXML[50];
+		string_t m_szErrorMsg;
+		string_t m_szErrorXML;
 		bool m_bPreserveWhitespace;
 
 	private:
@@ -61,7 +61,7 @@ namespace DuiLib {
 		bool _ParseData (LPTSTR& pstrText, LPTSTR& pstrData, char cEnd);
 		void _ParseMetaChar (LPTSTR& pstrText, LPTSTR& pstrDest);
 		bool _ParseAttributes (LPTSTR& pstrText);
-		bool _Failed (LPCTSTR pstrError, LPCTSTR pstrLocation = nullptr);
+		bool _Failed (string_view_t pstrError, string_view_t pstrLocation = _T (""));
 	};
 
 
@@ -77,21 +77,19 @@ namespace DuiLib {
 		CMarkupNode GetParent ();
 		CMarkupNode GetSibling ();
 		CMarkupNode GetChild ();
-		CMarkupNode GetChild (LPCTSTR pstrName);
+		CMarkupNode GetChild (string_view_t pstrName);
 
 		bool HasSiblings () const;
 		bool HasChildren () const;
-		LPCTSTR GetName () const;
-		LPCTSTR GetValue () const;
+		string_t GetName () const;
+		string_t GetValue () const;
 
 		bool HasAttributes ();
-		bool HasAttribute (LPCTSTR pstrName);
+		bool HasAttribute (string_view_t pstrName);
 		int GetAttributeCount ();
-		LPCTSTR GetAttributeName (int iIndex);
-		LPCTSTR GetAttributeValue (int iIndex);
-		LPCTSTR GetAttributeValue (LPCTSTR pstrName);
-		bool GetAttributeValue (int iIndex, LPTSTR pstrValue, SIZE_T cchMax);
-		bool GetAttributeValue (LPCTSTR pstrName, LPTSTR pstrValue, SIZE_T cchMax);
+		string_t GetAttributeName (int iIndex);
+		string_t GetAttributeValue (int iIndex);
+		string_t GetAttributeValue (string_view_t pstrName);
 
 	private:
 		void _MapAttributes ();

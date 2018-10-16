@@ -898,12 +898,7 @@ namespace DuiLib {
 			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetDisabledTextColor (clrColor);
 		} else if (pstrName == _T ("textpadding")) {
-			RECT rcTextPadding = { 0 };
-			LPTSTR pstr = nullptr;
-			rcTextPadding.left = _tcstol (pstrValue.data (), &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcTextPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcTextPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+			RECT rcTextPadding = FawTools::parse_rect (pstrValue);
 			SetTextPadding (rcTextPadding);
 		} else if (pstrName == _T ("showhtml")) SetShowHtml (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("showshadow")) SetShowShadow (FawTools::parse_bool (pstrValue));

@@ -814,48 +814,21 @@ namespace DuiLib {
 			}
 			SetFloatAlign (uAlign);
 		} else if (pstrName == _T ("padding")) {
-			RECT rcPadding = { 0 };
-			LPTSTR pstr = nullptr;
-			rcPadding.left = _tcstol (pstrValue.data (), &pstr, 10);  ASSERT (pstr);
-			rcPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-			rcPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-			rcPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+			RECT rcPadding = FawTools::parse_rect (pstrValue);
 			SetPadding (rcPadding);
 		} else if (pstrName == _T ("gradient")) SetGradient (pstrValue);
 		else if (pstrName == _T ("bkcolor") || pstrName == _T ("bkcolor1")) {
-			while (pstrValue[0] > _T ('\0') && pstrValue[0] <= _T (' ')) pstrValue = ::CharNext (pstrValue.data ());
-			if (pstrValue[0] == _T ('#')) pstrValue = ::CharNext (pstrValue.data ());
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue.data (), &pstr, 16);
-			SetBkColor (clrColor);
+			SetBkColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("bkcolor2")) {
-			while (pstrValue[0] > _T ('\0') && pstrValue[0] <= _T (' ')) pstrValue = ::CharNext (pstrValue.data ());
-			if (pstrValue[0] == _T ('#')) pstrValue = ::CharNext (pstrValue.data ());
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue.data (), &pstr, 16);
-			SetBkColor2 (clrColor);
+			SetBkColor2 ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("bkcolor3")) {
-			while (pstrValue[0] > _T ('\0') && pstrValue[0] <= _T (' ')) pstrValue = ::CharNext (pstrValue.data ());
-			if (pstrValue[0] == _T ('#')) pstrValue = ::CharNext (pstrValue.data ());
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue.data (), &pstr, 16);
-			SetBkColor3 (clrColor);
+			SetBkColor3 ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("forecolor")) {
-			while (pstrValue[0] > _T ('\0') && pstrValue[0] <= _T (' ')) pstrValue = ::CharNext (pstrValue.data ());
-			if (pstrValue[0] == _T ('#')) pstrValue = ::CharNext (pstrValue.data ());
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue.data (), &pstr, 16);
-			SetForeColor (clrColor);
+			SetForeColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("bordercolor")) {
-			if (pstrValue[0] == _T ('#')) pstrValue = ::CharNext (pstrValue.data ());
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue.data (), &pstr, 16);
-			SetBorderColor (clrColor);
+			SetBorderColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("focusbordercolor")) {
-			if (pstrValue[0] == _T ('#')) pstrValue = ::CharNext (pstrValue.data ());
-			LPTSTR pstr = nullptr;
-			DWORD clrColor = _tcstoul (pstrValue.data (), &pstr, 16);
-			SetFocusBorderColor (clrColor);
+			SetFocusBorderColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("colorhsl")) SetColorHSL (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("bordersize")) {
 			CDuiString nValue = pstrValue;
@@ -864,12 +837,7 @@ namespace DuiLib {
 				RECT rcPadding = { 0 };
 				SetBorderSize (rcPadding);
 			} else {
-				RECT rcPadding = { 0 };
-				LPTSTR pstr = nullptr;
-				rcPadding.left = _tcstol (pstrValue.data (), &pstr, 10);  ASSERT (pstr);
-				rcPadding.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-				rcPadding.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-				rcPadding.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+				RECT rcPadding = FawTools::parse_rect (pstrValue);
 				SetBorderSize (rcPadding);
 			}
 		} else if (pstrName == _T ("leftbordersize")) SetLeftBorderSize (_ttoi (pstrValue.data ()));
@@ -878,10 +846,7 @@ namespace DuiLib {
 		else if (pstrName == _T ("bottombordersize")) SetBottomBorderSize (_ttoi (pstrValue.data ()));
 		else if (pstrName == _T ("borderstyle")) SetBorderStyle (_ttoi (pstrValue.data ()));
 		else if (pstrName == _T ("borderround")) {
-			SIZE cxyRound = { 0 };
-			LPTSTR pstr = nullptr;
-			cxyRound.cx = _tcstol (pstrValue.data (), &pstr, 10);  ASSERT (pstr);
-			cxyRound.cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
+			SIZE cxyRound = FawTools::parse_size (pstrValue);
 			SetBorderRound (cxyRound);
 		} else if (pstrName == _T ("bkimage")) SetBkImage (pstrValue);
 		else if (pstrName == _T ("foreimage")) SetForeImage (pstrValue);

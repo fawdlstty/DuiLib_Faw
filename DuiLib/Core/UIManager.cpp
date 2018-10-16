@@ -291,7 +291,7 @@ namespace DuiLib {
 		RemoveAllTimers ();
 
 		m_sName.clear ();
-		if (pstrName != nullptr) m_sName = pstrName;
+		if (!pstrName.empty ()) m_sName = pstrName;
 
 		if (m_hWndPaint != hWnd) {
 			m_hWndPaint = hWnd;

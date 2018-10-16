@@ -51,17 +51,16 @@ namespace DuiLib {
 		if (!root.IsValid ()) return nullptr;
 
 		if (pManager) {
-			string_view_t pstrClass = nullptr;
+			string_view_t pstrClass = _T ("");
 			int nAttributes = 0;
-			string_view_t pstrName = nullptr;
-			string_view_t pstrValue = nullptr;
-			LPTSTR pstr = nullptr;
+			string_view_t pstrName = _T ("");
+			string_view_t pstrValue = _T ("");
 			for (CMarkupNode node = root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
 				pstrClass = node.GetName ();
 				if (pstrClass == _T ("Image")) {
 					nAttributes = node.GetAttributeCount ();
-					string_view_t pImageName = nullptr;
-					string_view_t pImageResType = nullptr;
+					string_view_t pImageName = _T ("");
+					string_view_t pImageResType = _T ("");
 					bool shared = false;
 					DWORD mask = 0;
 					for (int i = 0; i < nAttributes; i++) {
@@ -81,7 +80,7 @@ namespace DuiLib {
 				} else if (pstrClass == _T ("Font")) {
 					nAttributes = node.GetAttributeCount ();
 					int id = -1;
-					string_view_t pFontName = nullptr;
+					string_view_t pFontName = _T ("");
 					int size = 12;
 					bool bold = false;
 					bool underline = false;
@@ -115,8 +114,8 @@ namespace DuiLib {
 					}
 				} else if (pstrClass == _T ("Default")) {
 					nAttributes = node.GetAttributeCount ();
-					string_view_t pControlName = nullptr;
-					string_view_t pControlValue = nullptr;
+					string_view_t pControlName = _T ("");
+					string_view_t pControlValue = _T ("");
 					bool shared = false;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
@@ -134,8 +133,8 @@ namespace DuiLib {
 					}
 				} else if (pstrClass == _T ("Style")) {
 					nAttributes = node.GetAttributeCount ();
-					string_view_t pName = nullptr;
-					string_view_t pStyle = nullptr;
+					string_view_t pName = _T ("");
+					string_view_t pStyle = _T ("");
 					bool shared = false;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
@@ -175,41 +174,23 @@ namespace DuiLib {
 						pstrName = root.GetAttributeName (i);
 						pstrValue = root.GetAttributeValue (i);
 						if (pstrName == _T ("size")) {
-							pstr = nullptr;
-							int cx = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
-							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-							pManager->SetInitSize (pManager->GetDPIObj ()->Scale (cx), pManager->GetDPIObj ()->Scale (cy));
+							SIZE sz = FawTools::parse_size (pstrValue);
+							pManager->SetInitSize (pManager->GetDPIObj ()->Scale (sz.cx), pManager->GetDPIObj ()->Scale (sz.cy));
 						} else if (pstrName == _T ("sizebox")) {
-							RECT rcSizeBox = { 0 };
-							pstr = nullptr;
-							rcSizeBox.left = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
-							rcSizeBox.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-							rcSizeBox.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-							rcSizeBox.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+							RECT rcSizeBox = FawTools::parse_rect (pstrValue);
 							pManager->SetSizeBox (rcSizeBox);
 						} else if (pstrName == _T ("caption")) {
-							RECT rcCaption = { 0 };
-							pstr = nullptr;
-							rcCaption.left = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
-							rcCaption.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-							rcCaption.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-							rcCaption.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+							RECT rcCaption = FawTools::parse_rect (pstrValue);
 							pManager->SetCaptionRect (rcCaption);
 						} else if (pstrName == _T ("roundcorner")) {
-							pstr = nullptr;
-							int cx = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
-							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-							pManager->SetRoundCorner (cx, cy);
+							SIZE sz = FawTools::parse_size (pstrValue);
+							pManager->SetRoundCorner (sz.cx, sz.cy);
 						} else if (pstrName == _T ("mininfo")) {
-							pstr = nullptr;
-							int cx = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
-							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-							pManager->SetMinInfo (cx, cy);
+							SIZE sz = FawTools::parse_size (pstrValue);
+							pManager->SetMinInfo (sz.cx, sz.cy);
 						} else if (pstrName == _T ("maxinfo")) {
-							pstr = nullptr;
-							int cx = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
-							int cy = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-							pManager->SetMaxInfo (cx, cy);
+							SIZE sz = FawTools::parse_size (pstrValue);
+							pManager->SetMaxInfo (sz.cx, sz.cy);
 						} else if (pstrName == _T ("showdirty")) {
 							pManager->SetShowUpdateRect (FawTools::parse_bool (pstrValue));
 						} else if (pstrName == _T ("opacity") || pstrName == _T ("alpha")) {
@@ -245,12 +226,7 @@ namespace DuiLib {
 						} else if (pstrName == _T ("shadowcolor")) {
 							pManager->GetShadow ()->SetColor ((DWORD) FawTools::parse_hex (pstrValue));
 						} else if (pstrName == _T ("shadowcorner")) {
-							RECT rcCorner = { 0 };
-							pstr = nullptr;
-							rcCorner.left = FawTools::parse_dec (pstrValue);  ASSERT (pstr);
-							rcCorner.top = _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-							rcCorner.right = _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-							rcCorner.bottom = _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
+							RECT rcCorner = FawTools::parse_rect (pstrValue);
 							pManager->GetShadow ()->SetShadowCorner (rcCorner);
 						} else if (pstrName == _T ("shadowimage")) {
 							pManager->GetShadow ()->SetImage (pstrValue);
@@ -274,12 +250,12 @@ namespace DuiLib {
 		return &m_xml;
 	}
 
-	void CDialogBuilder::GetLastErrorMessage (LPTSTR pstrMessage, SIZE_T cchMax) const {
-		return m_xml.GetLastErrorMessage (pstrMessage, cchMax);
+	string_view_t CDialogBuilder::GetLastErrorMessage () const {
+		return m_xml.GetLastErrorMessage ();
 	}
 
-	void CDialogBuilder::GetLastErrorLocation (LPTSTR pstrSource, SIZE_T cchMax) const {
-		return m_xml.GetLastErrorLocation (pstrSource, cchMax);
+	string_view_t CDialogBuilder::GetLastErrorLocation () const {
+		return m_xml.GetLastErrorLocation ();
 	}
 
 	CControlUI* CDialogBuilder::_Parse (CMarkupNode* pRoot, CControlUI* pParent, CPaintManagerUI* pManager) {
@@ -294,17 +270,17 @@ namespace DuiLib {
 			if (pstrClass == _T ("Include")) {
 				if (!node.HasAttributes ()) continue;
 				int count = 1;
-				LPTSTR pstr = nullptr;
-				TCHAR szValue[500] = { 0 };
-				SIZE_T cchLen = lengthof (szValue) - 1;
-				if (node.GetAttributeValue (_T ("count"), szValue, cchLen))
-					count = _tcstol (szValue, &pstr, 10);
-				cchLen = lengthof (szValue) - 1;
-				if (!node.GetAttributeValue (_T ("source"), szValue, cchLen)) continue;
+				//string_t szValue (500, _T ('\0'));
+				//SIZE_T cchLen = szValue.length () - 1;
+				string_t szValue = node.GetAttributeValue (_T ("count"));
+				if (!szValue.empty ())
+					count = _ttoi (szValue.c_str ());
+				szValue = node.GetAttributeValue (_T ("source"));
+				if (!szValue.empty ()) continue;
 				for (int i = 0; i < count; i++) {
 					CDialogBuilder builder;
 					if (!m_pstrtype.empty ()) { // 使用资源dll，从资源中读取
-						WORD id = (WORD) _tcstol (szValue, &pstr, 10);
+						WORD id = (WORD) FawTools::parse_dec (szValue);
 						pControl = builder.Create ((UINT) id, m_pstrtype, m_pCallback, pManager, pParent);
 					} else {
 						pControl = builder.Create (szValue, (UINT) 0, m_pCallback, pManager, pParent);
