@@ -137,25 +137,29 @@ public:
 private:
 	// "1,2,3,4" -> std::vector<size_t>
 	template <typename T>
-	static std::vector<size_t> split_number (T &str, size_t expect = string_t::npos) {
-		std::vector<size_t> v;
-		size_t n = 0, i = 0;
-		bool has_num = false;
+	static std::vector<int64_t> split_number (T &str, size_t expect = string_t::npos) {
+		std::vector<int64_t> v;
+		int64_t n = 0;
+		size_t i = 0;
+		bool has_num = false, is_sign = false;
 		for (; i < str.length (); ++i) {
 			TCHAR ch = str[i];
 			if (ch >= _T ('0') && ch <= _T ('9')) {
 				n = n * 10 + ch - _T ('0');
 				has_num = true;
+			} else if (ch == _T ('-')) {
+				is_sign = true;
 			} else {
-				v.push_back (n);
+				v.push_back (is_sign ? -n : n);
 				n = 0;
 				has_num = false;
+				is_sign = false;
 				if (expect != string_t::npos && v.size () >= expect)
 					break;
 			}
 		}
 		if (has_num)
-			v.push_back (n);
+			v.push_back (is_sign ? -n : n);
 		while (expect != string_t::npos && v.size () < expect)
 			v.push_back (0);
 		if constexpr (!std::is_const<T>::value)
@@ -167,7 +171,7 @@ private:
 		std::vector<double> v;
 		double n = 0.0, l = 1.0;
 		size_t i = 0;
-		bool has_num = false;
+		bool has_num = false, is_sign = false;
 		for (; i < str.length (); ++i) {
 			TCHAR ch = str[i];
 			if (ch >= _T ('0') && ch <= _T ('9')) {
@@ -180,8 +184,10 @@ private:
 				has_num = true;
 			} else if (ch == _T ('.')) {
 				l /= 10;
+			} else if (ch == _T ('-')) {
+				is_sign = true;
 			} else {
-				v.push_back (n);
+				v.push_back (is_sign ? -n : n);
 				n = 0.0;
 				has_num = false;
 				if (expect != string_t::npos && v.size () >= expect)
@@ -189,7 +195,7 @@ private:
 			}
 		}
 		if (has_num)
-			v.push_back (n);
+			v.push_back (is_sign ? -n : n);
 		while (expect != string_t::npos && v.size () < expect)
 			v.push_back (0.0);
 		if constexpr (!std::is_const<T>::value)
