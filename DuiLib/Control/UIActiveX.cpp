@@ -422,8 +422,8 @@ namespace DuiLib {
 		if (m_bWindowless) return S_FALSE;
 		*phDC = ::GetDC (m_pOwner->m_hwndHost);
 		if ((grfFlags & OLEDC_PAINTBKGND) != 0) {
-			CDuiRect rcItem = m_pOwner->GetPos ();
-			if (!m_bWindowless) rcItem.ResetOffset ();
+			RECT rcItem = m_pOwner->GetPos ();
+			if (!m_bWindowless) ::OffsetRect (&rcItem, -rcItem.left, -rcItem.top);
 			::FillRect (*phDC, &rcItem, (HBRUSH) (COLOR_WINDOW + 1));
 		}
 		return S_OK;
@@ -487,8 +487,8 @@ namespace DuiLib {
 			Hr = m_pOwner->m_pUnk->QueryInterface (IID_IOleInPlaceObject, (LPVOID*) &m_pInPlaceObject);
 		}
 		if (m_pInPlaceObject != nullptr && !m_pOwner->IsMFC ()) {
-			CDuiRect rcItem = m_pOwner->m_rcItem;
-			if (!m_bWindowless) rcItem.ResetOffset ();
+			RECT rcItem = m_pOwner->m_rcItem;
+			if (!m_bWindowless) ::OffsetRect (&rcItem, -rcItem.left, -rcItem.top);
 			m_pInPlaceObject->SetObjectRects (&rcItem, &rcItem);
 		}
 		m_bInPlaceActive = SUCCEEDED (Hr);
@@ -782,7 +782,7 @@ namespace DuiLib {
 	}
 
 	LRESULT CActiveXWnd::OnPrint (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-		RECT rcClient;
+		RECT rcClient = { 0 };
 		::GetClientRect (m_hWnd, &rcClient);
 		m_pOwner->m_pViewObject->Draw (DVASPECT_CONTENT, -1, nullptr, nullptr, nullptr, (HDC) wParam, (RECTL*) &rcClient, nullptr, nullptr, NULL);
 
@@ -792,13 +792,13 @@ namespace DuiLib {
 			guiThreadInfo.cbSize = sizeof (GUITHREADINFO);
 			::GetGUIThreadInfo (0, &guiThreadInfo);
 			if (guiThreadInfo.hwndCaret) {
-				POINT ptCaret;
+				POINT ptCaret = { 0 };
 				ptCaret.x = guiThreadInfo.rcCaret.left;
 				ptCaret.y = guiThreadInfo.rcCaret.top;
 				::ClientToScreen (guiThreadInfo.hwndCaret, &ptCaret);
 				::ScreenToClient (m_pOwner->m_pOwner->GetManager ()->GetPaintWindow (), &ptCaret);
 				if (::PtInRect (&rcPos, ptCaret)) {
-					RECT rcCaret;
+					RECT rcCaret = { 0 };
 					rcCaret = guiThreadInfo.rcCaret;
 					rcCaret.right = rcCaret.left;
 					CRenderEngine::DrawLine ((HDC) wParam, rcCaret, 1, 0xFF000000);
@@ -877,8 +877,8 @@ namespace DuiLib {
 			m_pUnk->SetExtent (DVASPECT_CONTENT, &hmSize);
 		}
 		if (m_pControl->m_pInPlaceObject != nullptr) {
-			CDuiRect rcItem = m_rcItem;
-			if (!m_pControl->m_bWindowless) rcItem.ResetOffset ();
+			RECT rcItem = m_rcItem;
+			if (!m_pControl->m_bWindowless) ::OffsetRect (&rcItem, -rcItem.left, -rcItem.top);
 			m_pControl->m_pInPlaceObject->SetObjectRects (&rcItem, &rcItem);
 		}
 		if (!m_pControl->m_bWindowless) {

@@ -46,14 +46,14 @@ namespace DuiLib {
 			size_t nPos3 = sModify.find (_T ("'"), nPos2 + 1);
 			if (nPos3 == string_t::npos) return; //second
 
-			CDuiRect rcBmpPart = FawTools::parse_rect (string_view_t (&sModify[nPos2 + 1]));
+			RECT rcBmpPart = FawTools::parse_rect (string_view_t (&sModify[nPos2 + 1]));
 
-			m_nArrowWidth = rcBmpPart.GetWidth () / 5;
+			m_nArrowWidth = (rcBmpPart.right - rcBmpPart.left) / 5;
 			rcBmpPart.left += nIndex * m_nArrowWidth;
 			rcBmpPart.right = rcBmpPart.left + m_nArrowWidth;
 
-			CDuiRect rcDest (0, 0, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top);
-			rcDest.Deflate (GetBorderSize (), GetBorderSize ());
+			RECT rcDest { 0, 0, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top };
+			::InflateRect (&rcDest, -GetBorderSize (), -GetBorderSize ());
 			rcDest.left = rcDest.right - m_nArrowWidth;
 
 			CDuiString sSource = sModify.Mid (nPos1, nPos3 + 1 - nPos1);

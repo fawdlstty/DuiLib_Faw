@@ -51,16 +51,16 @@ namespace DuiLib {
 		if (!root.IsValid ()) return nullptr;
 
 		if (pManager) {
-			string_view_t pstrClass = _T ("");
+			string_t pstrClass = _T ("");
 			int nAttributes = 0;
-			string_view_t pstrName = _T ("");
-			string_view_t pstrValue = _T ("");
+			string_t pstrName = _T ("");
+			string_t pstrValue = _T ("");
 			for (CMarkupNode node = root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
 				pstrClass = node.GetName ();
 				if (pstrClass == _T ("Image")) {
 					nAttributes = node.GetAttributeCount ();
-					string_view_t pImageName = _T ("");
-					string_view_t pImageResType = _T ("");
+					string_t pImageName = _T ("");
+					string_t pImageResType = _T ("");
 					bool shared = false;
 					DWORD mask = 0;
 					for (int i = 0; i < nAttributes; i++) {
@@ -80,7 +80,7 @@ namespace DuiLib {
 				} else if (pstrClass == _T ("Font")) {
 					nAttributes = node.GetAttributeCount ();
 					int id = -1;
-					string_view_t pFontName = _T ("");
+					string_t pFontName = _T ("");
 					int size = 12;
 					bool bold = false;
 					bool underline = false;
@@ -114,8 +114,8 @@ namespace DuiLib {
 					}
 				} else if (pstrClass == _T ("Default")) {
 					nAttributes = node.GetAttributeCount ();
-					string_view_t pControlName = _T ("");
-					string_view_t pControlValue = _T ("");
+					string_t pControlName = _T ("");
+					string_t pControlValue = _T ("");
 					bool shared = false;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
@@ -133,8 +133,8 @@ namespace DuiLib {
 					}
 				} else if (pstrClass == _T ("Style")) {
 					nAttributes = node.GetAttributeCount ();
-					string_view_t pName = _T ("");
-					string_view_t pStyle = _T ("");
+					string_t pName = _T ("");
+					string_t pStyle = _T ("");
 					bool shared = false;
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
@@ -152,7 +152,7 @@ namespace DuiLib {
 					}
 				} else if (pstrClass == _T ("Import")) {
 					nAttributes = node.GetAttributeCount ();
-					string_view_t pstrPath = nullptr;
+					string_t pstrPath = _T ("");
 					for (int i = 0; i < nAttributes; i++) {
 						pstrName = node.GetAttributeName (i);
 						pstrValue = node.GetAttributeValue (i);
@@ -262,7 +262,7 @@ namespace DuiLib {
 		IContainerUI* pContainer = nullptr;
 		CControlUI* pReturn = nullptr;
 		for (CMarkupNode node = pRoot->GetChild (); node.IsValid (); node = node.GetSibling ()) {
-			string_view_t pstrClass = node.GetName ();
+			string_t pstrClass = node.GetName ();
 			if (pstrClass == _T ("Image") || pstrClass == _T ("Font") || pstrClass == _T ("Default") || pstrClass == _T ("Style")) continue;
 
 			CControlUI* pControl = nullptr;
@@ -289,7 +289,7 @@ namespace DuiLib {
 				continue;
 			} else {
 				CDuiString strClass;
-				strClass.Format (_T ("C%sUI"), pstrClass);
+				strClass.Format (_T ("C%sUI"), pstrClass.c_str ());
 				pControl = dynamic_cast<CControlUI*>(CControlFactory::GetInstance ()->CreateControl (strClass));
 
 				// ¼ì²é²å¼þ

@@ -195,9 +195,9 @@ namespace DuiLib {
 				//移动位置
 				m_pEditUI->SetFixedWidth (lpRCColum->right - lpRCColum->left);
 				m_pEditUI->SetFixedHeight (lpRCColum->bottom - lpRCColum->top);
-				m_pEditUI->SetFixedXY (CDuiSize (lpRCColum->left, lpRCColum->top));
+				m_pEditUI->SetFixedXY ({ lpRCColum->left, lpRCColum->top });
 				SIZE szTextSize = CRenderEngine::GetTextSize (m_pManager->GetPaintDC (), m_pManager, _T ("TTT"), m_ListInfo.nFont, DT_CALCRECT | DT_SINGLELINE);
-				m_pEditUI->SetTextPadding (CDuiRect (2, (lpRCColum->bottom - lpRCColum->top - szTextSize.cy) / 2, 2, 0));
+				m_pEditUI->SetTextPadding ({ 2, (lpRCColum->bottom - lpRCColum->top - szTextSize.cy) / 2, 2, 0 });
 
 				//设置文字
 				m_pEditUI->SetText (lpstrText);
@@ -292,7 +292,7 @@ namespace DuiLib {
 		CListContainerHeaderItemUI::CListContainerHeaderItemUI (): m_bDragable (TRUE), m_uButtonState (0), m_iSepWidth (4),
 		m_uTextStyle (DT_VCENTER | DT_CENTER | DT_SINGLELINE), m_dwTextColor (0), m_iFont (-1), m_bShowHtml (FALSE),
 		m_bEditable (FALSE), m_bComboable (FALSE), m_bCheckBoxable (FALSE), m_uCheckBoxState (0), m_bChecked (FALSE), m_pOwner (nullptr) {
-		SetTextPadding (CDuiRect (2, 0, 2, 0));
+		SetTextPadding ({ 2, 0, 2, 0 });
 		ptLastMouse.x = ptLastMouse.y = 0;
 		SetMinWidth (16);
 	}
@@ -479,7 +479,7 @@ namespace DuiLib {
 
 		//CheckBoxAble
 		if (m_bCheckBoxable) {
-			RECT rcCheckBox;
+			RECT rcCheckBox = { 0 };
 			GetCheckBoxRect (rcCheckBox);
 
 			if (event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK) {
@@ -610,13 +610,13 @@ namespace DuiLib {
 	}
 
 	SIZE CListContainerHeaderItemUI::EstimateSize (SIZE szAvailable) {
-		if (m_cxyFixed.cy == 0) return CDuiSize (m_cxyFixed.cx, m_pManager->GetDefaultFontInfo ()->tm.tmHeight + 14);
+		if (m_cxyFixed.cy == 0) return { m_cxyFixed.cx, m_pManager->GetDefaultFontInfo ()->tm.tmHeight + 14 };
 		return CContainerUI::EstimateSize (szAvailable);
 	}
 
 	RECT CListContainerHeaderItemUI::GetThumbRect () const {
-		if (m_iSepWidth >= 0) return CDuiRect (m_rcItem.right - m_iSepWidth, m_rcItem.top, m_rcItem.right, m_rcItem.bottom);
-		else return CDuiRect (m_rcItem.left, m_rcItem.top, m_rcItem.left - m_iSepWidth, m_rcItem.bottom);
+		if (m_iSepWidth >= 0) return { m_rcItem.right - m_iSepWidth, m_rcItem.top, m_rcItem.right, m_rcItem.bottom };
+		else return { m_rcItem.left, m_rcItem.top, m_rcItem.left - m_iSepWidth, m_rcItem.bottom };
 	}
 
 	void CListContainerHeaderItemUI::PaintStatusImage (HDC hDC) {
@@ -715,7 +715,7 @@ namespace DuiLib {
 		rcText.right -= m_rcTextPadding.right;
 		rcText.bottom -= m_rcTextPadding.bottom;
 		if (m_bCheckBoxable) {
-			RECT rcCheck;
+			RECT rcCheck = { 0 };
 			GetCheckBoxRect (rcCheck);
 			rcText.left += (rcCheck.right - rcCheck.left);
 		}
@@ -766,7 +766,7 @@ namespace DuiLib {
 		return m_bChecked;
 	}
 	BOOL CListContainerHeaderItemUI::DrawCheckBoxImage (HDC hDC, string_view_t pStrImage, string_view_t pStrModify) {
-		RECT rcCheckBox;
+		RECT rcCheckBox = { 0 };
 		GetCheckBoxRect (rcCheckBox);
 		return CRenderEngine::DrawImageString (hDC, m_pManager, rcCheckBox, m_rcPaint, pStrImage, pStrModify);
 	}
@@ -985,7 +985,7 @@ namespace DuiLib {
 		TListInfoUI* pInfo = m_pOwner->GetListInfo ();
 		for (int i = 0; i < pInfo->nColumns; i++) {
 			if (pListCtrl->CheckColumCheckBoxable (i)) {
-				RECT rcCheckBox;
+				RECT rcCheckBox = { 0 };
 				GetCheckBoxRect (i, rcCheckBox);
 
 				if (event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK) {
@@ -1076,7 +1076,7 @@ namespace DuiLib {
 
 			//检查是否需要显示CheckBox
 			if (pListCtrl->CheckColumCheckBoxable (i)) {
-				RECT rcCheckBox;
+				RECT rcCheckBox = { 0 };
 				GetCheckBoxRect (i, rcCheckBox);
 				rcItem.left += (rcCheckBox.right - rcCheckBox.left);
 			}
@@ -1106,7 +1106,7 @@ namespace DuiLib {
 		TListInfoUI* pInfo = m_pOwner->GetListInfo ();
 		for (int i = 0; i < pInfo->nColumns; i++) {
 			if (pListCtrl->CheckColumCheckBoxable (i)) {
-				RECT rcCheckBox;
+				RECT rcCheckBox = { 0 };
 				GetCheckBoxRect (i, rcCheckBox);
 
 				m_uCheckBoxState &= ~UISTATE_PUSHED;

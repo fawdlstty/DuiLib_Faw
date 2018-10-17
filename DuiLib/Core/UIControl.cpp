@@ -266,11 +266,11 @@ namespace DuiLib {
 		CControlUI* pParent = GetParent ();
 		if (pParent != nullptr) {
 			RECT rcParentPos = pParent->GetPos ();
-			CDuiRect rcRelativePos (m_rcItem);
-			rcRelativePos.Offset (-rcParentPos.left, -rcParentPos.top);
+			RECT rcRelativePos (m_rcItem);
+			::OffsetRect (&rcRelativePos, -rcParentPos.left, -rcParentPos.top);
 			return rcRelativePos;
 		} else {
-			return CDuiRect (0, 0, 0, 0);
+			return { 0, 0, 0, 0 };
 		}
 	}
 
@@ -281,7 +281,7 @@ namespace DuiLib {
 		if (rc.right < rc.left) rc.right = rc.left;
 		if (rc.bottom < rc.top) rc.bottom = rc.top;
 
-		CDuiRect invalidateRc = m_rcItem;
+		RECT invalidateRc = m_rcItem;
 		if (::IsRectEmpty (&invalidateRc)) invalidateRc = rc;
 
 		m_rcItem = rc;
@@ -296,10 +296,13 @@ namespace DuiLib {
 		m_bUpdateNeeded = false;
 
 		if (bNeedInvalidate && IsVisible ()) {
-			invalidateRc.Join (m_rcItem);
+			invalidateRc.left = min (invalidateRc.left, m_rcItem.left);
+			invalidateRc.top = min (invalidateRc.top, m_rcItem.top);
+			invalidateRc.right = max (invalidateRc.right, m_rcItem.right);
+			invalidateRc.bottom = max (invalidateRc.bottom, m_rcItem.bottom);
 			CControlUI* pParent = this;
-			RECT rcTemp;
-			RECT rcParent;
+			RECT rcTemp = { 0 };
+			RECT rcParent = { 0 };
 			while (!!(pParent = pParent->GetParent ())) {
 				if (!pParent->IsVisible ()) return;
 				rcTemp = invalidateRc;
@@ -606,8 +609,8 @@ namespace DuiLib {
 		RECT invalidateRc = m_rcItem;
 
 		CControlUI* pParent = this;
-		RECT rcTemp;
-		RECT rcParent;
+		RECT rcTemp = { 0 };
+		RECT rcParent = { 0 };
 		while (!!(pParent = pParent->GetParent ())) {
 			rcTemp = invalidateRc;
 			rcParent = pParent->GetPos ();
@@ -778,13 +781,13 @@ namespace DuiLib {
 		} else if (pstrName == _T ("floatalign")) {
 			UINT uAlign = GetFloatAlign ();
 			// Ω‚ŒˆŒƒ◊÷ Ù–‘
-			while (pstrValue[0] != _T ('\0')) {
+			while (!pstrValue.empty ()) {
 				CDuiString sValue;
-				while (pstrValue[0] == _T (',') || pstrValue[0] == _T (' ')) pstrValue = ::CharNext (pstrValue.data ());
+				while (pstrValue[0] == _T (',') || pstrValue[0] == _T (' ')) pstrValue = pstrValue.substr (1);
 
-				while (pstrValue[0] != _T ('\0') && pstrValue[0] != _T (',') && pstrValue[0] != _T (' ')) {
-					LPTSTR pstrTemp = ::CharNext (pstrValue.data ());
-					while (pstrValue < pstrTemp) {
+				while (!pstrValue.empty () && pstrValue[0] != _T (',') && pstrValue[0] != _T (' ')) {
+					string_view_t pstrTemp = pstrValue.substr (1);
+					while (pstrValue.length () > pstrTemp.length ()) {
 						sValue += pstrValue[0];
 						pstrValue = pstrValue.substr (1);
 					}
@@ -908,9 +911,9 @@ namespace DuiLib {
 				ASSERT (pstrList[0] == _T ('\"'));
 				if (pstrList[0] != _T ('\"')) return;
 				pstrList = pstrList.substr (1);
-				while (pstrList[0] != _T ('\0') && pstrList[0] != _T ('\"')) {
+				while (!pstrList.empty () && pstrList[0] != _T ('\"')) {
 					string_view_t pstrTemp = pstrList.substr (1);
-					while (pstrList < pstrTemp) {
+					while (pstrList.length () > pstrTemp.length ()) {
 						sValue += pstrList[0];
 						pstrList = pstrList.substr (1);
 					}
@@ -943,12 +946,12 @@ namespace DuiLib {
 		// Ω‚Œˆ—˘ Ω Ù–‘
 		CDuiString sItem;
 		CDuiString sValue;
-		while (pstrList[0] != _T ('\0')) {
+		while (!pstrList.empty ()) {
 			sItem.clear ();
 			sValue.clear ();
-			while (pstrList[0] != _T ('\0') && pstrList[0] != _T ('=')) {
+			while (!pstrList.empty () && pstrList[0] != _T ('=')) {
 				string_view_t pstrTemp = pstrList.substr (1);
-				while (pstrList < pstrTemp) {
+				while (pstrList.length () > pstrTemp.length ()) {
 					sItem += pstrList[0];
 					pstrList = pstrList.substr (1);
 				}
@@ -959,7 +962,7 @@ namespace DuiLib {
 			ASSERT (pstrList[0] == _T ('\"'));
 			if (pstrList[0] != _T ('\"')) return this;
 			pstrList = pstrList.substr (1);
-			while (pstrList[0] != _T ('\0') && pstrList[0] != _T ('\"')) {
+			while (!pstrList.empty () && pstrList[0] != _T ('\"')) {
 				string_view_t pstrTemp = pstrList.substr (1);
 				while (pstrList < pstrTemp) {
 					sValue += pstrList[0];
@@ -996,8 +999,8 @@ namespace DuiLib {
 
 	bool CControlUI::DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl) {
 		// ªÊ÷∆—≠–Ú£∫±≥æ∞—’…´->±≥æ∞Õº->◊¥Ã¨Õº->Œƒ±æ->±ﬂøÚ
-		SIZE cxyBorderRound;
-		RECT rcBorderSize;
+		SIZE cxyBorderRound = { 0 };
+		RECT rcBorderSize = { 0 };
 		if (m_pManager) {
 			cxyBorderRound = GetManager ()->GetDPIObj ()->Scale (m_cxyBorderRound);
 			rcBorderSize = GetManager ()->GetDPIObj ()->Scale (m_rcBorderSize);
@@ -1072,8 +1075,8 @@ namespace DuiLib {
 
 	void CControlUI::PaintBorder (HDC hDC) {
 		int nBorderSize;
-		SIZE cxyBorderRound;
-		RECT rcBorderSize;
+		SIZE cxyBorderRound = { 0 };
+		RECT rcBorderSize = { 0 };
 		if (m_pManager) {
 			nBorderSize = GetManager ()->GetDPIObj ()->Scale (m_nBorderSize);
 			cxyBorderRound = GetManager ()->GetDPIObj ()->Scale (m_cxyBorderRound);
@@ -1095,7 +1098,7 @@ namespace DuiLib {
 				if (IsFocused () && m_dwFocusBorderColor != 0 && nBorderSize > 0) {
 					CRenderEngine::DrawRect (hDC, m_rcItem, nBorderSize, GetAdjustColor (m_dwFocusBorderColor), m_nBorderStyle);
 				} else if (rcBorderSize.left > 0 || rcBorderSize.top > 0 || rcBorderSize.right > 0 || rcBorderSize.bottom > 0) {
-					RECT rcBorder;
+					RECT rcBorder = { 0 };
 
 					if (rcBorderSize.left > 0) {
 						rcBorder = m_rcItem;

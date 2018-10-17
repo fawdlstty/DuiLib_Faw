@@ -13,7 +13,7 @@ namespace DuiLib {
 	class UILIB_API CRenderClip {
 	public:
 		virtual ~CRenderClip ();
-		RECT rcItem;
+		RECT rcItem = { 0 };
 		HDC hDC;
 		HRGN hRgn;
 		HRGN hOldRgn;
@@ -45,7 +45,7 @@ namespace DuiLib {
 
 		static bool DrawIconImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, \
 			string_view_t pStrImage, string_view_t pStrModify = _T (""));
-		static bool MakeFitIconDest (const RECT& rcControl, const CDuiSize& szIcon, const CDuiString& sAlign, RECT& rcDest);
+		static bool MakeFitIconDest (const RECT& rcControl, const SIZE& szIcon, const CDuiString& sAlign, RECT& rcDest);
 
 		static void DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, string_view_t pstrText, DWORD dwTextColor, \
 			int iFont, UINT uStyle, DWORD dwTextBKColor);
@@ -55,7 +55,7 @@ namespace DuiLib {
 			bool hole = false, bool xtiled = false, bool ytiled = false);
 
 		static bool DrawImageInfo (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, const TDrawInfo* pDrawInfo, HINSTANCE instance = nullptr);
-		static bool DrawImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, string_view_t pStrImage, string_view_t pStrModify = nullptr, HINSTANCE instance = nullptr);
+		static bool DrawImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, string_view_t pStrImage, string_view_t pStrModify = _T (""), HINSTANCE instance = NULL);
 
 		static void DrawColor (HDC hDC, const RECT& rc, DWORD color);
 		static void DrawGradient (HDC hDC, const RECT& rc, DWORD dwFirst, DWORD dwSecond, bool bVertical, int nSteps);

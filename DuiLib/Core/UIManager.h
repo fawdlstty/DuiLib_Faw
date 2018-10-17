@@ -127,9 +127,9 @@ namespace DuiLib {
 		CDuiString sDrawModify;
 		CDuiString sImageName;
 		CDuiString sResType;
-		RECT rcDest;
-		RECT rcSource;
-		RECT rcCorner;
+		RECT rcDest = { 0 };
+		RECT rcSource = { 0 };
+		RECT rcCorner = { 0 };
 		DWORD dwMask;
 		BYTE uFade;
 		bool bHole;
@@ -168,7 +168,7 @@ namespace DuiLib {
 		int Type;
 		CControlUI* pSender;
 		DWORD dwTimestamp;
-		POINT ptMouse;
+		POINT ptMouse = { 0 };
 		TCHAR chKey;
 		WORD wKeyState;
 		WPARAM wParam;
@@ -279,8 +279,8 @@ namespace DuiLib {
 		static void SetCurrentPath(string_view_t pStrPath);
 		static void SetResourceDll(HINSTANCE hInst);
 		static void SetResourcePath(string_view_t pStrPath);
-		static void SetResourceZip(LPVOID pVoid, unsigned int len, string_view_t password = nullptr);
-		static void SetResourceZip(string_view_t pstrZip, bool bCachedResourceZip = false, string_view_t password = nullptr);
+		static void SetResourceZip(LPVOID pVoid, unsigned int len, string_view_t password = _T (""));
+		static void SetResourceZip(string_view_t pstrZip, bool bCachedResourceZip = false, string_view_t password = _T (""));
 		static void SetResourceType(int nType);
 		static int GetResourceType();
 		static bool GetHSL(short* H, short* S, short* L);
@@ -322,8 +322,8 @@ namespace DuiLib {
 		TFontInfo* GetFontInfo(HFONT hFont);
 
 		const TImageInfo* GetImage(string_view_t bitmap);
-		const TImageInfo* GetImageEx(string_view_t bitmap, string_view_t type = nullptr, DWORD mask = 0, bool bUseHSL = false, HINSTANCE instance = nullptr);
-		const TImageInfo* AddImage(string_view_t bitmap, string_view_t type = nullptr, DWORD mask = 0, bool bUseHSL = false, bool bShared = false, HINSTANCE instance = nullptr);
+		const TImageInfo* GetImageEx(string_view_t bitmap, string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, HINSTANCE instance = nullptr);
+		const TImageInfo* AddImage(string_view_t bitmap, string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, bool bShared = false, HINSTANCE instance = NULL);
 		const TImageInfo* AddImage(string_view_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false);
 		void RemoveImage(string_view_t bitmap, bool bShared = false);
 		void RemoveAllImages(bool bShared = false);
@@ -351,7 +351,7 @@ namespace DuiLib {
 		const CStdStringPtrMap& GetStyles(bool bShared = false) const;
 		void RemoveAllStyle(bool bShared = false);
 
-		const TImageInfo* GetImageString(string_view_t pStrImage, string_view_t pStrModify = nullptr);
+		const TImageInfo* GetImageString(string_view_t pStrImage, string_view_t pStrModify = _T (""));
 
 		// ³õÊ¼»¯ÍÏ×§
 		bool InitDragDrop();
@@ -478,13 +478,13 @@ namespace DuiLib {
 		CControlUI* m_pEventKey;
 		CControlUI* m_pLastToolTip;
 		//
-		POINT m_ptLastMousePos;
-		SIZE m_szMinWindow;
-		SIZE m_szMaxWindow;
-		SIZE m_szInitWindowSize;
-		RECT m_rcSizeBox;
-		SIZE m_szRoundCorner;
-		RECT m_rcCaption;
+		POINT m_ptLastMousePos = { 0 };
+		SIZE m_szMinWindow = { 0 };
+		SIZE m_szMaxWindow = { 0 };
+		SIZE m_szInitWindowSize = { 0 };
+		RECT m_rcSizeBox = { 0 };
+		SIZE m_szRoundCorner = { 0 };
+		RECT m_rcCaption = { 0 };
 		UINT m_uTimerID;
 		bool m_bFirstLayout;
 		bool m_bUpdateNeeded;
@@ -493,9 +493,9 @@ namespace DuiLib {
 		
 		BYTE m_nOpacity;
 		bool m_bLayered;
-		RECT m_rcLayeredInset;
+		RECT m_rcLayeredInset = { 0 };
 		bool m_bLayeredChanged;
-		RECT m_rcLayeredUpdate;
+		RECT m_rcLayeredUpdate = { 0 };
 		TDrawInfo m_diLayered;
 
 		bool m_bMouseTracking;

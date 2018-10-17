@@ -43,8 +43,8 @@ namespace DuiLib {
 		int nAttributes = 0;
 
 		//加载图片资源
-		string_view_t pstrId = nullptr;
-		string_view_t pstrPath = nullptr;
+		string_view_t pstrId = _T ("");
+		string_view_t pstrPath = _T ("");
 		for (CMarkupNode node = Root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
 			string_view_t pstrClass = node.GetName (), pstrName = _T (""), pstrValue = _T ("");
 			CMarkupNode ChildNode = node.GetChild ();
@@ -126,14 +126,14 @@ namespace DuiLib {
 		CMarkupNode Root = xml.GetRoot ();
 		if (!Root.IsValid ()) return FALSE;
 
-		string_view_t pstrClass = nullptr;
+		string_view_t pstrClass = _T ("");
 		int nAttributes = 0;
-		string_view_t pstrName = nullptr;
-		string_view_t pstrValue = nullptr;
+		string_view_t pstrName = _T ("");
+		string_view_t pstrValue = _T ("");
 
 		//加载图片资源
-		string_view_t pstrId = nullptr;
-		string_view_t pstrText = nullptr;
+		string_view_t pstrId = _T ("");
+		string_view_t pstrText = _T ("");
 		for (CMarkupNode node = Root.GetChild (); node.IsValid (); node = node.GetSibling ()) {
 			pstrClass = node.GetName ();
 			if (pstrClass == _T ("Text") && node.HasAttributes ()) {

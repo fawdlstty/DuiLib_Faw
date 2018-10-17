@@ -73,7 +73,7 @@ namespace DuiLib {
 		CDuiString sText = GetText ();
 		if (sText.empty ()) return;
 		RECT rcTextPadding = GetTextPadding ();
-		CDuiRect  rcClient;
+		RECT  rcClient;
 		rcClient = m_rcItem;
 		rcClient.left += rcTextPadding.left;
 		rcClient.right -= rcTextPadding.right;
@@ -84,17 +84,19 @@ namespace DuiLib {
 			int nScrollRange = 0;
 
 			if (m_nRollDirection == ROLLTEXT_LEFT || m_nRollDirection == ROLLTEXT_RIGHT) {	//左面移动
-				nScrollRange = m_nText_W_H + rcClient.GetWidth ();
-
-				rcClient.Offset ((m_nRollDirection == ROLLTEXT_LEFT ? rcClient.GetWidth () : -rcClient.GetWidth ()), 0);
-				rcClient.Offset ((m_nRollDirection == ROLLTEXT_LEFT ? -m_nScrollPos : m_nScrollPos), 0);
-				rcClient.right += (m_nText_W_H - rcClient.GetWidth ());
+				nScrollRange = m_nText_W_H + rcClient.right - rcClient.left;
+				LONG off_cx = (m_nRollDirection == ROLLTEXT_LEFT ? rcClient.right - rcClient.left : rcClient.left - rcClient.right);
+				::OffsetRect (&rcClient, off_cx, 0);
+				off_cx = (m_nRollDirection == ROLLTEXT_LEFT ? -m_nScrollPos : m_nScrollPos);
+				::OffsetRect (&rcClient, off_cx, 0);
+				rcClient.right += (m_nText_W_H - (rcClient.right - rcClient.left));
 			} else {																		//上下移动
-				nScrollRange = m_nText_W_H + rcClient.GetHeight ();
-
-				rcClient.Offset (0, (m_nRollDirection == ROLLTEXT_UP ? rcClient.GetHeight () : -rcClient.GetHeight ()));
-				rcClient.Offset (0, (m_nRollDirection == ROLLTEXT_UP ? -m_nScrollPos : m_nScrollPos));
-				rcClient.bottom += (m_nText_W_H - rcClient.GetHeight ());
+				nScrollRange = m_nText_W_H + rcClient.bottom - rcClient.top;
+				LONG off_cy = (m_nRollDirection == ROLLTEXT_UP ? rcClient.bottom - rcClient.top : rcClient.top - rcClient.bottom);
+				::OffsetRect (&rcClient, 0, off_cy);
+				off_cy = (m_nRollDirection == ROLLTEXT_UP ? -m_nScrollPos : m_nScrollPos);
+				::OffsetRect (&rcClient, 0, off_cy);
+				rcClient.bottom += (m_nText_W_H - (rcClient.bottom - rcClient.top));
 			}
 
 			m_nScrollPos += m_nStep;

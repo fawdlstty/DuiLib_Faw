@@ -51,7 +51,7 @@ namespace DuiLib {
 		int nAdjustables = 0;
 		int cxFixed = 0;
 		int nEstimateNum = 0;
-		SIZE szControlAvailable;
+		SIZE szControlAvailable = { 0 };
 		int iControlMaxWidth = 0;
 		int iControlMaxHeight = 0;
 		for (int it1 = 0; it1 < m_items.GetSize (); it1++) {
@@ -263,7 +263,7 @@ namespace DuiLib {
 						}
 					}
 
-					CDuiRect rcInvalidate = GetThumbRect (true);
+					RECT rcInvalidate = GetThumbRect (true);
 					m_rcNewPos = rc;
 					m_cxyFixed.cx = m_rcNewPos.right - m_rcNewPos.left;
 
@@ -271,8 +271,16 @@ namespace DuiLib {
 						m_rcItem = m_rcNewPos;
 						NeedParentUpdate ();
 					} else {
-						rcInvalidate.Join (GetThumbRect (true));
-						rcInvalidate.Join (GetThumbRect (false));
+						RECT rc = GetThumbRect (true);
+						rcInvalidate.left = min (rcInvalidate.left, rc.left);
+						rcInvalidate.top = min (rcInvalidate.top, rc.top);
+						rcInvalidate.right = max (rcInvalidate.right, rc.right);
+						rcInvalidate.bottom = max (rcInvalidate.bottom, rc.bottom);
+						rc = GetThumbRect (false);
+						rcInvalidate.left = min (rcInvalidate.left, rc.left);
+						rcInvalidate.top = min (rcInvalidate.top, rc.top);
+						rcInvalidate.right = max (rcInvalidate.right, rc.right);
+						rcInvalidate.bottom = max (rcInvalidate.bottom, rc.bottom);
 						if (m_pManager) m_pManager->Invalidate (rcInvalidate);
 					}
 					return;
@@ -291,11 +299,11 @@ namespace DuiLib {
 
 	RECT CHorizontalLayoutUI::GetThumbRect (bool bUseNew) const {
 		if ((m_uButtonState & UISTATE_CAPTURED) != 0 && bUseNew) {
-			if (m_iSepWidth >= 0) return CDuiRect (m_rcNewPos.right - m_iSepWidth, m_rcNewPos.top, m_rcNewPos.right, m_rcNewPos.bottom);
-			else return CDuiRect (m_rcNewPos.left, m_rcNewPos.top, m_rcNewPos.left - m_iSepWidth, m_rcNewPos.bottom);
+			if (m_iSepWidth >= 0) return { m_rcNewPos.right - m_iSepWidth, m_rcNewPos.top, m_rcNewPos.right, m_rcNewPos.bottom };
+			else return { m_rcNewPos.left, m_rcNewPos.top, m_rcNewPos.left - m_iSepWidth, m_rcNewPos.bottom };
 		} else {
-			if (m_iSepWidth >= 0) return CDuiRect (m_rcItem.right - m_iSepWidth, m_rcItem.top, m_rcItem.right, m_rcItem.bottom);
-			else return CDuiRect (m_rcItem.left, m_rcItem.top, m_rcItem.left - m_iSepWidth, m_rcItem.bottom);
+			if (m_iSepWidth >= 0) return { m_rcItem.right - m_iSepWidth, m_rcItem.top, m_rcItem.right, m_rcItem.bottom };
+			else return { m_rcItem.left, m_rcItem.top, m_rcItem.left - m_iSepWidth, m_rcItem.bottom };
 		}
 	}
 }

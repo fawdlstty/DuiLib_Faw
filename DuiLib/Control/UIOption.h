@@ -45,7 +45,7 @@ namespace DuiLib {
 		int GetSelectedFont () const;
 
 		string_view_t GetGroup () const;
-		void SetGroup (string_view_t pStrGroupName = nullptr);
+		void SetGroup (string_view_t pStrGroupName = _T (""));
 		bool IsSelected () const;
 		virtual void Selected (bool bSelected, bool bMsg = true);
 

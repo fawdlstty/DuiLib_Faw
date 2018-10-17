@@ -90,10 +90,10 @@ namespace DuiLib {
 		int LineIndex (int nLine = -1) const;
 		int LineLength (int nLine = -1) const;
 		bool LineScroll (int nLines, int nChars = 0);
-		CDuiPoint GetCharPos (long lChar) const;
+		POINT GetCharPos (long lChar) const;
 		long LineFromChar (long nIndex) const;
-		CDuiPoint PosFromChar (UINT nChar) const;
-		int CharFromPos (CDuiPoint pt) const;
+		POINT PosFromChar (UINT nChar) const;
+		int CharFromPos (POINT pt) const;
 		void EmptyUndoBuffer ();
 		UINT SetUndoLimit (UINT nLimit);
 		long StreamIn (int nFormat, EDITSTREAM &es);

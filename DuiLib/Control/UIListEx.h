@@ -118,7 +118,7 @@ namespace DuiLib {
 		void PaintStatusImage (HDC hDC);
 
 	protected:
-		POINT ptLastMouse;
+		POINT ptLastMouse = { 0 };
 		BOOL m_bDragable;
 		UINT m_uButtonState;
 		int m_iSepWidth;
@@ -126,7 +126,7 @@ namespace DuiLib {
 		int m_iFont;
 		UINT m_uTextStyle;
 		BOOL m_bShowHtml;
-		RECT m_rcTextPadding;
+		RECT m_rcTextPadding = { 0 };
 		CDuiString m_sNormalImage;
 		CDuiString m_sHotImage;
 		CDuiString m_sPushedImage;
@@ -170,10 +170,10 @@ namespace DuiLib {
 		CDuiString m_sCheckBoxSelectedImage;
 		CDuiString m_sCheckBoxForeImage;
 
-		SIZE m_cxyCheckBox;
+		SIZE m_cxyCheckBox = { 0 };
 
 	public:
-		BOOL DrawCheckBoxImage (HDC hDC, string_view_t pStrImage, string_view_t pStrModify = nullptr);
+		BOOL DrawCheckBoxImage (HDC hDC, string_view_t pStrImage, string_view_t pStrModify = _T (""));
 		string_view_t GetCheckBoxNormalImage ();
 		void SetCheckBoxNormalImage (string_view_t pStrImage);
 		string_view_t GetCheckBoxHotImage ();
@@ -256,7 +256,7 @@ namespace DuiLib {
 		CDuiString m_sCheckBoxSelectedImage;
 		CDuiString m_sCheckBoxForeImage;
 
-		SIZE m_cxyCheckBox;
+		SIZE m_cxyCheckBox = { 0 };
 
 	public:
 		virtual bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);

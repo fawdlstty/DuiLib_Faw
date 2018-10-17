@@ -11,14 +11,14 @@ namespace DuiLib {
 		virtual ~CTrayIcon (void);
 
 	public:
-		void CreateTrayIcon (HWND _RecvHwnd, UINT _IconIDResource, LPCTSTR _ToolTipText = nullptr, UINT _Message = 0);
+		void CreateTrayIcon (HWND _RecvHwnd, UINT _IconIDResource, string_view_t _ToolTipText = _T (""), UINT _Message = 0);
 		void DeleteTrayIcon ();
-		bool SetTooltipText (LPCTSTR _ToolTipText);
+		bool SetTooltipText (string_view_t _ToolTipText);
 		bool SetTooltipText (UINT _IDResource);
 		CDuiString GetTooltipText () const;
 
 		bool SetIcon (HICON _Hicon);
-		bool SetIcon (LPCTSTR _IconFile);
+		bool SetIcon (string_view_t _IconFile);
 		bool SetIcon (UINT _IDResource);
 		HICON GetIcon () const;
 		void SetHideIcon ();

@@ -26,15 +26,15 @@ namespace DuiLib {
 
 
 	RECT CHotKeyWnd::CalPos () {
-		CDuiRect rcPos = m_pOwner->GetPos ();
+		RECT rcPos = m_pOwner->GetPos ();
 		RECT rcInset = m_pOwner->GetTextPadding ();
 		rcPos.left += rcInset.left;
 		rcPos.top += rcInset.top;
 		rcPos.right -= rcInset.right;
 		rcPos.bottom -= rcInset.bottom;
 		LONG lHeight = m_pOwner->GetManager ()->GetFontInfo (m_pOwner->GetFont ())->tm.tmHeight;
-		if (lHeight < rcPos.GetHeight ()) {
-			rcPos.top += (rcPos.GetHeight () - lHeight) / 2;
+		if (lHeight < rcPos.bottom - rcPos.top) {
+			rcPos.top += (rcPos.bottom - rcPos.top - lHeight) / 2;
 			rcPos.bottom = rcPos.top + lHeight;
 		}
 		return rcPos;
@@ -60,7 +60,7 @@ namespace DuiLib {
 		else if (uMsg == OCM_COMMAND) {
 			if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_CHANGE) lRes = OnEditChanged (uMsg, wParam, lParam, bHandled);
 			else if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_UPDATE) {
-				RECT rcClient;
+				RECT rcClient = { 0 };
 				::GetClientRect (m_hWnd, &rcClient);
 				::InvalidateRect (m_hWnd, &rcClient, FALSE);
 			}
@@ -74,7 +74,7 @@ namespace DuiLib {
 			DWORD dwTextColor = m_pOwner->GetTextColor ();
 			DWORD dwBkColor = m_pOwner->GetNativeBkColor ();
 			CDuiString strText = GetHotKeyName ();
-			::RECT rect;
+			RECT rect = { 0 };
 			::GetClientRect (m_hWnd, &rect);
 			::SetBkMode (hDC, TRANSPARENT);
 			::SetTextColor (hDC, RGB (GetBValue (dwTextColor), GetGValue (dwTextColor), GetRValue (dwTextColor)));
@@ -209,7 +209,7 @@ namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CHotKeyUI)
 
 		CHotKeyUI::CHotKeyUI (): m_pWindow (nullptr), m_wVirtualKeyCode (0), m_wModifiers (0), m_uButtonState (0), m_dwHotKeybkColor (0xFFFFFFFF) {
-		SetTextPadding (CDuiRect (4, 3, 4, 3));
+		SetTextPadding ({ 4, 3, 4, 3 });
 		SetBkColor (0xFFFFFFFF);
 	}
 
@@ -368,7 +368,7 @@ namespace DuiLib {
 	}
 
 	SIZE CHotKeyUI::EstimateSize (SIZE szAvailable) {
-		if (m_cxyFixed.cy == 0) return CDuiSize (m_cxyFixed.cx, m_pManager->GetFontInfo (GetFont ())->tm.tmHeight + 6);
+		if (m_cxyFixed.cy == 0) return { m_cxyFixed.cx, m_pManager->GetFontInfo (GetFont ())->tm.tmHeight + 6 };
 		return CControlUI::EstimateSize (szAvailable);
 	}
 

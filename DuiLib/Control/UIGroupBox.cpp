@@ -7,7 +7,7 @@ namespace DuiLib {
 	//////////////////////////////////////////////////////////////////////////
 	//
 	CGroupBoxUI::CGroupBoxUI (): m_uTextStyle (DT_SINGLELINE | DT_VCENTER | DT_CENTER) {
-		SetInset (CDuiRect (20, 25, 20, 20));
+		SetInset ({ 20, 25, 20, 20 });
 	}
 
 	CGroupBoxUI::~CGroupBoxUI () {}
@@ -54,8 +54,8 @@ namespace DuiLib {
 		if (m_dwDisabledTextColor == 0) m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor ();
 		if (sText.empty ()) return;
 
-		CDuiRect rcText = m_rcItem;
-		rcText.Deflate (5, 5);
+		RECT rcText = m_rcItem;
+		::InflateRect (&rcText, -5, -5);
 		SIZE szAvailable = { rcText.right - rcText.left, rcText.bottom - rcText.top };
 		SIZE sz = CalcrectSize (szAvailable);
 
@@ -71,8 +71,8 @@ namespace DuiLib {
 	}
 	void CGroupBoxUI::PaintBorder (HDC hDC) {
 		int nBorderSize;
-		SIZE cxyBorderRound;
-		RECT rcBorderSize;
+		SIZE cxyBorderRound = { 0 };
+		RECT rcBorderSize = { 0 };
 		if (m_pManager) {
 			nBorderSize = GetManager ()->GetDPIObj ()->Scale (m_nBorderSize);
 			cxyBorderRound = GetManager ()->GetDPIObj ()->Scale (m_cxyBorderRound);
@@ -84,7 +84,7 @@ namespace DuiLib {
 		}
 
 		if (nBorderSize > 0) {
-			//CDuiRect rcItem = m_rcItem;
+			//RECT rcItem = m_rcItem;
 			//rcItem.Deflate (5, 5);
 
 			//if (cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0) {//»­Ô²½Ç±ß¿ò
@@ -100,11 +100,11 @@ namespace DuiLib {
 			//}
 			Gdiplus::Bitmap gb (m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top, PixelFormat32bppARGB);
 			Gdiplus::Graphics gg (&gb);
-			CDuiRect rcItem = m_rcItem;
+			RECT rcItem = m_rcItem;
 			rcItem.right -= rcItem.left;
 			rcItem.bottom -= rcItem.top;
 			rcItem.left = rcItem.top = 0;
-			rcItem.Deflate (5, 5);
+			::InflateRect (&rcItem, -5, -5);
 			DWORD dwColor = GetAdjustColor ((IsFocused () && m_dwFocusBorderColor != 0) ? m_dwFocusBorderColor : m_dwBorderColor);
 			HDC gghdc = gg.GetHDC ();
 			if (cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0) {

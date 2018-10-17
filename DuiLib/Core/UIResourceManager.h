@@ -24,7 +24,7 @@ namespace DuiLib {
 		}
 
 	public:
-		BOOL LoadResource (std::variant<UINT, string_t> xml, string_view_t type = nullptr);
+		BOOL LoadResource (std::variant<UINT, string_t> xml, string_view_t type = _T (""));
 		BOOL LoadResource (CMarkupNode Root);
 		void ResetResourceMap ();
 		string_view_t GetImagePath (string_view_t lpstrId);
@@ -39,7 +39,7 @@ namespace DuiLib {
 		void SetTextQueryInterface (IQueryControlText* pInterface) {
 			m_pQuerypInterface = pInterface;
 		}
-		CDuiString GetText (string_view_t lpstrId, string_view_t lpstrType = nullptr);
+		CDuiString GetText (string_view_t lpstrId, string_view_t lpstrType = _T (""));
 		void ReloadText ();
 		void ResetTextMap ();
 

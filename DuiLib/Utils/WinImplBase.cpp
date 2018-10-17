@@ -118,10 +118,10 @@ namespace DuiLib {
 	}
 
 	LRESULT WindowImplBase::OnNcHitTest (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-		POINT pt; pt.x = GET_X_LPARAM (lParam); pt.y = GET_Y_LPARAM (lParam);
+		POINT pt { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 		::ScreenToClient (GetHWND (), &pt);
 
-		RECT rcClient;
+		RECT rcClient = { 0 };
 		::GetClientRect (GetHWND (), &rcClient);
 
 		if (!::IsZoomed (GetHWND ())) {
@@ -194,9 +194,9 @@ namespace DuiLib {
 		SIZE szRoundCorner = m_pm.GetRoundCorner ();
 #if defined(WIN32) && !defined(UNDER_CE)
 		if (!::IsIconic (GetHWND ())) {
-			CDuiRect rcWnd;
+			RECT rcWnd = { 0 };
 			::GetWindowRect (GetHWND (), &rcWnd);
-			rcWnd.Offset (-rcWnd.left, -rcWnd.top);
+			::OffsetRect (&rcWnd, -rcWnd.left, -rcWnd.top);
 			rcWnd.right++; rcWnd.bottom++;
 			HRGN hRgn = ::CreateRoundRectRgn (rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom, szRoundCorner.cx, szRoundCorner.cy);
 			::SetWindowRgn (GetHWND (), hRgn, TRUE);

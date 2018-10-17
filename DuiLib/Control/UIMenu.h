@@ -15,13 +15,13 @@ namespace DuiLib {
 	};
 
 	struct MenuItemInfo {
-		TCHAR szName[256];
+		string_t szName;
 		bool bChecked;
 	};
 	struct MenuCmd {
-		TCHAR szName[256];
-		TCHAR szUserData[1024];
-		TCHAR szText[1024];
+		string_t szName;
+		string_t szUserData;
+		string_t szText;
 		BOOL bChecked;
 	};
 

@@ -422,7 +422,7 @@ namespace DuiLib {
 	}
 
 	void CWebBrowserUI::SetHomePage (string_view_t lpszUrl) {
-		m_sHomePage.Format (_T ("%s"), lpszUrl);
+		m_sHomePage.Format (_T ("%s"), lpszUrl.data ());
 	}
 
 	string_view_t CWebBrowserUI::GetHomePage () {

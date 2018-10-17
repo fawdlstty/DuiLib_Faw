@@ -132,7 +132,7 @@ namespace DuiLib {
 		bool		m_bShowHtml				= false;
 		bool		m_bShowShadow;
 		CDuiString	m_sDropBoxAttributes;
-		SIZE		m_szDropBox				= CDuiSize (0, 150);
+		SIZE		m_szDropBox				= { 0, 150 };
 		UINT		m_uButtonState			= 0;
 
 		CDuiString	m_sNormalImage;

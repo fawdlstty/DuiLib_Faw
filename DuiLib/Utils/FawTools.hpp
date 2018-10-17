@@ -198,18 +198,18 @@ private:
 	}
 
 	static std::string _conv_to_multi (std::wstring_view _old, UINT ToType) {
-		int lenOld = lstrlenW (_old.data ());
+		int lenOld = (int) _old.length ();
 		int lenNew = ::WideCharToMultiByte (ToType, 0, _old.data (), lenOld, nullptr, 0, nullptr, nullptr);
-		std::string s ((size_t) (lenNew + 1), '\0');
-		if (!::WideCharToMultiByte (ToType, 0, _old.data (), lenOld, const_cast<char*>(s.c_str ()), lenNew, nullptr, nullptr))
+		std::string s ((size_t) (lenNew / 2 + 1) * 2, '\0');
+		if (!::WideCharToMultiByte (ToType, 0, _old.data (), lenOld, &s[0], lenNew, nullptr, nullptr))
 			return "";
 		return s.c_str ();
 	}
 	static std::wstring _conv_to_wide (std::string_view _old, UINT ToType) {
-		int lenOld = lstrlenA (_old.data ());
+		int lenOld = (int) _old.length ();
 		int lenNew = ::MultiByteToWideChar (ToType, 0, _old.data (), lenOld, nullptr, 0);
-		std::wstring s ((size_t) (lenNew + 1), L'\0');
-		if (!::MultiByteToWideChar (ToType, 0, _old.data (), lenOld, const_cast<wchar_t*>(s.c_str ()), lenNew))
+		std::wstring s ((size_t) (lenNew / 2 + 1) * 2, L'\0');
+		if (!::MultiByteToWideChar (ToType, 0, _old.data (), lenOld, &s[0], lenNew))
 			return L"";
 		return s.c_str ();
 	}

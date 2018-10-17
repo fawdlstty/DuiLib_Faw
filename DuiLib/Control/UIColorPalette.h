@@ -55,8 +55,8 @@ namespace DuiLib {
 
 		int			m_nPalletHeight		= 200;
 		int			m_nBarHeight		= 10;
-		CDuiPoint	m_ptLastPalletMouse;
-		CDuiPoint	m_ptLastBarMouse;
+		POINT		m_ptLastPalletMouse;
+		POINT		m_ptLastBarMouse;
 		CDuiString  m_strThumbImage;
 	};
 }

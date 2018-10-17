@@ -145,8 +145,8 @@ namespace DuiLib {
 					return;
 
 				CControlUI* pParent = GetParent ();
-				RECT rcTemp;
-				RECT rcParent;
+				RECT rcTemp = { 0 };
+				RECT rcParent = { 0 };
 				while (!!(pParent = pParent->GetParent ())) {
 					rcTemp = invalidateRc;
 					rcParent = pParent->GetPos ();
@@ -273,7 +273,7 @@ namespace DuiLib {
 
 	//************************************
 	// 函数名称: GetItemText
-	// 返回类型: DuiLib::CDuiString
+	// 返回类型: CDuiString
 	// 函数说明: 
 	//************************************
 	CDuiString CTreeNodeUI::GetItemText () {

@@ -98,7 +98,7 @@ namespace DuiLib {
 			return ((WNDPROC) pThis->m_OriParentProc)(hwnd, uMsg, wParam, lParam);
 #pragma warning(default: 4312)
 		}
-		RECT WndRect;
+		RECT WndRect = { 0 };
 		switch (uMsg) {
 		case WM_ACTIVATEAPP:
 		case WM_NCACTIVATE:
@@ -217,7 +217,7 @@ namespace DuiLib {
 	}
 	void CShadowUI::Update (HWND hParent) {
 		if (!m_bIsShowShadow || !(m_Status & SS_VISABLE)) return;
-		RECT WndRect;
+		RECT WndRect = { 0 };
 		GetWindowRect (hParent, &WndRect);
 		int nShadWndWid;
 		int nShadWndHei;
@@ -269,7 +269,7 @@ namespace DuiLib {
 			MakeShadow ((UINT32 *) pvBits, hParent, &WndRect);
 		}
 
-		POINT ptDst;
+		POINT ptDst = { 0 };
 		if (m_bIsImageMode) {
 			ptDst.x = WndRect.left - m_nSize;
 			ptDst.y = WndRect.top - m_nSize;

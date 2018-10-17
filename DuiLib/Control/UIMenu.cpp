@@ -101,7 +101,7 @@ namespace DuiLib {
 			pControl->SetFixedWidth (MulDiv (cxFixed, 100, GetManager ()->GetDPIObj ()->GetScale ()));
 		}
 
-		return CDuiSize (cxFixed, cyFixed);
+		return { cxFixed, cyFixed };
 	}
 
 	void CMenuUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
@@ -183,7 +183,7 @@ namespace DuiLib {
 			MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (pstrName);
 			if (pItemInfo == nullptr) {
 				pItemInfo = new MenuItemInfo;
-				lstrcpy (pItemInfo->szName, pstrName.data ());
+				pItemInfo->szName = pstrName;
 				pItemInfo->bChecked = bChecked;
 				mCheckInfos->Insert (pstrName, pItemInfo);
 			} else {
@@ -215,7 +215,7 @@ namespace DuiLib {
 
 		CMenuWnd::GetGlobalContextMenuObserver ().AddReceiver (this);
 
-		Create ((m_pOwner == nullptr) ? pMainPaintManager->GetPaintWindow () : m_pOwner->GetManager ()->GetPaintWindow (), nullptr, WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, CDuiRect ());
+		Create ((m_pOwner == nullptr) ? pMainPaintManager->GetPaintWindow () : m_pOwner->GetManager ()->GetPaintWindow (), nullptr, WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, RECT ());
 
 		// HACK: Don't deselect the parent's caption
 		HWND hWndParent = m_hWnd;
@@ -274,7 +274,7 @@ namespace DuiLib {
 			LONG styleValue = ::GetWindowLong (GetHWND (), GWL_STYLE);
 			styleValue &= ~WS_CAPTION;
 			::SetWindowLong (GetHWND (), GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-			RECT rcClient;
+			RECT rcClient = { 0 };
 			::GetClientRect (GetHWND (), &rcClient);
 			::SetWindowPos (GetHWND (), nullptr, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
 				rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
@@ -339,9 +339,9 @@ namespace DuiLib {
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof (oMonitor);
 		::GetMonitorInfo (::MonitorFromWindow (GetHWND (), MONITOR_DEFAULTTOPRIMARY), &oMonitor);
-		CDuiRect rcWork = oMonitor.rcWork;
+		RECT rcWork = oMonitor.rcWork;
 #else
-		CDuiRect rcWork;
+		RECT rcWork = { 0 };
 		GetWindowRect (m_pOwner->GetManager ()->GetPaintWindow (), &rcWork);
 #endif
 		SIZE szAvailable = { rcWork.right - rcWork.left, rcWork.bottom - rcWork.top };
@@ -353,15 +353,15 @@ namespace DuiLib {
 		ASSERT (pMenuRoot);
 
 		SIZE szInit = m_pm.GetInitSize ();
-		CDuiRect rc;
-		CDuiPoint point = m_BasedPoint;
+		RECT rc = { 0 };
+		POINT point = m_BasedPoint;
 		rc.left = point.x;
 		rc.top = point.y;
 		rc.right = rc.left + szInit.cx;
 		rc.bottom = rc.top + szInit.cy;
 
-		int nWidth = rc.GetWidth ();
-		int nHeight = rc.GetHeight ();
+		int nWidth = rc.right - rc.left;
+		int nHeight = rc.bottom - rc.top;
 
 		if (m_dwAlignment & eMenuAlignment_Right) {
 			rc.right = point.x;
@@ -374,8 +374,8 @@ namespace DuiLib {
 		}
 
 		SetForegroundWindow (m_hWnd);
-		MoveWindow (m_hWnd, rc.left, rc.top, rc.GetWidth (), rc.GetHeight (), FALSE);
-		SetWindowPos (m_hWnd, HWND_TOPMOST, rc.left, rc.top, rc.GetWidth (), rc.GetHeight () + pMenuRoot->GetInset ().bottom + pMenuRoot->GetInset ().top, SWP_SHOWWINDOW);
+		MoveWindow (m_hWnd, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, FALSE);
+		SetWindowPos (m_hWnd, HWND_TOPMOST, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top + pMenuRoot->GetInset ().bottom + pMenuRoot->GetInset ().top, SWP_SHOWWINDOW);
 	}
 
 	void CMenuWnd::ResizeSubMenu () {
@@ -390,9 +390,9 @@ namespace DuiLib {
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof (oMonitor);
 		::GetMonitorInfo (::MonitorFromWindow (GetHWND (), MONITOR_DEFAULTTOPRIMARY), &oMonitor);
-		CDuiRect rcWork = oMonitor.rcWork;
+		RECT rcWork = oMonitor.rcWork;
 #else
-		CDuiRect rcWork;
+		RECT rcWork = { 0 };
 		GetWindowRect (m_pOwner->GetManager ()->GetPaintWindow (), &rcWork);
 #endif
 		SIZE szAvailable = { rcWork.right - rcWork.left, rcWork.bottom - rcWork.top };
@@ -406,7 +406,7 @@ namespace DuiLib {
 			}
 		}
 
-		RECT rcWindow;
+		RECT rcWindow = { 0 };
 		GetWindowRect (m_pOwner->GetManager ()->GetPaintWindow (), &rcWindow);
 
 		rc.top = rcOwner.top;
@@ -503,9 +503,9 @@ namespace DuiLib {
 	LRESULT CMenuWnd::OnSize (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
 		SIZE szRoundCorner = m_pm.GetRoundCorner ();
 		if (!::IsIconic (GetHWND ())) {
-			CDuiRect rcWnd;
+			RECT rcWnd = { 0 };
 			::GetWindowRect (GetHWND (), &rcWnd);
-			rcWnd.Offset (-rcWnd.left, -rcWnd.top);
+			::OffsetRect (&rcWnd, -rcWnd.left, -rcWnd.top);
 			rcWnd.right++; rcWnd.bottom++;
 			HRGN hRgn = ::CreateRoundRectRgn (rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom, szRoundCorner.cx, szRoundCorner.cy);
 			::SetWindowRgn (GetHWND (), hRgn, TRUE);
@@ -890,9 +890,9 @@ namespace DuiLib {
 						if (CMenuWnd::GetGlobalContextMenuObserver ().GetManager () != nullptr) {
 
 							MenuCmd* pMenuCmd = new MenuCmd ();
-							lstrcpy (pMenuCmd->szName, GetName ().data ());
-							lstrcpy (pMenuCmd->szUserData, GetUserData ().c_str ());
-							lstrcpy (pMenuCmd->szText, GetText ().data ());
+							pMenuCmd->szName = GetName ();
+							pMenuCmd->szUserData = GetUserData ();
+							pMenuCmd->szText = GetText ();
 							pMenuCmd->bChecked = GetChecked ();
 							if (!PostMessage (CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()->GetPaintWindow (), WM_MENUCLICK, (WPARAM) pMenuCmd, (LPARAM) this)) {
 								delete pMenuCmd;
@@ -952,7 +952,7 @@ namespace DuiLib {
 		param.wParam = 2;
 		CMenuWnd::GetGlobalContextMenuObserver ().RBroadcast (param);
 
-		m_pWindow->Init (static_cast<CMenuElementUI*>(this), _T (""), CDuiPoint (), nullptr);
+		m_pWindow->Init (static_cast<CMenuElementUI*>(this), _T (""), POINT { 0, 0 }, nullptr);
 	}
 
 	void CMenuElementUI::SetLineType () {
@@ -1081,7 +1081,7 @@ namespace DuiLib {
 			MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (pstrName);
 			if (pItemInfo == nullptr) {
 				pItemInfo = new MenuItemInfo;
-				lstrcpy (pItemInfo->szName, pstrName.data ());
+				pItemInfo->szName = pstrName;
 				pItemInfo->bChecked = bChecked;
 				mCheckInfos->Insert (pstrName, pItemInfo);
 			} else {

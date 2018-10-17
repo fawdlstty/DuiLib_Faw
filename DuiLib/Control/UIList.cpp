@@ -222,7 +222,7 @@ namespace DuiLib {
 			for (int it = 0; it < m_pHeader->GetCount (); it++) {
 				static_cast<CControlUI*>(m_pHeader->GetItemAt (it))->SetInternVisible (true);
 			}
-			m_pHeader->SetPos (CDuiRect (rc.left, 0, rc.right, 0), bNeedInvalidate);
+			m_pHeader->SetPos ({ rc.left, 0, rc.right, 0 }, bNeedInvalidate);
 		}
 
 		for (int i = 0; i < m_ListInfo.nColumns; i++) {
@@ -786,7 +786,7 @@ namespace DuiLib {
 	void CListUI::Scroll (int dx, int dy) {
 		if (dx == 0 && dy == 0) return;
 		SIZE sz = m_pList->GetScrollPos ();
-		m_pList->SetScrollPos (CDuiSize (sz.cx + dx, sz.cy + dy));
+		m_pList->SetScrollPos ({ sz.cx + dx, sz.cy + dy });
 	}
 
 	void CListUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
@@ -1001,7 +1001,7 @@ namespace DuiLib {
 			cx = m_pHorizontalScrollBar->GetScrollPos () - iLastScrollPos;
 		}
 
-		RECT rcPos;
+		RECT rcPos = { 0 };
 		for (int it2 = 0; it2 < m_items.GetSize (); it2++) {
 			CControlUI* pControl = static_cast<CControlUI*>(m_items[it2]);
 			if (!pControl->IsVisible ()) continue;
@@ -1093,7 +1093,7 @@ namespace DuiLib {
 		if (m_pOwner) {
 			CListHeaderUI* pHeader = m_pOwner->GetHeader ();
 			if (pHeader != nullptr && pHeader->GetCount () > 0) {
-				cxNeeded = MAX (0, pHeader->EstimateSize (CDuiSize (rc.right - rc.left, rc.bottom - rc.top)).cx);
+				cxNeeded = MAX (0, pHeader->EstimateSize ({ rc.right - rc.left, rc.bottom - rc.top }).cx);
 				if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) {
 					int nOffset = m_pHorizontalScrollBar->GetScrollPos ();
 					RECT rcHeader = pHeader->GetPos ();
@@ -1363,7 +1363,7 @@ namespace DuiLib {
 
 		CListHeaderItemUI::CListHeaderItemUI (): m_bDragable (true), m_uButtonState (0), m_iSepWidth (4),
 		m_uTextStyle (DT_VCENTER | DT_CENTER | DT_SINGLELINE), m_dwTextColor (0), m_iFont (-1), m_bShowHtml (false), m_nScale (0) {
-		SetTextPadding (CDuiRect (2, 0, 2, 0));
+		SetTextPadding ({ 2, 0, 2, 0 });
 		ptLastMouse.x = ptLastMouse.y = 0;
 		SetMinWidth (16);
 	}
@@ -1628,13 +1628,13 @@ namespace DuiLib {
 	}
 
 	SIZE CListHeaderItemUI::EstimateSize (SIZE szAvailable) {
-		if (m_cxyFixed.cy == 0) return CDuiSize (m_cxyFixed.cx, m_pManager->GetDefaultFontInfo ()->tm.tmHeight + 14);
+		if (m_cxyFixed.cy == 0) return { m_cxyFixed.cx, m_pManager->GetDefaultFontInfo ()->tm.tmHeight + 14 };
 		return CContainerUI::EstimateSize (szAvailable);
 	}
 
 	RECT CListHeaderItemUI::GetThumbRect () const {
-		if (m_iSepWidth >= 0) return CDuiRect (m_rcItem.right - m_iSepWidth, m_rcItem.top, m_rcItem.right, m_rcItem.bottom);
-		else return CDuiRect (m_rcItem.left, m_rcItem.top, m_rcItem.left - m_iSepWidth, m_rcItem.bottom);
+		if (m_iSepWidth >= 0) return { m_rcItem.right - m_iSepWidth, m_rcItem.top, m_rcItem.right, m_rcItem.bottom };
+		else return { m_rcItem.left, m_rcItem.top, m_rcItem.left - m_iSepWidth, m_rcItem.bottom };
 	}
 
 	void CListHeaderItemUI::PaintStatusImage (HDC hDC) {
@@ -1770,8 +1770,8 @@ namespace DuiLib {
 				}
 
 				CControlUI* pParent = GetParent ();
-				RECT rcTemp;
-				RECT rcParent;
+				RECT rcTemp = { 0 };
+				RECT rcParent = { 0 };
 				while (!!(pParent = pParent->GetParent ())) {
 					rcTemp = invalidateRc;
 					rcParent = pParent->GetPos ();
@@ -2005,7 +2005,7 @@ namespace DuiLib {
 	}
 
 	SIZE CListLabelElementUI::EstimateSize (SIZE szAvailable) {
-		if (m_pOwner == nullptr) return CDuiSize (0, 0);
+		if (m_pOwner == nullptr) return { 0, 0 };
 		CDuiString sText = GetText ();
 
 		TListInfoUI* pInfo = m_pOwner->GetListInfo ();
@@ -2324,8 +2324,8 @@ namespace DuiLib {
 				}
 
 				CControlUI* pParent = GetParent ();
-				RECT rcTemp;
-				RECT rcParent;
+				RECT rcTemp = { 0 };
+				RECT rcParent = { 0 };
 				while (!!(pParent = pParent->GetParent ())) {
 					rcTemp = invalidateRc;
 					rcParent = pParent->GetPos ();
@@ -2465,7 +2465,7 @@ namespace DuiLib {
 
 	void CListContainerElementUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
 		if (pstrName == _T ("selected")) Select ();
-		//else if( _tcscmp(pstrName, _T("expandable")) == 0 ) SetExpandable(_tcscmp(pstrValue, _T("true"));
+		//else if (pstrName == _T("expandable")) SetExpandable (FawTools::parse_bool (pstrValue));
 		else CContainerUI::SetAttribute (pstrName, pstrValue);
 	}
 

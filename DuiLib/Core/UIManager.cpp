@@ -10,7 +10,7 @@ namespace DuiLib {
 	static void GetChildWndRect (HWND hWnd, HWND hChildWnd, RECT& rcChildWnd) {
 		::GetWindowRect (hChildWnd, &rcChildWnd);
 
-		POINT pt;
+		POINT pt = { 0 };
 		pt.x = rcChildWnd.left;
 		pt.y = rcChildWnd.top;
 		::ScreenToClient (hWnd, &pt);
@@ -508,7 +508,7 @@ namespace DuiLib {
 	SIZE CPaintManagerUI::GetClientSize () const {
 		RECT rcClient = { 0 };
 		::GetClientRect (m_hWndPaint, &rcClient);
-		return CDuiSize (rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
+		return { rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
 	}
 
 	SIZE CPaintManagerUI::GetInitSize () {
@@ -1123,7 +1123,7 @@ namespace DuiLib {
 		case WM_PRINTCLIENT:
 		{
 			if (m_pRoot == nullptr) break;
-			RECT rcClient;
+			RECT rcClient = { 0 };
 			::GetClientRect (m_hWndPaint, &rcClient);
 			HDC hDC = (HDC) wParam;
 			int save = ::SaveDC (hDC);
@@ -2288,7 +2288,7 @@ namespace DuiLib {
 	}
 
 	RECT CPaintManagerUI::GetNativeWindowRect (HWND hChildWnd) {
-		RECT rcChildWnd;
+		RECT rcChildWnd = { 0 };
 		::GetWindowRect (hChildWnd, &rcChildWnd);
 		::ScreenToClient (m_hWndPaint, (LPPOINT) (&rcChildWnd));
 		::ScreenToClient (m_hWndPaint, (LPPOINT) (&rcChildWnd) + 1);
@@ -3352,7 +3352,7 @@ namespace DuiLib {
 		string_view_t pstrName = static_cast<LPCTSTR>(pData);
 		const string_view_t sName = pThis->GetName ();
 		if (sName.empty ()) return nullptr;
-		return (_tcsicmp (sName.data (), pstrName.data ()) == 0) ? pThis : nullptr;
+		return (sName == pstrName ? pThis : nullptr);
 	}
 
 	CControlUI* CALLBACK CPaintManagerUI::__FindControlFromClass (CControlUI* pThis, LPVOID pData) {
@@ -3469,7 +3469,7 @@ namespace DuiLib {
 		CDuiString* pStyle = static_cast<CDuiString*>(m_ResInfo.m_StyleHash.Find (pName));
 		if (!pStyle) pStyle = static_cast<CDuiString*>(m_SharedResInfo.m_StyleHash.Find (pName));
 		if (pStyle) return pStyle->c_str ();
-		else return nullptr;
+		else return _T ("");
 	}
 
 	BOOL CPaintManagerUI::RemoveStyle (string_view_t pName, bool bShared) {
@@ -3647,7 +3647,7 @@ namespace DuiLib {
 		if (pFmtEtc->cfFormat == CF_ENHMETAFILE && medium.tymed == TYMED_ENHMF) {
 			ENHMETAHEADER emh;
 			GetEnhMetaFileHeader (medium.hEnhMetaFile, sizeof (ENHMETAHEADER), &emh);
-			RECT rc;//={0,0,EnhMetaHdr.rclBounds.right-EnhMetaHdr.rclBounds.left, EnhMetaHdr.rclBounds.bottom-EnhMetaHdr.rclBounds.top};
+			RECT rc = { 0 };//={0,0,EnhMetaHdr.rclBounds.right-EnhMetaHdr.rclBounds.left, EnhMetaHdr.rclBounds.bottom-EnhMetaHdr.rclBounds.top};
 			HDC hDC = GetDC (m_hTargetWnd);
 			//start code: taken from ENHMETA.EXE MSDN Sample
 			//*ALSO NEED to GET the pallete (select and RealizePalette it, but i was too lazy*

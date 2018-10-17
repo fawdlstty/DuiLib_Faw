@@ -50,11 +50,11 @@ namespace DuiLib {
 		if (m_bHorizontal) {
 			int left = m_rcItem.left + (m_rcItem.right - m_rcItem.left - _szThumb.cx) * (m_nValue - m_nMin) / (m_nMax - m_nMin);
 			int top = (m_rcItem.bottom + m_rcItem.top - _szThumb.cy) / 2;
-			rcThumb = CDuiRect (left, top, left + _szThumb.cx, top + _szThumb.cy);
+			rcThumb = { left, top, left + _szThumb.cx, top + _szThumb.cy };
 		} else {
 			int left = (m_rcItem.right + m_rcItem.left - _szThumb.cx) / 2;
 			int top = m_rcItem.bottom - _szThumb.cy - (m_rcItem.bottom - m_rcItem.top - _szThumb.cy) * (m_nValue - m_nMin) / (m_nMax - m_nMin);
-			rcThumb = CDuiRect (left, top, left + _szThumb.cx, top + _szThumb.cy);
+			rcThumb = { left, top, left + _szThumb.cx, top + _szThumb.cy };
 		}
 		if (m_pManager != nullptr) {
 			//m_pManager->GetDPIObj()->Scale(&rcThumb);

@@ -79,16 +79,16 @@ namespace DuiLib {
 		void SetManager (CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true);
 		CControlUI* FindControl (FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags);
 
-		bool SetSubControlText (LPCTSTR pstrSubControlName, LPCTSTR pstrText);
-		bool SetSubControlFixedHeight (LPCTSTR pstrSubControlName, int cy);
-		bool SetSubControlFixedWdith (LPCTSTR pstrSubControlName, int cx);
-		bool SetSubControlUserData (LPCTSTR pstrSubControlName, LPCTSTR pstrText);
+		bool SetSubControlText (string_view_t pstrSubControlName, string_view_t pstrText);
+		bool SetSubControlFixedHeight (string_view_t pstrSubControlName, int cy);
+		bool SetSubControlFixedWdith (string_view_t pstrSubControlName, int cx);
+		bool SetSubControlUserData (string_view_t pstrSubControlName, string_view_t pstrText);
 
-		CDuiString GetSubControlText (LPCTSTR pstrSubControlName);
-		int GetSubControlFixedHeight (LPCTSTR pstrSubControlName);
-		int GetSubControlFixedWdith (LPCTSTR pstrSubControlName);
-		const CDuiString GetSubControlUserData (LPCTSTR pstrSubControlName);
-		CControlUI* FindSubControl (LPCTSTR pstrSubControlName);
+		CDuiString GetSubControlText (string_view_t pstrSubControlName);
+		int GetSubControlFixedHeight (string_view_t pstrSubControlName);
+		int GetSubControlFixedWdith (string_view_t pstrSubControlName);
+		const CDuiString GetSubControlUserData (string_view_t pstrSubControlName);
+		CControlUI* FindSubControl (string_view_t pstrSubControlName);
 
 		virtual SIZE GetScrollPos () const;
 		virtual SIZE GetScrollRange () const;

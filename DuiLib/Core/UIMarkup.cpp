@@ -37,7 +37,7 @@ namespace DuiLib {
 		if (m_pOwner == nullptr) return CMarkupNode ();
 		ULONG iPos = m_pOwner->m_pElements[m_iPos].iChild;
 		while (iPos != 0) {
-			if (m_pOwner->m_pstrXML.substr (m_pOwner->m_pElements[iPos].iStart) == pstrName) {
+			if (pstrName == &m_pOwner->m_pstrXML[m_pOwner->m_pElements[iPos].iStart]) {
 				return CMarkupNode (m_pOwner, iPos);
 			}
 			iPos = m_pOwner->m_pElements[iPos].iNext;
@@ -63,33 +63,33 @@ namespace DuiLib {
 
 	string_t CMarkupNode::GetName () const {
 		if (m_pOwner == nullptr) return _T ("");
-		return m_pOwner->m_pstrXML.substr (m_pOwner->m_pElements[m_iPos].iStart);
+		return &m_pOwner->m_pstrXML[m_pOwner->m_pElements[m_iPos].iStart];
 	}
 
 	string_t CMarkupNode::GetValue () const {
 		if (m_pOwner == nullptr) return _T ("");
-		return m_pOwner->m_pstrXML.substr (m_pOwner->m_pElements[m_iPos].iData);
+		return &m_pOwner->m_pstrXML[m_pOwner->m_pElements[m_iPos].iData];
 	}
 
 	string_t CMarkupNode::GetAttributeName (int iIndex) {
 		if (m_pOwner == nullptr) return _T ("");
 		if (m_nAttributes == 0) _MapAttributes ();
 		if (iIndex < 0 || iIndex >= m_nAttributes) return _T ("");
-		return m_pOwner->m_pstrXML.substr (m_aAttributes[iIndex].iName);
+		return &m_pOwner->m_pstrXML[m_aAttributes[iIndex].iName];
 	}
 
 	string_t CMarkupNode::GetAttributeValue (int iIndex) {
 		if (m_pOwner == nullptr) return _T ("");
 		if (m_nAttributes == 0) _MapAttributes ();
 		if (iIndex < 0 || iIndex >= m_nAttributes) return _T ("");
-		return m_pOwner->m_pstrXML.substr (m_aAttributes[iIndex].iValue);
+		return &m_pOwner->m_pstrXML[m_aAttributes[iIndex].iValue];
 	}
 
 	string_t CMarkupNode::GetAttributeValue (string_view_t pstrName) {
 		if (m_pOwner == nullptr) return _T ("");
 		if (m_nAttributes == 0) _MapAttributes ();
 		for (int i = 0; i < m_nAttributes; i++) {
-			if (m_pOwner->m_pstrXML.substr (m_aAttributes[i].iName) == pstrName) return m_pOwner->m_pstrXML.substr (m_aAttributes[i].iValue);
+			if (pstrName == &m_pOwner->m_pstrXML[m_aAttributes[i].iName]) return &m_pOwner->m_pstrXML[m_aAttributes[i].iValue];
 		}
 		return _T ("");
 	}
@@ -110,7 +110,7 @@ namespace DuiLib {
 		if (m_pOwner == nullptr) return false;
 		if (m_nAttributes == 0) _MapAttributes ();
 		for (int i = 0; i < m_nAttributes; i++) {
-			if (m_pOwner->m_pstrXML.substr (m_aAttributes[i].iName) == pstrName) return true;
+			if (pstrName == &m_pOwner->m_pstrXML[m_aAttributes[i].iName]) return true;
 		}
 		return false;
 	}
@@ -140,7 +140,7 @@ namespace DuiLib {
 	//
 
 	CMarkup::CMarkup (string_view_t pstrXML) {
-		m_pstrXML = nullptr;
+		m_pstrXML = _T ("");
 		m_pElements = nullptr;
 		m_nElements = 0;
 		m_bPreserveWhitespace = true;
@@ -293,10 +293,13 @@ namespace DuiLib {
 		_SkipWhitespace (pstrText);
 		ULONG iPrevious = 0;
 		for (; ; ) {
-			if (*pstrText == _T ('\0') && iParent <= 1) return true;
+			if (*pstrText == _T ('\0') && iParent <= 1)
+				return true;
 			_SkipWhitespace (pstrText);
-			if (*pstrText != _T ('<')) return _Failed (_T ("Expected start tag"), pstrText);
-			if (pstrText[1] == _T ('/')) return true;
+			if (*pstrText != _T ('<'))
+				return _Failed (_T ("Expected start tag"), pstrText);
+			if (pstrText[1] == _T ('/'))
+				return true;
 			*pstrText++ = _T ('\0');
 			_SkipWhitespace (pstrText);
 			// Skip comment or processing directive
@@ -322,25 +325,32 @@ namespace DuiLib {
 			LPCTSTR pstrName = pstrText;
 			_SkipIdentifier (pstrText);
 			LPTSTR pstrNameEnd = pstrText;
-			if (*pstrText == _T ('\0')) return _Failed (_T ("Error parsing element name"), pstrText);
+			if (*pstrText == _T ('\0'))
+				return _Failed (_T ("Error parsing element name"), pstrText);
 			// Parse attributes
-			if (!_ParseAttributes (pstrText)) return false;
+			if (!_ParseAttributes (pstrText))
+				return false;
 			_SkipWhitespace (pstrText);
 			if (pstrText[0] == _T ('/') && pstrText[1] == _T ('>')) {
 				pEl->iData = (ULONG) (pstrText - &m_pstrXML[0]);
 				*pstrText = _T ('\0');
 				pstrText += 2;
 			} else {
-				if (*pstrText != _T ('>')) return _Failed (_T ("Expected start-tag closing"), pstrText);
+				if (*pstrText != _T ('>'))
+					return _Failed (_T ("Expected start-tag closing"), pstrText);
 				// Parse node data
 				pEl->iData = (ULONG) (++pstrText - &m_pstrXML[0]);
 				LPTSTR pstrDest = pstrText;
-				if (!_ParseData (pstrText, pstrDest, _T ('<'))) return false;
+				if (!_ParseData (pstrText, pstrDest, _T ('<')))
+					return false;
 				// Determine type of next element
-				if (*pstrText == _T ('\0') && iParent <= 1) return true;
-				if (*pstrText != _T ('<')) return _Failed (_T ("Expected end-tag start"), pstrText);
+				if (*pstrText == _T ('\0') && iParent <= 1)
+					return true;
+				if (*pstrText != _T ('<'))
+					return _Failed (_T ("Expected end-tag start"), pstrText);
 				if (pstrText[0] == _T ('<') && pstrText[1] != _T ('/')) {
-					if (!_Parse (pstrText, iPos)) return false;
+					if (!_Parse (pstrText, iPos))
+						return false;
 				}
 				if (pstrText[0] == _T ('<') && pstrText[1] == _T ('/')) {
 					*pstrDest = _T ('\0');
@@ -348,10 +358,12 @@ namespace DuiLib {
 					pstrText += 2;
 					_SkipWhitespace (pstrText);
 					SIZE_T cchName = pstrNameEnd - pstrName;
-					if (_tcsncmp (pstrText, pstrName, cchName) != 0) return _Failed (_T ("Unmatched closing tag"), pstrText);
+					if (_tcsncmp (pstrText, pstrName, cchName) != 0)
+						return _Failed (_T ("Unmatched closing tag"), pstrText);
 					pstrText += cchName;
 					_SkipWhitespace (pstrText);
-					if (*pstrText++ != _T ('>')) return _Failed (_T ("Unmatched closing tag"), pstrText);
+					if (*pstrText++ != _T ('>'))
+						return _Failed (_T ("Unmatched closing tag"), pstrText);
 				}
 			}
 			*pstrNameEnd = _T ('\0');
@@ -464,7 +476,7 @@ namespace DuiLib {
 	bool CMarkup::_Failed (string_view_t pstrError, string_view_t pstrLocation) {
 		// Register last error
 		TRACE (_T ("XML Error: %s"), pstrError.data ());
-		if (pstrLocation != nullptr) TRACE (pstrLocation);
+		if (!pstrLocation.empty ()) TRACE (pstrLocation);
 		m_szErrorMsg = pstrError;
 		m_szErrorXML = pstrLocation;
 		return false; // Always return 'false'

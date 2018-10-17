@@ -2,128 +2,41 @@
 #include "Utils.h"
 
 namespace DuiLib {
+	/*void RECT::Join (const RECT& rc) {
+		left = min (left, rc.left);
+		top = min (top, rc.top);
+		right = max (right, rc.right);
+		bottom = max (bottom, rc.bottom);
+	}*/
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-	//
+	//void RECT::ResetOffset () {
+	//	::OffsetRect (this, -left, -top);
+	//}
 
-	CDuiPoint::CDuiPoint () {
-		x = y = 0;
-	}
+	//void RECT::Normalize () {
+	//	if (left > right) {
+	//		int iTemp = left; left = right; right = iTemp;
+	//	}
+	//	if (top > bottom) {
+	//		int iTemp = top; top = bottom; bottom = iTemp;
+	//	}
+	//}
 
-	CDuiPoint::CDuiPoint (const POINT& src) {
-		x = src.x;
-		y = src.y;
-	}
+	//void RECT::Offset (int cx, int cy) {
+	//	::OffsetRect (this, cx, cy);
+	//}
 
-	CDuiPoint::CDuiPoint (int _x, int _y) {
-		x = _x;
-		y = _y;
-	}
+	//void RECT::Inflate (int cx, int cy) {
+	//	::InflateRect (this, cx, cy);
+	//}
 
-	CDuiPoint::CDuiPoint (LPARAM lParam) {
-		x = GET_X_LPARAM (lParam);
-		y = GET_Y_LPARAM (lParam);
-	}
+	//void RECT::Deflate (int cx, int cy) {
+	//	::InflateRect (this, -cx, -cy);
+	//}
 
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-	//
-
-	CDuiSize::CDuiSize () {
-		cx = cy = 0;
-	}
-
-	CDuiSize::CDuiSize (const SIZE& src) {
-		cx = src.cx;
-		cy = src.cy;
-	}
-
-	CDuiSize::CDuiSize (const RECT rc) {
-		cx = rc.right - rc.left;
-		cy = rc.bottom - rc.top;
-	}
-
-	CDuiSize::CDuiSize (int _cx, int _cy) {
-		cx = _cx;
-		cy = _cy;
-	}
-
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-	//
-
-	CDuiRect::CDuiRect () {
-		left = top = right = bottom = 0;
-	}
-
-	CDuiRect::CDuiRect (const RECT& src) {
-		left = src.left;
-		top = src.top;
-		right = src.right;
-		bottom = src.bottom;
-	}
-
-	CDuiRect::CDuiRect (int iLeft, int iTop, int iRight, int iBottom) {
-		left = iLeft;
-		top = iTop;
-		right = iRight;
-		bottom = iBottom;
-	}
-
-	int CDuiRect::GetWidth () const {
-		return right - left;
-	}
-
-	int CDuiRect::GetHeight () const {
-		return bottom - top;
-	}
-
-	void CDuiRect::Empty () {
-		left = top = right = bottom = 0;
-	}
-
-	bool CDuiRect::Isnullptr () const {
-		return (left == 0 && right == 0 && top == 0 && bottom == 0);
-	}
-
-	void CDuiRect::Join (const RECT& rc) {
-		if (rc.left < left) left = rc.left;
-		if (rc.top < top) top = rc.top;
-		if (rc.right > right) right = rc.right;
-		if (rc.bottom > bottom) bottom = rc.bottom;
-	}
-
-	void CDuiRect::ResetOffset () {
-		::OffsetRect (this, -left, -top);
-	}
-
-	void CDuiRect::Normalize () {
-		if (left > right) {
-			int iTemp = left; left = right; right = iTemp;
-		}
-		if (top > bottom) {
-			int iTemp = top; top = bottom; bottom = iTemp;
-		}
-	}
-
-	void CDuiRect::Offset (int cx, int cy) {
-		::OffsetRect (this, cx, cy);
-	}
-
-	void CDuiRect::Inflate (int cx, int cy) {
-		::InflateRect (this, cx, cy);
-	}
-
-	void CDuiRect::Deflate (int cx, int cy) {
-		::InflateRect (this, -cx, -cy);
-	}
-
-	void CDuiRect::Union (CDuiRect& rc) {
-		::UnionRect (this, this, &rc);
-	}
+	//void RECT::Union (RECT& rc) {
+	//	::UnionRect (this, this, &rc);
+	//}
 
 
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -362,7 +275,7 @@ namespace DuiLib {
 	}
 
 	int CDuiString::Format (string_view_t pstrFormat, ...) {
-		if (pstrFormat == nullptr || pstrFormat[0] == _T ('\0'))
+		if (pstrFormat.empty ())
 			return 0;
 		try {
 			va_list ap;
@@ -598,24 +511,20 @@ namespace DuiLib {
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
 	//
-	//CImageString::CImageString()
-	//{
-	//	Clear();
+	//CImageString::CImageString () {
+	//	Clear ();
 	//}
 
-	//CImageString::CImageString(const CImageString& image)
-	//{
-	//	Clone(image);
+	//CImageString::CImageString (const CImageString& image) {
+	//	Clone (image);
 	//}
 
-	//const CImageString& CImageString::operator=(const CImageString& image)
-	//{
-	//	Clone(image);
+	//const CImageString& CImageString::operator= (const CImageString& image) {
+	//	Clone (image);
 	//	return *this;
 	//}
 
-	//void CImageString::Clone(const CImageString& image)
-	//{
+	//void CImageString::Clone (const CImageString& image) {
 	//	m_sImageAttribute = image.m_sImageAttribute;
 
 	//	m_sImage = image.m_sImage;
@@ -633,26 +542,22 @@ namespace DuiLib {
 	//	m_bTiledY = image.m_bTiledY;
 	//}
 
-	//CImageString::~CImageString()
-	//{
+	//CImageString::~CImageString () {
 
 	//}
 
-	//const CDuiString& CImageString::GetAttributeString() const
-	//{
+	//const CDuiString& CImageString::GetAttributeString() const {
 	//	return m_sImageAttribute;
 	//}
 
-	//void CImageString::SetAttributeString(LPCTSTR pStrImageAttri)
-	//{
+	//void CImageString::SetAttributeString(string_view_t pStrImageAttri) {
 	//	if (m_sImageAttribute == pStrImageAttri) return;
-	//	Clear();
+	//	Clear ();
 	//	m_sImageAttribute = pStrImageAttri;
 	//	m_sImage = m_sImageAttribute;
 	//}
 
-	//bool CImageString::LoadImage(CPaintManagerUI* pManager)
-	//{
+	//bool CImageString::LoadImage(CPaintManagerUI* pManager) {
 	//	m_imageInfo = nullptr;
 	//	m_bLoadSuccess = true;
 	//	ZeroMemory(&m_rcDest, sizeof(RECT));
@@ -667,26 +572,19 @@ namespace DuiLib {
 	//	if (!m_bLoadSuccess) return false;
 
 	//	const TImageInfo* data = nullptr;
-	//	if (m_sResType.empty())
-	//	{
-	//		data = pManager->GetImageEx((LPCTSTR)m_sImage, nullptr, m_dwMask);
+	//	if (m_sResType.empty()) {
+	//		data = pManager->GetImageEx(m_sImage.c_str (), nullptr, m_dwMask);
+	//	} else {
+	//		data = pManager->GetImageEx(m_sImage.c_str (), m_sResType.c_str (), m_dwMask);
 	//	}
-	//	else
-	//	{
-	//		data = pManager->GetImageEx((LPCTSTR)m_sImage, (LPCTSTR)m_sResType, m_dwMask);
-	//	}
-	//	if (data == nullptr)
-	//	{
+	//	if (data == nullptr) {
 	//		m_bLoadSuccess = false;
 	//		return false;
-	//	}
-	//	else
-	//	{
+	//	} else {
 	//		m_bLoadSuccess = true;
 	//	}
 
-	//	if (m_rcSource.left == 0 && m_rcSource.right == 0 && m_rcSource.top == 0 && m_rcSource.bottom == 0)
-	//	{
+	//	if (m_rcSource.left == 0 && m_rcSource.right == 0 && m_rcSource.top == 0 && m_rcSource.bottom == 0) {
 	//		m_rcSource.right = data->nX;
 	//		m_rcSource.bottom = data->nY;
 	//	}
@@ -697,26 +595,23 @@ namespace DuiLib {
 	//	return true;
 	//}
 
-	//bool CImageString::IsLoadSuccess()
-	//{
-	//	return !m_sImageAttribute.empty() && m_bLoadSuccess;
+	//bool CImageString::IsLoadSuccess () {
+	//	return !m_sImageAttribute.empty () && m_bLoadSuccess;
 	//}
 
-	//void CImageString::ModifyAttribute(LPCTSTR pStrModify)
-	//{
-	//	//ParseAttribute(pStrModify);
+	//void CImageString::ModifyAttribute (string_view_t pStrModify) {
+	//	//ParseAttribute (pStrModify);
 	//}
 
-	//void CImageString::Clear()
-	//{
-	//	m_sImageAttribute.Empty();
+	//void CImageString::Clear () {
+	//	m_sImageAttribute.Empty ();
 	//	m_sImage.Empty();
 	//	m_sResType.Empty();
 	//	m_imageInfo = nullptr;
 	//	m_bLoadSuccess = true;
-	//	ZeroMemory(&m_rcDest, sizeof(RECT));
-	//	ZeroMemory(&m_rcSource, sizeof(RECT));
-	//	ZeroMemory(&m_rcCorner, sizeof(RECT));
+	//	ZeroMemory (&m_rcDest, sizeof (RECT));
+	//	ZeroMemory (&m_rcSource, sizeof (RECT));
+	//	ZeroMemory (&m_rcCorner, sizeof (RECT));
 	//	m_bFade = 0xFF;
 	//	m_dwMask = 0;
 	//	m_bHole = false;
@@ -724,9 +619,8 @@ namespace DuiLib {
 	//	m_bTiledY = false;
 	//}
 
-	//void CImageString::ParseAttribute(LPCTSTR pStrImage)
-	//{
-	//	if (pStrImage == nullptr)
+	//void CImageString::ParseAttribute(string_view_t pStrImage) {
+	//	if (!pStrImage.empty ())
 	//		return;
 
 	//	// 1¡¢aaa.jpg
@@ -734,18 +628,14 @@ namespace DuiLib {
 	//	// mask='#FF0000' fade='255' hole='false' xtiled='false' ytiled='false'
 	//	CDuiString sItem;
 	//	CDuiString sValue;
-	//	LPTSTR pstr = nullptr;
 
-	//	while (*pStrImage != _T('\0'))
-	//	{
+	//	while (*pStrImage != _T('\0')) {
 	//		sItem.Empty();
 	//		sValue.Empty();
 	//		while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
-	//		while (*pStrImage != _T('\0') && *pStrImage != _T('=') && *pStrImage > _T(' '))
-	//		{
+	//		while (*pStrImage != _T('\0') && *pStrImage != _T('=') && *pStrImage > _T(' ')) {
 	//			LPTSTR pstrTemp = ::CharNext(pStrImage);
-	//			while (pStrImage < pstrTemp)
-	//			{
+	//			while (pStrImage < pstrTemp) {
 	//				sItem += *pStrImage++;
 	//			}
 	//		}
@@ -753,19 +643,15 @@ namespace DuiLib {
 	//		if (*pStrImage++ != _T('=')) break;
 	//		while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
 	//		if (*pStrImage++ != _T('\'')) break;
-	//		while (*pStrImage != _T('\0') && *pStrImage != _T('\''))
-	//		{
+	//		while (*pStrImage != _T('\0') && *pStrImage != _T('\'')) {
 	//			LPTSTR pstrTemp = ::CharNext(pStrImage);
-	//			while (pStrImage < pstrTemp)
-	//			{
+	//			while (pStrImage < pstrTemp) {
 	//				sValue += *pStrImage++;
 	//			}
 	//		}
 	//		if (*pStrImage++ != _T('\'')) break;
-	//		if (!sValue.empty())
-	//		{
-	//			if (sItem == _T("file") || sItem == _T("res"))
-	//			{
+	//		if (!sValue.empty()) {
+	//			if (sItem == _T("file") || sItem == _T("res")) {
 	//				m_sImage = sValue;
 	//				//if (g_Dpi.GetScale() != 100) {
 	//				//	std::wstringstream wss;
@@ -773,56 +659,27 @@ namespace DuiLib {
 	//				//	std::wstring suffix = wss.str();
 	//				//	m_sImage.Replace(L".", suffix.c_str());
 	//				//}
-	//			}
-	//			else if (sItem == _T("restype"))
-	//			{					
+	//			} else if (sItem == _T("restype")) {					
 	//				m_sResType = sValue;
-	//			}
-	//			else if (sItem == _T("dest"))
-	//			{
-	//				m_rcDest.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
-	//				m_rcDest.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
-	//				m_rcDest.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
-	//				m_rcDest.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
-
+	//			} else if (sItem == _T("dest")) {
+	//				m_rcDest = FawTools::parse_rect (sValue);
 	//				//g_Dpi.ScaleRect(&m_rcDest);
-	//			}
-	//			else if (sItem == _T("source"))
-	//			{
-	//				m_rcSource.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
-	//				m_rcSource.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
-	//				m_rcSource.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
-	//				m_rcSource.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
+	//			} else if (sItem == _T("source")) {
+	//				m_rcSource = FawTools::parse_rect (sValue);
 	//				//g_Dpi.ScaleRect(&m_rcSource);
-	//			}
-	//			else if (sItem == _T("corner"))
-	//			{
-	//				m_rcCorner.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
-	//				m_rcCorner.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
-	//				m_rcCorner.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
-	//				m_rcCorner.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
+	//			} else if (sItem == _T("corner")) {
+	//				m_rcCorner = FawTools::parse_rect (sValue);
 	//				//g_Dpi.ScaleRect(&m_rcCorner);
-	//			}
-	//			else if (sItem == _T("mask"))
-	//			{
-	//				if (sValue[0] == _T('#')) m_dwMask = _tcstoul(sValue.c_str() + 1, &pstr, 16);
-	//				else m_dwMask = _tcstoul(sValue.c_str(), &pstr, 16);
-	//			}
-	//			else if (sItem == _T("fade"))
-	//			{
-	//				m_bFade = (BYTE)_tcstoul(sValue.c_str(), &pstr, 10);
-	//			}
-	//			else if (sItem == _T("hole"))
-	//			{
-	//				m_bHole = (_tcscmp(sValue.c_str(), _T("true"));
-	//			}
-	//			else if (sItem == _T("xtiled"))
-	//			{
-	//				m_bTiledX = (_tcscmp(sValue.c_str(), _T("true"));
-	//			}
-	//			else if (sItem == _T("ytiled"))
-	//			{
-	//				m_bTiledY = (_tcscmp(sValue.c_str(), _T("true"));
+	//			} else if (sItem == _T("mask")) {
+	//				m_dwMask = (DWORD) FawTools::parse_hex (sValue);
+	//			} else if (sItem == _T("fade")) {
+	//				m_bFade = (BYTE) FawTools::parse_dec (sValue);
+	//			} else if (sItem == _T("hole")) {
+	//				m_bHole = FawTools::parse_bool (sValue);
+	//			} else if (sItem == _T("xtiled")) {
+	//				m_bTiledX = FawTools::parse_bool (sValue);
+	//			} else if (sItem == _T("ytiled")) {
+	//				m_bTiledY = FawTools::parse_bool (sValue);
 	//			}
 	//		}
 	//		if (*pStrImage++ != _T(' ')) break;

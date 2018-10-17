@@ -673,7 +673,7 @@ namespace DuiLib {
 
 	HRESULT CTxtWinHost::TxNotify (DWORD iNotify, void *pv) {
 		if (iNotify == EN_REQUESTRESIZE) {
-			RECT rc;
+			RECT rc = { 0 };
 			REQRESIZE *preqsz = (REQRESIZE *) pv;
 			GetControlRect (&rc);
 			rc.bottom = rc.top + preqsz->rc.bottom;
@@ -1492,8 +1492,8 @@ namespace DuiLib {
 		return (BOOL) lResult == TRUE;
 	}
 
-	CDuiPoint CRichEditUI::GetCharPos (long lChar) const {
-		CDuiPoint pt;
+	POINT CRichEditUI::GetCharPos (long lChar) const {
+		POINT pt = { 0 };
 		TxSendMessage (EM_POSFROMCHAR, (WPARAM) &pt, (LPARAM) lChar, 0);
 		return pt;
 	}
@@ -1505,17 +1505,16 @@ namespace DuiLib {
 		return (long) lResult;
 	}
 
-	CDuiPoint CRichEditUI::PosFromChar (UINT nChar) const {
-		POINTL pt;
+	POINT CRichEditUI::PosFromChar (UINT nChar) const {
+		POINT pt = { 0 };
 		TxSendMessage (EM_POSFROMCHAR, (WPARAM) &pt, nChar, 0);
-		return CDuiPoint (pt.x, pt.y);
+		return { pt.x, pt.y };
 	}
 
-	int CRichEditUI::CharFromPos (CDuiPoint pt) const {
-		POINTL ptl = { pt.x, pt.y };
+	int CRichEditUI::CharFromPos (POINT pt) const {
 		if (!m_pTwh) return 0;
 		LRESULT lResult;
-		TxSendMessage (EM_CHARFROMPOS, 0, (LPARAM) &ptl, &lResult);
+		TxSendMessage (EM_CHARFROMPOS, 0, (LPARAM) &pt, &lResult);
 		return (int) lResult;
 	}
 
@@ -1767,14 +1766,14 @@ namespace DuiLib {
 				if (m_pTwh && m_pManager->IsLayered () && IsFocused ()) {
 					if (::GetFocus () != m_pManager->GetPaintWindow ()) return;
 					m_bDrawCaret = !m_bDrawCaret;
-					POINT ptCaret;
+					POINT ptCaret = { 0 };
 					::GetCaretPos (&ptCaret);
 					RECT rcCaret = { ptCaret.x, ptCaret.y, ptCaret.x + m_pTwh->GetCaretWidth (),
 						ptCaret.y + m_pTwh->GetCaretHeight () };
 					RECT rcTemp = rcCaret;
 					if (!::IntersectRect (&rcCaret, &rcTemp, &m_rcItem)) return;
 					CControlUI* pParent = this;
-					RECT rcParent;
+					RECT rcParent = { 0 };
 					while (!!(pParent = pParent->GetParent ())) {
 						rcTemp = rcCaret;
 						rcParent = pParent->GetPos ();
@@ -1933,7 +1932,7 @@ namespace DuiLib {
 		CControlUI::DoPaint (hDC, rcPaint, pStopControl);
 
 		if (m_pTwh) {
-			RECT rc;
+			RECT rc = { 0 };
 			m_pTwh->GetControlRect (&rc);
 			// Remember wparam is actually the hdc and lparam is the update
 			// rect because this message has been preprocessed by the window.
@@ -2011,7 +2010,7 @@ namespace DuiLib {
 		}
 
 		if (m_pTwh && m_pTwh->IsShowCaret () && m_pManager->IsLayered () && IsFocused () && m_bDrawCaret) {
-			POINT ptCaret;
+			POINT ptCaret = { 0 };
 			::GetCaretPos (&ptCaret);
 			if (::PtInRect (&m_rcItem, ptCaret)) {
 				RECT rcCaret = { ptCaret.x, ptCaret.y, ptCaret.x, ptCaret.y + m_pTwh->GetCaretHeight () };
@@ -2232,7 +2231,7 @@ namespace DuiLib {
 			// 解决微软输入法位置异常的问题
 			HIMC hIMC = ImmGetContext (GetManager ()->GetPaintWindow ());
 			if (hIMC) {
-				POINT point;
+				POINT point = { 0 };
 				GetCaretPos (&point);
 
 				COMPOSITIONFORM Composition;
@@ -2269,7 +2268,7 @@ namespace DuiLib {
 			// Mouse message only go when captured or inside rect
 			DWORD dwHitResult = m_pTwh->IsCaptured () ? HITRESULT_HIT : HITRESULT_OUTSIDE;
 			if (dwHitResult == HITRESULT_OUTSIDE) {
-				RECT rc;
+				RECT rc = { 0 };
 				m_pTwh->GetControlRect (&rc);
 				POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 				if (uMsg == WM_SETCURSOR) {
@@ -2295,7 +2294,7 @@ namespace DuiLib {
 #ifdef _USEIMM
 		else if (uMsg == WM_IME_STARTCOMPOSITION) {
 			if (IsFocused ()) {
-				POINT ptCaret;
+				POINT ptCaret = { 0 };
 				::GetCaretPos (&ptCaret);
 				HIMC hMic = ::ImmGetContext (GetManager ()->GetPaintWindow ());
 				COMPOSITIONFORM cpf;

@@ -88,20 +88,20 @@ namespace DuiLib {
 	}
 
 	RECT CEditWnd::CalPos () {
-		CDuiRect rcPos = m_pOwner->GetPos ();
+		RECT rcPos = m_pOwner->GetPos ();
 		RECT rcInset = m_pOwner->GetTextPadding ();
 		rcPos.left += rcInset.left;
 		rcPos.top += rcInset.top;
 		rcPos.right -= rcInset.right;
 		rcPos.bottom -= rcInset.bottom;
 		LONG lEditHeight = m_pOwner->GetManager ()->GetFontInfo (m_pOwner->GetFont ())->tm.tmHeight;
-		if (lEditHeight < rcPos.GetHeight ()) {
-			rcPos.top += (rcPos.GetHeight () - lEditHeight) / 2;
+		if (lEditHeight < rcPos.bottom - rcPos.top) {
+			rcPos.top += (rcPos.bottom - rcPos.top - lEditHeight) / 2;
 			rcPos.bottom = rcPos.top + lEditHeight;
 		}
 
 		CControlUI* pParent = m_pOwner;
-		RECT rcParent;
+		RECT rcParent = { 0 };
 		while (!!(pParent = pParent->GetParent ())) {
 			if (!pParent->IsVisible ()) {
 				rcPos.left = rcPos.top = rcPos.right = rcPos.bottom = 0;
@@ -149,7 +149,7 @@ namespace DuiLib {
 		else if (uMsg == OCM_COMMAND) {
 			if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_CHANGE) lRes = OnEditChanged (uMsg, wParam, lParam, bHandled);
 			else if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_UPDATE) {
-				RECT rcClient;
+				RECT rcClient = { 0 };
 				::GetClientRect (m_hWnd, &rcClient);
 				::InvalidateRect (m_hWnd, &rcClient, FALSE);
 			}
@@ -189,9 +189,9 @@ namespace DuiLib {
 			//if (m_pOwner->GetManager()->IsLayered()) {
 			//	lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
 			//	if( m_pOwner->IsEnabled() && m_bDrawCaret ) {
-			//		RECT rcClient;
+			//		RECT rcClient = { 0 };
 			//		::GetClientRect(m_hWnd, &rcClient);
-			//		POINT ptCaret;
+			//		POINT ptCaret = { 0 };
 			//		::GetCaretPos(&ptCaret);
 			//		RECT rcCaret = { ptCaret.x, ptCaret.y, ptCaret.x, ptCaret.y+rcClient.bottom-rcClient.top };
 			//		CRenderEngine::DrawLine((HDC)wParam, rcCaret, 1, 0xFF000000);
@@ -202,7 +202,7 @@ namespace DuiLib {
 		} else if (uMsg == WM_TIMER) {
 			if (wParam == CARET_TIMERID) {
 				m_bDrawCaret = !m_bDrawCaret;
-				RECT rcClient;
+				RECT rcClient = { 0 };
 				::GetClientRect (m_hWnd, &rcClient);
 				::InvalidateRect (m_hWnd, &rcClient, FALSE);
 				return 0;
@@ -245,7 +245,7 @@ namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CEditUI)
 
 	CEditUI::CEditUI () {
-		SetTextPadding (CDuiRect (4, 3, 4, 3));
+		SetTextPadding ({ 4, 3, 4, 3 });
 		SetBkColor (0xFFFFFFFF);
 	}
 
@@ -553,7 +553,7 @@ namespace DuiLib {
 	}
 
 	SIZE CEditUI::EstimateSize (SIZE szAvailable) {
-		if (m_cxyFixed.cy == 0) return CDuiSize (m_cxyFixed.cx, m_pManager->GetFontInfo (GetFont ())->tm.tmHeight + 6);
+		if (m_cxyFixed.cy == 0) return { m_cxyFixed.cx, m_pManager->GetFontInfo (GetFont ())->tm.tmHeight + 6 };
 		return CControlUI::EstimateSize (szAvailable);
 	}
 

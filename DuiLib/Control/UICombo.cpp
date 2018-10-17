@@ -78,7 +78,7 @@ namespace DuiLib {
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof (oMonitor);
 		::GetMonitorInfo (::MonitorFromWindow (GetHWND (), MONITOR_DEFAULTTOPRIMARY), &oMonitor);
-		CDuiRect rcWork = oMonitor.rcWork;
+		RECT rcWork = oMonitor.rcWork;
 		if (rc.bottom > rcWork.bottom) {
 			rc.left = rcOwner.left;
 			rc.right = rcOwner.right;
@@ -138,7 +138,7 @@ namespace DuiLib {
 			if (!pDefaultAttributes.empty ()) {
 				m_pLayout->ApplyAttributeList (pDefaultAttributes);
 			}
-			m_pLayout->SetInset (CDuiRect (1, 1, 1, 1));
+			m_pLayout->SetInset ({ 1, 1, 1, 1 });
 			m_pLayout->SetBkColor (0xFFFFFFFF);
 			m_pLayout->SetBorderColor (0xFFC6C7D2);
 			m_pLayout->SetBorderSize (1);
@@ -233,7 +233,7 @@ namespace DuiLib {
 	void CComboWnd::Scroll (int dx, int dy) {
 		if (dx == 0 && dy == 0) return;
 		SIZE sz = m_pLayout->GetScrollPos ();
-		m_pLayout->SetScrollPos (CDuiSize (sz.cx + dx, sz.cy + dy));
+		m_pLayout->SetScrollPos ({ sz.cx + dx, sz.cy + dy });
 	}
 
 #if(_WIN32_WINNT >= 0x0501)
@@ -511,7 +511,7 @@ namespace DuiLib {
 	}
 
 	SIZE CComboUI::EstimateSize (SIZE szAvailable) {
-		if (m_cxyFixed.cy == 0) return CDuiSize (m_cxyFixed.cx, m_pManager->GetDefaultFontInfo ()->tm.tmHeight + 12);
+		if (m_cxyFixed.cy == 0) return { m_cxyFixed.cx, m_pManager->GetDefaultFontInfo ()->tm.tmHeight + 12 };
 		return CControlUI::EstimateSize (szAvailable);
 	}
 

@@ -16,7 +16,7 @@ namespace DuiLib {
 		RECT rcColumn[UILIST_MAX_COLUMNS];
 		int nFont;
 		UINT uTextStyle;
-		RECT rcTextPadding;
+		RECT rcTextPadding = { 0 };
 		DWORD dwTextColor;
 		DWORD dwBkColor;
 		CDuiString sBkImage;
@@ -347,7 +347,7 @@ namespace DuiLib {
 		void PaintStatusImage (HDC hDC);
 
 	protected:
-		POINT ptLastMouse;
+		POINT ptLastMouse = { 0 };
 		bool m_bDragable;
 		UINT m_uButtonState;
 		int m_iSepWidth;
@@ -355,7 +355,7 @@ namespace DuiLib {
 		int m_iFont;
 		UINT m_uTextStyle;
 		bool m_bShowHtml;
-		RECT m_rcTextPadding;
+		RECT m_rcTextPadding = { 0 };
 		CDuiString m_sNormalImage;
 		CDuiString m_sHotImage;
 		CDuiString m_sPushedImage;

@@ -72,8 +72,7 @@ namespace DuiLib {
 	}
 
 	RECT CIPAddressWnd::CalPos () {
-		CDuiRect rcPos = m_pOwner->GetPos ();
-		return rcPos;
+		return m_pOwner->GetPos ();
 	}
 
 	string_view_t CIPAddressWnd::GetWindowClassName () const {

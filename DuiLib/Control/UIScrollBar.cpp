@@ -559,12 +559,10 @@ namespace DuiLib {
 			++m_nScrollRepeatDelay;
 			if ((m_uThumbState & UISTATE_CAPTURED) != 0) {
 				if (!m_bHorizontal) {
-					if (m_pOwner != nullptr) m_pOwner->SetScrollPos (CDuiSize (m_pOwner->GetScrollPos ().cx, \
-						m_nLastScrollPos + m_nLastScrollOffset));
+					if (m_pOwner != nullptr) m_pOwner->SetScrollPos ({ m_pOwner->GetScrollPos ().cx, m_nLastScrollPos + m_nLastScrollOffset });
 					else SetScrollPos (m_nLastScrollPos + m_nLastScrollOffset);
 				} else {
-					if (m_pOwner != nullptr) m_pOwner->SetScrollPos (CDuiSize (m_nLastScrollPos + m_nLastScrollOffset, \
-						m_pOwner->GetScrollPos ().cy));
+					if (m_pOwner != nullptr) m_pOwner->SetScrollPos ({ m_nLastScrollPos + m_nLastScrollOffset, m_pOwner->GetScrollPos ().cy });
 					else SetScrollPos (m_nLastScrollPos + m_nLastScrollOffset);
 				}
 				Invalidate ();

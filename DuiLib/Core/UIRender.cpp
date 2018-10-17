@@ -246,7 +246,7 @@ namespace DuiLib {
 		if (rcBmpPart.right > data->nX) rcBmpPart.right = data->nX;
 		if (rcBmpPart.bottom > data->nY) rcBmpPart.bottom = data->nY;
 
-		RECT rcTemp;
+		RECT rcTemp = { 0 };
 		if (!::IntersectRect (&rcTemp, &rcItem, &rc)) return true;
 		if (!::IntersectRect (&rcTemp, &rcItem, &rcPaint)) return true;
 
@@ -687,7 +687,7 @@ namespace DuiLib {
 		bool bHole = false;
 		bool bTiledX = true;
 		bool bTiledY = true;
-		CDuiSize szIcon (0, 0);
+		SIZE szIcon { 0, 0 };
 
 		int image_count = 0;
 
@@ -707,14 +707,6 @@ namespace DuiLib {
 						sImageResType = str_value;
 						++image_count;
 				} else if (str_key == _T ("dest")) {
-					//rcItem.left = rc.left + _tcstol (str_value, &pstr, 10);  ASSERT (pstr);
-					//rcItem.top = rc.top + _tcstol (pstr + 1, &pstr, 10);    ASSERT (pstr);
-					//rcItem.right = rc.left + _tcstol (pstr + 1, &pstr, 10);  ASSERT (pstr);
-					//if (rcItem.right > rc.right)
-					//	rcItem.right = rc.right;
-					//rcItem.bottom = rc.top + _tcstol (pstr + 1, &pstr, 10); ASSERT (pstr);
-					//if (rcItem.bottom > rc.bottom)
-					//	rcItem.bottom = rc.bottom;
 					rcItem = FawTools::parse_rect (str_value);
 					rcItem.left += rc.left;
 					rcItem.top += rc.top;
@@ -751,7 +743,7 @@ namespace DuiLib {
 		return true;
 	}
 
-	bool CRenderEngine::MakeFitIconDest (const RECT& rcControl, const CDuiSize& szIcon, const CDuiString& sAlign, RECT& rcDest) {
+	bool CRenderEngine::MakeFitIconDest (const RECT& rcControl, const SIZE& szIcon, const CDuiString& sAlign, RECT& rcDest) {
 		ASSERT (!sAlign.empty ());
 		if (sAlign == _T ("left")) {
 			rcDest.left = rcControl.left;
@@ -1416,7 +1408,7 @@ namespace DuiLib {
 
 	void CRenderEngine::DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, string_view_t pstrText, DWORD dwTextColor, int iFont, UINT uStyle) {
 		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
-		if (pstrText == nullptr || pManager == nullptr) return;
+		if (pstrText.empty () || pManager == nullptr) return;
 
 		if (pManager->IsLayered () || pManager->IsUseGdiplusText ()) {
 			HFONT hOldFont = (HFONT)::SelectObject (hDC, pManager->GetFont (iFont));
@@ -1499,7 +1491,7 @@ namespace DuiLib {
 					strUnicode = strUnicode.Mid (0, strUnicode.length () - 1);
 				}
 				wchar_t wch[2] = { 0 };
-				wch[0] = static_cast<wchar_t>(_tcstol (strUnicode.data (), 0, 16));
+				wch[0] = static_cast<wchar_t>(FawTools::parse_hex (strUnicode));
 				::DrawTextW (hDC, wch, -1, &rc, uStyle);
 			} else {
 				::DrawText (hDC, pstrText.data (), -1, &rc, uStyle);
@@ -1645,7 +1637,7 @@ namespace DuiLib {
 				&& (pstrText[1] >= _T ('a') && pstrText[1] <= _T ('z'))
 				&& (pstrText[2] == _T (' ') || pstrText[2] == _T ('>') || pstrText[2] == _T ('}'))) {
 				pstrText = pstrText.substr (1);
-				string_view_t pstrNextStart = nullptr;
+				string_view_t pstrNextStart = _T ("");
 				switch (pstrText[0]) {
 				case _T ('a'):  // Link
 				{
@@ -1653,7 +1645,7 @@ namespace DuiLib {
 					if (iLinkIndex < nLinkRects && !bLineDraw) {
 						CDuiString *pStr = (CDuiString*) (sLinks + iLinkIndex);
 						pStr->clear ();
-						while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) {
+						while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) {
 							string_view_t pstrTemp = pstrText.substr (1);
 							while (pstrText < pstrTemp) {
 								*pStr += pstrText[0];
@@ -1730,7 +1722,7 @@ namespace DuiLib {
 						bool bBold = false;
 						bool bUnderline = false;
 						bool bItalic = false;
-						while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}') && pstrText[0] != _T (' ')) {
+						while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}') && pstrText[0] != _T (' ')) {
 							pstrTemp = pstrText.substr (1);
 							while (pstrText < pstrTemp) {
 								sFontName += pstrText[0];
@@ -1740,7 +1732,7 @@ namespace DuiLib {
 						if (isdigit (pstrText[0])) {
 							iFontSize = FawTools::parse_dec (pstrText);
 						}
-						while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) {
+						while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) {
 							pstrTemp = pstrText.substr (1);
 							while (pstrText < pstrTemp) {
 								sFontAttr += pstrText[0];
@@ -1770,7 +1762,7 @@ namespace DuiLib {
 					int iHeight = 0;
 					const TImageInfo* pImageInfo = nullptr;
 					CDuiString sName;
-					while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}') && pstrText[0] != _T (' ')) {
+					while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}') && pstrText[0] != _T (' ')) {
 						string_view_t pstrTemp = pstrText.substr (1);
 						while (pstrText < pstrTemp) {
 							sName += pstrText[0];
@@ -1850,15 +1842,15 @@ namespace DuiLib {
 							} else {
 								pstrNextStart = _T ("");
 								if (bDraw && bLineDraw) {
-									CDuiRect rcImage (pt.x, pt.y + cyLineHeight - iHeight, pt.x + iWidth, pt.y + cyLineHeight);
+									RECT rcImage { pt.x, pt.y + cyLineHeight - iHeight, pt.x + iWidth, pt.y + cyLineHeight };
 									if (iHeight < cyLineHeight) {
 										rcImage.bottom -= (cyLineHeight - iHeight) / 2;
 										rcImage.top = rcImage.bottom - iHeight;
 									}
-									CDuiRect rcBmpPart (0, 0, iWidth, iHeight);
+									RECT rcBmpPart { 0, 0, iWidth, iHeight };
 									rcBmpPart.left = iWidth * iImageListIndex;
 									rcBmpPart.right = iWidth * (iImageListIndex + 1);
-									CDuiRect rcCorner (0, 0, 0, 0);
+									RECT rcCorner { 0, 0, 0, 0 };
 									DrawImage (hDC, pImageInfo->hBitmap, rcImage, rcImage, rcBmpPart, rcCorner, \
 										pImageInfo->bAlpha, 255);
 								}
@@ -1937,7 +1929,7 @@ namespace DuiLib {
 				}
 				if (!pstrNextStart.empty ()) pstrText = pstrNextStart;
 				else {
-					while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) pstrText = pstrText.substr (1);
+					while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) pstrText = pstrText.substr (1);
 					pstrText = pstrText.substr (1);
 				}
 			} else if (!bInRaw && (pstrText[0] == _T ('<') || pstrText[0] == _T ('{')) && pstrText[1] == _T ('/')) {
@@ -2000,7 +1992,7 @@ namespace DuiLib {
 				}
 				break;
 				}
-				while (pstrText[0] != _T ('\0') && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) pstrText = pstrText.substr (1);
+				while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) pstrText = pstrText.substr (1);
 				pstrText = pstrText.substr (1);
 			} else if (!bInRaw &&  pstrText[0] == _T ('<') && pstrText[2] == _T ('>') && (pstrText[1] == _T ('{') || pstrText[1] == _T ('}'))) {
 				SIZE szSpace = { 0 };

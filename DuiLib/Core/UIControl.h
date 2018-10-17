@@ -70,7 +70,7 @@ namespace DuiLib {
 		void SetColorHSL (bool bColorHSL);
 		SIZE GetBorderRound () const;
 		void SetBorderRound (SIZE cxyRound);
-		bool DrawImage (HDC hDC, string_view_t pStrImage, string_view_t pStrModify = nullptr);
+		bool DrawImage (HDC hDC, string_view_t pStrImage, string_view_t pStrModify = _T (""));
 
 		//±ß¿òÏà¹Ø
 		int GetBorderSize () const;
