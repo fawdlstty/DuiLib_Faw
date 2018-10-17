@@ -2,7 +2,7 @@
 
 ## 描述
 
-此项目是DuiLib的一个个人维护版本，当前拥有较激进的更新。
+此项目是DuiLib的一个个人维护版本，使用C++17重写了整个项目。
 
 大众所熟知的DuiLib主分支处于较少更新的状态，几年前的激进更新派DuiLib_Ultimate、DuiLib_Redrain等也渐渐变成了保守派，也降低了更新速度，然而这个优秀的库也渐渐的无法满足当今的需要。
 
@@ -72,13 +72,17 @@
 
 ## 已更新内容
 
-1. 完善链接方式，针对是否为Unicode、Debug、64位、动态或静态，4种条件16种链接方式做出完善的链接选项。
-2. 修改CDuiString实现方式的底层为std::string，使得兼容性更强
-3. GroupBox边框绘制时自动擦除文字位置，使得不用设置背景色，文字依旧不被边框遮盖
+1. 完善链接方式，针对是否为Unicode、Debug、64位、动态或静态，4种条件16种链接方式做出完善的链接选项
+2. GroupBox边框绘制时自动擦除文字位置，使得不用设置背景色，文字依旧不被边框遮盖
+3. 修复容器子元素手动右对齐，方法为子控件加入代码：floatalign="right"
 4. 修复Combo控件的SetText功能
-5. 修复容器子元素手动右对齐，方法为子控件加入代码：floatalign="right"
-6. 新增图片的dest可为负数，当为负数时，位置固定在目标控件的右边。比如Combo控件固定到右边的下拉箭头
+5. 新增图片的dest可为负数，当为负数时，位置固定在目标控件的右边。比如Combo控件固定到右边的下拉箭头
+6. 修改CDuiString实现方式的底层为std::string，使得兼容性更强
 7. Label控件新增autocalcheight，效果类似于autocalcwidth
+8. 使用std::variant代替STRINGorID
+9. 使用std::string_view代替了几乎所有的LPCTSTR
+10. 移除了CDuiPoint、CDuiRect、CDuiSize
+11. 整理出公共类FawTools，将大部分重复的代码合并
 
 ## 待研究或待添加
 
