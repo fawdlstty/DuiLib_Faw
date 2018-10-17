@@ -945,42 +945,9 @@ namespace DuiLib {
 		}
 		CDuiString sXmlData = pstrValue;
 		sXmlData.Replace (_T ("&quot;"), _T ("\""));
-		string_view_t pstrList = sXmlData;
-		// 解析样式属性
-		CDuiString sItem;
-		CDuiString sValue;
-		while (!pstrList.empty ()) {
-			sItem.clear ();
-			sValue.clear ();
-			while (!pstrList.empty () && pstrList[0] != _T ('=')) {
-				string_view_t pstrTemp = pstrList.substr (1);
-				while (pstrList.length () > pstrTemp.length ()) {
-					sItem += pstrList[0];
-					pstrList = pstrList.substr (1);
-				}
-			}
-			ASSERT (pstrList[0] == _T ('='));
-			if (pstrList[0] != _T ('=')) return this;
-			pstrList = pstrList.substr (1);
-			ASSERT (pstrList[0] == _T ('\"'));
-			if (pstrList[0] != _T ('\"')) return this;
-			pstrList = pstrList.substr (1);
-			while (!pstrList.empty () && pstrList[0] != _T ('\"')) {
-				string_view_t pstrTemp = pstrList.substr (1);
-				while (pstrList.length () > pstrTemp.length ()) {
-					sValue += pstrList[0];
-					pstrList = pstrList.substr (1);
-				}
-			}
-			ASSERT (pstrList[0] == _T ('\"'));
-			if (pstrList[0] != _T ('\"')) return this;
-			pstrList = pstrList.substr (1);
-			SetAttribute (sItem, sValue);
-			if (pstrList[0] != _T (' ')) return this;
-			pstrList = pstrList.substr (1);
-			if (pstrList[0] != _T (',')) return this;
-			pstrList = pstrList.substr (1);
-		}
+		auto pairs = FawTools::parse_keyvalue_pairs (sXmlData);
+		for (auto[str_key, str_value] : pairs)
+			SetAttribute (str_key, str_value);
 		return this;
 	}
 
