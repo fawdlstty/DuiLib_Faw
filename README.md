@@ -86,11 +86,10 @@
 
 ## 待研究或待添加
 
-1. 实现内存加载控件图片
-2. 实现虚拟列表效果
-3. 文字无阴影效果
-4. 图片没有autocalcwidth、autocalcheight
-5. 容器不支持根据子元素大小来计算大小
-6. 考虑新增Ribbon控件
+1. 实现虚拟列表效果
+2. 实现文字阴影效果
+3. 图片没有autocalcwidth、autocalcheight
+4. 容器不支持根据子元素大小来计算大小
+5. 考虑新增Ribbon、Docker、MVC功能
 
 ## 许可证：MIT+原始许可
