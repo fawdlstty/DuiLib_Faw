@@ -30,7 +30,7 @@ namespace DuiLib {
 	}
 
 	void COptionUI::SetGroup (string_view_t pStrGroupName) {
-		if (pStrGroupName == nullptr) {
+		if (pStrGroupName.empty ()) {
 			if (m_sGroupName.empty ()) return;
 			m_sGroupName.clear ();
 		} else {

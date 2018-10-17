@@ -233,7 +233,7 @@ namespace DuiLib {
 		}
 		const TImageInfo* data = nullptr;
 		if (sImageResType.empty ()) {
-			data = pManager->GetImageEx (sImageName, nullptr, dwMask, false, instance);
+			data = pManager->GetImageEx (sImageName, _T (""), dwMask, false, instance);
 		} else {
 			data = pManager->GetImageEx (sImageName, sImageResType, dwMask, false, instance);
 		}
@@ -273,7 +273,7 @@ namespace DuiLib {
 		LPBYTE pData = nullptr;
 		DWORD dwSize = 0;
 		do {
-			if (type == nullptr) {
+			if (type.empty ()) {
 				CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 				if (CPaintManagerUI::GetResourceZip ().empty ()) {
 					sFile += std::get<1> (bitmap);
@@ -777,10 +777,10 @@ namespace DuiLib {
 	}
 
 	TImageInfo* CRenderEngine::LoadImage (string_view_t pStrImage, string_view_t type, DWORD mask, HINSTANCE instance) {
-		if (pStrImage == nullptr) return nullptr;
+		if (pStrImage.empty ()) return nullptr;
 
 		string_view_t sStrPath = pStrImage;
-		if (type == nullptr) {
+		if (type.empty ()) {
 			sStrPath = CResourceManager::GetInstance ()->GetImagePath (pStrImage);
 			if (sStrPath.empty ()) sStrPath = pStrImage;
 			else {
@@ -791,7 +791,7 @@ namespace DuiLib {
 				}*/
 			}
 		}
-		return LoadImage (sStrPath, type, mask, instance);
+		return LoadImage (std::variant<UINT, string_t> (sStrPath.data ()), type, mask, instance);
 	}
 
 	TImageInfo* CRenderEngine::LoadImage (UINT nID, string_view_t type, DWORD mask, HINSTANCE instance) {
@@ -2100,7 +2100,7 @@ namespace DuiLib {
 				pstrText = pstrText.substr (cchSize);
 			}
 
-			if (pt.x >= rc.right || pstrText[0] == _T ('\n') || pstrText[0] == _T ('\0')) bLineEnd = true;
+			if (pt.x >= rc.right || pstrText.empty () || pstrText[0] == _T ('\n')) bLineEnd = true;
 			if (bDraw && bLineEnd) {
 				if (!bLineDraw) {
 					aFontArray.Resize (aLineFontArray.GetSize ());

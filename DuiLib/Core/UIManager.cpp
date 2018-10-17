@@ -2878,23 +2878,23 @@ namespace DuiLib {
 	}
 
 	const TImageInfo* CPaintManagerUI::AddImage (string_view_t bitmap, string_view_t type, DWORD mask, bool bUseHSL, bool bShared, HINSTANCE instance) {
-		if (bitmap == nullptr || bitmap[0] == _T ('\0')) return nullptr;
+		if (bitmap.empty ()) return nullptr;
 
 		TImageInfo* data = nullptr;
-		if (type != nullptr && type.length () > 0) {
+		if (type.length () > 0) {
 			if (isdigit (bitmap[0])) {
 				int iIndex = _ttoi (bitmap.data ());
 				data = CRenderEngine::LoadImage (iIndex, type.data (), mask, instance);
 			}
 		} else {
-			data = CRenderEngine::LoadImage (bitmap, nullptr, mask, instance);
+			data = CRenderEngine::LoadImage (bitmap, _T (""), mask, instance);
 		}
 
 		if (data == nullptr) {
 			return nullptr;
 		}
 		data->bUseHSL = bUseHSL;
-		if (type != nullptr) data->sResType = type;
+		if (!type.empty ()) data->sResType = type;
 		data->dwMask = mask;
 		if (data->bUseHSL) {
 			data->pSrcBits = new BYTE[data->nX * data->nY * 4];
@@ -2932,7 +2932,7 @@ namespace DuiLib {
 
 	const TImageInfo* CPaintManagerUI::AddImage (string_view_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared) {
 		// 因无法确定外部HBITMAP格式，不能使用hsl调整
-		if (bitmap == nullptr || bitmap[0] == _T ('\0')) return nullptr;
+		if (bitmap.empty ()) return nullptr;
 		if (hBitmap == nullptr || iWidth <= 0 || iHeight <= 0) return nullptr;
 
 		TImageInfo* data = new TImageInfo;
@@ -3234,14 +3234,14 @@ namespace DuiLib {
 	}
 
 	string_view_t CPaintManagerUI::GetWindowCustomAttribute (string_view_t pstrName) const {
-		if (pstrName == nullptr || pstrName[0] == _T ('\0')) return nullptr;
+		if (pstrName.empty ()) return _T ("");
 		CDuiString* pCostomAttr = static_cast<CDuiString*>(m_mWindowCustomAttrHash.Find (pstrName));
 		if (pCostomAttr) return *pCostomAttr;
-		return nullptr;
+		return _T ("");
 	}
 
 	bool CPaintManagerUI::RemoveWindowCustomAttribute (string_view_t pstrName) {
-		if (pstrName == nullptr || pstrName[0] == _T ('\0')) return nullptr;
+		if (pstrName.empty ()) return false;
 		CDuiString* pCostomAttr = static_cast<CDuiString*>(m_mWindowCustomAttrHash.Find (pstrName));
 		if (!pCostomAttr) return false;
 

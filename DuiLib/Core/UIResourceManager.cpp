@@ -21,14 +21,15 @@ namespace DuiLib {
 			}
 		} else {
 			HRSRC hResource = ::FindResource (CPaintManagerUI::GetResourceDll (), MAKEINTRESOURCE (std::get<0> (xml)), type.data ());
-			if (hResource == nullptr) return FALSE;
+			if (hResource == NULL) return FALSE;
 			HGLOBAL hGlobal = ::LoadResource (CPaintManagerUI::GetResourceDll (), hResource);
-			if (hGlobal == nullptr) {
+			if (hGlobal == NULL) {
 				FreeResource (hResource);
 				return FALSE;
 			}
 
 			if (!m_xml.LoadFromMem ((BYTE*) ::LockResource (hGlobal), ::SizeofResource (CPaintManagerUI::GetResourceDll (), hResource))) {
+				::FreeResource (hResource);
 				return FALSE;
 			}
 			::FreeResource (hResource);
@@ -62,7 +63,7 @@ namespace DuiLib {
 						pstrPath = pstrValue;
 					}
 				}
-				if (pstrId == nullptr || pstrPath == nullptr) continue;
+				if (pstrId.empty () || pstrPath.empty ()) continue;
 				CDuiString * pstrFind = static_cast<CDuiString *>(m_mImageHashMap.Find (pstrId));
 				if (pstrFind != nullptr) continue;
 				m_mImageHashMap.Insert (pstrId, (LPVOID)new CDuiString (pstrPath));
@@ -79,7 +80,7 @@ namespace DuiLib {
 						pstrPath = pstrValue;
 					}
 				}
-				if (pstrId == nullptr || pstrPath == nullptr) continue;
+				if (pstrId.empty () || pstrPath.empty ()) continue;
 				CDuiString * pstrFind = static_cast<CDuiString *>(m_mXmlHashMap.Find (pstrId));
 				if (pstrFind != nullptr) continue;
 				m_mXmlHashMap.Insert (pstrId, (LPVOID)new CDuiString (pstrPath));

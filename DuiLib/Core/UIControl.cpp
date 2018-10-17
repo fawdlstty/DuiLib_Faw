@@ -717,7 +717,7 @@ namespace DuiLib {
 	}
 
 	void CControlUI::AddCustomAttribute (string_view_t pstrName, string_view_t pstrAttr) {
-		if (pstrName == nullptr || pstrName[0] == _T ('\0') || pstrAttr == nullptr || pstrAttr[0] == _T ('\0')) return;
+		if (pstrName.empty () || pstrAttr.empty ()) return;
 		CDuiString* pCostomAttr = new CDuiString (pstrAttr);
 		if (m_mCustomAttrHash.Find (pstrName) == nullptr)
 			m_mCustomAttrHash.Set (pstrName, (LPVOID) pCostomAttr);
@@ -726,14 +726,14 @@ namespace DuiLib {
 	}
 
 	string_view_t CControlUI::GetCustomAttribute (string_view_t pstrName) const {
-		if (pstrName == nullptr || pstrName[0] == _T ('\0')) return nullptr;
+		if (pstrName.empty ()) return _T ("");
 		CDuiString* pCostomAttr = static_cast<CDuiString*>(m_mCustomAttrHash.Find (pstrName));
 		if (pCostomAttr) return *pCostomAttr;
 		return nullptr;
 	}
 
 	bool CControlUI::RemoveCustomAttribute (string_view_t pstrName) {
-		if (pstrName == nullptr || pstrName[0] == _T ('\0')) return nullptr;
+		if (pstrName.empty ()) return false;
 		CDuiString* pCostomAttr = static_cast<CDuiString*>(m_mCustomAttrHash.Find (pstrName));
 		if (!pCostomAttr) return false;
 
@@ -792,25 +792,24 @@ namespace DuiLib {
 						pstrValue = pstrValue.substr (1);
 					}
 				}
-				if (sValue.CompareNoCase (_T ("nullptr")) == 0) {
+				if (sValue == _T ("nullptr")) {
 					uAlign = 0;
-				}
-				if (sValue.CompareNoCase (_T ("left")) == 0) {
+				} else if (sValue == _T ("left")) {
 					uAlign &= ~(DT_CENTER | DT_RIGHT);
 					uAlign |= DT_LEFT;
-				} else if (sValue.CompareNoCase (_T ("center")) == 0) {
+				} else if (sValue == _T ("center")) {
 					uAlign &= ~(DT_LEFT | DT_RIGHT);
 					uAlign |= DT_CENTER;
-				} else if (sValue.CompareNoCase (_T ("right")) == 0) {
+				} else if (sValue == _T ("right")) {
 					uAlign &= ~(DT_LEFT | DT_CENTER);
 					uAlign |= DT_RIGHT;
-				} else if (sValue.CompareNoCase (_T ("top")) == 0) {
+				} else if (sValue == _T ("top")) {
 					uAlign &= ~(DT_BOTTOM | DT_VCENTER);
 					uAlign |= DT_TOP;
-				} else if (sValue.CompareNoCase (_T ("vcenter")) == 0) {
+				} else if (sValue == _T ("vcenter")) {
 					uAlign &= ~(DT_TOP | DT_BOTTOM);
 					uAlign |= DT_VCENTER;
-				} else if (sValue.CompareNoCase (_T ("bottom")) == 0) {
+				} else if (sValue == _T ("bottom")) {
 					uAlign &= ~(DT_TOP | DT_VCENTER);
 					uAlign |= DT_BOTTOM;
 				}
@@ -819,8 +818,9 @@ namespace DuiLib {
 		} else if (pstrName == _T ("padding")) {
 			RECT rcPadding = FawTools::parse_rect (pstrValue);
 			SetPadding (rcPadding);
-		} else if (pstrName == _T ("gradient")) SetGradient (pstrValue);
-		else if (pstrName == _T ("bkcolor") || pstrName == _T ("bkcolor1")) {
+		} else if (pstrName == _T ("gradient")) {
+			SetGradient (pstrValue);
+		} else if (pstrName == _T ("bkcolor") || pstrName == _T ("bkcolor1")) {
 			SetBkColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("bkcolor2")) {
 			SetBkColor2 ((DWORD) FawTools::parse_hex (pstrValue));
@@ -832,23 +832,26 @@ namespace DuiLib {
 			SetBorderColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("focusbordercolor")) {
 			SetFocusBorderColor ((DWORD) FawTools::parse_hex (pstrValue));
-		} else if (pstrName == _T ("colorhsl")) SetColorHSL (FawTools::parse_bool (pstrValue));
-		else if (pstrName == _T ("bordersize")) {
-			CDuiString nValue = pstrValue;
-			if (nValue.find (',') == string_t::npos) {
-				SetBorderSize (_ttoi (pstrValue.data ()));
-				RECT rcPadding = { 0 };
-				SetBorderSize (rcPadding);
+		} else if (pstrName == _T ("colorhsl")) {
+			SetColorHSL (FawTools::parse_bool (pstrValue));
+		} else if (pstrName == _T ("bordersize")) {
+			if (pstrValue.find (',') == string_t::npos) {
+				SetBorderSize (FawTools::parse_dec (pstrValue));
 			} else {
 				RECT rcPadding = FawTools::parse_rect (pstrValue);
 				SetBorderSize (rcPadding);
 			}
-		} else if (pstrName == _T ("leftbordersize")) SetLeftBorderSize (_ttoi (pstrValue.data ()));
-		else if (pstrName == _T ("topbordersize")) SetTopBorderSize (_ttoi (pstrValue.data ()));
-		else if (pstrName == _T ("rightbordersize")) SetRightBorderSize (_ttoi (pstrValue.data ()));
-		else if (pstrName == _T ("bottombordersize")) SetBottomBorderSize (_ttoi (pstrValue.data ()));
-		else if (pstrName == _T ("borderstyle")) SetBorderStyle (_ttoi (pstrValue.data ()));
-		else if (pstrName == _T ("borderround")) {
+		} else if (pstrName == _T ("leftbordersize")) {
+			SetLeftBorderSize (_ttoi (pstrValue.data ()));
+		} else if (pstrName == _T ("topbordersize")) {
+			SetTopBorderSize (_ttoi (pstrValue.data ()));
+		} else if (pstrName == _T ("rightbordersize")) {
+			SetRightBorderSize (_ttoi (pstrValue.data ()));
+		} else if (pstrName == _T ("bottombordersize")) {
+			SetBottomBorderSize (_ttoi (pstrValue.data ()));
+		} else if (pstrName == _T ("borderstyle")) {
+			SetBorderStyle (_ttoi (pstrValue.data ()));
+		} else if (pstrName == _T ("borderround")) {
 			SIZE cxyRound = FawTools::parse_size (pstrValue);
 			SetBorderRound (cxyRound);
 		} else if (pstrName == _T ("bkimage")) SetBkImage (pstrValue);
@@ -900,7 +903,7 @@ namespace DuiLib {
 				sValue.clear ();
 				while (!pstrList.empty () && pstrList[0] != _T ('=')) {
 					string_view_t pstrTemp = pstrList.substr (1);
-					while (pstrList < pstrTemp) {
+					while (pstrList.length () > pstrTemp.length ()) {
 						sItem += pstrList[0];
 						pstrList = pstrList.substr (1);
 					}
@@ -964,7 +967,7 @@ namespace DuiLib {
 			pstrList = pstrList.substr (1);
 			while (!pstrList.empty () && pstrList[0] != _T ('\"')) {
 				string_view_t pstrTemp = pstrList.substr (1);
-				while (pstrList < pstrTemp) {
+				while (pstrList.length () > pstrTemp.length ()) {
 					sValue += pstrList[0];
 					pstrList = pstrList.substr (1);
 				}

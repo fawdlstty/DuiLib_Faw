@@ -258,7 +258,7 @@ namespace DuiLib {
 
 	void CButtonUI::BindTriggerTabSel (int _SetSelectIndex /*= -1*/) {
 		string_view_t pstrName = GetBindTabLayoutName ();
-		if (pstrName == nullptr || (GetBindTabLayoutIndex () < 0 && _SetSelectIndex < 0))
+		if (pstrName.empty () || (GetBindTabLayoutIndex () < 0 && _SetSelectIndex < 0))
 			return;
 
 		CTabLayoutUI* pTabLayout = static_cast<CTabLayoutUI*>(GetManager ()->FindControl (pstrName));
