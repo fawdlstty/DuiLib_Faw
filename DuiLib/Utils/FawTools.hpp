@@ -8,20 +8,15 @@ namespace DuiLib {
 	public:
 		// "1,2,3,4" -> RECT
 		template <typename T>
-		static RECT parse_rect (T &str) {
-			auto v = split_number (str, 4); return { (LONG) v[0], (LONG) v[1], (LONG) v[2], (LONG) v[3] };
-		}
+		static RECT parse_rect (T &str) { auto v = split_number (str, 4); return { (LONG) v[0], (LONG) v[1], (LONG) v[2], (LONG) v[3] }; }
 
+		// "1.0,2.0,3.0,4.0" -> TPercentInfo
 		template <typename T>
-		static DuiLib::TPercentInfo parse_TPercentInfo (T &str) {
-			auto v = split_double (str, 4); return { v[0], v[1], v[2], v[3] };
-		}
+		static TPercentInfo parse_TPercentInfo (T &str) { auto v = split_double (str, 4); return { v[0], v[1], v[2], v[3] }; }
 
 		// "1,2" -> SIZE
 		template <typename T>
-		static SIZE parse_size (T &str) {
-			auto v = split_number (str, 2); return { (LONG) v[0], (LONG) v[1] };
-		}
+		static SIZE parse_size (T &str) { auto v = split_number (str, 2); return { (LONG) v[0], (LONG) v[1] }; }
 
 		// "#FFFF0000" or "FF0000" -> size_t
 		template <typename T>
@@ -29,15 +24,10 @@ namespace DuiLib {
 			size_t n = 0, i = (str.length () > 0 && str[0] == _T ('#')) ? 1 : 0;
 			for (; i < str.length (); ++i) {
 				TCHAR ch = str[i];
-				if (ch >= _T ('0') && ch <= _T ('9')) {
-					n = n * 16 + ch - _T ('0');
-				} else if (ch >= _T ('A') && ch <= _T ('Z')) {
-					n = n * 16 + ch - _T ('A') + 10;
-				} else if (ch >= _T ('a') && ch <= _T ('z')) {
-					n = n * 16 + ch - _T ('a') + 10;
-				} else {
-					break;
-				}
+				if (ch >= _T ('0') && ch <= _T ('9')) { n = n * 16 + ch - _T ('0'); }
+				else if (ch >= _T ('A') && ch <= _T ('Z')) { n = n * 16 + ch - _T ('A') + 10; }
+				else if (ch >= _T ('a') && ch <= _T ('z')) { n = n * 16 + ch - _T ('a') + 10; }
+				else { break; }
 			}
 			if constexpr (!std::is_const<T>::value)
 				str = str.substr (i);
@@ -52,11 +42,9 @@ namespace DuiLib {
 			size_t i = is_sign ? 1 : 0;
 			for (; i < str.length (); ++i) {
 				TCHAR ch = str[i];
-				if (ch >= _T ('0') && ch <= _T ('9')) {
-					n = n * 10 + ch - _T ('0');
-				} else {
+				if (ch < _T ('0') || ch > _T ('9'))
 					break;
-				}
+				n = n * 10 + ch - _T ('0');
 			}
 			if constexpr (!std::is_const<T>::value)
 				str = str.substr (i);
@@ -76,8 +64,7 @@ namespace DuiLib {
 			std::map<string_t, string_t> m;
 			size_t begin = 0;
 			string_view_t str_key = _T (""), str_value = _T ("");
-			while (begin < str.size ()) {
-				// parse str_key
+			while (begin < str.size ()) { 	// parse str_key
 				TCHAR ch = str[begin];
 				TCHAR sp = (ch == _T ('\"') || ch == _T ('\'') ? ch : _T ('='));
 				if (ch == sp) ++begin;
@@ -113,62 +100,90 @@ namespace DuiLib {
 			return m;
 		}
 
+		//
+		static std::string formatA (std::string_view str, ...) {
+			if (str.empty ())
+				return "";
+			try {
+				va_list ap;
+				//来源：http://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
+				ptrdiff_t final_n, n = (str.length ()) * 2;
+				std::unique_ptr<char[]> formatted;
+				while (true) {
+					formatted.reset (new char[n]);
+					//strcpy_s (&formatted [0], fmt_str.size (), fmt_str);
+					va_start (ap, str);
+					// _vsntprintf_s
+					final_n = _vsnprintf_s (formatted.get (), n, _TRUNCATE, str.data (), ap);
+					va_end (ap);
+					if (final_n < 0 || final_n >= n)
+						n += abs (final_n - n + 1);
+					else
+						break;
+				}
+				return formatted.get ();
+			} catch (...) {
+			}
+		}
+		static std::wstring formatW (std::wstring_view str, ...) {
+			if (str.empty ())
+				return L"";
+			try {
+				va_list ap;
+				//来源：http://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
+				ptrdiff_t final_n, n = (str.length ()) * 2;
+				std::unique_ptr<wchar_t[]> formatted;
+				while (true) {
+					formatted.reset (new wchar_t[n]);
+					//strcpy_s (&formatted [0], fmt_str.size (), fmt_str);
+					va_start (ap, str);
+					// _vsntprintf_s
+					final_n = _vsnwprintf_s (formatted.get (), n, _TRUNCATE, str.data (), ap);
+					va_end (ap);
+					if (final_n < 0 || final_n >= n)
+						n += abs (final_n - n + 1);
+					else
+						break;
+				}
+				return formatted.get ();
+			} catch (...) {
+			}
+		}
+
+		//
+		template<typename T>
+		static size_t find (std::vector<T> &v, T &item) {
+			for (int i = 0; i < v.size (); ++i) {
+				if (v[i] == item)
+					return i;
+			}
+			return string_t::npos;
+		}
+
 
 
 		//
 		// 字符串处理
 		//
 
-		static std::wstring gb18030_to_utf16 (std::string_view _old) {
-			return _conv_to_wide (_old, CP_ACP);
-		}
-		static std::string utf16_to_gb18030 (std::wstring_view _old) {
-			return _conv_to_multi (_old, CP_ACP);
-		}
-		static std::wstring utf8_to_utf16 (std::string_view _old) {
-			return _conv_to_wide (_old, CP_UTF8);
-		}
-		static std::string utf16_to_utf8 (std::wstring_view _old) {
-			return _conv_to_multi (_old, CP_UTF8);
-		}
-		static std::string gb18030_to_utf8 (std::string_view _old) {
-			return utf16_to_utf8 (gb18030_to_utf16 (_old));
-		}
-		static std::string utf8_to_gb18030 (std::string_view _old) {
-			return utf16_to_gb18030 (utf8_to_utf16 (_old));
-		}
+		static std::wstring gb18030_to_utf16 (std::string_view _old) { return _conv_to_wide (_old, CP_ACP); }
+		static std::string utf16_to_gb18030 (std::wstring_view _old) { return _conv_to_multi (_old, CP_ACP); }
+		static std::wstring utf8_to_utf16 (std::string_view _old) { return _conv_to_wide (_old, CP_UTF8); }
+		static std::string utf16_to_utf8 (std::wstring_view _old) { return _conv_to_multi (_old, CP_UTF8); }
+		static std::string gb18030_to_utf8 (std::string_view _old) { return utf16_to_utf8 (gb18030_to_utf16 (_old)); }
+		static std::string utf8_to_gb18030 (std::string_view _old) { return utf16_to_gb18030 (utf8_to_utf16 (_old)); }
 #ifdef UNICODE
-		static std::string get_gb18030 (string_view_t _old) {
-			return utf16_to_gb18030 (_old);
-		}
-		static std::wstring get_utf16 (string_view_t _old) {
-			return std::wstring (_old);
-		}
-		static string_t get_T (std::string_view _old) {
-			return gb18030_to_utf16 (_old);
-		}
-		static string_t get_T_from_utf8 (std::string_view _old) {
-			return utf8_to_utf16 (_old);
-		}
-		static string_t get_T (std::wstring_view _old) {
-			return std::wstring (_old);
-		}
+		static std::string get_gb18030 (string_view_t _old) { return utf16_to_gb18030 (_old); }
+		static std::wstring get_utf16 (string_view_t _old) { return std::wstring (_old); }
+		static string_t get_T (std::string_view _old) { return gb18030_to_utf16 (_old); }
+		static string_t get_T_from_utf8 (std::string_view _old) { return utf8_to_utf16 (_old); }
+		static string_t get_T (std::wstring_view _old) { return std::wstring (_old); }
 #else
-		static std::string get_gb18030 (string_view_t _old) {
-			return std::string (_old);
-		}
-		static std::wstring get_utf16 (string_view_t _old) {
-			return gb18030_to_utf16 (_old);
-		}
-		static string_t get_T (std::string_view _old) {
-			return std::string (_old);
-		}
-		static string_t get_T_from_utf8 (std::string_view _old) {
-			return utf8_to_gb18030 (_old);
-		}
-		static string_t get_T (std::wstring_view _old) {
-			return utf16_to_gb18030 (_old);
-		}
+		static std::string get_gb18030 (string_view_t _old) { return std::string (_old); }
+		static std::wstring get_utf16 (string_view_t _old) { return gb18030_to_utf16 (_old); }
+		static string_t get_T (std::string_view _old) { return std::string (_old); }
+		static string_t get_T_from_utf8 (std::string_view _old) { return utf8_to_gb18030 (_old); }
+		static string_t get_T (std::wstring_view _old) { return utf16_to_gb18030 (_old); }
 #endif
 
 	private:
@@ -203,6 +218,7 @@ namespace DuiLib {
 				str = str.substr (i);
 			return v;
 		}
+
 		template <typename T>
 		static std::vector<double> split_double (T &str, size_t expect = string_t::npos) {
 			std::vector<double> v;
@@ -248,6 +264,7 @@ namespace DuiLib {
 				return "";
 			return s.c_str ();
 		}
+
 		static std::wstring _conv_to_wide (std::string_view _old, UINT ToType) {
 			int lenOld = (int) _old.length ();
 			int lenNew = ::MultiByteToWideChar (ToType, 0, _old.data (), lenOld, nullptr, 0);
@@ -263,5 +280,13 @@ namespace DuiLib {
 		//}
 	};
 }
+
+#ifndef format
+#	ifdef UNICODE
+#		define format formatW;
+#	else
+#		define format formatA;
+#	endif
+#endif
 
 #endif //__FAW_TOOLS_HPP__

@@ -33,6 +33,9 @@
     <Filter Include="Header Files\Control">
       <UniqueIdentifier>{77af9153-b795-4ed6-bcab-50a6b1c6741c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Bind">
+      <UniqueIdentifier>{abd5beb9-c75f-4d64-9af5-0bfb91ebbf5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
@@ -390,6 +393,9 @@
     </ClInclude>
     <ClInclude Include="Utils\FawTools.hpp">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Bind\BindBase.hpp">
+      <Filter>Header Files\Bind</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

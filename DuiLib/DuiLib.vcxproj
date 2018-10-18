@@ -1051,6 +1051,7 @@
     <ClCompile Include="Control\UIWebBrowser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bind\BindBase.hpp" />
     <ClInclude Include="Control\UIIPAddressEx.h" />
     <ClInclude Include="Control\UIRollText.h" />
     <ClInclude Include="Control\UIAnimation.h" />
