@@ -34,6 +34,7 @@
 #include <tuple>
 #include <type_traits>
 #include <variant>
+#include <cstdint>
 #include <Windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
@@ -131,6 +132,7 @@ typedef std::string_view string_view_t;
 #include "Control/UIRing.h"
 
 #include "Utils/FawTools.hpp"
+#include "Bind/BindBase.hpp"
 
 #pragma comment (lib, "comctl32.lib")
 #pragma comment (lib, "GdiPlus.lib")

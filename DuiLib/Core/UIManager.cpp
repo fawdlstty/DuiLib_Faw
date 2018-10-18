@@ -172,7 +172,7 @@ namespace DuiLib {
 		m_bLayered (false),
 		m_bLayeredChanged (false),
 		m_bShowUpdateRect (false),
-		m_bUseGdiplusText (false),
+		m_bUseGdiplusText (true),
 		m_trh (0),
 		m_bDragMode (false),
 		m_hDragBitmap (nullptr),

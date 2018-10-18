@@ -83,20 +83,10 @@ namespace DuiLib {
 		}
 
 		CDuiString strClassName;
-		std::vector<CDuiString> vctStaticName;
+		static std::vector<CDuiString> vctStaticName { _T ("controlui"), _T ("textui"), _T ("labelui"), _T ("containerui"), _T ("horizontallayoutui"), _T ("verticallayoutui"), _T("tablayoutui"), _T ("childlayoutui"), _T ("dialoglayoutui"), _T ("progresscontainerui") };
 
 		strClassName = pControl->GetClass ();
 		strClassName.MakeLower ();
-		vctStaticName.push_back (_T ("controlui"));
-		vctStaticName.push_back (_T ("textui"));
-		vctStaticName.push_back (_T ("labelui"));
-		vctStaticName.push_back (_T ("containerui"));
-		vctStaticName.push_back (_T ("horizontallayoutui"));
-		vctStaticName.push_back (_T ("verticallayoutui"));
-		vctStaticName.push_back (_T ("tablayoutui"));
-		vctStaticName.push_back (_T ("childlayoutui"));
-		vctStaticName.push_back (_T ("dialoglayoutui"));
-		vctStaticName.push_back (_T ("progresscontainerui"));
 		std::vector<CDuiString>::iterator it = std::find (vctStaticName.begin (), vctStaticName.end (), strClassName);
 		if (vctStaticName.end () != it) {
 			CControlUI* pParent = pControl->GetParent ();
@@ -311,7 +301,7 @@ namespace DuiLib {
 
 	LRESULT WindowImplBase::HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		LRESULT lRes = 0;
-		BOOL bHandled = TRUE;
+		BOOL bHandled = FALSE;
 		switch (uMsg) {
 		case WM_CREATE:			lRes = OnCreate (uMsg, wParam, lParam, bHandled); break;
 		case WM_CLOSE:			lRes = OnClose (uMsg, wParam, lParam, bHandled); break;
@@ -325,7 +315,7 @@ namespace DuiLib {
 		case WM_MOUSEWHEEL:		lRes = OnMouseWheel (uMsg, wParam, lParam, bHandled); break;
 #endif
 		case WM_SIZE:			lRes = OnSize (uMsg, wParam, lParam, bHandled); break;
-		case WM_CHAR:		lRes = OnChar (uMsg, wParam, lParam, bHandled); break;
+		case WM_CHAR:			lRes = OnChar (uMsg, wParam, lParam, bHandled); break;
 		case WM_SYSCOMMAND:		lRes = OnSysCommand (uMsg, wParam, lParam, bHandled); break;
 		case WM_KEYDOWN:		lRes = OnKeyDown (uMsg, wParam, lParam, bHandled); break;
 		case WM_KILLFOCUS:		lRes = OnKillFocus (uMsg, wParam, lParam, bHandled); break;
@@ -333,8 +323,7 @@ namespace DuiLib {
 		case WM_LBUTTONUP:		lRes = OnLButtonUp (uMsg, wParam, lParam, bHandled); break;
 		case WM_LBUTTONDOWN:	lRes = OnLButtonDown (uMsg, wParam, lParam, bHandled); break;
 		case WM_MOUSEMOVE:		lRes = OnMouseMove (uMsg, wParam, lParam, bHandled); break;
-		case WM_MOUSEHOVER:	lRes = OnMouseHover (uMsg, wParam, lParam, bHandled); break;
-		default:				bHandled = FALSE; break;
+		case WM_MOUSEHOVER:		lRes = OnMouseHover (uMsg, wParam, lParam, bHandled); break;
 		}
 		if (bHandled) return lRes;
 
