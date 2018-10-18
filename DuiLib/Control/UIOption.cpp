@@ -14,7 +14,7 @@ namespace DuiLib {
 	}
 
 	LPVOID COptionUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_OPTION) return static_cast<COptionUI*>(this);
+		if (pstrName == DUI_CTRL_OPTION) return static_cast<COptionUI*>(this);
 		return CButtonUI::GetInterface (pstrName);
 	}
 
@@ -315,7 +315,7 @@ namespace DuiLib {
 		return _T ("CheckBoxUI");
 	}
 	LPVOID CCheckBoxUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_CHECKBOX) return static_cast<CCheckBoxUI*>(this);
+		if (pstrName == DUI_CTRL_CHECKBOX) return static_cast<CCheckBoxUI*>(this);
 		return COptionUI::GetInterface (pstrName);
 	}
 

@@ -10,7 +10,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CTabLayoutUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_TABLAYOUT) return static_cast<CTabLayoutUI*>(this);
+		if (pstrName == DUI_CTRL_TABLAYOUT) return static_cast<CTabLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 

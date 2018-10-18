@@ -45,7 +45,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CListUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_LIST) return static_cast<CListUI*>(this);
+		if (pstrName == DUI_CTRL_LIST) return static_cast<CListUI*>(this);
 		if (pstrName ==  _T ("IList")) return static_cast<IListUI*>(this);
 		if (pstrName == _T ("IListOwner")) return static_cast<IListOwnerUI*>(this);
 		return CVerticalLayoutUI::GetInterface (pstrName);
@@ -1220,7 +1220,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CListHeaderUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_LISTHEADER) return this;
+		if (pstrName == DUI_CTRL_LISTHEADER) return this;
 		return CHorizontalLayoutUI::GetInterface (pstrName);
 	}
 
@@ -1373,7 +1373,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CListHeaderItemUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_LISTHEADERITEM) return this;
+		if (pstrName == DUI_CTRL_LISTHEADERITEM) return this;
 		return CContainerUI::GetInterface (pstrName);
 	}
 
@@ -1711,8 +1711,8 @@ namespace DuiLib {
 	}
 
 	LPVOID CListElementUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_LISTITEM) return static_cast<IListItemUI*>(this);
-		if (pstrName == DUI_CTR_LISTELEMENT) return static_cast<CListElementUI*>(this);
+		if (pstrName == DUI_CTRL_LISTITEM) return static_cast<IListItemUI*>(this);
+		if (pstrName == DUI_CTRL_LISTELEMENT) return static_cast<CListElementUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 
@@ -1943,7 +1943,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CListLabelElementUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_LISTLABELELEMENT) return static_cast<CListLabelElementUI*>(this);
+		if (pstrName == DUI_CTRL_LISTLABELELEMENT) return static_cast<CListLabelElementUI*>(this);
 		return CListElementUI::GetInterface (pstrName);
 	}
 
@@ -2090,7 +2090,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CListTextElementUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_LISTTEXTELEMENT) return static_cast<CListTextElementUI*>(this);
+		if (pstrName == DUI_CTRL_LISTTEXTELEMENT) return static_cast<CListTextElementUI*>(this);
 		return CListLabelElementUI::GetInterface (pstrName);
 	}
 
@@ -2265,8 +2265,8 @@ namespace DuiLib {
 	}
 
 	LPVOID CListContainerElementUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_LISTITEM) return static_cast<IListItemUI*>(this);
-		if (pstrName == DUI_CTR_LISTCONTAINERELEMENT) return static_cast<CListContainerElementUI*>(this);
+		if (pstrName == DUI_CTRL_LISTITEM) return static_cast<IListItemUI*>(this);
+		if (pstrName == DUI_CTRL_LISTCONTAINERELEMENT) return static_cast<CListContainerElementUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 

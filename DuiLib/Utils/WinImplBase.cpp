@@ -301,7 +301,7 @@ namespace DuiLib {
 
 	LRESULT WindowImplBase::HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		LRESULT lRes = 0;
-		BOOL bHandled = FALSE;
+		BOOL bHandled = TRUE;
 		switch (uMsg) {
 		case WM_CREATE:			lRes = OnCreate (uMsg, wParam, lParam, bHandled); break;
 		case WM_CLOSE:			lRes = OnClose (uMsg, wParam, lParam, bHandled); break;
@@ -324,6 +324,7 @@ namespace DuiLib {
 		case WM_LBUTTONDOWN:	lRes = OnLButtonDown (uMsg, wParam, lParam, bHandled); break;
 		case WM_MOUSEMOVE:		lRes = OnMouseMove (uMsg, wParam, lParam, bHandled); break;
 		case WM_MOUSEHOVER:		lRes = OnMouseHover (uMsg, wParam, lParam, bHandled); break;
+		default:				bHandled = FALSE; break;
 		}
 		if (bHandled) return lRes;
 

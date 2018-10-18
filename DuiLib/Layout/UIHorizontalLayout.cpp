@@ -12,7 +12,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CHorizontalLayoutUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_HORIZONTALLAYOUT) return static_cast<CHorizontalLayoutUI*>(this);
+		if (pstrName == DUI_CTRL_HORIZONTALLAYOUT) return static_cast<CHorizontalLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 

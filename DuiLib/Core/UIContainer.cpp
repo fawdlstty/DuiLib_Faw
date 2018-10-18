@@ -28,7 +28,7 @@ namespace DuiLib {
 
 	LPVOID CContainerUI::GetInterface (string_view_t pstrName) {
 		if (pstrName == _T ("IContainer")) return static_cast<IContainerUI*>(this);
-		else if (pstrName == DUI_CTR_CONTAINER) return static_cast<CContainerUI*>(this);
+		else if (pstrName == DUI_CTRL_CONTAINER) return static_cast<CContainerUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 

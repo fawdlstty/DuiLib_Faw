@@ -13,7 +13,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CButtonUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_BUTTON) return static_cast<CButtonUI*>(this);
+		if (pstrName == DUI_CTRL_BUTTON) return static_cast<CButtonUI*>(this);
 		return CLabelUI::GetInterface (pstrName.data ());
 	}
 

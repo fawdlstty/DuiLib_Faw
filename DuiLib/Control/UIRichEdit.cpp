@@ -982,11 +982,11 @@ namespace DuiLib {
 	}
 
 	string_view_t CRichEditUI::GetClass () const {
-		return DUI_CTR_RICHEDIT;
+		return DUI_CTRL_RICHEDIT;
 	}
 
 	LPVOID CRichEditUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_RICHEDIT) return static_cast<CRichEditUI*>(this);
+		if (pstrName == DUI_CTRL_RICHEDIT) return static_cast<CRichEditUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 

@@ -34,7 +34,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CChildLayoutUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_CHILDLAYOUT) return static_cast<CChildLayoutUI*>(this);
+		if (pstrName == DUI_CTRL_CHILDLAYOUT) return static_cast<CChildLayoutUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 

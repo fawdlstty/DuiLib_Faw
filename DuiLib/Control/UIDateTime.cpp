@@ -151,7 +151,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CDateTimeUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_DATETIME) return static_cast<CDateTimeUI*>(this);
+		if (pstrName == DUI_CTRL_DATETIME) return static_cast<CDateTimeUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 

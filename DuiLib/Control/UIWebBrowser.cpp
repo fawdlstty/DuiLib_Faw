@@ -417,7 +417,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CWebBrowserUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_WEBBROWSER) return static_cast<CWebBrowserUI*>(this);
+		if (pstrName == DUI_CTRL_WEBBROWSER) return static_cast<CWebBrowserUI*>(this);
 		return CActiveXUI::GetInterface (pstrName);
 	}
 

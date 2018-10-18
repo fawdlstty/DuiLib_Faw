@@ -101,7 +101,7 @@ namespace DuiLib {
 		}
 
 		//
-		static std::string formatA (std::string_view str, ...) {
+		static std::string format_strA (std::string_view str, ...) {
 			if (str.empty ())
 				return "";
 			try {
@@ -125,7 +125,7 @@ namespace DuiLib {
 			} catch (...) {
 			}
 		}
-		static std::wstring formatW (std::wstring_view str, ...) {
+		static std::wstring format_strW (std::wstring_view str, ...) {
 			if (str.empty ())
 				return L"";
 			try {
@@ -283,9 +283,9 @@ namespace DuiLib {
 
 #ifndef format
 #	ifdef UNICODE
-#		define format formatW;
+#		define format_str format_strW;
 #	else
-#		define format formatA;
+#		define format_str format_strA;
 #	endif
 #endif
 

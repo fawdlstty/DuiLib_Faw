@@ -14,7 +14,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CProgressUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_PROGRESS) return static_cast<CProgressUI*>(this);
+		if (pstrName == DUI_CTRL_PROGRESS) return static_cast<CProgressUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 

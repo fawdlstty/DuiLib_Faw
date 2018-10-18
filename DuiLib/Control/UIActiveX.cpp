@@ -825,7 +825,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CActiveXUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_ACTIVEX) return static_cast<CActiveXUI*>(this);
+		if (pstrName == DUI_CTRL_ACTIVEX) return static_cast<CActiveXUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 

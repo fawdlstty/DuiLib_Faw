@@ -53,7 +53,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CGifAnimUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_GIFANIM) return static_cast<CGifAnimUI*>(this);
+		if (pstrName == DUI_CTRL_GIFANIM) return static_cast<CGifAnimUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 

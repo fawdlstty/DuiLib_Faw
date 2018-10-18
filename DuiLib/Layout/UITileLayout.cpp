@@ -10,7 +10,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CTileLayoutUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_TILELAYOUT) return static_cast<CTileLayoutUI*>(this);
+		if (pstrName == DUI_CTRL_TILELAYOUT) return static_cast<CTileLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 

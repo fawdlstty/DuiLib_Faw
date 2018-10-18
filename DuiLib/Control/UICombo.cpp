@@ -38,7 +38,7 @@ namespace DuiLib {
 			CDuiString sName = msg.pSender->GetName ();
 			CControlUI* pCtrl = msg.pSender;
 			while (pCtrl != nullptr) {
-				IListItemUI* pListItem = (IListItemUI*) pCtrl->GetInterface (DUI_CTR_LISTITEM);
+				IListItemUI* pListItem = (IListItemUI*) pCtrl->GetInterface (DUI_CTRL_LISTITEM);
 				if (pListItem != nullptr) {
 					break;
 				}
@@ -110,11 +110,11 @@ namespace DuiLib {
 	bool CComboWnd::IsHitItem (POINT ptMouse) {
 		CControlUI* pControl = m_pm.FindControl (ptMouse);
 		if (pControl != nullptr) {
-			LPVOID pInterface = pControl->GetInterface (DUI_CTR_SCROLLBAR);
+			LPVOID pInterface = pControl->GetInterface (DUI_CTRL_SCROLLBAR);
 			if (pInterface) return false;
 
 			while (pControl != nullptr) {
-				IListItemUI* pListItem = (IListItemUI*) pControl->GetInterface (DUI_CTR_LISTITEM);
+				IListItemUI* pListItem = (IListItemUI*) pControl->GetInterface (DUI_CTRL_LISTITEM);
 				if (pListItem != nullptr) {
 					return true;
 				}
@@ -274,7 +274,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CComboUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_COMBO) return static_cast<CComboUI*>(this);
+		if (pstrName == DUI_CTRL_COMBO) return static_cast<CComboUI*>(this);
 		if (pstrName == _T ("IListOwner")) return static_cast<IListOwnerUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}

@@ -29,11 +29,11 @@ namespace DuiLib {
 	}
 
 	string_view_t CFlashUI::GetClass () const {
-		return DUI_CTR_FLASH;
+		return DUI_CTRL_FLASH;
 	}
 
 	LPVOID CFlashUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_FLASH) return static_cast<CFlashUI*>(this);
+		if (pstrName == DUI_CTRL_FLASH) return static_cast<CFlashUI*>(this);
 		return CActiveXUI::GetInterface (pstrName);
 	}
 

@@ -32,7 +32,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CControlUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_CONTROL) return this;
+		if (pstrName == DUI_CTRL_CONTROL) return this;
 		return nullptr;
 	}
 

@@ -12,7 +12,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CVerticalLayoutUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_VERTICALLAYOUT) return static_cast<CVerticalLayoutUI*>(this);
+		if (pstrName == DUI_CTRL_VERTICALLAYOUT) return static_cast<CVerticalLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
 

@@ -254,7 +254,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CEditUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_EDIT) return static_cast<CEditUI*>(this);
+		if (pstrName == DUI_CTRL_EDIT) return static_cast<CEditUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 

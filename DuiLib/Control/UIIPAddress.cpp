@@ -153,7 +153,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CIPAddressUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_IPADDRESS) return static_cast<CIPAddressUI*>(this);
+		if (pstrName == DUI_CTRL_IPADDRESS) return static_cast<CIPAddressUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
 

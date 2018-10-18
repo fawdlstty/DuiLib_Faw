@@ -14,7 +14,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CScrollBarUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_SCROLLBAR) return static_cast<CScrollBarUI*>(this);
+		if (pstrName == DUI_CTRL_SCROLLBAR) return static_cast<CScrollBarUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
 

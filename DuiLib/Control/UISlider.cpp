@@ -18,7 +18,7 @@ namespace DuiLib {
 	}
 
 	LPVOID CSliderUI::GetInterface (string_view_t pstrName) {
-		if (pstrName == DUI_CTR_SLIDER) return static_cast<CSliderUI*>(this);
+		if (pstrName == DUI_CTRL_SLIDER) return static_cast<CSliderUI*>(this);
 		return CProgressUI::GetInterface (pstrName);
 	}
 
