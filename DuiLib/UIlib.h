@@ -133,6 +133,7 @@ typedef std::string_view string_view_t;
 
 #include "Utils/FawTools.hpp"
 #include "Bind/BindBase.h"
+#include "Bind/BindCtrls.hpp"
 
 #pragma comment (lib, "comctl32.lib")
 #pragma comment (lib, "GdiPlus.lib")

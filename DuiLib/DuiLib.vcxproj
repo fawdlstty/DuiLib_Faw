@@ -1053,6 +1053,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bind\BindBase.h" />
+    <ClInclude Include="Bind\BindCtrls.hpp" />
     <ClInclude Include="Control\UIIPAddressEx.h" />
     <ClInclude Include="Control\UIRollText.h" />
     <ClInclude Include="Control\UIAnimation.h" />

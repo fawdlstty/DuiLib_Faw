@@ -403,5 +403,8 @@
     <ClInclude Include="Bind\BindBase.h">
       <Filter>Header Files\Bind</Filter>
     </ClInclude>
+    <ClInclude Include="Bind\BindCtrls.hpp">
+      <Filter>Header Files\Bind</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
