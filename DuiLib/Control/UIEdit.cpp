@@ -51,12 +51,12 @@ namespace DuiLib {
 		else if (uTextStyle & DT_CENTER) uStyle |= ES_CENTER;
 		else if (uTextStyle & DT_RIGHT) uStyle |= ES_RIGHT;
 		if (m_pOwner->IsPasswordMode ()) uStyle |= ES_PASSWORD;
-		Create (m_pOwner->GetManager ()->GetPaintWindow (), nullptr, uStyle, 0, rcPos);
-		HFONT hFont = nullptr;
+		Create (m_pOwner->GetManager ()->GetPaintWindow (), _T (""), uStyle, 0, rcPos);
+		HFONT hFont = NULL;
 		int iFontIndex = m_pOwner->GetFont ();
 		if (iFontIndex != -1)
 			hFont = m_pOwner->GetManager ()->GetFont (iFontIndex);
-		if (hFont == nullptr)
+		if (hFont == NULL)
 			hFont = m_pOwner->GetManager ()->GetDefaultFontInfo ()->hFont;
 
 		SetWindowFont (m_hWnd, hFont, TRUE);

@@ -445,12 +445,10 @@ namespace DuiLib {
 	}
 
 	CPaintManagerUI* CPaintManagerUI::GetPaintManager (string_view_t pstrName) {
-		if (pstrName == nullptr) return nullptr;
-		CDuiString sName = pstrName;
-		if (sName.empty ()) return nullptr;
+		//if (pstrName.empty ()) return nullptr;
 		for (int i = 0; i < m_aPreMessages.GetSize (); i++) {
 			CPaintManagerUI* pManager = static_cast<CPaintManagerUI*>(m_aPreMessages[i]);
-			if (pManager != nullptr && sName == pManager->GetName ()) return pManager;
+			if (pManager != nullptr && pstrName == pManager->GetName ()) return pManager;
 		}
 		return nullptr;
 	}

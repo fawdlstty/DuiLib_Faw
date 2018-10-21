@@ -4,13 +4,47 @@
 #pragma once
 
 namespace DuiLib {
-#define DEF_BINDCTRL(ctrl_name)													\
-	class Bind##ctrl_name##UI: public BindCtrlBase {											\
-	public:																						\
-		C##ctrl_name##UI *operator-> () { return static_cast<C##ctrl_name##UI*> (m_ctrl); }		\
-	protected:																					\
-		string_view_t GetClassType () const override { return _T (#ctrl_name##"UI"); }			\
+#define DEF_BINDCTRL(CTRL_TYPE)																				\
+	class Bind##CTRL_TYPE##UI: public BindCtrlBase {														\
+	public:																									\
+		Bind##CTRL_TYPE##UI (string_view_t ctrl_name): BindCtrlBase (ctrl_name) {}							\
+		C##CTRL_TYPE##UI *operator* () noexcept {															\
+			if (m_ctrl == nullptr) {																		\
+				auto pm = CPaintManagerUI::GetPaintManager (_T (""));										\
+				if (!pm)																					\
+					ASSERT (false);																			\
+				m_ctrl = pm->FindControl (m_ctrl_name);														\
+			}																								\
+			return static_cast<C##CTRL_TYPE##UI*> (m_ctrl);													\
+		}																									\
+		C##CTRL_TYPE##UI *operator-> () noexcept { return operator* (); }									\
+	protected:																								\
+		string_view_t GetClassType () const override { return _T (#CTRL_TYPE##"UI"); }						\
 	}
+
+
+
+	// Core
+	//DEF_BINDCTRL (Control);
+	class BindControlUI: public BindCtrlBase {
+	public:
+		BindControlUI (string_view_t ctrl_name): BindCtrlBase (ctrl_name) {}
+		CControlUI *operator* () noexcept {
+			if (m_ctrl == nullptr) {
+				auto pm = CPaintManagerUI::GetPaintManager (_T (""));
+				if (!pm)
+					ASSERT (false);
+				m_ctrl = pm->FindControl (m_ctrl_name);
+			}
+			return static_cast<CControlUI*> (m_ctrl);
+		}
+		CControlUI *operator-> () noexcept { return operator* (); }
+	protected:
+		string_view_t GetClassType () const override { return _T ("ControlUI"); }
+	};
+	DEF_BINDCTRL (Container);
+
+	// Control
 	DEF_BINDCTRL (ActiveX);
 	//DEF_BINDCTRL (Animation);
 	DEF_BINDCTRL (Button);
@@ -22,7 +56,9 @@ namespace DuiLib {
 	DEF_BINDCTRL (FadeButton);
 	DEF_BINDCTRL (Flash);
 	DEF_BINDCTRL (GifAnim);
-	//DEF_BINDCTRL (GifAnimEx);
+#ifdef USE_XIMAGE_EFFECT
+	DEF_BINDCTRL (GifAnimEx);
+#endif
 	DEF_BINDCTRL (GroupBox);
 	DEF_BINDCTRL (HotKey);
 	DEF_BINDCTRL (IPAddress);
@@ -32,6 +68,7 @@ namespace DuiLib {
 	DEF_BINDCTRL (ListEx);
 	DEF_BINDCTRL (Menu);
 	DEF_BINDCTRL (Option);
+	DEF_BINDCTRL (CheckBox);
 	DEF_BINDCTRL (Progress);
 	DEF_BINDCTRL (RichEdit);
 	DEF_BINDCTRL (Ring);
@@ -41,6 +78,14 @@ namespace DuiLib {
 	DEF_BINDCTRL (Text);
 	DEF_BINDCTRL (TreeView);
 	DEF_BINDCTRL (WebBrowser);
+
+	// Layout
+	DEF_BINDCTRL (AnimationTabLayout);
+	DEF_BINDCTRL (ChildLayout);
+	DEF_BINDCTRL (HorizontalLayout);
+	DEF_BINDCTRL (TabLayout);
+	DEF_BINDCTRL (TileLayout);
+	DEF_BINDCTRL (VerticalLayout);
 }
 
 #endif //__BIND_CTRLS_HPP__

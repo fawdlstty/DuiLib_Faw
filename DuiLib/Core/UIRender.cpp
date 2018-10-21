@@ -801,7 +801,7 @@ namespace DuiLib {
 	void CRenderEngine::DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, string_view_t pstrText, DWORD dwTextColor, \
 		int iFont, UINT uStyle, DWORD dwTextBKColor) {
 		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
-		if (pstrText == nullptr || pManager == nullptr) return;
+		if (pstrText.empty () || pManager == nullptr) return;
 		DrawColor (hDC, rc, dwTextBKColor);
 		DrawText (hDC, pManager, rc, pstrText, dwTextColor, iFont, uStyle);
 	}

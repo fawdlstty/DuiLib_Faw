@@ -281,7 +281,7 @@ namespace DuiLib {
 	};
 }
 
-#ifndef format
+#ifndef format_str
 #	ifdef UNICODE
 #		define format_str format_strW;
 #	else

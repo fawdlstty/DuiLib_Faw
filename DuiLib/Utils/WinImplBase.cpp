@@ -264,8 +264,9 @@ namespace DuiLib {
 		m_pm.AttachDialog (pRoot);
 		// 添加Notify事件接口
 		m_pm.AddNotifier (this);
+		// 开始绑定控件
+		//BindCtrlBase::init_binding (&m_pm);
 		// 窗口初始化完毕
-		BindCtrlBase::init_binding (&m_pm);
 		InitWindow ();
 		return 0;
 	}

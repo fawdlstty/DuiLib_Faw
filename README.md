@@ -16,6 +16,8 @@
 
 ## 使用
 
+### 第一步：链接dll
+
 #### 动态链接
 
 使用动态链接的程序需在程序目录保留DuiLib*.dll，否则程序无法运行。由于动态链接有诸多不利因素（更大的软件体积、更多的文件引用等），所以在发行版中不推荐这种方式。
@@ -70,6 +72,36 @@
 
 看需求加入预处理器定义UILIB_STATIC，然后将编译选项分别设置为/MT、/MTd即可。
 
+### 第二步：增加变量绑定
+
+需将所有的这种代码：
+```C++
+// InitWindow里面
+CEditUI *ctrl = dynamic_cast<CEditUI*> (parent->find_control (_T ("ctrl_name")));
+```
+替换为：
+```C++
+// InitWindow之前的任意位置
+BindEditUI ctrl { _T ("ctrl_name") };
+```
+需注意：
+1. 绑定对象的创建位置不限，既可以在程序运行时绑定，也可以在InitWindow执行完后再绑定
+2. 绑定对象在窗口及PaintManager创建前是无法使用的，只有在两者创建完成后才能使用
+3. PaintManager对象不要设置名称，如果必须设置的场合，需要在Bind/BindCtrls.hpp代码中同步修改
+
+### 第三步：自定义控件绑定
+
+假设XML节点为<UserCtrl name="ctrl_name" />，那么类名必须风格统一，为CUserCtrlUI；然后在头文件中加入以下代码：
+```C++
+#ifdef DEF_BINDCTRL
+DEF_BINDCTRL (UserCtrl);
+#endif //DEF_BINDCTRL
+```
+大功告成，此时可以用以下代码实现自定义控件绑定
+```C++
+BindUserCtrl ctrl { _T ("ctrl_name") };
+```
+
 ## 已更新内容
 
 1. 完善链接方式，针对是否为Unicode、Debug、64位、动态或静态，4种条件16种链接方式做出完善的链接选项
@@ -83,6 +115,7 @@
 9. 使用std::string_view代替了几乎所有的LPCTSTR
 10. 移除了CDuiPoint、CDuiRect、CDuiSize
 11. 整理出公共类FawTools，将大部分重复的代码合并
+12. 实现控件绑定（经研究发现，因为语言的问题，值绑定的效果不好，所以这儿暂时不考虑，如果有好的建议可以提）
 
 ## 待研究或待添加
 
