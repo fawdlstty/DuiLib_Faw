@@ -12,7 +12,7 @@
 
 由于逐渐与原分支拉开变化，示例代码逐渐无法完整的示例整个项目，所以此项目暂时删除所有示例，使用此项目需要一定的DuiLib经验才能驾驭。
 
-此项目目前只支持vs2017环境下编译，如果使用其他版本编译器需要自行建立项目文件。
+此项目目前只支持vs2017环境下编译，如果使用clang、gcc或其他版本编译器需要自行建立项目文件。
 
 ## 使用
 
@@ -92,7 +92,7 @@ BindEditUI ctrl { _T ("ctrl_name") };
 
 ### 第三步：自定义控件绑定
 
-假设XML节点为<UserCtrl name="ctrl_name" />，那么类名必须风格统一，为CUserCtrlUI；然后在头文件中加入以下代码：
+假设XML节点为&lt;UserCtrl name="ctrl_name" /&gt;，那么类名必须风格统一，为CUserCtrlUI；然后在头文件中加入以下代码：
 ```C++
 #ifdef DEF_BINDCTRL
 DEF_BINDCTRL (UserCtrl);
