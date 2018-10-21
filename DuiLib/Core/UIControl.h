@@ -27,9 +27,7 @@ namespace DuiLib {
 		virtual CPaintManagerUI* GetManager () const;
 		virtual void SetManager (CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true);
 		virtual CControlUI* GetParent () const;
-		void setInstance (HINSTANCE instance = nullptr) {
-			m_instance = instance;
-		};
+		void setInstance (HINSTANCE instance) { m_instance = instance; };
 
 		// ¶¨Ê±Æ÷
 		bool SetTimer (UINT nTimerID, UINT nElapse);

@@ -65,8 +65,8 @@ namespace DuiLib {
 		bool RegisterWindowClass ();
 		bool RegisterSuperclass ();
 
-		HWND Create (HWND hwndParent, string_view_t pstrName, DWORD dwStyle, DWORD dwExStyle, const RECT rc, HMENU hMenu = nullptr);
-		HWND Create (HWND hwndParent, string_view_t pstrName, DWORD dwStyle, DWORD dwExStyle, int x = CW_USEDEFAULT, int y = CW_USEDEFAULT, int cx = CW_USEDEFAULT, int cy = CW_USEDEFAULT, HMENU hMenu = nullptr);
+		HWND Create (HWND hwndParent, string_view_t pstrName, DWORD dwStyle, DWORD dwExStyle, const RECT rc, HMENU hMenu = NULL);
+		HWND Create (HWND hwndParent, string_view_t pstrName, DWORD dwStyle, DWORD dwExStyle, int x = CW_USEDEFAULT, int y = CW_USEDEFAULT, int cx = CW_USEDEFAULT, int cy = CW_USEDEFAULT, HMENU hMenu = NULL);
 		HWND CreateDuiWindow (HWND hwndParent, string_view_t pstrWindowName, DWORD dwStyle = 0, DWORD dwExStyle = 0);
 		HWND Subclass (HWND hWnd);
 		void Unsubclass ();

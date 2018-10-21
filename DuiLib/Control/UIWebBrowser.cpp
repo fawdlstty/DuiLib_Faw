@@ -128,9 +128,9 @@ namespace DuiLib {
 		} else if (riid == IID_IOleCommandTarget)
 			*ppvObject = static_cast<IOleCommandTarget*>(this);
 
-		if (*ppvObject != nullptr)
+		if (*ppvObject)
 			AddRef ();
-		return *ppvObject == nullptr ? E_NOINTERFACE : S_OK;
+		return (!*ppvObject) ? E_NOINTERFACE : S_OK;
 	}
 
 	STDMETHODIMP_ (ULONG) CWebBrowserUI::AddRef () {
@@ -144,7 +144,7 @@ namespace DuiLib {
 	}
 
 	void CWebBrowserUI::Navigate2 (string_view_t lpszUrl) {
-		if (lpszUrl == nullptr)
+		if (lpszUrl.empty ())
 			return;
 
 		if (m_pWebBrowser2) {
@@ -244,7 +244,7 @@ namespace DuiLib {
 	}
 
 	STDMETHODIMP CWebBrowserUI::GetHostInfo (DOCHOSTUIINFO* pInfo) {
-		if (pInfo != nullptr) {
+		if (pInfo) {
 			pInfo->dwFlags |= DOCHOSTUIFLAG_NO3DBORDER | DOCHOSTUIFLAG_NO3DOUTERBORDER;
 		}
 		if (m_pWebBrowserEventHandler) {
@@ -313,16 +313,16 @@ namespace DuiLib {
 		if (pMsg->message < WM_KEYFIRST || pMsg->message > WM_KEYLAST)
 			return S_FALSE;
 
-		if (m_pWebBrowser2 == nullptr)
+		if (!m_pWebBrowser2)
 			return E_NOTIMPL;
 
 		// 当前Web窗口不是焦点,不处理加速键
 		BOOL bIsChild = FALSE;
-		HWND hTempWnd = nullptr;
+		HWND hTempWnd = NULL;
 		HWND hWndFocus = ::GetFocus ();
 
 		hTempWnd = hWndFocus;
-		while (hTempWnd != nullptr) {
+		while (hTempWnd) {
 			if (hTempWnd == m_hwndHost) {
 				bIsChild = TRUE;
 				break;
@@ -381,7 +381,7 @@ namespace DuiLib {
 	}
 
 	void CWebBrowserUI::SetWebBrowserEventHandler (CWebBrowserEventHandler* pEventHandler) {
-		if (pEventHandler != nullptr && m_pWebBrowserEventHandler != pEventHandler)
+		if (pEventHandler && m_pWebBrowserEventHandler != pEventHandler)
 			m_pWebBrowserEventHandler = pEventHandler;
 	}
 
@@ -532,7 +532,7 @@ namespace DuiLib {
 
 		CComQIPtr<IHTMLDocument2> pHtmlDoc2 = pDp;
 
-		if (pHtmlDoc2 == nullptr)
+		if (!pHtmlDoc2)
 			return nullptr;
 
 		hr = pHtmlDoc2->get_parentWindow (&_pHtmlWnd2);

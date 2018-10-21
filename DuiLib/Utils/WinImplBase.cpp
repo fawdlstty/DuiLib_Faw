@@ -254,7 +254,7 @@ namespace DuiLib {
 			pRoot = builder.Create (xml, _T (""), this, &m_pm);
 		}
 
-		if (pRoot == nullptr) {
+		if (!pRoot) {
 			CDuiString sError = _T ("加载资源文件失败：");
 			sError += GetSkinFile ();
 			MessageBox (nullptr, sError.c_str (), _T ("Duilib"), MB_OK | MB_ICONERROR);

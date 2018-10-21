@@ -40,9 +40,9 @@ namespace DuiLib {
 		if (IsWindows8Point1OrGreater ()) {
 			HRESULT  hr = E_FAIL;
 			HMODULE hModule = ::LoadLibrary (_T ("Shcore.dll"));
-			if (hModule != nullptr) {
+			if (hModule) {
 				LPGetDpiForMonitor GetDpiForMonitor = (LPGetDpiForMonitor) GetProcAddress (hModule, "GetDpiForMonitor");
-				if (GetDpiForMonitor != nullptr && GetDpiForMonitor (hMonitor, MDT_EFFECTIVE_DPI, &dpix, &dpiy) != S_OK) {
+				if (GetDpiForMonitor && GetDpiForMonitor (hMonitor, MDT_EFFECTIVE_DPI, &dpix, &dpiy) != S_OK) {
 					MessageBox (nullptr, _T ("GetDpiForMonitor failed"), _T ("Notification"), MB_OK);
 					return 96;
 				}
@@ -72,9 +72,9 @@ namespace DuiLib {
 	PROCESS_DPI_AWARENESS CDPI::GetDPIAwareness () {
 		if (IsWindows8Point1OrGreater ()) {
 			HMODULE hModule = ::LoadLibrary (_T ("Shcore.dll"));
-			if (hModule != nullptr) {
+			if (hModule) {
 				LPGetProcessDpiAwareness GetProcessDpiAwareness = (LPGetProcessDpiAwareness) GetProcAddress (hModule, "GetProcessDpiAwareness");
-				if (GetProcessDpiAwareness != nullptr) {
+				if (GetProcessDpiAwareness) {
 					HANDLE hProcess = OpenProcess (PROCESS_ALL_ACCESS, false, GetCurrentProcessId ());
 					if (GetProcessDpiAwareness (hProcess, &m_Awareness) == S_OK) {
 					}
@@ -89,9 +89,9 @@ namespace DuiLib {
 		BOOL bRet = FALSE;
 		if (IsWindows8Point1OrGreater ()) {
 			HMODULE hModule = ::LoadLibrary (_T ("Shcore.dll"));
-			if (hModule != nullptr) {
+			if (hModule) {
 				LPSetProcessDpiAwareness SetProcessDpiAwareness = (LPSetProcessDpiAwareness) GetProcAddress (hModule, "SetProcessDpiAwareness");
-				if (SetProcessDpiAwareness != nullptr && SetProcessDpiAwareness (Awareness) == S_OK) {
+				if (SetProcessDpiAwareness && SetProcessDpiAwareness (Awareness) == S_OK) {
 					m_Awareness = Awareness;
 					bRet = TRUE;
 				}

@@ -26,7 +26,7 @@ namespace DuiLib {
 			m_pOwer = pOwer;
 		}
 		virtual ~Imp () {
-			if (m_pGifImage != nullptr) {
+			if (m_pGifImage) {
 				delete m_pGifImage;
 				m_pGifImage = nullptr;
 			}
@@ -42,7 +42,7 @@ namespace DuiLib {
 			CDuiString sImag = m_pOwer->GetBkImage ();
 			m_bLoadImg = true;
 			m_pGifImage = CRenderEngine::LoadGifImageX (std::variant<UINT, string_t> (sImag), 0, 0);
-			if (nullptr == m_pGifImage) return;
+			if (!m_pGifImage) return;
 			m_nFrameCount = m_pGifImage->GetNumFrames ();
 			m_nFramePosition = 0;
 			m_nDelay = m_pGifImage->GetFrameDelay ();
@@ -88,7 +88,7 @@ namespace DuiLib {
 			m_pOwer->Invalidate ();
 		}
 		void DrawFrame (HDC hDC, const RECT& rcPaint, const RECT &rcItem) {
-			if (nullptr == hDC || nullptr == m_pGifImage) return;
+			if (!hDC || !m_pGifImage) return;
 			if (m_pGifImage) {
 				if (CxImage* pImage = m_pGifImage->GetFrame (m_nFramePosition))
 					pImage->Draw2 (hDC, rcItem);
@@ -107,9 +107,11 @@ namespace DuiLib {
 		m_pImp->SetOwer (this);
 	}
 	CGifAnimExUI::~CGifAnimExUI (void) {
-		m_pImp->StopAnim (false);
-		delete m_pImp;
-		m_pImp = nullptrptr;
+		if (m_pImp) {
+			m_pImp->StopAnim (false);
+			delete m_pImp;
+			m_pImp = nullptr;
+		}
 	}
 	string_view_t CGifAnimExUI::GetClass () const {
 		return _T ("GifAnimUI");

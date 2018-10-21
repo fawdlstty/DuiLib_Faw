@@ -195,7 +195,7 @@ namespace DuiLib {
 
 	void CVerticalLayoutUI::SetSepImmMode (bool bImmediately) {
 		if (m_bImmMode == bImmediately) return;
-		if ((m_uButtonState & UISTATE_CAPTURED) != 0 && !m_bImmMode && m_pManager != nullptr) {
+		if ((m_uButtonState & UISTATE_CAPTURED) != 0 && !m_bImmMode && m_pManager) {
 			m_pManager->RemovePostPaint (this);
 		}
 

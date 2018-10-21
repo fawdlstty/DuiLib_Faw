@@ -9,7 +9,7 @@ namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CMenuUI)
 
 	CMenuUI::CMenuUI () {
-		if (GetHeader () != nullptr)
+		if (GetHeader ())
 			GetHeader ()->SetVisible (false);
 	}
 
@@ -34,11 +34,11 @@ namespace DuiLib {
 
 	bool CMenuUI::Add (CControlUI* pControl) {
 		CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface (_T ("MenuElement")));
-		if (pMenuItem == nullptr)
+		if (!pMenuItem)
 			return false;
 
 		for (int i = 0; i < pMenuItem->GetCount (); ++i) {
-			if (pMenuItem->GetItemAt (i)->GetInterface (_T ("MenuElement")) != nullptr) {
+			if (pMenuItem->GetItemAt (i)->GetInterface (_T ("MenuElement"))) {
 				(static_cast<CMenuElementUI*>(pMenuItem->GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetInternVisible (false);
 			}
 		}
@@ -47,11 +47,11 @@ namespace DuiLib {
 
 	bool CMenuUI::AddAt (CControlUI* pControl, int iIndex) {
 		CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface (_T ("MenuElement")));
-		if (pMenuItem == nullptr)
+		if (!pMenuItem)
 			return false;
 
 		for (int i = 0; i < pMenuItem->GetCount (); ++i) {
-			if (pMenuItem->GetItemAt (i)->GetInterface (_T ("MenuElement")) != nullptr) {
+			if (pMenuItem->GetItemAt (i)->GetInterface (_T ("MenuElement"))) {
 				(static_cast<CMenuElementUI*>(pMenuItem->GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetInternVisible (false);
 			}
 		}
@@ -60,7 +60,7 @@ namespace DuiLib {
 
 	int CMenuUI::GetItemIndex (CControlUI* pControl) const {
 		CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface (_T ("MenuElement")));
-		if (pMenuItem == nullptr)
+		if (!pMenuItem)
 			return -1;
 
 		return __super::GetItemIndex (pControl);
@@ -68,7 +68,7 @@ namespace DuiLib {
 
 	bool CMenuUI::SetItemIndex (CControlUI* pControl, int iIndex) {
 		CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface (_T ("MenuElement")));
-		if (pMenuItem == nullptr)
+		if (!pMenuItem)
 			return false;
 
 		return __super::SetItemIndex (pControl, iIndex);
@@ -76,7 +76,7 @@ namespace DuiLib {
 
 	bool CMenuUI::Remove (CControlUI* pControl) {
 		CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface (_T ("MenuElement")));
-		if (pMenuItem == nullptr)
+		if (!pMenuItem)
 			return false;
 
 		return __super::Remove (pControl);
@@ -139,7 +139,7 @@ namespace DuiLib {
 		case 2:
 		{
 			HWND hParent = GetParent (m_hWnd);
-			while (hParent != nullptr) {
+			while (hParent) {
 				if (hParent == param.hWnd) {
 					Close ();
 					break;
@@ -163,10 +163,10 @@ namespace DuiLib {
 
 	void CMenuWnd::DestroyMenu () {
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
-		if (mCheckInfos != nullptr) {
+		if (mCheckInfos) {
 			for (int i = 0; i < mCheckInfos->GetSize (); i++) {
 				MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->GetAt (i)->Data;
-				if (pItemInfo != nullptr) {
+				if (pItemInfo) {
 					delete pItemInfo;
 					pItemInfo = nullptr;
 				}
@@ -179,9 +179,9 @@ namespace DuiLib {
 		if (pstrName.empty ()) return nullptr;
 
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
-		if (mCheckInfos != nullptr) {
+		if (mCheckInfos) {
 			MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (pstrName);
-			if (pItemInfo == nullptr) {
+			if (!pItemInfo) {
 				pItemInfo = new MenuItemInfo;
 				pItemInfo->szName = pstrName;
 				pItemInfo->bChecked = bChecked;
@@ -206,20 +206,20 @@ namespace DuiLib {
 		m_dwAlignment = dwAlignment;
 
 		// 如果是一级菜单的创建
-		if (pOwner == nullptr) {
-			ASSERT (pMainPaintManager != nullptr);
+		if (!pOwner) {
+			ASSERT (pMainPaintManager);
 			CMenuWnd::GetGlobalContextMenuObserver ().SetManger (pMainPaintManager);
-			if (pMenuCheckInfo != nullptr)
+			if (pMenuCheckInfo)
 				CMenuWnd::GetGlobalContextMenuObserver ().SetMenuCheckInfo (pMenuCheckInfo);
 		}
 
 		CMenuWnd::GetGlobalContextMenuObserver ().AddReceiver (this);
 
-		Create ((m_pOwner == nullptr) ? pMainPaintManager->GetPaintWindow () : m_pOwner->GetManager ()->GetPaintWindow (), nullptr, WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, RECT ());
+		Create (!m_pOwner ? pMainPaintManager->GetPaintWindow () : m_pOwner->GetManager ()->GetPaintWindow (), _T (""), WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, { 0, 0, 0, 0 });
 
 		// HACK: Don't deselect the parent's caption
 		HWND hWndParent = m_hWnd;
-		while (::GetParent (hWndParent) != nullptr) hWndParent = ::GetParent (hWndParent);
+		while (::GetParent (hWndParent)) hWndParent = ::GetParent (hWndParent);
 
 		::ShowWindow (m_hWnd, SW_SHOW);
 		::SendMessage (hWndParent, WM_NCACTIVATE, TRUE, 0L);
@@ -231,7 +231,7 @@ namespace DuiLib {
 
 
 	void CMenuWnd::Notify (TNotifyUI& msg) {
-		if (CMenuWnd::GetGlobalContextMenuObserver ().GetManager () != nullptr) {
+		if (CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()) {
 			if (msg.sType == _T ("click") || msg.sType == _T ("valuechanged")) {
 				CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()->SendNotify (msg, false);
 			}
@@ -251,9 +251,9 @@ namespace DuiLib {
 
 	void CMenuWnd::OnFinalMessage (HWND hWnd) {
 		RemoveObserver ();
-		if (m_pOwner != nullptr) {
+		if (m_pOwner) {
 			for (int i = 0; i < m_pOwner->GetCount (); i++) {
-				if (static_cast<CMenuElementUI*>(m_pOwner->GetItemAt (i)->GetInterface (_T ("MenuElement"))) != nullptr) {
+				if (static_cast<CMenuElementUI*>(m_pOwner->GetItemAt (i)->GetInterface (_T ("MenuElement")))) {
 					(static_cast<CMenuElementUI*>(m_pOwner->GetItemAt (i)))->SetOwner (m_pOwner->GetParent ());
 					(static_cast<CMenuElementUI*>(m_pOwner->GetItemAt (i)))->SetVisible (false);
 					(static_cast<CMenuElementUI*>(m_pOwner->GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetInternVisible (false);
@@ -270,7 +270,7 @@ namespace DuiLib {
 
 	LRESULT CMenuWnd::OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
 		bool bShowShadow = false;
-		if (m_pOwner != nullptr) {
+		if (m_pOwner) {
 			LONG styleValue = ::GetWindowLong (GetHWND (), GWL_STYLE);
 			styleValue &= ~WS_CAPTION;
 			::SetWindowLong (GetHWND (), GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
@@ -294,7 +294,7 @@ namespace DuiLib {
 			m_pLayout->GetList ()->SetAutoDestroy (false);
 
 			for (int i = 0; i < m_pOwner->GetCount (); i++) {
-				if (m_pOwner->GetItemAt (i)->GetInterface (_T ("MenuElement")) != nullptr) {
+				if (m_pOwner->GetItemAt (i)->GetInterface (_T ("MenuElement"))) {
 					(static_cast<CMenuElementUI*>(m_pOwner->GetItemAt (i)))->SetOwner (m_pLayout);
 					m_pLayout->Add (static_cast<CControlUI*>(m_pOwner->GetItemAt (i)));
 				}
@@ -398,7 +398,7 @@ namespace DuiLib {
 		SIZE szAvailable = { rcWork.right - rcWork.left, rcWork.bottom - rcWork.top };
 
 		for (int it = 0; it < m_pOwner->GetCount (); it++) {
-			if (m_pOwner->GetItemAt (it)->GetInterface (_T ("MenuElement")) != nullptr) {
+			if (m_pOwner->GetItemAt (it)->GetInterface (_T ("MenuElement"))) {
 				CControlUI* pControl = static_cast<CControlUI*>(m_pOwner->GetItemAt (it));
 				SIZE sz = pControl->EstimateSize (szAvailable);
 				cyFixed += sz.cy;
@@ -424,9 +424,9 @@ namespace DuiLib {
 		RECT rcPreWindow = { 0 };
 		MenuObserverImpl::Iterator iterator (CMenuWnd::GetGlobalContextMenuObserver ());
 		MenuMenuReceiverImplBase* pReceiver = iterator.next ();
-		while (pReceiver != nullptr) {
+		while (pReceiver) {
 			CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
-			if (pContextMenu != nullptr) {
+			if (pContextMenu) {
 				GetWindowRect (pContextMenu->GetHWND (), &rcPreWindow);
 
 				bReachRight = rcPreWindow.left >= rcWindow.right;
@@ -484,9 +484,9 @@ namespace DuiLib {
 
 		MenuObserverImpl::Iterator iterator (CMenuWnd::GetGlobalContextMenuObserver ());
 		MenuMenuReceiverImplBase* pReceiver = iterator.next ();
-		while (pReceiver != nullptr) {
+		while (pReceiver) {
 			CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
-			if (pContextMenu != nullptr && pContextMenu->GetHWND () == hFocusWnd) {
+			if (pContextMenu && pContextMenu->GetHWND () == hFocusWnd) {
 				bInMenuWindowList = TRUE;
 				break;
 			}
@@ -533,7 +533,7 @@ namespace DuiLib {
 			lRes = OnSize (uMsg, wParam, lParam, bHandled);
 			break;
 		case WM_CLOSE:
-			if (m_pOwner != nullptr) {
+			if (m_pOwner) {
 				m_pOwner->SetManager (m_pOwner->GetManager (), m_pOwner->GetParent (), false);
 				m_pOwner->SetPos (m_pOwner->GetPos ());
 				m_pOwner->SetFocus ();
@@ -600,7 +600,7 @@ namespace DuiLib {
 			//DrawItemExpland(hDC, m_rcItem);
 			//for (int i = 0; i < GetCount(); ++i)
 			//{
-			//	if (GetItemAt(i)->GetInterface(_T("MenuElement")) == nullptr) {
+			//	if (!GetItemAt(i)->GetInterface(_T("MenuElement"))) {
 			//		GetItemAt(i)->DoPaint(hDC, rcPaint);
 			//	}
 			//}
@@ -626,7 +626,7 @@ namespace DuiLib {
 						CControlUI* pControl = static_cast<CControlUI*>(m_items[it]);
 						if (pControl == pStopControl) return false;
 						if (!pControl->IsVisible ()) continue;
-						if (pControl->GetInterface (_T ("MenuElement")) != nullptr) continue;
+						if (pControl->GetInterface (_T ("MenuElement"))) continue;
 						if (!::IntersectRect (&rcTemp, &rcPaint, &pControl->GetPos ())) continue;
 						if (pControl->IsFloat ()) {
 							if (!::IntersectRect (&rcTemp, &m_rcItem, &pControl->GetPos ())) continue;
@@ -640,7 +640,7 @@ namespace DuiLib {
 						CControlUI* pControl = static_cast<CControlUI*>(m_items[it]);
 						if (pControl == pStopControl) return false;
 						if (!pControl->IsVisible ()) continue;
-						if (pControl->GetInterface (_T ("MenuElement")) != nullptr) continue;
+						if (pControl->GetInterface (_T ("MenuElement"))) continue;
 						if (!::IntersectRect (&rcTemp, &rcPaint, &pControl->GetPos ())) continue;
 						if (pControl->IsFloat ()) {
 							if (!::IntersectRect (&rcTemp, &m_rcItem, &pControl->GetPos ())) continue;
@@ -656,7 +656,7 @@ namespace DuiLib {
 			}
 		}
 
-		if (m_pVerticalScrollBar != nullptr) {
+		if (m_pVerticalScrollBar) {
 			if (m_pVerticalScrollBar == pStopControl) return false;
 			if (m_pVerticalScrollBar->IsVisible ()) {
 				if (::IntersectRect (&rcTemp, &rcPaint, &m_pVerticalScrollBar->GetPos ())) {
@@ -665,7 +665,7 @@ namespace DuiLib {
 			}
 		}
 
-		if (m_pHorizontalScrollBar != nullptr) {
+		if (m_pHorizontalScrollBar) {
 			if (m_pHorizontalScrollBar == pStopControl) return false;
 			if (m_pHorizontalScrollBar->IsVisible ()) {
 				if (::IntersectRect (&rcTemp, &rcPaint, &m_pHorizontalScrollBar->GetPos ())) {
@@ -738,7 +738,7 @@ namespace DuiLib {
 		CDuiString sText = GetText ();
 		if (sText.empty ()) return;
 
-		if (m_pOwner == nullptr) return;
+		if (!m_pOwner) return;
 		TListInfoUI* pInfo = m_pOwner->GetListInfo ();
 		DWORD iTextColor = pInfo->dwTextColor;
 		if ((m_uButtonState & UISTATE_HOT) != 0) {
@@ -826,7 +826,7 @@ namespace DuiLib {
 			if (m_pWindow) return;
 			bool hasSubMenu = false;
 			for (int i = 0; i < GetCount (); ++i) {
-				if (GetItemAt (i)->GetInterface (_T ("MenuElement")) != nullptr) {
+				if (GetItemAt (i)->GetInterface (_T ("MenuElement"))) {
 					(static_cast<CMenuElementUI*>(GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetVisible (true);
 					(static_cast<CMenuElementUI*>(GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetInternVisible (true);
 
@@ -851,7 +851,7 @@ namespace DuiLib {
 
 			bool hasSubMenu = false;
 			for (int i = 0; i < GetCount (); ++i) {
-				if (GetItemAt (i)->GetInterface (_T ("MenuElement")) != nullptr) {
+				if (GetItemAt (i)->GetInterface (_T ("MenuElement"))) {
 
 					hasSubMenu = true;
 				}
@@ -870,7 +870,7 @@ namespace DuiLib {
 
 				bool hasSubMenu = false;
 				for (int i = 0; i < GetCount (); ++i) {
-					if (GetItemAt (i)->GetInterface (_T ("MenuElement")) != nullptr) {
+					if (GetItemAt (i)->GetInterface (_T ("MenuElement"))) {
 						(static_cast<CMenuElementUI*>(GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetVisible (true);
 						(static_cast<CMenuElementUI*>(GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetInternVisible (true);
 
@@ -887,7 +887,7 @@ namespace DuiLib {
 					CMenuUI* menuUI = static_cast<CMenuUI*>(GetManager ()->GetRoot ());
 					isClosing = (menuUI->m_pWindow->isClosing);
 					if (IsWindow (GetManager ()->GetPaintWindow ()) && !isClosing) {
-						if (CMenuWnd::GetGlobalContextMenuObserver ().GetManager () != nullptr) {
+						if (CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()) {
 
 							MenuCmd* pMenuCmd = new MenuCmd ();
 							pMenuCmd->szName = GetName ();
@@ -914,7 +914,7 @@ namespace DuiLib {
 			if (m_pWindow) return;
 			bool hasSubMenu = false;
 			for (int i = 0; i < GetCount (); ++i) {
-				if (GetItemAt (i)->GetInterface (_T ("MenuElement")) != nullptr) {
+				if (GetItemAt (i)->GetInterface (_T ("MenuElement"))) {
 					(static_cast<CMenuElementUI*>(GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetVisible (true);
 					(static_cast<CMenuElementUI*>(GetItemAt (i)->GetInterface (_T ("MenuElement"))))->SetInternVisible (true);
 					hasSubMenu = true;
@@ -999,9 +999,9 @@ namespace DuiLib {
 		if (pstrName.empty ()) return false;
 
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
-		if (mCheckInfos != nullptr) {
+		if (mCheckInfos) {
 			MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (pstrName);
-			if (pItemInfo != nullptr) {
+			if (pItemInfo) {
 				return pItemInfo->bChecked;
 			}
 		}
@@ -1031,7 +1031,7 @@ namespace DuiLib {
 			SetCheckItem (FawTools::parse_bool (pstrValue));
 		} else if (pstrName == _T ("ischeck")) {
 			CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
-			if (mCheckInfos != nullptr) {
+			if (mCheckInfos) {
 				bool bFind = false;
 				for (int i = 0; i < mCheckInfos->GetSize (); i++) {
 					MenuItemInfo* itemInfo = (MenuItemInfo*) mCheckInfos->GetAt (i)->Data;
@@ -1063,9 +1063,9 @@ namespace DuiLib {
 		if (pstrName.empty ()) return nullptr;
 
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
-		if (mCheckInfos != nullptr) {
+		if (mCheckInfos) {
 			MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (pstrName);
-			if (pItemInfo != nullptr) {
+			if (pItemInfo) {
 				return pItemInfo;
 			}
 		}
@@ -1077,9 +1077,9 @@ namespace DuiLib {
 		if (pstrName.empty ()) return nullptr;
 
 		CStdStringPtrMap* mCheckInfos = CMenuWnd::GetGlobalContextMenuObserver ().GetMenuCheckInfo ();
-		if (mCheckInfos != nullptr) {
+		if (mCheckInfos) {
 			MenuItemInfo* pItemInfo = (MenuItemInfo*) mCheckInfos->Find (pstrName);
-			if (pItemInfo == nullptr) {
+			if (!pItemInfo) {
 				pItemInfo = new MenuItemInfo;
 				pItemInfo->szName = pstrName;
 				pItemInfo->bChecked = bChecked;

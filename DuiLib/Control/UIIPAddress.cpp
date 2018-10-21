@@ -9,7 +9,7 @@ DWORD GetLocalIpAddress () {
 	char local[255] = { 0 };
 	gethostname (local, sizeof (local));
 	hostent* ph = gethostbyname (local);
-	if (ph == nullptr)
+	if (!ph)
 		return 0;
 	in_addr addr;
 	memcpy (&addr, ph->h_addr_list[0], sizeof (in_addr));
@@ -50,14 +50,14 @@ namespace DuiLib {
 		m_pOwner = pOwner;
 		m_pOwner->m_nIPUpdateFlag = IP_NONE;
 
-		if (m_hWnd == nullptr) {
+		if (!m_hWnd) {
 			INITCOMMONCONTROLSEX   CommCtrl;
 			CommCtrl.dwSize = sizeof (CommCtrl);
 			CommCtrl.dwICC = ICC_INTERNET_CLASSES;//Ö¸¶¨Class
 			if (InitCommonControlsEx (&CommCtrl)) {
 				RECT rcPos = CalPos ();
 				UINT uStyle = WS_CHILD | WS_TABSTOP | WS_GROUP;
-				Create (m_pOwner->GetManager ()->GetPaintWindow (), nullptr, uStyle, 0, rcPos);
+				Create (m_pOwner->GetManager ()->GetPaintWindow (), _T (""), uStyle, 0, rcPos);
 			}
 			SetWindowFont (m_hWnd, m_pOwner->GetManager ()->GetFontInfo (m_pOwner->GetFont ())->hFont, TRUE);
 		}
@@ -85,7 +85,7 @@ namespace DuiLib {
 
 	void CIPAddressWnd::OnFinalMessage (HWND /*hWnd*/) {
 		// Clear reference and die
-		if (m_hBkBrush != nullptr) ::DeleteObject (m_hBkBrush);
+		if (m_hBkBrush) ::DeleteObject (m_hBkBrush);
 		m_pOwner->m_pWindow = nullptr;
 		delete this;
 	}
@@ -179,26 +179,25 @@ namespace DuiLib {
 		if (m_nIPUpdateFlag == IP_DELETE)
 			SetText (_T (""));
 		else if (m_nIPUpdateFlag == IP_UPDATE) {
-			TCHAR szIP[MAX_PATH] = { 0 };
 			in_addr addr;
 			addr.S_un.S_addr = m_dwIP;
-			_stprintf (szIP, _T ("%d.%d.%d.%d"), addr.S_un.S_un_b.s_b4, addr.S_un.S_un_b.s_b3, addr.S_un.S_un_b.s_b2, addr.S_un.S_un_b.s_b1);
+			string_t szIP = FawTools::format_str (_T ("%d.%d.%d.%d"), addr.S_un.S_un_b.s_b4, addr.S_un.S_un_b.s_b3, addr.S_un.S_un_b.s_b2, addr.S_un.S_un_b.s_b1);
 			SetText (szIP);
 		}
 	}
 
 	void CIPAddressUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CLabelUI::DoEvent (event);
 			return;
 		} else if (event.Type == UIEVENT_SETCURSOR && IsEnabled ()) {
 			::SetCursor (::LoadCursor (nullptr, IDC_IBEAM));
 			return;
 		} else if (event.Type == UIEVENT_WINDOWSIZE) {
-			if (m_pWindow != nullptr) m_pManager->SetFocusNeeded (this);
+			if (m_pWindow) m_pManager->SetFocusNeeded (this);
 		} else if (event.Type == UIEVENT_SCROLLWHEEL) {
-			if (m_pWindow != nullptr) return;
+			if (m_pWindow) return;
 		} else if (event.Type == UIEVENT_SETFOCUS && IsEnabled ()) {
 			if (m_pWindow) {
 				return;
@@ -212,11 +211,11 @@ namespace DuiLib {
 		} else if (event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN) {
 			if (IsEnabled ()) {
 				GetManager ()->ReleaseCapture ();
-				if (IsFocused () && m_pWindow == nullptr) {
+				if (IsFocused () && !m_pWindow) {
 					m_pWindow = new CIPAddressWnd ();
 					ASSERT (m_pWindow);
 				}
-				if (m_pWindow != nullptr) {
+				if (m_pWindow) {
 					m_pWindow->Init (this);
 					m_pWindow->ShowWindow ();
 				}

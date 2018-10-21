@@ -62,7 +62,7 @@ namespace DuiLib {
 		/* [unique][in] */ FORMATETC __RPC_FAR *pformatetcIn,
 		/* [out] */ STGMEDIUM __RPC_FAR *pmedium) {
 		ATLTRACE ("CIDataObject::c_str\n");
-		if (pformatetcIn == nullptr || pmedium == nullptr)
+		if (!pformatetcIn || !pmedium)
 			return E_INVALIDARG;
 		pmedium->hGlobal = nullptr;
 
@@ -89,7 +89,7 @@ namespace DuiLib {
 	STDMETHODIMP CIDataObject::QueryGetData (
 		/* [unique][in] */ FORMATETC __RPC_FAR *pformatetc) {
 		ATLTRACE ("CIDataObject::QueryGetData\n");
-		if (pformatetc == nullptr)
+		if (!pformatetc)
 			return E_INVALIDARG;
 
 		//support others if needed DVASPECT_THUMBNAIL  //DVASPECT_ICON   //DVASPECT_DOCPRINT
@@ -112,7 +112,7 @@ namespace DuiLib {
 		/* [unique][in] */ FORMATETC __RPC_FAR *pformatectIn,
 		/* [out] */ FORMATETC __RPC_FAR *pformatetcOut) {
 		ATLTRACE ("CIDataObject::GetCanonicalFormatEtc\n");
-		if (pformatetcOut == nullptr)
+		if (!pformatetcOut)
 			return E_INVALIDARG;
 		return DATA_S_SAMEFORMATETC;
 	}
@@ -122,14 +122,14 @@ namespace DuiLib {
 		/* [unique][in] */ STGMEDIUM __RPC_FAR *pmedium,
 		/* [in] */ BOOL fRelease) {
 		ATLTRACE ("CIDataObject::SetData\n");
-		if (pformatetc == nullptr || pmedium == nullptr)
+		if (!pformatetc || !pmedium)
 			return E_INVALIDARG;
 
 		ATLASSERT (pformatetc->tymed == pmedium->tymed);
 		FORMATETC* fetc = new FORMATETC;
 		STGMEDIUM* pStgMed = new STGMEDIUM;
 
-		if (fetc == nullptr || pStgMed == nullptr)
+		if (!fetc || !pStgMed)
 			return E_OUTOFMEMORY;
 
 		ZeroMemory (fetc, sizeof (FORMATETC));
@@ -178,7 +178,7 @@ namespace DuiLib {
 		}
 		pMedDest->tymed = pMedSrc->tymed;
 		pMedDest->pUnkForRelease = nullptr;
-		if (pMedSrc->pUnkForRelease != nullptr) {
+		if (pMedSrc->pUnkForRelease) {
 			pMedDest->pUnkForRelease = pMedSrc->pUnkForRelease;
 			pMedSrc->pUnkForRelease->AddRef ();
 		}
@@ -187,14 +187,14 @@ namespace DuiLib {
 		/* [in] */ DWORD dwDirection,
 		/* [out] */ IEnumFORMATETC __RPC_FAR *__RPC_FAR *ppenumFormatEtc) {
 		ATLTRACE ("CIDataObject::EnumFormatEtc\n");
-		if (ppenumFormatEtc == nullptr)
+		if (!ppenumFormatEtc)
 			return E_POINTER;
 
 		*ppenumFormatEtc = nullptr;
 		switch (dwDirection) {
 		case DATADIR_GET:
 			*ppenumFormatEtc = new CEnumFormatEtc (m_ArrFormatEtc);
-			if (*ppenumFormatEtc == nullptr)
+			if (!*ppenumFormatEtc)
 				return E_OUTOFMEMORY;
 			(*ppenumFormatEtc)->AddRef ();
 			break;
@@ -239,7 +239,7 @@ namespace DuiLib {
 		if (IID_IUnknown == riid || IID_IDropSource == riid)
 			*ppvObject = this;
 
-		if (*ppvObject != nullptr) {
+		if (*ppvObject) {
 			((LPUNKNOWN) *ppvObject)->AddRef ();
 			return S_OK;
 		}
@@ -305,7 +305,7 @@ namespace DuiLib {
 		if (IID_IUnknown == refiid || IID_IEnumFORMATETC == refiid)
 			*ppv = this;
 
-		if (*ppv != nullptr) {
+		if (*ppv) {
 			((LPUNKNOWN) *ppv)->AddRef ();
 			return S_OK;
 		}
@@ -329,22 +329,22 @@ namespace DuiLib {
 
 	STDMETHODIMP CEnumFormatEtc::Next (ULONG celt, LPFORMATETC lpFormatEtc, ULONG FAR *pceltFetched) {
 		ATLTRACE ("CEnumFormatEtc::Next()\n");
-		if (pceltFetched != nullptr)
+		if (pceltFetched)
 			*pceltFetched = 0;
 
 		ULONG cReturn = celt;
 
-		if (celt <= 0 || lpFormatEtc == nullptr || (size_t) m_iCur >= m_pFmtEtc.size ())
+		if (celt <= 0 || !lpFormatEtc || (size_t) m_iCur >= m_pFmtEtc.size ())
 			return S_FALSE;
 
-		if (pceltFetched == nullptr && celt != 1) // pceltFetched can be nullptr only for 1 item request
+		if (!pceltFetched && celt != 1) // pceltFetched can be nullptr only for 1 item request
 			return S_FALSE;
 
 		while (m_iCur < (int) m_pFmtEtc.size () && cReturn > 0) {
 			*lpFormatEtc++ = m_pFmtEtc[m_iCur++];
 			--cReturn;
 		}
-		if (pceltFetched != nullptr)
+		if (pceltFetched)
 			*pceltFetched = celt - cReturn;
 
 		return (cReturn == 0) ? S_OK : S_FALSE;
@@ -366,11 +366,11 @@ namespace DuiLib {
 
 	STDMETHODIMP CEnumFormatEtc::Clone (IEnumFORMATETC FAR * FAR*ppCloneEnumFormatEtc) {
 		ATLTRACE ("CEnumFormatEtc::Clone()\n");
-		if (ppCloneEnumFormatEtc == nullptr)
+		if (!ppCloneEnumFormatEtc)
 			return E_POINTER;
 
 		CEnumFormatEtc *newEnum = new CEnumFormatEtc (m_pFmtEtc);
-		if (newEnum == nullptr)
+		if (!newEnum)
 			return E_OUTOFMEMORY;
 		newEnum->AddRef ();
 		newEnum->m_iCur = m_iCur;
@@ -391,7 +391,7 @@ namespace DuiLib {
 	}
 
 	CIDropTarget::~CIDropTarget () {
-		if (m_pDropTargetHelper != nullptr) {
+		if (m_pDropTargetHelper) {
 			m_pDropTargetHelper->Release ();
 			m_pDropTargetHelper = nullptr;
 		}
@@ -403,7 +403,7 @@ namespace DuiLib {
 		if (IID_IUnknown == riid || IID_IDropTarget == riid)
 			*ppvObject = this;
 
-		if (*ppvObject != nullptr) {
+		if (*ppvObject) {
 			((LPUNKNOWN) *ppvObject)->AddRef ();
 			return S_OK;
 		}
@@ -462,7 +462,7 @@ namespace DuiLib {
 		/* [in] */ POINTL pt,
 		/* [out][in] */ DWORD __RPC_FAR *pdwEffect) {
 		ATLTRACE ("CIDropTarget::DragEnter\n");
-		if (pDataObj == nullptr)
+		if (!pDataObj)
 			return E_INVALIDARG;
 
 		if (m_pDropTargetHelper)
@@ -513,14 +513,14 @@ namespace DuiLib {
 		/* [in] */ DWORD grfKeyState, /* [in] */ POINTL pt,
 		/* [out][in] */ DWORD __RPC_FAR *pdwEffect) {
 		ATLTRACE ("CIDropTarget::Drop\n");
-		if (pDataObj == nullptr)
+		if (!pDataObj)
 			return E_INVALIDARG;
 
 		if (m_pDropTargetHelper)
 			m_pDropTargetHelper->Drop (pDataObj, (LPPOINT) &pt, *pdwEffect);
 
 		if (QueryDrop (grfKeyState, pdwEffect)) {
-			if (m_bAllowDrop && m_pSupportedFrmt != nullptr) {
+			if (m_bAllowDrop && m_pSupportedFrmt) {
 				STGMEDIUM medium;
 				if (pDataObj->GetData (m_pSupportedFrmt, &medium) == S_OK) {
 					if (OnDrop (m_pSupportedFrmt, medium, pdwEffect)) //does derive class wants us to free medium?

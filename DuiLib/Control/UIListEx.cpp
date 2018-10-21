@@ -24,7 +24,7 @@ namespace DuiLib {
 	}
 	BOOL CListExUI::CheckColumEditable (int nColum) {
 		CListContainerHeaderItemUI* pHItem = static_cast<CListContainerHeaderItemUI*>(m_pHeader->GetItemAt (nColum));
-		return pHItem != nullptr ? pHItem->GetColumeEditable () : FALSE;
+		return pHItem ? pHItem->GetColumeEditable () : FALSE;
 	}
 	void CListExUI::InitListCtrl () {
 		if (!m_bAddMessageFilter) {
@@ -33,7 +33,7 @@ namespace DuiLib {
 		}
 	}
 	CRichEditUI* CListExUI::GetEditUI () {
-		if (m_pEditUI == nullptr) {
+		if (!m_pEditUI) {
 			m_pEditUI = new CRichEditUI;
 			m_pEditUI->SetName (_T ("ListEx_Edit"));
 			string_view_t pDefaultAttributes = GetManager ()->GetDefaultAttributeList (_T ("RichEdit"));
@@ -58,11 +58,11 @@ namespace DuiLib {
 
 	BOOL CListExUI::CheckColumComboBoxable (int nColum) {
 		CListContainerHeaderItemUI* pHItem = static_cast<CListContainerHeaderItemUI*>(m_pHeader->GetItemAt (nColum));
-		return pHItem != nullptr ? pHItem->GetColumeComboable () : FALSE;
+		return pHItem ? pHItem->GetColumeComboable () : FALSE;
 	}
 
 	CComboBoxUI* CListExUI::GetComboBoxUI () {
-		if (m_pComboBoxUI == nullptr) {
+		if (!m_pComboBoxUI) {
 			m_pComboBoxUI = new CComboBoxUI;
 			m_pComboBoxUI->SetName (_T ("ListEx_Combo"));
 			string_view_t pDefaultAttributes = GetManager ()->GetDefaultAttributeList (_T ("Combo"));
@@ -83,7 +83,7 @@ namespace DuiLib {
 	BOOL CListExUI::CheckColumCheckBoxable (int nColum) {
 		CControlUI* p = m_pHeader->GetItemAt (nColum);
 		CListContainerHeaderItemUI* pHItem = static_cast<CListContainerHeaderItemUI*>(p->GetInterface (_T ("ListContainerHeaderItem")));
-		return pHItem != nullptr ? pHItem->GetColumeCheckable () : FALSE;
+		return pHItem ? pHItem->GetColumeCheckable () : FALSE;
 	}
 
 	void CListExUI::Notify (TNotifyUI& msg) {
@@ -99,7 +99,7 @@ namespace DuiLib {
 					for (int j = 0; j < GetCount (); ++j) {
 						CControlUI* p = GetItemAt (j);
 						CListTextExtElementUI* pLItem = static_cast<CListTextExtElementUI*>(p->GetInterface (_T ("ListTextExElement")));
-						if (pLItem != nullptr) {
+						if (pLItem) {
 							pLItem->SetCheck (bCheck);
 						}
 					}
@@ -110,7 +110,7 @@ namespace DuiLib {
 			for (int i = 0; i < GetCount (); ++i) {
 				CControlUI* p = GetItemAt (i);
 				CListTextExtElementUI* pLItem = static_cast<CListTextExtElementUI*>(p->GetInterface (_T ("ListTextExElement")));
-				if (pLItem != nullptr && pLItem == msg.pSender) {
+				if (pLItem && pLItem == msg.pSender) {
 					OnListItemChecked (LOWORD (msg.wParam), HIWORD (msg.wParam), (BOOL) msg.lParam);
 					break;
 				}
@@ -235,7 +235,7 @@ namespace DuiLib {
 	void CListExUI::OnListItemChecked (int nIndex, int nColum, BOOL bChecked) {
 		CControlUI* p = m_pHeader->GetItemAt (nColum);
 		CListContainerHeaderItemUI* pHItem = static_cast<CListContainerHeaderItemUI*>(p->GetInterface (_T ("ListContainerHeaderItem")));
-		if (pHItem == nullptr)
+		if (!pHItem)
 			return;
 
 		//如果选中，那么检查是否全部都处于选中状态
@@ -244,7 +244,7 @@ namespace DuiLib {
 			for (int i = 0; i < GetCount (); i++) {
 				p = GetItemAt (i);
 				CListTextExtElementUI* pLItem = static_cast<CListTextExtElementUI*>(p->GetInterface (_T ("ListTextExElement")));
-				if (pLItem != nullptr && !pLItem->GetCheck ()) {
+				if (pLItem && !pLItem->GetCheck ()) {
 					bCheckAll = FALSE;
 					break;
 				}
@@ -268,7 +268,7 @@ namespace DuiLib {
 	void CListExUI::SetColumItemColor (int nIndex, int nColum, DWORD iBKColor) {
 		CControlUI* p = GetItemAt (nIndex);
 		CListTextExtElementUI* pLItem = static_cast<CListTextExtElementUI*>(p->GetInterface (_T ("ListTextExElement")));
-		if (pLItem != nullptr) {
+		if (pLItem) {
 			DWORD iTextBkColor = iBKColor;
 			pLItem->SetColumItemColor (nColum, iTextBkColor);
 		}
@@ -277,9 +277,8 @@ namespace DuiLib {
 	BOOL CListExUI::GetColumItemColor (int nIndex, int nColum, DWORD& iBKColor) {
 		CControlUI* p = GetItemAt (nIndex);
 		CListTextExtElementUI* pLItem = static_cast<CListTextExtElementUI*>(p->GetInterface (_T ("ListTextExElement")));
-		if (pLItem == nullptr) {
+		if (!pLItem)
 			return FALSE;
-		}
 		pLItem->GetColumItemColor (nColum, iBKColor);
 		return TRUE;
 	}
@@ -472,7 +471,7 @@ namespace DuiLib {
 
 	void CListContainerHeaderItemUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CContainerUI::DoEvent (event);
 			return;
 		}
@@ -897,7 +896,7 @@ namespace DuiLib {
 	}
 
 	void CListTextExtElementUI::SetText (int iIndex, string_view_t pstrText) {
-		if (m_pOwner == nullptr) return;
+		if (!m_pOwner) return;
 		TListInfoUI* pInfo = m_pOwner->GetListInfo ();
 		if (iIndex < 0 || iIndex >= pInfo->nColumns) return;
 		while (m_aTexts.GetSize () < pInfo->nColumns) {
@@ -905,7 +904,7 @@ namespace DuiLib {
 		}
 
 		CDuiString* pText = static_cast<CDuiString*>(m_aTexts[iIndex]);
-		if ((pText == nullptr && pstrText == nullptr) || (pText && *pText == pstrText)) return;
+		if ((!pText && pstrText.empty ()) || (pText && *pText == pstrText)) return;
 
 		if (pText)
 			*pText = pstrText;
@@ -926,7 +925,7 @@ namespace DuiLib {
 
 	void CListTextExtElementUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pOwner != nullptr) m_pOwner->DoEvent (event);
+			if (m_pOwner) m_pOwner->DoEvent (event);
 			else CListLabelElementUI::DoEvent (event);
 			return;
 		}
@@ -1032,7 +1031,7 @@ namespace DuiLib {
 		if (m_pOwner) pInfo = m_pOwner->GetListInfo ();
 
 		SIZE cXY = m_cxyFixed;
-		if (cXY.cy == 0 && m_pManager != nullptr && pInfo != nullptr) {
+		if (cXY.cy == 0 && m_pManager && pInfo) {
 			cXY.cy = m_pManager->GetFontInfo (pInfo->nFont)->tm.tmHeight + 8;
 			cXY.cy += pInfo->rcTextPadding.top + pInfo->rcTextPadding.bottom;
 		}
@@ -1041,7 +1040,7 @@ namespace DuiLib {
 	}
 
 	void CListTextExtElementUI::DrawItemText (HDC hDC, const RECT& /*rcItem*/) {
-		if (m_pOwner == nullptr) return;
+		if (!m_pOwner) return;
 		TListInfoUI* pInfo = m_pOwner->GetListInfo ();
 		DWORD iTextColor = pInfo->dwTextColor;
 
@@ -1056,7 +1055,7 @@ namespace DuiLib {
 		}
 		IListCallbackUI* pCallback = m_pOwner->GetTextCallback ();
 		//DUIASSERT(pCallback);
-		//if( pCallback == nullptr ) return;
+		//if (!pCallback) return;
 
 		CListExUI * pListCtrl = (CListExUI *) m_pOwner;
 		m_nLinks = 0;

@@ -82,7 +82,7 @@ namespace DuiLib {
 		if (m_iCurSel >= 0) {
 			CControlUI* pControl = static_cast<CControlUI*>(m_items[m_iCurSel]);
 			IListItemUI* pElement = static_cast<IListItemUI*>(pControl->GetInterface (_T ("ListItem")));
-			if (pElement != nullptr) {
+			if (pElement) {
 				pElement->DrawItemText (hDC, rcText);
 			} else {
 				RECT rcOldPos = pControl->GetPos ();

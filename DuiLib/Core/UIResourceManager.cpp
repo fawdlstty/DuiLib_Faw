@@ -65,7 +65,7 @@ namespace DuiLib {
 				}
 				if (pstrId.empty () || pstrPath.empty ()) continue;
 				CDuiString * pstrFind = static_cast<CDuiString *>(m_mImageHashMap.Find (pstrId));
-				if (pstrFind != nullptr) continue;
+				if (pstrFind) continue;
 				m_mImageHashMap.Insert (pstrId, (LPVOID)new CDuiString (pstrPath));
 			} else if (pstrClass == _T ("Xml") && node.HasAttributes ()) {
 				//加载XML配置文件
@@ -82,7 +82,7 @@ namespace DuiLib {
 				}
 				if (pstrId.empty () || pstrPath.empty ()) continue;
 				CDuiString * pstrFind = static_cast<CDuiString *>(m_mXmlHashMap.Find (pstrId));
-				if (pstrFind != nullptr) continue;
+				if (pstrFind) continue;
 				m_mXmlHashMap.Insert (pstrId, (LPVOID)new CDuiString (pstrPath));
 			} else continue;
 		}
@@ -91,12 +91,12 @@ namespace DuiLib {
 
 	string_view_t CResourceManager::GetImagePath (string_view_t lpstrId) {
 		CDuiString * lpStr = static_cast<CDuiString *>(m_mImageHashMap.Find (lpstrId));
-		return lpStr == nullptr ? _T ("") : lpStr->c_str ();
+		return !lpStr ? _T ("") : lpStr->c_str ();
 	}
 
 	string_view_t CResourceManager::GetXmlPath (string_view_t lpstrId) {
 		CDuiString * lpStr = static_cast<CDuiString *>(m_mXmlHashMap.Find (lpstrId));
-		return lpStr == nullptr ? _T ("") : lpStr->c_str ();
+		return !lpStr ? _T ("") : lpStr->c_str ();
 	}
 
 	void CResourceManager::ResetResourceMap () {
@@ -153,7 +153,7 @@ namespace DuiLib {
 				if (pstrId.empty () || pstrText.empty ()) continue;
 
 				CDuiString *lpstrFind = static_cast<CDuiString *>(m_mTextResourceHashMap.Find (pstrId));
-				if (lpstrFind != nullptr) {
+				if (lpstrFind) {
 					*lpstrFind = pstrText;
 				} else {
 					m_mTextResourceHashMap.Insert (pstrId, (LPVOID)new CDuiString (pstrText));
@@ -168,21 +168,21 @@ namespace DuiLib {
 		if (lpstrId.empty ()) return _T ("");
 
 		CDuiString *lpstrFind = static_cast<CDuiString *>(m_mTextResourceHashMap.Find (lpstrId));
-		if (lpstrFind == nullptr && m_pQuerypInterface) {
+		if (!lpstrFind && m_pQuerypInterface) {
 			lpstrFind = new CDuiString (m_pQuerypInterface->QueryControlText (lpstrId, lpstrType));
 			m_mTextResourceHashMap.Insert (lpstrId, (LPVOID) lpstrFind);
 		}
-		return lpstrFind == nullptr ? lpstrId : *lpstrFind;
+		return !lpstrFind ? lpstrId : *lpstrFind;
 	}
 
 	void CResourceManager::ReloadText () {
-		if (m_pQuerypInterface == nullptr) return;
+		if (!m_pQuerypInterface) return;
 		//重载文字描述
 		for (int i = 0; i < m_mTextResourceHashMap.GetSize (); i++) {
 			string_view_t lpstrId = m_mTextResourceHashMap.GetAt (i)->Key;
-			if (lpstrId == nullptr) continue;
+			if (lpstrId.empty ()) continue;
 			string_view_t lpstrText = m_pQuerypInterface->QueryControlText (lpstrId, nullptr);
-			if (lpstrText != nullptr) {
+			if (!lpstrText.empty ()) {
 				CDuiString *lpStr = static_cast<CDuiString*> (m_mTextResourceHashMap.Find (lpstrId));
 				*lpStr = lpstrText;
 			}

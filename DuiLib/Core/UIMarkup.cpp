@@ -14,27 +14,27 @@ namespace DuiLib {
 	CMarkupNode::CMarkupNode (CMarkup* pOwner, int iPos) : m_pOwner (pOwner), m_iPos (iPos), m_nAttributes (0) {}
 
 	CMarkupNode CMarkupNode::GetSibling () {
-		if (m_pOwner == nullptr) return CMarkupNode ();
+		if (!m_pOwner) return CMarkupNode ();
 		ULONG iPos = m_pOwner->m_pElements[m_iPos].iNext;
 		if (iPos == 0) return CMarkupNode ();
 		return CMarkupNode (m_pOwner, iPos);
 	}
 
 	bool CMarkupNode::HasSiblings () const {
-		if (m_pOwner == nullptr) return false;
+		if (!m_pOwner) return false;
 		ULONG iPos = m_pOwner->m_pElements[m_iPos].iNext;
 		return iPos > 0;
 	}
 
 	CMarkupNode CMarkupNode::GetChild () {
-		if (m_pOwner == nullptr) return CMarkupNode ();
+		if (!m_pOwner) return CMarkupNode ();
 		ULONG iPos = m_pOwner->m_pElements[m_iPos].iChild;
 		if (iPos == 0) return CMarkupNode ();
 		return CMarkupNode (m_pOwner, iPos);
 	}
 
 	CMarkupNode CMarkupNode::GetChild (string_view_t pstrName) {
-		if (m_pOwner == nullptr) return CMarkupNode ();
+		if (!m_pOwner) return CMarkupNode ();
 		ULONG iPos = m_pOwner->m_pElements[m_iPos].iChild;
 		while (iPos != 0) {
 			if (pstrName == &m_pOwner->m_pstrXML[m_pOwner->m_pElements[iPos].iStart]) {
@@ -46,47 +46,47 @@ namespace DuiLib {
 	}
 
 	bool CMarkupNode::HasChildren () const {
-		if (m_pOwner == nullptr) return false;
+		if (!m_pOwner) return false;
 		return m_pOwner->m_pElements[m_iPos].iChild != 0;
 	}
 
 	CMarkupNode CMarkupNode::GetParent () {
-		if (m_pOwner == nullptr) return CMarkupNode ();
+		if (!m_pOwner) return CMarkupNode ();
 		ULONG iPos = m_pOwner->m_pElements[m_iPos].iParent;
 		if (iPos == 0) return CMarkupNode ();
 		return CMarkupNode (m_pOwner, iPos);
 	}
 
 	bool CMarkupNode::IsValid () const {
-		return m_pOwner != nullptr;
+		return m_pOwner;
 	}
 
 	string_t CMarkupNode::GetName () const {
-		if (m_pOwner == nullptr) return _T ("");
+		if (!m_pOwner) return _T ("");
 		return &m_pOwner->m_pstrXML[m_pOwner->m_pElements[m_iPos].iStart];
 	}
 
 	string_t CMarkupNode::GetValue () const {
-		if (m_pOwner == nullptr) return _T ("");
+		if (!m_pOwner) return _T ("");
 		return &m_pOwner->m_pstrXML[m_pOwner->m_pElements[m_iPos].iData];
 	}
 
 	string_t CMarkupNode::GetAttributeName (int iIndex) {
-		if (m_pOwner == nullptr) return _T ("");
+		if (!m_pOwner) return _T ("");
 		if (m_nAttributes == 0) _MapAttributes ();
 		if (iIndex < 0 || iIndex >= m_nAttributes) return _T ("");
 		return &m_pOwner->m_pstrXML[m_aAttributes[iIndex].iName];
 	}
 
 	string_t CMarkupNode::GetAttributeValue (int iIndex) {
-		if (m_pOwner == nullptr) return _T ("");
+		if (!m_pOwner) return _T ("");
 		if (m_nAttributes == 0) _MapAttributes ();
 		if (iIndex < 0 || iIndex >= m_nAttributes) return _T ("");
 		return &m_pOwner->m_pstrXML[m_aAttributes[iIndex].iValue];
 	}
 
 	string_t CMarkupNode::GetAttributeValue (string_view_t pstrName) {
-		if (m_pOwner == nullptr) return _T ("");
+		if (!m_pOwner) return _T ("");
 		if (m_nAttributes == 0) _MapAttributes ();
 		for (int i = 0; i < m_nAttributes; i++) {
 			if (pstrName == &m_pOwner->m_pstrXML[m_aAttributes[i].iName]) return &m_pOwner->m_pstrXML[m_aAttributes[i].iValue];
@@ -95,19 +95,19 @@ namespace DuiLib {
 	}
 
 	int CMarkupNode::GetAttributeCount () {
-		if (m_pOwner == nullptr) return 0;
+		if (!m_pOwner) return 0;
 		if (m_nAttributes == 0) _MapAttributes ();
 		return m_nAttributes;
 	}
 
 	bool CMarkupNode::HasAttributes () {
-		if (m_pOwner == nullptr) return false;
+		if (!m_pOwner) return false;
 		if (m_nAttributes == 0) _MapAttributes ();
 		return m_nAttributes > 0;
 	}
 
 	bool CMarkupNode::HasAttribute (string_view_t pstrName) {
-		if (m_pOwner == nullptr) return false;
+		if (!m_pOwner) return false;
 		if (m_nAttributes == 0) _MapAttributes ();
 		for (int i = 0; i < m_nAttributes; i++) {
 			if (pstrName == &m_pOwner->m_pstrXML[m_aAttributes[i].iName]) return true;
@@ -152,7 +152,7 @@ namespace DuiLib {
 	}
 
 	bool CMarkup::IsValid () const {
-		return m_pElements != nullptr;
+		return m_pElements;
 	}
 
 	void CMarkup::SetPreserveWhitespace (bool bPreserve) {
@@ -237,7 +237,7 @@ namespace DuiLib {
 				std::string pwd = FawTools::get_gb18030 (sFilePwd);
 				hz = OpenZip (sFile.c_str (), pwd.c_str ());
 			}
-			if (hz == nullptr) return _Failed (_T ("Error opening zip file"));
+			if (!hz) return _Failed (_T ("Error opening zip file"));
 			ZIPENTRY ze;
 			int i = 0;
 			CDuiString key = pstrFilename;
@@ -262,7 +262,7 @@ namespace DuiLib {
 	}
 
 	void CMarkup::Release () {
-		if (m_pElements != nullptr) free (m_pElements);
+		if (m_pElements) free (m_pElements);
 		m_pstrXML = _T ("");
 		m_pElements = nullptr;
 		m_nElements = 0;

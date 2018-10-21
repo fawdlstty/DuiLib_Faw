@@ -46,7 +46,7 @@ namespace DuiLib {
 
 		// Already initialized
 		_ASSERT (CPaintManagerUI::GetInstance () != INVALID_HANDLE_VALUE);
-		_ASSERT (pPaintManager != nullptr);
+		_ASSERT (pPaintManager);
 		m_pManager = pPaintManager;
 		HWND hParentWnd = m_pManager->GetPaintWindow ();
 		// Add parent window - shadow pair to the map
@@ -243,12 +243,12 @@ namespace DuiLib {
 		bmi.bmiHeader.biSizeImage = nShadWndWid * nShadWndHei * 4;
 		BYTE *pvBits;          // pointer to DIB section
 		HBITMAP hbitmap = CreateDIBSection (nullptr, &bmi, DIB_RGB_COLORS, (void **) &pvBits, nullptr, 0);
-		if (hbitmap == nullptr) {
+		if (!hbitmap) {
 			GetLastErrorMessage ();
 		}
 
 		HDC hMemDC = CreateCompatibleDC (nullptr);
-		if (hMemDC == nullptr) {
+		if (!hMemDC) {
 			GetLastErrorMessage ();
 		}
 		HBITMAP hOriBmp = (HBITMAP) SelectObject (hMemDC, hbitmap);
@@ -489,7 +489,7 @@ namespace DuiLib {
 
 
 		m_bIsDisableShadow = bDisable;
-		if (m_hWnd != nullptr) {
+		if (m_hWnd) {
 
 			if (m_bIsDisableShadow) {
 				::ShowWindow (m_hWnd, SW_HIDE);
@@ -534,7 +534,7 @@ namespace DuiLib {
 			return false;
 
 		m_nSize = (signed char) NewSize;
-		if (m_hWnd != nullptr && (SS_VISABLE & m_Status))
+		if (m_hWnd && (SS_VISABLE & m_Status))
 			Update (GetParent (m_hWnd));
 		return true;
 	}
@@ -544,7 +544,7 @@ namespace DuiLib {
 			return false;
 
 		m_nSharpness = (unsigned char) NewSharpness;
-		if (m_hWnd != nullptr && (SS_VISABLE & m_Status))
+		if (m_hWnd && (SS_VISABLE & m_Status))
 			Update (GetParent (m_hWnd));
 		return true;
 	}
@@ -554,7 +554,7 @@ namespace DuiLib {
 			return false;
 
 		m_nDarkness = (unsigned char) NewDarkness;
-		if (m_hWnd != nullptr && (SS_VISABLE & m_Status))
+		if (m_hWnd && (SS_VISABLE & m_Status))
 			Update (GetParent (m_hWnd));
 		return true;
 	}
@@ -566,14 +566,14 @@ namespace DuiLib {
 
 		m_nxOffset = (signed char) NewXOffset;
 		m_nyOffset = (signed char) NewYOffset;
-		if (m_hWnd != nullptr && (SS_VISABLE & m_Status))
+		if (m_hWnd && (SS_VISABLE & m_Status))
 			Update (GetParent (m_hWnd));
 		return true;
 	}
 
 	bool CShadowUI::SetColor (COLORREF NewColor) {
 		m_Color = NewColor;
-		if (m_hWnd != nullptr && (SS_VISABLE & m_Status))
+		if (m_hWnd && (SS_VISABLE & m_Status))
 			Update (GetParent (m_hWnd));
 		return true;
 	}
@@ -584,7 +584,7 @@ namespace DuiLib {
 
 		m_bIsImageMode = true;
 		m_sShadowImage = szImage;
-		if (m_hWnd != nullptr && (SS_VISABLE & m_Status))
+		if (m_hWnd && (SS_VISABLE & m_Status))
 			Update (GetParent (m_hWnd));
 
 		return true;
@@ -594,7 +594,7 @@ namespace DuiLib {
 		if (rcCorner.left < 0 || rcCorner.top < 0 || rcCorner.right < 0 || rcCorner.bottom < 0) return false;
 
 		m_rcShadowCorner = rcCorner;
-		if (m_hWnd != nullptr && (SS_VISABLE & m_Status)) {
+		if (m_hWnd && (SS_VISABLE & m_Status)) {
 			Update (GetParent (m_hWnd));
 		}
 

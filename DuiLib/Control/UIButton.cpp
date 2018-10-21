@@ -23,7 +23,7 @@ namespace DuiLib {
 
 	void CButtonUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CLabelUI::DoEvent (event);
 			return;
 		}
@@ -80,7 +80,7 @@ namespace DuiLib {
 
 	bool CButtonUI::Activate () {
 		if (!CControlUI::Activate ()) return false;
-		if (m_pManager != nullptr) {
+		if (m_pManager) {
 			m_pManager->SendNotify (this, DUI_MSGTYPE_CLICK);
 			BindTriggerTabSel ();
 		}
@@ -348,11 +348,9 @@ namespace DuiLib {
 			iFont = GetFocusedFont ();
 
 		if (m_bShowHtml)
-			CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, clrColor, \
-				nullptr, nullptr, nLinks, iFont, m_uTextStyle);
+			CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, clrColor, nullptr, nullptr, nLinks, iFont, m_uTextStyle);
 		else
-			CRenderEngine::DrawText (hDC, m_pManager, rc, sText, clrColor, \
-				iFont, m_uTextStyle);
+			CRenderEngine::DrawText (hDC, m_pManager, rc, sText, clrColor, iFont, m_uTextStyle);
 	}
 
 	void CButtonUI::PaintBkColor (HDC hDC) {
@@ -381,7 +379,7 @@ namespace DuiLib {
 			TDrawInfo info;
 			info.Parse (m_sStateImage, _T (""), m_pManager);
 			const TImageInfo* pImage = m_pManager->GetImageEx (info.sImageName, info.sResType, info.dwMask, info.bHSL);
-			if (m_sNormalImage.empty () && pImage != nullptr) {
+			if (m_sNormalImage.empty () && pImage) {
 				SIZE szImage = { pImage->nX, pImage->nY };
 				SIZE szStatus = { pImage->nX / m_nStateCount, pImage->nY };
 				if (szImage.cx > 0 && szImage.cy > 0) {

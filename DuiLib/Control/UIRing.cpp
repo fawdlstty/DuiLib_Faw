@@ -34,22 +34,21 @@ namespace DuiLib {
 	}
 
 	void CRingUI::PaintBkImage (HDC hDC) {
-		if (m_pBkimage == nullptr) {
+		if (!m_pBkimage)
 			InitImage ();
-		}
+		if (!m_pBkimage)
+			return;
 
-		if (m_pBkimage != nullptr) {
-			RECT rcItem = m_rcItem;
-			int iWidth = rcItem.right - rcItem.left;
-			int iHeight = rcItem.bottom - rcItem.top;
-			Gdiplus::PointF centerPos ((Gdiplus::REAL) (rcItem.left + iWidth / 2), (Gdiplus::REAL) (rcItem.top + iHeight / 2));
+		RECT rcItem = m_rcItem;
+		int iWidth = rcItem.right - rcItem.left;
+		int iHeight = rcItem.bottom - rcItem.top;
+		Gdiplus::PointF centerPos ((Gdiplus::REAL) (rcItem.left + iWidth / 2), (Gdiplus::REAL) (rcItem.top + iHeight / 2));
 
-			Gdiplus::Graphics graphics (hDC);
-			graphics.TranslateTransform (centerPos.X, centerPos.Y);
-			graphics.RotateTransform (m_fCurAngle);
-			graphics.TranslateTransform (-centerPos.X, -centerPos.Y);//还原源点
-			graphics.DrawImage (m_pBkimage, rcItem.left, rcItem.top, iWidth, iHeight);
-		}
+		Gdiplus::Graphics graphics (hDC);
+		graphics.TranslateTransform (centerPos.X, centerPos.Y);
+		graphics.RotateTransform (m_fCurAngle);
+		graphics.TranslateTransform (-centerPos.X, -centerPos.Y);//还原源点
+		graphics.DrawImage (m_pBkimage, rcItem.left, rcItem.top, iWidth, iHeight);
 	}
 
 	void CRingUI::DoEvent (TEventUI& event) {
@@ -71,7 +70,7 @@ namespace DuiLib {
 	}
 
 	void CRingUI::DeleteImage () {
-		if (m_pBkimage != nullptr) {
+		if (m_pBkimage) {
 			delete m_pBkimage;
 			m_pBkimage = nullptr;
 		}

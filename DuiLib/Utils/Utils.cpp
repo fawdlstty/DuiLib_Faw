@@ -54,11 +54,11 @@ namespace DuiLib {
 	}
 
 	CStdPtrArray::~CStdPtrArray () {
-		if (m_ppVoid != nullptr) free (m_ppVoid);
+		if (m_ppVoid) free (m_ppVoid);
 	}
 
 	void CStdPtrArray::Empty () {
-		if (m_ppVoid != nullptr) free (m_ppVoid);
+		if (m_ppVoid) free (m_ppVoid);
 		m_ppVoid = nullptr;
 		m_nCount = m_nAllocated = 0;
 	}
@@ -80,7 +80,7 @@ namespace DuiLib {
 			int nAllocated = m_nAllocated * 2;
 			if (nAllocated == 0) nAllocated = 11;
 			LPVOID* ppVoid = static_cast<LPVOID*>(realloc (m_ppVoid, nAllocated * sizeof (LPVOID)));
-			if (ppVoid != nullptr) {
+			if (ppVoid) {
 				m_nAllocated = nAllocated;
 				m_ppVoid = ppVoid;
 			} else {
@@ -99,7 +99,7 @@ namespace DuiLib {
 			int nAllocated = m_nAllocated * 2;
 			if (nAllocated == 0) nAllocated = 11;
 			LPVOID* ppVoid = static_cast<LPVOID*>(realloc (m_ppVoid, nAllocated * sizeof (LPVOID)));
-			if (ppVoid != nullptr) {
+			if (ppVoid) {
 				m_nAllocated = nAllocated;
 				m_ppVoid = ppVoid;
 			} else {
@@ -163,7 +163,7 @@ namespace DuiLib {
 	}
 
 	CStdValArray::~CStdValArray () {
-		if (m_pVoid != nullptr) free (m_pVoid);
+		if (m_pVoid) free (m_pVoid);
 	}
 
 	void CStdValArray::Empty () {
@@ -179,7 +179,7 @@ namespace DuiLib {
 			int nAllocated = m_nAllocated * 2;
 			if (nAllocated == 0) nAllocated = 11;
 			LPBYTE pVoid = static_cast<LPBYTE>(realloc (m_pVoid, nAllocated * m_iElementSize));
-			if (pVoid != nullptr) {
+			if (pVoid) {
 				m_nAllocated = nAllocated;
 				m_pVoid = pVoid;
 			} else {
@@ -577,7 +577,7 @@ namespace DuiLib {
 	//	} else {
 	//		data = pManager->GetImageEx(m_sImage.c_str (), m_sResType.c_str (), m_dwMask);
 	//	}
-	//	if (data == nullptr) {
+	//	if (!data) {
 	//		m_bLoadSuccess = false;
 	//		return false;
 	//	} else {

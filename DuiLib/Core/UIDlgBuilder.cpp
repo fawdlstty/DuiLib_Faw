@@ -29,9 +29,9 @@ namespace DuiLib {
 				dll_instence = CPaintManagerUI::GetResourceDll ();
 			}
 			HRSRC hResource = ::FindResource (dll_instence, MAKEINTRESOURCE (std::get<0> (xml)), type.data ());
-			if (hResource == nullptr) return nullptr;
+			if (!hResource) return nullptr;
 			HGLOBAL hGlobal = ::LoadResource (dll_instence, hResource);
-			if (hGlobal == nullptr) {
+			if (!hGlobal) {
 				FreeResource (hResource);
 				return nullptr;
 			}
@@ -293,24 +293,24 @@ namespace DuiLib {
 				pControl = dynamic_cast<CControlUI*>(CControlFactory::GetInstance ()->CreateControl (strClass));
 
 				// 检查插件
-				if (pControl == nullptr) {
+				if (!pControl) {
 					CStdPtrArray* pPlugins = CPaintManagerUI::GetPlugins ();
 					LPCREATECONTROL lpCreateControl = nullptr;
 					for (int i = 0; i < pPlugins->GetSize (); ++i) {
 						lpCreateControl = (LPCREATECONTROL) pPlugins->GetAt (i);
-						if (lpCreateControl != nullptr) {
+						if (lpCreateControl) {
 							pControl = lpCreateControl (pstrClass);
-							if (pControl != nullptr) break;
+							if (pControl) break;
 						}
 					}
 				}
-				// 回掉创建
-				if (pControl == nullptr && m_pCallback != nullptr) {
+				// 回调创建
+				if (!pControl && m_pCallback) {
 					pControl = m_pCallback->CreateControl (pstrClass);
 				}
 			}
 
-			if (pControl == nullptr) {
+			if (!pControl) {
 #ifdef _DEBUG
 				DUITRACE (_T ("未知控件:%s"), pstrClass);
 #else
@@ -325,12 +325,12 @@ namespace DuiLib {
 			// Attach to parent
 			// 因为某些属性和父窗口相关，比如selected，必须先Add到父窗口
 			CTreeViewUI* pTreeView = nullptr;
-			if (pParent != nullptr && pControl != nullptr) {
+			if (pParent && pControl) {
 				CTreeNodeUI* pParentTreeNode = static_cast<CTreeNodeUI*>(pParent->GetInterface (_T ("TreeNode")));
 				CTreeNodeUI* pTreeNode = static_cast<CTreeNodeUI*>(pControl->GetInterface (_T ("TreeNode")));
 				pTreeView = static_cast<CTreeViewUI*>(pParent->GetInterface (_T ("TreeView")));
 				// TreeNode子节点
-				if (pTreeNode != nullptr) {
+				if (pTreeNode) {
 					if (pParentTreeNode) {
 						pTreeView = pParentTreeNode->GetTreeView ();
 						if (!pParentTreeNode->Add (pTreeNode)) {
@@ -339,7 +339,7 @@ namespace DuiLib {
 							continue;
 						}
 					} else {
-						if (pTreeView != nullptr) {
+						if (pTreeView) {
 							if (!pTreeView->Add (pTreeNode)) {
 								delete pTreeNode;
 								pTreeNode = nullptr;
@@ -349,25 +349,25 @@ namespace DuiLib {
 					}
 				}
 				// TreeNode子控件
-				else if (pParentTreeNode != nullptr) {
+				else if (pParentTreeNode) {
 					pParentTreeNode->GetTreeNodeHoriznotal ()->Add (pControl);
 				}
 				// 普通控件
 				else {
-					if (pContainer == nullptr) pContainer = static_cast<IContainerUI*>(pParent->GetInterface (_T ("IContainer")));
+					if (!pContainer) pContainer = static_cast<IContainerUI*>(pParent->GetInterface (_T ("IContainer")));
 					ASSERT (pContainer);
-					if (pContainer == nullptr) return nullptr;
+					if (!pContainer) return nullptr;
 					if (!pContainer->Add (pControl)) {
 						delete pControl;
 						continue;
 					}
 				}
 			}
-			if (pControl == nullptr) continue;
+			if (!pControl) continue;
 
 			// Init default attributes
 			if (pManager) {
-				if (pTreeView != nullptr) {
+				if (pTreeView) {
 					pControl->SetManager (pManager, pTreeView, true);
 				} else {
 					pControl->SetManager (pManager, nullptr, false);
@@ -388,12 +388,12 @@ namespace DuiLib {
 				}
 			}
 			if (pManager) {
-				if (pTreeView == nullptr) {
+				if (!pTreeView) {
 					pControl->SetManager (nullptr, nullptr, false);
 				}
 			}
 			// Return first item
-			if (pReturn == nullptr) pReturn = pControl;
+			if (!pReturn) pReturn = pControl;
 		}
 		return pReturn;
 	}

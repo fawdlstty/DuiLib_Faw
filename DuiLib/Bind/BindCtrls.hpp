@@ -9,7 +9,7 @@ namespace DuiLib {
 	public:																									\
 		Bind##CTRL_TYPE##UI (string_view_t ctrl_name): BindCtrlBase (ctrl_name) {}							\
 		C##CTRL_TYPE##UI *operator* () noexcept {															\
-			if (m_ctrl == nullptr) {																		\
+			if (!m_ctrl) {																					\
 				auto pm = CPaintManagerUI::GetPaintManager (_T (""));										\
 				if (!pm)																					\
 					ASSERT (false);																			\
@@ -25,23 +25,23 @@ namespace DuiLib {
 
 
 	// Core
-	//DEF_BINDCTRL (Control);
-	class BindControlUI: public BindCtrlBase {
-	public:
-		BindControlUI (string_view_t ctrl_name): BindCtrlBase (ctrl_name) {}
-		CControlUI *operator* () noexcept {
-			if (m_ctrl == nullptr) {
-				auto pm = CPaintManagerUI::GetPaintManager (_T (""));
-				if (!pm)
-					ASSERT (false);
-				m_ctrl = pm->FindControl (m_ctrl_name);
-			}
-			return static_cast<CControlUI*> (m_ctrl);
-		}
-		CControlUI *operator-> () noexcept { return operator* (); }
-	protected:
-		string_view_t GetClassType () const override { return _T ("ControlUI"); }
-	};
+	DEF_BINDCTRL (Control);
+	//class BindControlUI: public BindCtrlBase {
+	//public:
+	//	BindControlUI (string_view_t ctrl_name): BindCtrlBase (ctrl_name) {}
+	//	CControlUI *operator* () noexcept {
+	//		if (!m_ctrl) {
+	//			auto pm = CPaintManagerUI::GetPaintManager (_T (""));
+	//			if (!pm)
+	//				ASSERT (false);
+	//			m_ctrl = pm->FindControl (m_ctrl_name);
+	//		}
+	//		return static_cast<CControlUI*> (m_ctrl);
+	//	}
+	//	CControlUI *operator-> () noexcept { return operator* (); }
+	//protected:
+	//	string_view_t GetClassType () const override { return _T ("ControlUI"); }
+	//};
 	DEF_BINDCTRL (Container);
 
 	// Control

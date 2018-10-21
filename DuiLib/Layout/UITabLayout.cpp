@@ -43,7 +43,7 @@ namespace DuiLib {
 	}
 
 	bool CTabLayoutUI::Remove (CControlUI* pControl) {
-		if (pControl == nullptr) return false;
+		if (!pControl) return false;
 
 		int index = GetItemIndex (pControl);
 		bool ret = CContainerUI::Remove (pControl);
@@ -88,7 +88,7 @@ namespace DuiLib {
 		}
 		NeedParentUpdate ();
 
-		if (m_pManager != nullptr) {
+		if (m_pManager) {
 			m_pManager->SetNextTabControl ();
 			m_pManager->SendNotify (this, DUI_MSGTYPE_TABSELECT, m_iCurSel, iOldSel);
 		}

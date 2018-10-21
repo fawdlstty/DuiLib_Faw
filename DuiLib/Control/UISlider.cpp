@@ -44,7 +44,7 @@ namespace DuiLib {
 	RECT CSliderUI::GetThumbRect () const {
 		RECT rcThumb = { 0 };
 		SIZE _szThumb = CSliderUI::m_szThumb;
-		if (GetManager () != nullptr) {
+		if (GetManager ()) {
 			GetManager ()->GetDPIObj ()->Scale (&_szThumb);
 		}
 		if (m_bHorizontal) {
@@ -56,7 +56,7 @@ namespace DuiLib {
 			int top = m_rcItem.bottom - _szThumb.cy - (m_rcItem.bottom - m_rcItem.top - _szThumb.cy) * (m_nValue - m_nMin) / (m_nMax - m_nMin);
 			rcThumb = { left, top, left + _szThumb.cx, top + _szThumb.cy };
 		}
-		if (m_pManager != nullptr) {
+		if (m_pManager) {
 			//m_pManager->GetDPIObj()->Scale(&rcThumb);
 		}
 		return rcThumb;
@@ -96,7 +96,7 @@ namespace DuiLib {
 
 	void CSliderUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CProgressUI::DoEvent (event);
 			return;
 		}

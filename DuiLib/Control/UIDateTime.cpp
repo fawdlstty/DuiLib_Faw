@@ -34,10 +34,10 @@ namespace DuiLib {
 		m_pOwner = pOwner;
 		m_pOwner->m_nDTUpdateFlag = DT_NONE;
 
-		if (m_hWnd == nullptr) {
+		if (m_hWnd == NULL) {
 			RECT rcPos = CalPos ();
 			UINT uStyle = WS_CHILD;
-			Create (m_pOwner->GetManager ()->GetPaintWindow (), nullptr, uStyle, 0, rcPos);
+			Create (m_pOwner->GetManager ()->GetPaintWindow (), _T (""), uStyle, 0, rcPos);
 			SetWindowFont (m_hWnd, m_pOwner->GetManager ()->GetFontInfo (m_pOwner->GetFont ())->hFont, TRUE);
 		}
 
@@ -81,7 +81,7 @@ namespace DuiLib {
 	}
 
 	void CDateTimeWnd::OnFinalMessage (HWND hWnd) {
-		if (m_hBkBrush != nullptr) ::DeleteObject (m_hBkBrush);
+		if (m_hBkBrush != NULL) ::DeleteObject (m_hBkBrush);
 		//m_pOwner->GetManager()->RemoveNativeWindow(hWnd);
 		m_pOwner->m_pWindow = nullptr;
 		delete this;
@@ -101,7 +101,7 @@ namespace DuiLib {
 			return lRes;
 		} else if (uMsg == OCM_NOTIFY) {
 			NMHDR* pHeader = (NMHDR*) lParam;
-			if (pHeader != nullptr && pHeader->hwndFrom == m_hWnd) {
+			if (pHeader && pHeader->hwndFrom == m_hWnd) {
 				if (pHeader->code == DTN_DATETIMECHANGE) {
 					LPNMDATETIMECHANGE lpChage = (LPNMDATETIMECHANGE) lParam;
 					::SendMessage (m_hWnd, DTM_GETSYSTEMTIME, 0, (LPARAM) &m_pOwner->m_sysTime);
@@ -188,16 +188,16 @@ namespace DuiLib {
 
 	void CDateTimeUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CLabelUI::DoEvent (event);
 			return;
 		} else if (event.Type == UIEVENT_SETCURSOR && IsEnabled ()) {
 			::SetCursor (::LoadCursor (nullptr, IDC_IBEAM));
 			return;
 		} else if (event.Type == UIEVENT_WINDOWSIZE) {
-			if (m_pWindow != nullptr) m_pManager->SetFocusNeeded (this);
+			if (m_pWindow) m_pManager->SetFocusNeeded (this);
 		} else if (event.Type == UIEVENT_SCROLLWHEEL) {
-			if (m_pWindow != nullptr) return;
+			if (m_pWindow) return;
 		} else if (event.Type == UIEVENT_SETFOCUS && IsEnabled ()) {
 			if (m_pWindow) return;
 			m_pWindow = new CDateTimeWnd ();
@@ -209,11 +209,11 @@ namespace DuiLib {
 		} else if (event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN) {
 			if (IsEnabled ()) {
 				GetManager ()->ReleaseCapture ();
-				if (IsFocused () && m_pWindow == nullptr) {
+				if (IsFocused () && !m_pWindow) {
 					m_pWindow = new CDateTimeWnd ();
 					ASSERT (m_pWindow);
 				}
-				if (m_pWindow != nullptr) {
+				if (m_pWindow) {
 					m_pWindow->Init (this);
 					m_pWindow->ShowWindow ();
 				}

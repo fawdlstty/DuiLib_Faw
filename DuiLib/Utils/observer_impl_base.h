@@ -37,7 +37,7 @@ public:
 	virtual ~ObserverImpl () {}
 
 	virtual void AddReceiver (ReceiverImplBase<ReturnT, ParamT>* receiver) {
-		if (receiver == nullptr)
+		if (!receiver)
 			return;
 
 		receivers_[count_] = receiver;
@@ -46,7 +46,7 @@ public:
 	}
 
 	virtual void RemoveReceiver (ReceiverImplBase<ReturnT, ParamT>* receiver) {
-		if (receiver == nullptr)
+		if (!receiver)
 			return;
 
 		for (auto it = receivers_.begin (); it != receivers_.end (); ++it) {

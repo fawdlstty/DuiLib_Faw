@@ -38,7 +38,7 @@ namespace DuiLib {
 		if (nullptr != m_pCurrentControl) m_pCurrentControl->SetVisible (false);
 		AnimationSwitch ();
 
-		if (m_pManager != nullptr) {
+		if (m_pManager) {
 			m_pManager->SetNextTabControl ();
 			m_pManager->SendNotify (this, _T ("tabselect"), m_iCurSel, iOldSel);
 		}

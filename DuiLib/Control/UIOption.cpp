@@ -59,7 +59,7 @@ namespace DuiLib {
 		if (m_bSelected) m_uButtonState |= UISTATE_SELECTED;
 		else m_uButtonState &= ~UISTATE_SELECTED;
 
-		if (m_pManager != nullptr) {
+		if (m_pManager) {
 			if (!m_sGroupName.empty ()) {
 				if (m_bSelected) {
 					CStdPtrArray* aOptionGroup = m_pManager->GetOptionGroup (m_sGroupName);
@@ -208,7 +208,7 @@ namespace DuiLib {
 				TDrawInfo info;
 				info.Parse (m_sSelectedStateImage, _T (""), m_pManager);
 				const TImageInfo* pImage = m_pManager->GetImageEx (info.sImageName, info.sResType, info.dwMask, info.bHSL);
-				if (m_sSelectedImage.empty () && pImage != nullptr) {
+				if (m_sSelectedImage.empty () && pImage) {
 					SIZE szImage = { pImage->nX, pImage->nY };
 					SIZE szStatus = { pImage->nX / m_nSelectedStateCount, pImage->nY };
 					if (szImage.cx > 0 && szImage.cy > 0) {
@@ -337,7 +337,7 @@ namespace DuiLib {
 	}
 	void CCheckBoxUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else COptionUI::DoEvent (event);
 			return;
 		}
@@ -357,7 +357,7 @@ namespace DuiLib {
 		if (m_bSelected) m_uButtonState |= UISTATE_SELECTED;
 		else m_uButtonState &= ~UISTATE_SELECTED;
 
-		if (m_pManager != nullptr) {
+		if (m_pManager) {
 			if (!m_sGroupName.empty ()) {
 				if (m_bSelected) {
 					CStdPtrArray* aOptionGroup = m_pManager->GetOptionGroup (m_sGroupName);

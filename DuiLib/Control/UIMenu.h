@@ -81,7 +81,7 @@ namespace DuiLib {
 		}
 
 		virtual ~MenuObserverImpl () {
-			if (pReceivers_ != nullptr) {
+			if (pReceivers_) {
 				delete pReceivers_;
 				pReceivers_ = nullptr;
 			}
@@ -89,7 +89,7 @@ namespace DuiLib {
 		}
 
 		virtual void AddReceiver (MenuMenuReceiverImplBase* receiver) {
-			if (receiver == nullptr)
+			if (!receiver)
 				return;
 
 			pReceivers_->push_back (receiver);
@@ -97,7 +97,7 @@ namespace DuiLib {
 		}
 
 		virtual void RemoveReceiver (MenuMenuReceiverImplBase* receiver) {
-			if (receiver == nullptr)
+			if (!receiver)
 				return;
 
 			ReceiversVector::iterator it = pReceivers_->begin ();
@@ -144,7 +144,7 @@ namespace DuiLib {
 		};
 
 		virtual void SetManger (CPaintManagerUI* pManager) {
-			if (pManager != nullptr)
+			if (pManager)
 				m_pMainWndPaintManager = pManager;
 		}
 
@@ -153,7 +153,7 @@ namespace DuiLib {
 		}
 
 		virtual void SetMenuCheckInfo (CStdStringPtrMap* pInfo) {
-			if (pInfo != nullptr)
+			if (pInfo)
 				m_pMenuCheckInfo = pInfo;
 			else
 				m_pMenuCheckInfo = nullptr;
@@ -178,7 +178,7 @@ namespace DuiLib {
 		}
 
 		virtual ~MenuReceiverImpl () {
-			if (pObservers_ != nullptr) {
+			if (pObservers_) {
 				delete pObservers_;
 				pObservers_ = nullptr;
 			}

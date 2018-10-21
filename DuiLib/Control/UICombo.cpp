@@ -37,9 +37,9 @@ namespace DuiLib {
 			// ²âÊÔ´úÂë
 			CDuiString sName = msg.pSender->GetName ();
 			CControlUI* pCtrl = msg.pSender;
-			while (pCtrl != nullptr) {
+			while (pCtrl) {
 				IListItemUI* pListItem = (IListItemUI*) pCtrl->GetInterface (DUI_CTRL_LISTITEM);
-				if (pListItem != nullptr) {
+				if (pListItem) {
 					break;
 				}
 				pCtrl = pCtrl->GetParent ();
@@ -88,10 +88,10 @@ namespace DuiLib {
 			::MapWindowRect (pOwner->GetManager ()->GetPaintWindow (), HWND_DESKTOP, &rc);
 		}
 
-		Create (pOwner->GetManager ()->GetPaintWindow (), nullptr, WS_POPUP, WS_EX_TOOLWINDOW, rc);
+		Create (pOwner->GetManager ()->GetPaintWindow (), _T (""), WS_POPUP, WS_EX_TOOLWINDOW, rc);
 		// HACK: Don't deselect the parent's caption
 		HWND hWndParent = m_hWnd;
-		while (::GetParent (hWndParent) != nullptr) hWndParent = ::GetParent (hWndParent);
+		while (::GetParent (hWndParent) != NULL) hWndParent = ::GetParent (hWndParent);
 		::ShowWindow (m_hWnd, SW_SHOW);
 		::SendMessage (hWndParent, WM_NCACTIVATE, TRUE, 0L);
 	}
@@ -109,13 +109,13 @@ namespace DuiLib {
 
 	bool CComboWnd::IsHitItem (POINT ptMouse) {
 		CControlUI* pControl = m_pm.FindControl (ptMouse);
-		if (pControl != nullptr) {
+		if (pControl) {
 			LPVOID pInterface = pControl->GetInterface (DUI_CTRL_SCROLLBAR);
 			if (pInterface) return false;
 
-			while (pControl != nullptr) {
+			while (pControl) {
 				IListItemUI* pListItem = (IListItemUI*) pControl->GetInterface (DUI_CTRL_LISTITEM);
-				if (pListItem != nullptr) {
+				if (pListItem) {
 					return true;
 				}
 				pControl = pControl->GetParent ();
@@ -149,7 +149,7 @@ namespace DuiLib {
 				m_pLayout->Add (static_cast<CControlUI*>(m_pOwner->GetItemAt (i)));
 			}
 			CShadowUI *pShadow = m_pOwner->GetManager ()->GetShadow ();
-			if (pShadow != NULL && m_pOwner != NULL) {
+			if (pShadow && m_pOwner) {
 				pShadow->CopyShadow (m_pm.GetShadow ());
 				m_pm.GetShadow ()->ShowShadow (m_pOwner->IsShowShadow ());
 			}
@@ -304,7 +304,7 @@ namespace DuiLib {
 			CControlUI* pControl = static_cast<CControlUI*>(m_items[m_iCurSel]);
 			if (!pControl) return false;
 			IListItemUI* pListItem = static_cast<IListItemUI*>(pControl->GetInterface (_T ("ListItem")));
-			if (pListItem != nullptr) pListItem->Select (false);
+			if (pListItem) pListItem->Select (false);
 			m_iCurSel = -1;
 		}
 		if (iIndex < 0) return false;
@@ -313,11 +313,11 @@ namespace DuiLib {
 		CControlUI* pControl = static_cast<CControlUI*>(m_items[iIndex]);
 		if (!pControl || !pControl->IsEnabled ()) return false;
 		IListItemUI* pListItem = static_cast<IListItemUI*>(pControl->GetInterface (_T ("ListItem")));
-		if (pListItem == nullptr) return false;
+		if (!pListItem) return false;
 		m_iCurSel = iIndex;
-		if (m_pWindow != nullptr || bTakeFocus) pControl->SetFocus ();
+		if (m_pWindow || bTakeFocus) pControl->SetFocus ();
 		pListItem->Select (true);
-		if (m_pManager != nullptr) m_pManager->SendNotify (this, DUI_MSGTYPE_ITEMSELECT, m_iCurSel, iOldSel);
+		if (m_pManager) m_pManager->SendNotify (this, DUI_MSGTYPE_ITEMSELECT, m_iCurSel, iOldSel);
 		Invalidate ();
 
 		return true;
@@ -345,17 +345,17 @@ namespace DuiLib {
 		for (int i = iMinIndex; i < iMaxIndex + 1; ++i) {
 			CControlUI* p = GetItemAt (i);
 			IListItemUI* pListItem = static_cast<IListItemUI*>(p->GetInterface (_T ("ListItem")));
-			if (pListItem != nullptr) {
+			if (pListItem) {
 				pListItem->SetIndex (i);
 			}
 		}
-		if (m_iCurSel >= 0 && pSelectedListItem != nullptr) m_iCurSel = pSelectedListItem->GetIndex ();
+		if (m_iCurSel >= 0 && pSelectedListItem) m_iCurSel = pSelectedListItem->GetIndex ();
 		return true;
 	}
 
 	bool CComboUI::Add (CControlUI* pControl) {
 		IListItemUI* pListItem = static_cast<IListItemUI*>(pControl->GetInterface (_T ("ListItem")));
-		if (pListItem != nullptr) {
+		if (pListItem) {
 			pListItem->SetOwner (this);
 			pListItem->SetIndex (m_items.GetSize ());
 		}
@@ -367,7 +367,7 @@ namespace DuiLib {
 
 		// The list items should know about us
 		IListItemUI* pListItem = static_cast<IListItemUI*>(pControl->GetInterface (_T ("ListItem")));
-		if (pListItem != nullptr) {
+		if (pListItem) {
 			pListItem->SetOwner (this);
 			pListItem->SetIndex (iIndex);
 		}
@@ -375,7 +375,7 @@ namespace DuiLib {
 		for (int i = iIndex + 1; i < GetCount (); ++i) {
 			CControlUI* p = GetItemAt (i);
 			pListItem = static_cast<IListItemUI*>(p->GetInterface (_T ("ListItem")));
-			if (pListItem != nullptr) {
+			if (pListItem) {
 				pListItem->SetIndex (i);
 			}
 		}
@@ -392,7 +392,7 @@ namespace DuiLib {
 		for (int i = iIndex; i < GetCount (); ++i) {
 			CControlUI* p = GetItemAt (i);
 			IListItemUI* pListItem = static_cast<IListItemUI*>(p->GetInterface (_T ("ListItem")));
-			if (pListItem != nullptr) {
+			if (pListItem) {
 				pListItem->SetIndex (i);
 			}
 		}
@@ -411,7 +411,7 @@ namespace DuiLib {
 		for (int i = iIndex; i < GetCount (); ++i) {
 			CControlUI* p = GetItemAt (i);
 			IListItemUI* pListItem = static_cast<IListItemUI*>(p->GetInterface (_T ("ListItem")));
-			if (pListItem != nullptr) pListItem->SetIndex (i);
+			if (pListItem) pListItem->SetIndex (i);
 		}
 
 		if (iIndex == m_iCurSel && m_iCurSel >= 0) {
@@ -429,7 +429,7 @@ namespace DuiLib {
 
 	void CComboUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CContainerUI::DoEvent (event);
 			return;
 		}
@@ -517,12 +517,12 @@ namespace DuiLib {
 
 	bool CComboUI::Activate () {
 		if (!CControlUI::Activate ()) return false;
-		if (m_pManager != nullptr) m_pManager->SendNotify (this, DUI_MSGTYPE_PREDROPDOWN);
+		if (m_pManager) m_pManager->SendNotify (this, DUI_MSGTYPE_PREDROPDOWN);
 		if (m_pWindow) return true;
 		m_pWindow = new CComboWnd ();
 		ASSERT (m_pWindow);
 		m_pWindow->Init (this);
-		if (m_pManager != nullptr) m_pManager->SendNotify (this, DUI_MSGTYPE_DROPDOWN);
+		if (m_pManager) m_pManager->SendNotify (this, DUI_MSGTYPE_DROPDOWN);
 		Invalidate ();
 		return true;
 	}
@@ -546,11 +546,11 @@ namespace DuiLib {
 			if (ctrl->GetText () == pstrText && ctrl->IsEnabled () && m_iCurSel == -2)
 				m_iCurSel = i;
 			IListItemUI *item = static_cast<IListItemUI*>(ctrl->GetInterface (_T ("ListItem")));
-			if (item != nullptr)
+			if (item)
 				item->Select (m_iCurSel == i);
 		}
 		CContainerUI::SetText (pstrText);
-		if (m_pManager != nullptr && m_iCurSel >= 0)
+		if (m_pManager && m_iCurSel >= 0)
 			m_pManager->SendNotify (this, DUI_MSGTYPE_ITEMSELECT, m_iCurSel, iOldSel);
 	}
 
@@ -854,28 +854,28 @@ namespace DuiLib {
 	}
 	void CComboUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
 		if (pstrName == _T ("align")) {
-			if (_tcsstr (pstrValue.data (), _T ("left")) != nullptr) {
+			if (pstrValue.find (_T ("left")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_CENTER | DT_RIGHT | DT_SINGLELINE);
 				m_uTextStyle |= DT_LEFT;
 			}
-			if (_tcsstr (pstrValue.data (), _T ("center")) != nullptr) {
+			if (pstrValue.find (_T ("center")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_uTextStyle |= DT_CENTER;
 			}
-			if (_tcsstr (pstrValue.data (), _T ("right")) != nullptr) {
+			if (pstrValue.find (_T ("right")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_LEFT | DT_CENTER | DT_SINGLELINE);
 				m_uTextStyle |= DT_RIGHT;
 			}
 		} else if (pstrName == _T ("valign")) {
-			if (_tcsstr (pstrValue.data (), _T ("top")) != nullptr) {
+			if (pstrValue.find (_T ("top")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_BOTTOM | DT_VCENTER);
 				m_uTextStyle |= (DT_TOP | DT_SINGLELINE);
 			}
-			if (_tcsstr (pstrValue.data (), _T ("vcenter")) != nullptr) {
+			if (pstrValue.find (_T ("vcenter")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_TOP | DT_BOTTOM);
 				m_uTextStyle |= (DT_VCENTER | DT_SINGLELINE);
 			}
-			if (_tcsstr (pstrValue.data (), _T ("bottom")) != nullptr) {
+			if (pstrValue.find (_T ("bottom")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_TOP | DT_VCENTER);
 				m_uTextStyle |= (DT_BOTTOM | DT_SINGLELINE);
 			}
@@ -890,7 +890,7 @@ namespace DuiLib {
 				m_uTextStyle &= ~DT_WORDBREAK & ~DT_EDITCONTROL;
 				m_uTextStyle |= DT_SINGLELINE;
 			}
-		} else if (pstrName == _T ("font")) SetFont (_ttoi (pstrValue.data ()));
+		} else if (pstrName == _T ("font")) SetFont (FawTools::parse_dec (pstrValue));
 		else if (pstrName == _T ("textcolor")) {
 			DWORD clrColor = (DWORD) FawTools::parse_hex (pstrValue);
 			SetTextColor (clrColor);
@@ -914,28 +914,28 @@ namespace DuiLib {
 			SetDropBoxSize (szDropBoxSize);
 		} else if (pstrName == _T ("itemfont")) SetItemFont (_ttoi (pstrValue.data ()));
 		else if (pstrName == _T ("itemalign")) {
-			if (_tcsstr (pstrValue.data (), _T ("left")) != nullptr) {
+			if (pstrValue.find (_T ("left")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_CENTER | DT_RIGHT);
 				m_ListInfo.uTextStyle |= DT_LEFT;
 			}
-			if (_tcsstr (pstrValue.data (), _T ("center")) != nullptr) {
+			if (pstrValue.find (_T ("center")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_ListInfo.uTextStyle |= DT_CENTER;
 			}
-			if (_tcsstr (pstrValue.data (), _T ("right")) != nullptr) {
+			if (pstrValue.find (_T ("right")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_LEFT | DT_CENTER);
 				m_ListInfo.uTextStyle |= DT_RIGHT;
 			}
 		} else if (pstrName == _T ("itemvalign")) {
-			if (_tcsstr (pstrValue.data (), _T ("top")) != nullptr) {
+			if (pstrValue.find (_T ("top")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_VCENTER | DT_BOTTOM);
 				m_ListInfo.uTextStyle |= DT_TOP;
 			}
-			if (_tcsstr (pstrValue.data (), _T ("vcenter")) != nullptr) {
+			if (pstrValue.find (_T ("vcenter")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_TOP | DT_BOTTOM | DT_WORDBREAK);
 				m_ListInfo.uTextStyle |= DT_VCENTER | DT_SINGLELINE;
 			}
-			if (_tcsstr (pstrValue.data (), _T ("bottom")) != nullptr) {
+			if (pstrValue.find (_T ("bottom")) != string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_TOP | DT_VCENTER);
 				m_ListInfo.uTextStyle |= DT_BOTTOM;
 			}

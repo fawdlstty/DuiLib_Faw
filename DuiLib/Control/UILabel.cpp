@@ -150,28 +150,28 @@ namespace DuiLib {
 
 	void CLabelUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
 		if (pstrName == _T ("align")) {
-			if (_tcsstr (pstrValue.data (), _T ("left")) != nullptr) {
+			if (pstrValue.find (_T ("left")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_CENTER | DT_RIGHT);
 				m_uTextStyle |= DT_LEFT;
 			}
-			if (_tcsstr (pstrValue.data (), _T ("center")) != nullptr) {
+			if (pstrValue.find (_T ("center")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_uTextStyle |= DT_CENTER;
 			}
-			if (_tcsstr (pstrValue.data (), _T ("right")) != nullptr) {
+			if (pstrValue.find (_T ("right")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_LEFT | DT_CENTER);
 				m_uTextStyle |= DT_RIGHT;
 			}
 		} else if (pstrName == _T ("valign")) {
-			if (_tcsstr (pstrValue.data (), _T ("top")) != nullptr) {
+			if (pstrValue.find (_T ("top")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_BOTTOM | DT_VCENTER | DT_WORDBREAK);
 				m_uTextStyle |= (DT_TOP | DT_SINGLELINE);
 			}
-			if (_tcsstr (pstrValue.data (), _T ("vcenter")) != nullptr) {
+			if (pstrValue.find (_T ("vcenter")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_TOP | DT_BOTTOM | DT_WORDBREAK);
 				m_uTextStyle |= (DT_VCENTER | DT_SINGLELINE);
 			}
-			if (_tcsstr (pstrValue.data (), _T ("bottom")) != nullptr) {
+			if (pstrValue.find (_T ("bottom")) != string_t::npos) {
 				m_uTextStyle &= ~(DT_TOP | DT_VCENTER | DT_WORDBREAK);
 				m_uTextStyle |= (DT_BOTTOM | DT_SINGLELINE);
 			}
@@ -230,18 +230,14 @@ namespace DuiLib {
 		int nLinks = 0;
 		if (IsEnabled ()) {
 			if (m_bShowHtml)
-				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, m_dwTextColor, \
-					nullptr, nullptr, nLinks, m_iFont, m_uTextStyle);
+				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, m_dwTextColor, nullptr, nullptr, nLinks, m_iFont, m_uTextStyle);
 			else
-				CRenderEngine::DrawText (hDC, m_pManager, rc, sText, m_dwTextColor, \
-					m_iFont, m_uTextStyle);
+				CRenderEngine::DrawText (hDC, m_pManager, rc, sText, m_dwTextColor, m_iFont, m_uTextStyle);
 		} else {
 			if (m_bShowHtml)
-				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, m_dwDisabledTextColor, \
-					nullptr, nullptr, nLinks, m_iFont, m_uTextStyle);
+				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, m_dwDisabledTextColor, nullptr, nullptr, nLinks, m_iFont, m_uTextStyle);
 			else
-				CRenderEngine::DrawText (hDC, m_pManager, rc, sText, m_dwDisabledTextColor, \
-					m_iFont, m_uTextStyle);
+				CRenderEngine::DrawText (hDC, m_pManager, rc, sText, m_dwDisabledTextColor, m_iFont, m_uTextStyle);
 		}
 	}
 

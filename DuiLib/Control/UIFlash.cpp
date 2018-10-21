@@ -87,9 +87,9 @@ namespace DuiLib {
 		else if (riid == __uuidof(_IShockwaveFlashEvents))
 			*ppvObject = static_cast<_IShockwaveFlashEvents*>(this);
 
-		if (*ppvObject != nullptr)
+		if (*ppvObject)
 			AddRef ();
-		return *ppvObject == nullptr ? E_NOINTERFACE : S_OK;
+		return (!*ppvObject) ? E_NOINTERFACE : S_OK;
 	}
 
 	ULONG STDMETHODCALLTYPE CFlashUI::AddRef (void) {
@@ -149,10 +149,10 @@ namespace DuiLib {
 	}
 
 	void CFlashUI::SetFlashEventHandler (CFlashEventHandler* pHandler) {
-		if (m_pFlashEventHandler != nullptr) {
+		if (m_pFlashEventHandler) {
 			m_pFlashEventHandler->Release ();
 		}
-		if (pHandler == nullptr) {
+		if (!pHandler) {
 			m_pFlashEventHandler = pHandler;
 			return;
 		}
@@ -164,16 +164,16 @@ namespace DuiLib {
 		if (pMsg->message < WM_KEYFIRST || pMsg->message > WM_KEYLAST)
 			return S_FALSE;
 
-		if (m_pFlash == nullptr)
+		if (!m_pFlash)
 			return E_NOTIMPL;
 
 		// 当前Web窗口不是焦点,不处理加速键
 		BOOL bIsChild = FALSE;
-		HWND hTempWnd = nullptr;
+		HWND hTempWnd = NULL;
 		HWND hWndFocus = ::GetFocus ();
 
 		hTempWnd = hWndFocus;
-		while (hTempWnd != nullptr) {
+		while (hTempWnd) {
 			if (hTempWnd == m_hwndHost) {
 				bIsChild = TRUE;
 				break;
@@ -192,7 +192,7 @@ namespace DuiLib {
 	}
 
 	HRESULT CFlashUI::RegisterEventHandler (BOOL inAdvise) {
-		if (m_pFlash == nullptr)
+		if (!m_pFlash)
 			return S_FALSE;
 
 		HRESULT hr = S_FALSE;

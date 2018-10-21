@@ -64,25 +64,25 @@ namespace DuiLib {
 	}
 
 	bool CContainerUI::Add (CControlUI* pControl) {
-		if (pControl == nullptr) return false;
+		if (!pControl) return false;
 
-		if (m_pManager != nullptr) m_pManager->InitControls (pControl, this);
+		if (m_pManager) m_pManager->InitControls (pControl, this);
 		if (IsVisible ()) NeedUpdate ();
 		else pControl->SetInternVisible (false);
 		return m_items.Add (pControl);
 	}
 
 	bool CContainerUI::AddAt (CControlUI* pControl, int iIndex) {
-		if (pControl == nullptr) return false;
+		if (!pControl) return false;
 
-		if (m_pManager != nullptr) m_pManager->InitControls (pControl, this);
+		if (m_pManager) m_pManager->InitControls (pControl, this);
 		if (IsVisible ()) NeedUpdate ();
 		else pControl->SetInternVisible (false);
 		return m_items.InsertAt (iIndex, pControl);
 	}
 
 	bool CContainerUI::Remove (CControlUI* pControl) {
-		if (pControl == nullptr) return false;
+		if (!pControl) return false;
 
 		for (int it = 0; it < m_items.GetSize (); it++) {
 			if (static_cast<CControlUI*>(m_items[it]) == pControl) {
@@ -99,7 +99,7 @@ namespace DuiLib {
 
 	bool CContainerUI::RemoveAt (int iIndex) {
 		CControlUI* pControl = GetItemAt (iIndex);
-		if (pControl != nullptr) {
+		if (pControl) {
 			return CContainerUI::Remove (pControl);
 		}
 
@@ -220,14 +220,14 @@ namespace DuiLib {
 	}
 
 	void CContainerUI::SetMouseEnabled (bool bEnabled) {
-		if (m_pVerticalScrollBar != nullptr) m_pVerticalScrollBar->SetMouseEnabled (bEnabled);
-		if (m_pHorizontalScrollBar != nullptr) m_pHorizontalScrollBar->SetMouseEnabled (bEnabled);
+		if (m_pVerticalScrollBar) m_pVerticalScrollBar->SetMouseEnabled (bEnabled);
+		if (m_pHorizontalScrollBar) m_pHorizontalScrollBar->SetMouseEnabled (bEnabled);
 		CControlUI::SetMouseEnabled (bEnabled);
 	}
 
 	void CContainerUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CControlUI::DoEvent (event);
 			return;
 		}
@@ -240,7 +240,7 @@ namespace DuiLib {
 			m_bFocused = false;
 			return;
 		}
-		if (m_pVerticalScrollBar != nullptr && m_pVerticalScrollBar->IsVisible () && m_pVerticalScrollBar->IsEnabled ()) {
+		if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible () && m_pVerticalScrollBar->IsEnabled ()) {
 			if (event.Type == UIEVENT_KEYDOWN) {
 				switch (event.chKey) {
 				case VK_DOWN:
@@ -273,7 +273,7 @@ namespace DuiLib {
 				}
 			}
 		}
-		if (m_pHorizontalScrollBar != nullptr && m_pHorizontalScrollBar->IsVisible () && m_pHorizontalScrollBar->IsEnabled ()) {
+		if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible () && m_pHorizontalScrollBar->IsEnabled ()) {
 			if (event.Type == UIEVENT_KEYDOWN) {
 				switch (event.chKey) {
 				case VK_DOWN:
@@ -358,7 +358,7 @@ namespace DuiLib {
 
 		if (m_pVerticalScrollBar) {
 			// 发送滚动消息
-			if (m_pManager != nullptr && bMsg) {
+			if (m_pManager && bMsg) {
 				int nPage = (m_pVerticalScrollBar->GetScrollPos () + m_pVerticalScrollBar->GetLineSize ()) / m_pVerticalScrollBar->GetLineSize ();
 				m_pManager->SendNotify (this, DUI_MSGTYPE_SCROLL, (WPARAM) nPage);
 			}
@@ -525,14 +525,14 @@ namespace DuiLib {
 		iIndex = CLAMP (iIndex, 0, GetCount () - 1);
 		if (bForward) {
 			for (int i = iIndex; i < GetCount (); i++) {
-				if (GetItemAt (i)->GetInterface (_T ("ListItem")) != nullptr
+				if (GetItemAt (i)->GetInterface (_T ("ListItem"))
 					&& GetItemAt (i)->IsVisible ()
 					&& GetItemAt (i)->IsEnabled ()) return i;
 			}
 			return -1;
 		} else {
 			for (int i = iIndex; i >= 0; --i) {
-				if (GetItemAt (i)->GetInterface (_T ("ListItem")) != nullptr
+				if (GetItemAt (i)->GetInterface (_T ("ListItem"))
 					&& GetItemAt (i)->IsVisible ()
 					&& GetItemAt (i)->IsEnabled ()) return i;
 			}
@@ -568,7 +568,7 @@ namespace DuiLib {
 		if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) m_pHorizontalScrollBar->Move (szOffset, false);
 		for (int it = 0; it < m_items.GetSize (); it++) {
 			CControlUI* pControl = static_cast<CControlUI*>(m_items[it]);
-			if (pControl != nullptr && pControl->IsVisible ()) pControl->Move (szOffset, false);
+			if (pControl && pControl->IsVisible ()) pControl->Move (szOffset, false);
 		}
 	}
 
@@ -618,10 +618,10 @@ namespace DuiLib {
 			SetInset (rcInset);
 		} else if (pstrName == _T ("mousechild")) SetMouseChildEnabled (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("vscrollbar")) {
-			EnableScrollBar (FawTools::parse_bool (pstrValue), GetHorizontalScrollBar () != nullptr);
+			EnableScrollBar (FawTools::parse_bool (pstrValue), GetHorizontalScrollBar ());
 		} else if (pstrName == _T ("vscrollbarstyle")) {
 			m_sVerticalScrollBarStyle = pstrValue;
-			EnableScrollBar (TRUE, GetHorizontalScrollBar () != nullptr);
+			EnableScrollBar (TRUE, GetHorizontalScrollBar ());
 			if (GetVerticalScrollBar ()) {
 				string_view_t pStyle = m_pManager->GetStyle (m_sVerticalScrollBarStyle);
 				if (!pStyle.empty ()) {
@@ -631,10 +631,10 @@ namespace DuiLib {
 				}
 			}
 		} else if (pstrName == _T ("hscrollbar")) {
-			EnableScrollBar (GetVerticalScrollBar () != nullptr, FawTools::parse_bool (pstrValue));
+			EnableScrollBar (GetVerticalScrollBar (), FawTools::parse_bool (pstrValue));
 		} else if (pstrName == _T ("hscrollbarstyle")) {
 			m_sHorizontalScrollBarStyle = pstrValue;
-			EnableScrollBar (TRUE, GetHorizontalScrollBar () != nullptr);
+			EnableScrollBar (TRUE, GetHorizontalScrollBar ());
 			if (GetHorizontalScrollBar ()) {
 				string_view_t pStyle = m_pManager->GetStyle (m_sHorizontalScrollBarStyle);
 				if (!pStyle.empty ()) {
@@ -661,8 +661,8 @@ namespace DuiLib {
 			static_cast<CControlUI*>(m_items[it])->SetManager (pManager, this, bInit);
 		}
 
-		if (m_pVerticalScrollBar != nullptr) m_pVerticalScrollBar->SetManager (pManager, this, bInit);
-		if (m_pHorizontalScrollBar != nullptr) m_pHorizontalScrollBar->SetManager (pManager, this, bInit);
+		if (m_pVerticalScrollBar) m_pVerticalScrollBar->SetManager (pManager, this, bInit);
+		if (m_pHorizontalScrollBar) m_pHorizontalScrollBar->SetManager (pManager, this, bInit);
 		CControlUI::SetManager (pManager, pParent, bInit);
 	}
 
@@ -670,19 +670,19 @@ namespace DuiLib {
 		if ((uFlags & UIFIND_VISIBLE) != 0 && !IsVisible ()) return nullptr;
 		if ((uFlags & UIFIND_ENABLED) != 0 && !IsEnabled ()) return nullptr;
 		if ((uFlags & UIFIND_HITTEST) != 0 && !::PtInRect (&m_rcItem, *(static_cast<LPPOINT>(pData)))) return nullptr;
-		if ((uFlags & UIFIND_UPDATETEST) != 0 && Proc (this, pData) != nullptr) return nullptr;
+		if ((uFlags & UIFIND_UPDATETEST) != 0 && Proc (this, pData)) return nullptr;
 
 		CControlUI* pResult = nullptr;
 		if ((uFlags & UIFIND_ME_FIRST) != 0) {
 			if ((uFlags & UIFIND_HITTEST) == 0 || IsMouseEnabled ()) pResult = Proc (this, pData);
 		}
-		if (pResult == nullptr && m_pVerticalScrollBar != nullptr) {
+		if (!pResult && m_pVerticalScrollBar) {
 			if ((uFlags & UIFIND_HITTEST) == 0 || IsMouseEnabled ()) pResult = m_pVerticalScrollBar->FindControl (Proc, pData, uFlags);
 		}
-		if (pResult == nullptr && m_pHorizontalScrollBar != nullptr) {
+		if (!pResult && m_pHorizontalScrollBar) {
 			if ((uFlags & UIFIND_HITTEST) == 0 || IsMouseEnabled ()) pResult = m_pHorizontalScrollBar->FindControl (Proc, pData, uFlags);
 		}
-		if (pResult != nullptr) return pResult;
+		if (pResult) return pResult;
 
 		if ((uFlags & UIFIND_HITTEST) == 0 || IsMouseChildEnabled ()) {
 			RECT rc = m_rcItem;
@@ -695,7 +695,7 @@ namespace DuiLib {
 			if ((uFlags & UIFIND_TOP_FIRST) != 0) {
 				for (int it = m_items.GetSize () - 1; it >= 0; it--) {
 					pResult = static_cast<CControlUI*>(m_items[it])->FindControl (Proc, pData, uFlags);
-					if (pResult != nullptr) {
+					if (pResult) {
 						if ((uFlags & UIFIND_HITTEST) != 0 && !pResult->IsFloat () && !::PtInRect (&rc, *(static_cast<LPPOINT>(pData))))
 							continue;
 						else
@@ -705,7 +705,7 @@ namespace DuiLib {
 			} else {
 				for (int it = 0; it < m_items.GetSize (); it++) {
 					pResult = static_cast<CControlUI*>(m_items[it])->FindControl (Proc, pData, uFlags);
-					if (pResult != nullptr) {
+					if (pResult) {
 						if ((uFlags & UIFIND_HITTEST) != 0 && !pResult->IsFloat () && !::PtInRect (&rc, *(static_cast<LPPOINT>(pData))))
 							continue;
 						else
@@ -716,7 +716,7 @@ namespace DuiLib {
 		}
 
 		pResult = nullptr;
-		if (pResult == nullptr && (uFlags & UIFIND_ME_FIRST) == 0) {
+		if (!pResult && (uFlags & UIFIND_ME_FIRST) == 0) {
 			if ((uFlags & UIFIND_HITTEST) == 0 || IsMouseEnabled ()) pResult = Proc (this, pData);
 		}
 		return pResult;
@@ -772,14 +772,14 @@ namespace DuiLib {
 			}
 		}
 
-		if (m_pVerticalScrollBar != nullptr && m_pVerticalScrollBar->IsVisible ()) {
+		if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible ()) {
 			if (m_pVerticalScrollBar == pStopControl) return false;
 			if (::IntersectRect (&rcTemp, &rcPaint, &m_pVerticalScrollBar->GetPos ())) {
 				if (!m_pVerticalScrollBar->Paint (hDC, rcPaint, pStopControl)) return false;
 			}
 		}
 
-		if (m_pHorizontalScrollBar != nullptr && m_pHorizontalScrollBar->IsVisible ()) {
+		if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) {
 			if (m_pHorizontalScrollBar == pStopControl) return false;
 			if (::IntersectRect (&rcTemp, &rcPaint, &m_pHorizontalScrollBar->GetPos ())) {
 				if (!m_pHorizontalScrollBar->Paint (hDC, rcPaint, pStopControl)) return false;
@@ -913,7 +913,7 @@ namespace DuiLib {
 	bool CContainerUI::SetSubControlText (string_view_t pstrSubControlName, string_view_t pstrText) {
 		CControlUI* pSubControl = nullptr;
 		pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl != nullptr) {
+		if (pSubControl) {
 			pSubControl->SetText (pstrText);
 			return TRUE;
 		} else
@@ -923,7 +923,7 @@ namespace DuiLib {
 	bool CContainerUI::SetSubControlFixedHeight (string_view_t pstrSubControlName, int cy) {
 		CControlUI* pSubControl = nullptr;
 		pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl != nullptr) {
+		if (pSubControl) {
 			pSubControl->SetFixedHeight (cy);
 			return TRUE;
 		} else
@@ -933,7 +933,7 @@ namespace DuiLib {
 	bool CContainerUI::SetSubControlFixedWdith (string_view_t pstrSubControlName, int cx) {
 		CControlUI* pSubControl = nullptr;
 		pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl != nullptr) {
+		if (pSubControl) {
 			pSubControl->SetFixedWidth (cx);
 			return TRUE;
 		} else
@@ -943,7 +943,7 @@ namespace DuiLib {
 	bool CContainerUI::SetSubControlUserData (string_view_t pstrSubControlName, string_view_t pstrText) {
 		CControlUI* pSubControl = nullptr;
 		pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl != nullptr) {
+		if (pSubControl) {
 			pSubControl->SetUserData (pstrText);
 			return TRUE;
 		} else
@@ -953,7 +953,7 @@ namespace DuiLib {
 	CDuiString CContainerUI::GetSubControlText (string_view_t pstrSubControlName) {
 		CControlUI* pSubControl = nullptr;
 		pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl == nullptr)
+		if (!pSubControl)
 			return _T ("");
 		else
 			return pSubControl->GetText ();
@@ -962,7 +962,7 @@ namespace DuiLib {
 	int CContainerUI::GetSubControlFixedHeight (string_view_t pstrSubControlName) {
 		CControlUI* pSubControl = nullptr;
 		pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl == nullptr)
+		if (!pSubControl)
 			return -1;
 		else
 			return pSubControl->GetFixedHeight ();
@@ -971,7 +971,7 @@ namespace DuiLib {
 	int CContainerUI::GetSubControlFixedWdith (string_view_t pstrSubControlName) {
 		CControlUI* pSubControl = nullptr;
 		pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl == nullptr)
+		if (!pSubControl)
 			return -1;
 		else
 			return pSubControl->GetFixedWidth ();
@@ -980,7 +980,7 @@ namespace DuiLib {
 	const CDuiString CContainerUI::GetSubControlUserData (string_view_t pstrSubControlName) {
 		CControlUI* pSubControl = nullptr;
 		pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl == nullptr)
+		if (!pSubControl)
 			return _T ("");
 		else
 			return pSubControl->GetUserData ();

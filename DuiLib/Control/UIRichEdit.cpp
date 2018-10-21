@@ -200,7 +200,7 @@ namespace DuiLib {
 
 	HRESULT InitDefaultCharFormat (CRichEditUI* re, CHARFORMAT2W* pcf, HFONT hfont) {
 		memset (pcf, 0, sizeof (CHARFORMAT2W));
-		if (hfont == nullptr) {
+		if (!hfont) {
 			hfont = re->GetManager ()->GetFont (re->GetFont ());
 		}
 		LOGFONT lf;
@@ -327,7 +327,7 @@ namespace DuiLib {
 		if (hmod) {
 			TextServicesProc = (PCreateTextServices) GetProcAddress (hmod, "CreateTextServices");
 		}
-		if (TextServicesProc != nullptr) {
+		if (TextServicesProc) {
 			hr = TextServicesProc (nullptr, this, &pUnk);
 		}
 
@@ -428,10 +428,10 @@ namespace DuiLib {
 
 	BOOL CTxtWinHost::TxEnableScrollBar (INT fuSBFlags, INT fuArrowflags) {
 		if (fuSBFlags == SB_VERT) {
-			m_re->EnableScrollBar (true, m_re->GetHorizontalScrollBar () != nullptr);
+			m_re->EnableScrollBar (true, m_re->GetHorizontalScrollBar ());
 			m_re->GetVerticalScrollBar ()->SetVisible (fuArrowflags != ESB_DISABLE_BOTH);
 		} else if (fuSBFlags == SB_HORZ) {
-			m_re->EnableScrollBar (m_re->GetVerticalScrollBar () != nullptr, true);
+			m_re->EnableScrollBar (m_re->GetVerticalScrollBar (), true);
 			m_re->GetHorizontalScrollBar ()->SetVisible (fuArrowflags != ESB_DISABLE_BOTH);
 		} else if (fuSBFlags == SB_BOTH) {
 			m_re->EnableScrollBar (true, true);
@@ -474,7 +474,7 @@ namespace DuiLib {
 	}
 
 	void CTxtWinHost::TxInvalidateRect (LPCRECT prc, BOOL fMode) {
-		if (prc == nullptr) {
+		if (!prc) {
 			m_re->GetManager ()->Invalidate (rcClient);
 			return;
 		}
@@ -716,7 +716,7 @@ namespace DuiLib {
 	}
 
 	void CTxtWinHost::SetFont (HFONT hFont) {
-		if (hFont == nullptr) return;
+		if (!hFont) return;
 		LOGFONT lf;
 		::GetObject (hFont, sizeof (LOGFONT), &lf);
 		LONG yPixPerInch = ::GetDeviceCaps (m_re->GetManager ()->GetPaintDC (), LOGPIXELSY);
@@ -1087,7 +1087,7 @@ namespace DuiLib {
 			if (bUnderline) lf.lfUnderline = TRUE;
 			if (bItalic) lf.lfItalic = TRUE;
 			HFONT hFont = ::CreateFontIndirect (&lf);
-			if (hFont == nullptr) return;
+			if (!hFont) return;
 			m_pTwh->SetFont (hFont);
 			::DeleteObject (hFont);
 		}
@@ -1583,7 +1583,7 @@ namespace DuiLib {
 		if (m_pTwh) {
 			if (msg == WM_KEYDOWN && TCHAR (wparam) == VK_RETURN) {
 				if (!m_bWantReturn || (::GetKeyState (VK_CONTROL) < 0 && !m_bWantCtrlReturn)) {
-					if (m_pManager != nullptr) m_pManager->SendNotify ((CControlUI*) this, DUI_MSGTYPE_RETURN);
+					if (m_pManager) m_pManager->SendNotify ((CControlUI*) this, DUI_MSGTYPE_RETURN);
 					return S_OK;
 				}
 			}
@@ -1733,7 +1733,7 @@ namespace DuiLib {
 
 	void CRichEditUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CControlUI::DoEvent (event);
 			return;
 		}
@@ -1842,7 +1842,7 @@ namespace DuiLib {
 			rcScrollView.bottom -= m_pHorizontalScrollBar->GetFixedHeight ();
 		}
 
-		if (m_pTwh != nullptr) {
+		if (m_pTwh) {
 			RECT rcScrollTextView = rcScrollView;
 			rcScrollTextView.left += m_rcTextPadding.left;
 			rcScrollTextView.right -= m_rcTextPadding.right;
@@ -1880,12 +1880,12 @@ namespace DuiLib {
 			}
 		}
 
-		if (m_pVerticalScrollBar != nullptr && m_pVerticalScrollBar->IsVisible ()) {
+		if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible ()) {
 			RECT rcScrollBarPos = { rcScrollView.right, rcScrollView.top,
 				rcScrollView.right + m_pVerticalScrollBar->GetFixedWidth (), rcScrollView.bottom };
 			m_pVerticalScrollBar->SetPos (rcScrollBarPos, false);
 		}
-		if (m_pHorizontalScrollBar != nullptr && m_pHorizontalScrollBar->IsVisible ()) {
+		if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) {
 			RECT rcScrollBarPos = { rcScrollView.left, rcScrollView.bottom, rcScrollView.right,
 				rcScrollView.bottom + m_pHorizontalScrollBar->GetFixedHeight () };
 			m_pHorizontalScrollBar->SetPos (rcScrollBarPos, false);
@@ -1910,7 +1910,7 @@ namespace DuiLib {
 
 	void CRichEditUI::Move (SIZE szOffset, bool bNeedInvalidate) {
 		CContainerUI::Move (szOffset, bNeedInvalidate);
-		if (m_pTwh != nullptr) {
+		if (m_pTwh) {
 			RECT rc = m_rcItem;
 			rc.left += m_rcInset.left;
 			rc.top += m_rcInset.top;
@@ -2018,7 +2018,7 @@ namespace DuiLib {
 			}
 		}
 
-		if (m_pVerticalScrollBar != nullptr) {
+		if (m_pVerticalScrollBar) {
 			if (m_pVerticalScrollBar == pStopControl) return false;
 			if (m_pVerticalScrollBar->IsVisible ()) {
 				if (::IntersectRect (&rcTemp, &rcPaint, &m_pVerticalScrollBar->GetPos ())) {
@@ -2027,7 +2027,7 @@ namespace DuiLib {
 			}
 		}
 
-		if (m_pHorizontalScrollBar != nullptr) {
+		if (m_pHorizontalScrollBar) {
 			if (m_pHorizontalScrollBar == pStopControl) return false;
 			if (m_pHorizontalScrollBar->IsVisible ()) {
 				if (::IntersectRect (&rcTemp, &rcPaint, &m_pHorizontalScrollBar->GetPos ())) {

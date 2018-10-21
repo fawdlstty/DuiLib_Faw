@@ -2907,7 +2907,7 @@ int unzClose (unzFile file) {
 		return UNZ_PARAMERROR;
 	s = (unz_s*) file;
 
-	if (s->pfile_in_zip_read != nullptr)
+	if (s->pfile_in_zip_read)
 		unzCloseCurrentFile (file);
 
 	lufclose (s->file);
@@ -3027,7 +3027,7 @@ int unzlocal_GetCurrentFileInfoInternal (unzFile file, unz_file_info *pfile_info
 		err = UNZ_ERRNO;
 
 	lSeek += file_info.size_filename;
-	if ((err == UNZ_OK) && (szFileName != nullptr)) {
+	if ((err == UNZ_OK) && (szFileName)) {
 		uLong uSizeRead;
 		if (file_info.size_filename < fileNameBufferSize) {
 			*(szFileName + file_info.size_filename) = '\0';
@@ -3042,7 +3042,7 @@ int unzlocal_GetCurrentFileInfoInternal (unzFile file, unz_file_info *pfile_info
 	}
 
 
-	if ((err == UNZ_OK) && (extraField != nullptr)) {
+	if ((err == UNZ_OK) && (extraField)) {
 		uLong uSizeRead;
 		if (file_info.size_file_extra < extraFieldBufferSize)
 			uSizeRead = file_info.size_file_extra;
@@ -3062,7 +3062,7 @@ int unzlocal_GetCurrentFileInfoInternal (unzFile file, unz_file_info *pfile_info
 		lSeek += file_info.size_file_extra;
 
 
-	if ((err == UNZ_OK) && (szComment != nullptr)) {
+	if ((err == UNZ_OK) && (szComment)) {
 		uLong uSizeRead;
 		if (file_info.size_file_comment < commentBufferSize) {
 			*(szComment + file_info.size_file_comment) = '\0';
@@ -3082,10 +3082,10 @@ int unzlocal_GetCurrentFileInfoInternal (unzFile file, unz_file_info *pfile_info
 	} else {
 	} //unused lSeek+=file_info.size_file_comment;
 
-	if ((err == UNZ_OK) && (pfile_info != nullptr))
+	if ((err == UNZ_OK) && (pfile_info))
 		*pfile_info = file_info;
 
-	if ((err == UNZ_OK) && (pfile_info_internal != nullptr))
+	if ((err == UNZ_OK) && (pfile_info_internal))
 		*pfile_info_internal = file_info_internal;
 
 	return err;
@@ -3295,7 +3295,7 @@ int unzOpenCurrentFile (unzFile file, const char *password) {
 	if (!s->current_file_ok)
 		return UNZ_PARAMERROR;
 
-	if (s->pfile_in_zip_read != nullptr)
+	if (s->pfile_in_zip_read)
 		unzCloseCurrentFile (file);
 
 	if (unzlocal_CheckCurrentFileCoherencyHeader (s, &iSizeVar,
@@ -3610,7 +3610,7 @@ int unzGetGlobalComment (unzFile file, char *szComment, uLong uSizeBuf) { //int 
 		*szComment = '\0';
 		if (lufread (szComment, (uInt) uReadThis, 1, s->file) != 1) return UNZ_ERRNO;
 	}
-	if ((szComment != nullptr) && (uSizeBuf > s->gi.size_comment)) *(szComment + s->gi.size_comment) = '\0';
+	if ((szComment) && (uSizeBuf > s->gi.size_comment)) *(szComment + s->gi.size_comment) = '\0';
 	return (int) uReadThis;
 }
 
@@ -3857,15 +3857,15 @@ ZRESULT TUnzip::Find (const TCHAR *tname, bool ic, int *index, ZIPENTRY *ze) {
 	int res = unzLocateFile (uf, name, ic ? CASE_INSENSITIVE : CASE_SENSITIVE);
 	if (res != UNZ_OK) {
 		if (index != 0) *index = -1;
-		if (ze != nullptr) {
+		if (ze) {
 			ZeroMemory (ze, sizeof (ZIPENTRY)); ze->index = -1;
 		}
 		return ZR_NOTFOUND;
 	}
 	if (currentfile != -1) unzCloseCurrentFile (uf); currentfile = -1;
 	int i = (int) uf->num_file;
-	if (index != nullptr) *index = i;
-	if (ze != nullptr) {
+	if (index) *index = i;
+	if (ze) {
 		ZRESULT zres = Get (i, ze);
 		if (zres != ZR_OK) return zres;
 	}

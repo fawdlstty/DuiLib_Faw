@@ -204,7 +204,7 @@ namespace DuiLib {
 		m_ResInfo.m_dwDefaultLinkHoverFontColor = m_SharedResInfo.m_dwDefaultLinkHoverFontColor;
 		m_ResInfo.m_dwDefaultSelectedBkColor = m_SharedResInfo.m_dwDefaultSelectedBkColor;
 
-		if (m_hUpdateRectPen == nullptr) {
+		if (!m_hUpdateRectPen) {
 			m_hUpdateRectPen = ::CreatePen (PS_SOLID, 1, RGB (220, 0, 0));
 			// Boot Windows Common Controls (for the ToolTip control)
 			::InitCommonControls ();
@@ -238,7 +238,7 @@ namespace DuiLib {
 		m_aAsyncNotify.Resize (0);
 
 		m_mNameHash.Resize (0);
-		if (m_pRoot != nullptr) delete m_pRoot;
+		if (m_pRoot) delete m_pRoot;
 
 		::DeleteObject (m_ResInfo.m_DefaultFontInfo.hFont);
 		RemoveAllFonts ();
@@ -250,7 +250,7 @@ namespace DuiLib {
 		RemoveAllTimers ();
 		RemoveAllDrawInfos ();
 
-		if (m_hwndTooltip != nullptr) {
+		if (m_hwndTooltip) {
 			::DestroyWindow (m_hwndTooltip);
 			m_hwndTooltip = nullptr;
 		}
@@ -260,19 +260,19 @@ namespace DuiLib {
 				::RemoveFontMemResourceEx (handle);
 			}
 		}
-		if (m_hDcOffscreen != nullptr) ::DeleteDC (m_hDcOffscreen);
-		if (m_hDcBackground != nullptr) ::DeleteDC (m_hDcBackground);
-		if (m_hbmpOffscreen != nullptr) ::DeleteObject (m_hbmpOffscreen);
-		if (m_hbmpBackground != nullptr) ::DeleteObject (m_hbmpBackground);
-		if (m_hDcPaint != nullptr) ::ReleaseDC (m_hWndPaint, m_hDcPaint);
+		if (m_hDcOffscreen) ::DeleteDC (m_hDcOffscreen);
+		if (m_hDcBackground) ::DeleteDC (m_hDcBackground);
+		if (m_hbmpOffscreen) ::DeleteObject (m_hbmpOffscreen);
+		if (m_hbmpBackground) ::DeleteObject (m_hbmpBackground);
+		if (m_hDcPaint) ::ReleaseDC (m_hWndPaint, m_hDcPaint);
 		m_aPreMessages.Remove (m_aPreMessages.Find (this));
 		// 销毁拖拽图片
-		if (m_hDragBitmap != nullptr) ::DeleteObject (m_hDragBitmap);
+		if (m_hDragBitmap) ::DeleteObject (m_hDragBitmap);
 		//卸载GDIPlus
 		Gdiplus::GdiplusShutdown (m_gdiplusToken);
 		delete m_pGdiplusStartupInput;
 		// DPI管理对象
-		if (m_pDPI != nullptr) {
+		if (m_pDPI) {
 			delete m_pDPI;
 			m_pDPI = nullptr;
 		}
@@ -314,7 +314,7 @@ namespace DuiLib {
 	}
 
 	CDuiString CPaintManagerUI::GetInstancePath () {
-		if (m_hInstance == nullptr) return _T ('\0');
+		if (!m_hInstance) return _T ('\0');
 
 		TCHAR tszModule[MAX_PATH + 1] = { 0 };
 		::GetModuleFileName (m_hInstance, tszModule, MAX_PATH);
@@ -331,8 +331,7 @@ namespace DuiLib {
 	}
 
 	HINSTANCE CPaintManagerUI::GetResourceDll () {
-		if (m_hResourceInstance == nullptr) return m_hInstance;
-		return m_hResourceInstance;
+		return m_hResourceInstance ? m_hResourceInstance : m_hInstance;
 	}
 
 	const string_view_t CPaintManagerUI::GetResourcePath () {
@@ -376,7 +375,7 @@ namespace DuiLib {
 
 	void CPaintManagerUI::SetResourceZip (LPVOID pVoid, unsigned int len, string_view_t password) {
 		if (m_pStrResourceZip == _T ("membuffer")) return;
-		if (m_bCachedResourceZip && m_hResourceZip != nullptr) {
+		if (m_bCachedResourceZip && m_hResourceZip) {
 			CloseZip ((HZIP) m_hResourceZip);
 			m_hResourceZip = nullptr;
 		}
@@ -391,7 +390,7 @@ namespace DuiLib {
 
 	void CPaintManagerUI::SetResourceZip (string_view_t pStrPath, bool bCachedResourceZip, string_view_t password) {
 		if (m_pStrResourceZip == pStrPath && m_bCachedResourceZip == bCachedResourceZip) return;
-		if (m_bCachedResourceZip && m_hResourceZip != nullptr) {
+		if (m_bCachedResourceZip && m_hResourceZip) {
 			CloseZip ((HZIP) m_hResourceZip);
 			m_hResourceZip = nullptr;
 		}
@@ -431,7 +430,7 @@ namespace DuiLib {
 			AdjustSharedImagesHSL ();
 			for (int i = 0; i < m_aPreMessages.GetSize (); i++) {
 				CPaintManagerUI* pManager = static_cast<CPaintManagerUI*>(m_aPreMessages[i]);
-				if (pManager != nullptr) pManager->AdjustImagesHSL ();
+				if (pManager) pManager->AdjustImagesHSL ();
 			}
 		}
 	}
@@ -448,7 +447,7 @@ namespace DuiLib {
 		//if (pstrName.empty ()) return nullptr;
 		for (int i = 0; i < m_aPreMessages.GetSize (); i++) {
 			CPaintManagerUI* pManager = static_cast<CPaintManagerUI*>(m_aPreMessages[i]);
-			if (pManager != nullptr && pstrName == pManager->GetName ()) return pManager;
+			if (pManager && pstrName == pManager->GetName ()) return pManager;
 		}
 		return nullptr;
 	}
@@ -461,9 +460,9 @@ namespace DuiLib {
 		ASSERT (!pstrModuleName.empty ());
 		if (pstrModuleName.empty ()) return false;
 		HMODULE hModule = ::LoadLibrary (pstrModuleName.data ());
-		if (hModule != nullptr) {
+		if (hModule) {
 			LPCREATECONTROL lpCreateControl = (LPCREATECONTROL)::GetProcAddress (hModule, "CreateControl");
-			if (lpCreateControl != nullptr) {
+			if (lpCreateControl) {
 				if (m_aPlugins.Find (lpCreateControl) >= 0) return true;
 				m_aPlugins.Add (lpCreateControl);
 				return true;
@@ -516,7 +515,7 @@ namespace DuiLib {
 	void CPaintManagerUI::SetInitSize (int cx, int cy) {
 		m_szInitWindowSize.cx = cx;
 		m_szInitWindowSize.cy = cy;
-		if (m_pRoot == nullptr && m_hWndPaint != nullptr) {
+		if (!m_pRoot && m_hWndPaint) {
 			::SetWindowPos (m_hWndPaint, nullptr, 0, 0, cx, cy, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
 		}
 	}
@@ -588,7 +587,7 @@ namespace DuiLib {
 
 	void CPaintManagerUI::SetOpacity (BYTE nOpacity) {
 		m_nOpacity = nOpacity;
-		if (m_hWndPaint != nullptr) {
+		if (m_hWndPaint) {
 			typedef BOOL (__stdcall *PFUNCSETLAYEREDWINDOWATTR)(HWND, COLORREF, BYTE, DWORD);
 			PFUNCSETLAYEREDWINDOWATTR fSetLayeredWindowAttributes = nullptr;
 
@@ -596,7 +595,7 @@ namespace DuiLib {
 			if (hUser32) {
 				fSetLayeredWindowAttributes =
 					(PFUNCSETLAYEREDWINDOWATTR)::GetProcAddress (hUser32, "SetLayeredWindowAttributes");
-				if (fSetLayeredWindowAttributes == nullptr) return;
+				if (!fSetLayeredWindowAttributes) return;
 			}
 
 			DWORD dwStyle = ::GetWindowLong (m_hWndPaint, GWL_EXSTYLE);
@@ -613,19 +612,19 @@ namespace DuiLib {
 	}
 
 	void CPaintManagerUI::SetLayered (bool bLayered) {
-		if (m_hWndPaint != nullptr && bLayered != m_bLayered) {
+		if (m_hWndPaint && bLayered != m_bLayered) {
 			UINT uStyle = GetWindowStyle (m_hWndPaint);
 			if ((uStyle & WS_CHILD) != 0) return;
-			if (g_fUpdateLayeredWindow == nullptr) {
+			if (!g_fUpdateLayeredWindow) {
 				HMODULE hUser32 = ::GetModuleHandle (_T ("User32.dll"));
 				if (hUser32) {
 					g_fUpdateLayeredWindow =
 						(PFUNCUPDATELAYEREDWINDOW)::GetProcAddress (hUser32, "UpdateLayeredWindow");
-					if (g_fUpdateLayeredWindow == nullptr) return;
+					if (!g_fUpdateLayeredWindow) return;
 				}
 			}
 			m_bLayered = bLayered;
-			if (m_pRoot != nullptr) m_pRoot->NeedUpdate ();
+			if (m_pRoot) m_pRoot->NeedUpdate ();
 			Invalidate ();
 		}
 	}
@@ -695,10 +694,10 @@ namespace DuiLib {
 		{
 			// Tabbing between controls
 			if (wParam == VK_TAB) {
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass ().data (), _T ("RichEditUI")) != nullptr) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass ().data (), _T ("RichEditUI"))) {
 					if (static_cast<CRichEditUI*>(m_pFocus)->IsWantTab ()) return false;
 				}
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass ().data (), _T ("WkeWebkitUI")) != nullptr) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass ().data (), _T ("WkeWebkitUI"))) {
 					return false;
 				}
 				SetNextTabControl (::GetKeyState (VK_SHIFT) >= 0);
@@ -712,7 +711,7 @@ namespace DuiLib {
 			FINDSHORTCUT fs = { 0 };
 			fs.ch = (TCHAR) toupper ((int) wParam);
 			CControlUI* pControl = m_pRoot->FindControl (__FindControlFromShortcut, &fs, UIFIND_ENABLED | UIFIND_ME_FIRST | UIFIND_TOP_FIRST);
-			if (pControl != nullptr) {
+			if (pControl) {
 				pControl->SetFocus ();
 				pControl->Activate ();
 				return true;
@@ -721,7 +720,7 @@ namespace DuiLib {
 		break;
 		case WM_SYSKEYDOWN:
 		{
-			if (m_pFocus != nullptr) {
+			if (m_pFocus) {
 				TEventUI event = { 0 };
 				event.Type = UIEVENT_SYSKEY;
 				event.chKey = (TCHAR) wParam;
@@ -737,7 +736,7 @@ namespace DuiLib {
 	}
 
 	bool CPaintManagerUI::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes) {
-		if (m_hWndPaint == nullptr) return false;
+		if (!m_hWndPaint) return false;
 		// Cycle through listeners
 		for (int i = 0; i < m_aMessageFilters.GetSize (); i++) {
 			bool bHandled = false;
@@ -794,7 +793,7 @@ namespace DuiLib {
 			TNotifyUI* pMsg = nullptr;
 			while (!!(pMsg = static_cast<TNotifyUI*>(m_aAsyncNotify.GetAt (0)))) {
 				m_aAsyncNotify.Remove (0);
-				if (pMsg->pSender != nullptr) {
+				if (pMsg->pSender) {
 					if (pMsg->pSender->OnNotify) pMsg->pSender->OnNotify (pMsg);
 				}
 				for (int j = 0; j < m_aNotifiers.GetSize (); j++) {
@@ -811,12 +810,12 @@ namespace DuiLib {
 			event.ptMouse = m_ptLastMousePos;
 			event.wKeyState = (WORD) MapKeyState ();
 			event.dwTimestamp = ::GetTickCount ();
-			if (m_pEventHover != nullptr) {
+			if (m_pEventHover) {
 				event.Type = UIEVENT_MOUSELEAVE;
 				event.pSender = m_pEventHover;
 				m_pEventHover->Event (event);
 			}
-			if (m_pEventClick != nullptr) {
+			if (m_pEventClick) {
 				event.Type = UIEVENT_BUTTONUP;
 				event.pSender = m_pEventClick;
 				m_pEventClick->Event (event);
@@ -826,10 +825,10 @@ namespace DuiLib {
 
 			if (::GetActiveWindow () == m_hWndPaint) {
 				HWND hwndParent = GetWindowOwner (m_hWndPaint);
-				if (hwndParent != nullptr) ::SetFocus (hwndParent);
+				if (hwndParent) ::SetFocus (hwndParent);
 			}
 
-			if (m_hwndTooltip != nullptr) {
+			if (m_hwndTooltip) {
 				::DestroyWindow (m_hwndTooltip);
 				m_hwndTooltip = nullptr;
 			}
@@ -843,7 +842,7 @@ namespace DuiLib {
 		return true;
 		case WM_PAINT:
 		{
-			if (m_pRoot == nullptr) {
+			if (!m_pRoot) {
 				PAINTSTRUCT ps = { 0 };
 				::BeginPaint (m_hWndPaint, &ps);
 				CRenderEngine::DrawColor (m_hDcPaint, ps.rcPaint, 0xFF000000);
@@ -891,10 +890,10 @@ namespace DuiLib {
 				if (!::IsRectEmpty (&rcClient) && !::IsIconic (m_hWndPaint)) {
 					if (m_pRoot->IsUpdateNeeded ()) {
 						RECT rcRoot = rcClient;
-						if (m_hDcOffscreen != nullptr) ::DeleteDC (m_hDcOffscreen);
-						if (m_hDcBackground != nullptr) ::DeleteDC (m_hDcBackground);
-						if (m_hbmpOffscreen != nullptr) ::DeleteObject (m_hbmpOffscreen);
-						if (m_hbmpBackground != nullptr) ::DeleteObject (m_hbmpBackground);
+						if (m_hDcOffscreen) ::DeleteDC (m_hDcOffscreen);
+						if (m_hDcBackground) ::DeleteDC (m_hDcBackground);
+						if (m_hbmpOffscreen) ::DeleteObject (m_hbmpOffscreen);
+						if (m_hbmpBackground) ::DeleteObject (m_hbmpBackground);
 						m_hDcOffscreen = nullptr;
 						m_hDcBackground = nullptr;
 						m_hbmpOffscreen = nullptr;
@@ -959,7 +958,7 @@ namespace DuiLib {
 			// Render screen
 			//
 			// Prepare offscreen bitmap
-			if (m_bOffscreenPaint && m_hbmpOffscreen == nullptr) {
+			if (m_bOffscreenPaint && !m_hbmpOffscreen) {
 				m_hDcOffscreen = ::CreateCompatibleDC (m_hDcPaint);
 				m_hbmpOffscreen = CRenderEngine::CreateARGB32Bitmap (m_hDcPaint, dwWidth, dwHeight, (LPBYTE*) &m_pOffscreenBits);
 				ASSERT (m_hDcOffscreen);
@@ -1042,7 +1041,7 @@ namespace DuiLib {
 						BYTE G = 0;
 						BYTE B = 0;
 						if (!m_diLayered.sDrawString.empty ()) {
-							if (m_hbmpBackground == nullptr) {
+							if (!m_hbmpBackground) {
 								m_hDcBackground = ::CreateCompatibleDC (m_hDcPaint);
 								m_hbmpBackground = CRenderEngine::CreateARGB32Bitmap (m_hDcPaint, _dwWidth, _dwHeight, (BYTE**) &m_pBackgroundBits);
 								::ZeroMemory (m_pBackgroundBits, _dwWidth * _dwHeight * 4);
@@ -1120,7 +1119,7 @@ namespace DuiLib {
 		}
 		case WM_PRINTCLIENT:
 		{
-			if (m_pRoot == nullptr) break;
+			if (!m_pRoot) break;
 			RECT rcClient = { 0 };
 			::GetClientRect (m_hWndPaint, &rcClient);
 			HDC hDC = (HDC) wParam;
@@ -1128,7 +1127,7 @@ namespace DuiLib {
 			m_pRoot->Paint (hDC, rcClient, nullptr);
 			if ((lParam & PRF_CHILDREN) != 0) {
 				HWND hWndChild = ::GetWindow (m_hWndPaint, GW_CHILD);
-				while (hWndChild != nullptr) {
+				while (hWndChild) {
 					RECT rcPos = { 0 };
 					::GetWindowRect (hWndChild, &rcPos);
 					::MapWindowPoints (HWND_DESKTOP, m_hWndPaint, reinterpret_cast<LPPOINT>(&rcPos), 2);
@@ -1161,14 +1160,14 @@ namespace DuiLib {
 		break;
 		case WM_SIZE:
 		{
-			if (m_pFocus != nullptr) {
+			if (m_pFocus) {
 				TEventUI event = { 0 };
 				event.Type = UIEVENT_WINDOWSIZE;
 				event.pSender = m_pFocus;
 				event.dwTimestamp = ::GetTickCount ();
 				m_pFocus->Event (event);
 			}
-			if (m_pRoot != nullptr) m_pRoot->NeedUpdate ();
+			if (m_pRoot) m_pRoot->NeedUpdate ();
 		}
 		return true;
 		case WM_TIMER:
@@ -1197,9 +1196,9 @@ namespace DuiLib {
 			m_bMouseTracking = false;
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			CControlUI* pHover = FindControl (pt);
-			if (pHover == nullptr) break;
+			if (!pHover) break;
 			// Generate mouse hover event
-			if (m_pEventHover != nullptr) {
+			if (m_pEventHover) {
 				TEventUI event = { 0 };
 				event.Type = UIEVENT_MOUSEHOVER;
 				event.pSender = m_pEventHover;
@@ -1221,8 +1220,8 @@ namespace DuiLib {
 			m_ToolTip.hinst = m_hInstance;
 			m_ToolTip.lpszText = &sToolTip[0];
 			m_ToolTip.rect = pHover->GetPos ();
-			if (m_hwndTooltip == nullptr) {
-				m_hwndTooltip = ::CreateWindowEx (0, TOOLTIPS_CLASS, nullptr, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, m_hWndPaint, nullptr, m_hInstance, nullptr);
+			if (!m_hwndTooltip) {
+				m_hwndTooltip = ::CreateWindowEx (0, TOOLTIPS_CLASS, nullptr, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, m_hWndPaint, NULL, m_hInstance, nullptr);
 				::SendMessage (m_hwndTooltip, TTM_ADDTOOL, 0, (LPARAM) &m_ToolTip);
 				::SendMessage (m_hwndTooltip, TTM_SETMAXTIPWIDTH, 0, pHover->GetToolTipWidth ());
 			}
@@ -1234,7 +1233,7 @@ namespace DuiLib {
 		return true;
 		case WM_MOUSELEAVE:
 		{
-			if (m_hwndTooltip != nullptr) ::SendMessage (m_hwndTooltip, TTM_TRACKACTIVATE, FALSE, (LPARAM) &m_ToolTip);
+			if (m_hwndTooltip) ::SendMessage (m_hwndTooltip, TTM_TRACKACTIVATE, FALSE, (LPARAM) &m_ToolTip);
 			if (m_bMouseTracking) {
 				POINT pt = { 0 };
 				RECT rcWnd = { 0 };
@@ -1260,7 +1259,7 @@ namespace DuiLib {
 				tme.cbSize = sizeof (TRACKMOUSEEVENT);
 				tme.dwFlags = TME_HOVER | TME_LEAVE;
 				tme.hwndTrack = m_hWndPaint;
-				tme.dwHoverTime = m_hwndTooltip == nullptr ? m_iHoverTime : (DWORD) ::SendMessage (m_hwndTooltip, TTM_GETDELAYTIME, TTDT_INITIAL, 0L);
+				tme.dwHoverTime = !m_hwndTooltip ? m_iHoverTime : (DWORD) ::SendMessage (m_hwndTooltip, TTM_GETDELAYTIME, TTDT_INITIAL, 0L);
 				_TrackMouseEvent (&tme);
 				m_bMouseTracking = true;
 			}
@@ -1275,17 +1274,17 @@ namespace DuiLib {
 			// 记录鼠标位置
 			m_ptLastMousePos = pt;
 			CControlUI* pNewHover = FindControl (pt);
-			if (pNewHover != nullptr && pNewHover->GetManager () != this) break;
+			if (pNewHover && pNewHover->GetManager () != this) break;
 
 			// 拖拽事件
 			if (bNeedDrag && m_bDragMode && wParam == MK_LBUTTON) {
 				::ReleaseCapture ();
 				CIDropSource* pdsrc = new CIDropSource;
-				if (pdsrc == nullptr) return 0;
+				if (!pdsrc) return 0;
 				pdsrc->AddRef ();
 
 				CIDataObject* pdobj = new CIDataObject (pdsrc);
-				if (pdobj == nullptr) return 0;
+				if (!pdobj) return 0;
 				pdobj->AddRef ();
 
 				FORMATETC fmtetc = { 0 };
@@ -1337,8 +1336,8 @@ namespace DuiLib {
 			event.wKeyState = (WORD) MapKeyState ();
 			if (!IsCaptured ()) {
 				pNewHover = FindControl (pt);
-				if (pNewHover != nullptr && pNewHover->GetManager () != this) break;
-				if (pNewHover != m_pEventHover && m_pEventHover != nullptr) {
+				if (pNewHover && pNewHover->GetManager () != this) break;
+				if (pNewHover != m_pEventHover && m_pEventHover) {
 					event.Type = UIEVENT_MOUSELEAVE;
 					event.pSender = m_pEventHover;
 
@@ -1351,20 +1350,20 @@ namespace DuiLib {
 
 					m_pEventHover->Event (event);
 					m_pEventHover = nullptr;
-					if (m_hwndTooltip != nullptr) ::SendMessage (m_hwndTooltip, TTM_TRACKACTIVATE, FALSE, (LPARAM) &m_ToolTip);
+					if (m_hwndTooltip) ::SendMessage (m_hwndTooltip, TTM_TRACKACTIVATE, FALSE, (LPARAM) &m_ToolTip);
 				}
-				if (pNewHover != m_pEventHover && pNewHover != nullptr) {
+				if (pNewHover != m_pEventHover && pNewHover) {
 					event.Type = UIEVENT_MOUSEENTER;
 					event.pSender = pNewHover;
 					pNewHover->Event (event);
 					m_pEventHover = pNewHover;
 				}
 			}
-			if (m_pEventClick != nullptr) {
+			if (m_pEventClick) {
 				event.Type = UIEVENT_MOUSEMOVE;
 				event.pSender = m_pEventClick;
 				m_pEventClick->Event (event);
-			} else if (pNewHover != nullptr) {
+			} else if (pNewHover) {
 				event.Type = UIEVENT_MOUSEMOVE;
 				event.pSender = pNewHover;
 				pNewHover->Event (event);
@@ -1377,18 +1376,18 @@ namespace DuiLib {
 			// when Win32 child windows are placed on the dialog
 			// and we need to remove them on focus change).
 			if (!m_bNoActivate) ::SetFocus (m_hWndPaint);
-			if (m_pRoot == nullptr) break;
+			if (!m_pRoot) break;
 			// 查找控件
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			m_ptLastMousePos = pt;
 			CControlUI* pControl = FindControl (pt);
-			if (pControl == nullptr) break;
+			if (!pControl) break;
 			if (pControl->GetManager () != this) break;
 
 			// 准备拖拽
 			if (pControl->IsDragEnabled ()) {
 				m_bDragMode = true;
-				if (m_hDragBitmap != nullptr) {
+				if (m_hDragBitmap) {
 					::DeleteObject (m_hDragBitmap);
 					m_hDragBitmap = nullptr;
 				}
@@ -1419,7 +1418,7 @@ namespace DuiLib {
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			m_ptLastMousePos = pt;
 			CControlUI* pControl = FindControl (pt);
-			if (pControl == nullptr) break;
+			if (!pControl) break;
 			if (pControl->GetManager () != this) break;
 			SetCapture ();
 			TEventUI event = { 0 };
@@ -1438,7 +1437,7 @@ namespace DuiLib {
 		{
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			m_ptLastMousePos = pt;
-			if (m_pEventClick == nullptr) break;
+			if (!m_pEventClick) break;
 			ReleaseCapture ();
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_BUTTONUP;
@@ -1460,7 +1459,7 @@ namespace DuiLib {
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			m_ptLastMousePos = pt;
 			CControlUI* pControl = FindControl (pt);
-			if (pControl == nullptr) break;
+			if (!pControl) break;
 			if (pControl->GetManager () != this) break;
 			pControl->SetFocus ();
 			SetCapture ();
@@ -1481,7 +1480,7 @@ namespace DuiLib {
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			m_ptLastMousePos = pt;
 			m_pEventClick = FindControl (pt);
-			if (m_pEventClick == nullptr) break;
+			if (!m_pEventClick) break;
 			ReleaseCapture ();
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_RBUTTONUP;
@@ -1500,7 +1499,7 @@ namespace DuiLib {
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			m_ptLastMousePos = pt;
 			CControlUI* pControl = FindControl (pt);
-			if (pControl == nullptr) break;
+			if (!pControl) break;
 			if (pControl->GetManager () != this) break;
 			pControl->SetFocus ();
 			SetCapture ();
@@ -1521,7 +1520,7 @@ namespace DuiLib {
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			m_ptLastMousePos = pt;
 			m_pEventClick = FindControl (pt);
-			if (m_pEventClick == nullptr) break;
+			if (!m_pEventClick) break;
 			ReleaseCapture ();
 
 			TEventUI event = { 0 };
@@ -1537,11 +1536,11 @@ namespace DuiLib {
 		break;
 		case WM_CONTEXTMENU:
 		{
-			if (m_pRoot == nullptr) break;
+			if (!m_pRoot) break;
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			::ScreenToClient (m_hWndPaint, &pt);
 			m_ptLastMousePos = pt;
-			if (m_pEventClick == nullptr) break;
+			if (!m_pEventClick) break;
 			ReleaseCapture ();
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_CONTEXTMENU;
@@ -1558,12 +1557,12 @@ namespace DuiLib {
 		break;
 		case WM_MOUSEWHEEL:
 		{
-			if (m_pRoot == nullptr) break;
+			if (!m_pRoot) break;
 			POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 			::ScreenToClient (m_hWndPaint, &pt);
 			m_ptLastMousePos = pt;
 			CControlUI* pControl = FindControl (pt);
-			if (pControl == nullptr) break;
+			if (!pControl) break;
 			if (pControl->GetManager () != this) break;
 			int zDelta = (int) (short) HIWORD (wParam);
 			TEventUI event = { 0 };
@@ -1582,8 +1581,8 @@ namespace DuiLib {
 		break;
 		case WM_CHAR:
 		{
-			if (m_pRoot == nullptr) break;
-			if (m_pFocus == nullptr) break;
+			if (!m_pRoot) break;
+			if (!m_pFocus) break;
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_CHAR;
 			event.pSender = m_pFocus;
@@ -1598,8 +1597,8 @@ namespace DuiLib {
 		break;
 		case WM_KEYDOWN:
 		{
-			if (m_pRoot == nullptr) break;
-			if (m_pFocus == nullptr) break;
+			if (!m_pRoot) break;
+			if (!m_pFocus) break;
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_KEYDOWN;
 			event.pSender = m_pFocus;
@@ -1615,8 +1614,8 @@ namespace DuiLib {
 		break;
 		case WM_KEYUP:
 		{
-			if (m_pRoot == nullptr) break;
-			if (m_pEventKey == nullptr) break;
+			if (!m_pRoot) break;
+			if (!m_pEventKey) break;
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_KEYUP;
 			event.pSender = m_pEventKey;
@@ -1632,7 +1631,7 @@ namespace DuiLib {
 		break;
 		case WM_SETCURSOR:
 		{
-			if (m_pRoot == nullptr) break;
+			if (!m_pRoot) break;
 			if (LOWORD (lParam) != HTCLIENT) break;
 			if (m_bMouseCapture) return true;
 
@@ -1640,7 +1639,7 @@ namespace DuiLib {
 			::GetCursorPos (&pt);
 			::ScreenToClient (m_hWndPaint, &pt);
 			CControlUI* pControl = FindControl (pt);
-			if (pControl == nullptr) break;
+			if (!pControl) break;
 			if ((pControl->GetControlFlags () & UIFLAG_SETCURSOR) == 0) break;
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_SETCURSOR;
@@ -1655,7 +1654,7 @@ namespace DuiLib {
 		return true;
 		case WM_SETFOCUS:
 		{
-			if (m_pFocus != nullptr) {
+			if (m_pFocus) {
 				TEventUI event = { 0 };
 				event.Type = UIEVENT_SETFOCUS;
 				event.wParam = wParam;
@@ -1675,7 +1674,7 @@ namespace DuiLib {
 		{
 			if (lParam == 0) break;
 			LPNMHDR lpNMHDR = (LPNMHDR) lParam;
-			if (lpNMHDR != nullptr) lRes = ::SendMessage (lpNMHDR->hwndFrom, OCM__BASE + uMsg, wParam, lParam);
+			if (lpNMHDR) lRes = ::SendMessage (lpNMHDR->hwndFrom, OCM__BASE + uMsg, wParam, lParam);
 			return true;
 		}
 		break;
@@ -1741,7 +1740,7 @@ namespace DuiLib {
 		// Remove the existing control-tree. We might have gotten inside this function as
 		// a result of an event fired or similar, so we cannot just delete the objects and
 		// pull the internal memory of the calling code. We'll delay the cleanup.
-		if (m_pRoot != nullptr) {
+		if (m_pRoot) {
 			m_aPostPaintControls.Empty ();
 			AddDelayedCleanup (m_pRoot);
 		}
@@ -1757,8 +1756,8 @@ namespace DuiLib {
 
 	bool CPaintManagerUI::InitControls (CControlUI* pControl, CControlUI* pParent /*= nullptr*/) {
 		ASSERT (pControl);
-		if (pControl == nullptr) return false;
-		pControl->SetManager (this, pParent != nullptr ? pParent : pControl->GetParent (), true);
+		if (!pControl) return false;
+		pControl->SetManager (this, pParent ? pParent : pControl->GetParent (), true);
 		pControl->FindControl (__FindControlFromNameHash, this, UIFIND_ALL);
 		return true;
 	}
@@ -1807,7 +1806,7 @@ namespace DuiLib {
 		LPVOID lp = m_mOptionGroup.Find (pStrGroupName);
 		if (lp) {
 			CStdPtrArray* aOptionGroup = static_cast<CStdPtrArray*>(lp);
-			if (aOptionGroup == nullptr) return;
+			if (!aOptionGroup) return;
 			for (int i = 0; i < aOptionGroup->GetSize (); i++) {
 				if (static_cast<CControlUI*>(aOptionGroup->GetAt (i)) == pControl) {
 					aOptionGroup->Remove (i);
@@ -1885,7 +1884,7 @@ namespace DuiLib {
 		}
 		m_SharedResInfo.m_CustomFonts.RemoveAll ();
 		// 默认字体
-		if (m_SharedResInfo.m_DefaultFontInfo.hFont != nullptr) {
+		if (m_SharedResInfo.m_DefaultFontInfo.hFont) {
 			::DeleteObject (m_SharedResInfo.m_DefaultFontInfo.hFont);
 		}
 		// 样式
@@ -1917,14 +1916,14 @@ namespace DuiLib {
 		m_SharedResInfo.m_AttrHash.RemoveAll ();
 
 		// 关闭ZIP
-		if (m_bCachedResourceZip && m_hResourceZip != nullptr) {
+		if (m_bCachedResourceZip && m_hResourceZip) {
 			CloseZip ((HZIP) m_hResourceZip);
 			m_hResourceZip = nullptr;
 		}
 	}
 
 	CDPI * DuiLib::CPaintManagerUI::GetDPIObj () {
-		if (m_pDPI == nullptr) {
+		if (!m_pDPI) {
 			m_pDPI = new CDPI;
 		}
 		return m_pDPI;
@@ -1944,8 +1943,8 @@ namespace DuiLib {
 			rc.bottom = rcWnd.top + (rcWnd.bottom - rcWnd.top) * scale2 / scale1;
 			prcNewWindow = &rc;
 		}
-		SetWindowPos (GetPaintWindow (), nullptr, prcNewWindow->left, prcNewWindow->top, prcNewWindow->right - prcNewWindow->left, prcNewWindow->bottom - prcNewWindow->top, SWP_NOZORDER | SWP_NOACTIVATE);
-		if (GetRoot () != nullptr) GetRoot ()->NeedUpdate ();
+		SetWindowPos (GetPaintWindow (), NULL, prcNewWindow->left, prcNewWindow->top, prcNewWindow->right - prcNewWindow->left, prcNewWindow->bottom - prcNewWindow->top, SWP_NOZORDER | SWP_NOACTIVATE);
+		if (GetRoot ()) GetRoot ()->NeedUpdate ();
 		::PostMessage (GetPaintWindow (), WM_USER_SET_DPI, 0, 0);
 	}
 
@@ -2012,7 +2011,7 @@ namespace DuiLib {
 		// Already has focus?
 		if (pControl == m_pFocus) return;
 		// Remove focus from old control
-		if (m_pFocus != nullptr) {
+		if (m_pFocus) {
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_KILLFOCUS;
 			event.pSender = pControl;
@@ -2021,9 +2020,9 @@ namespace DuiLib {
 			SendNotify (m_pFocus, DUI_MSGTYPE_KILLFOCUS);
 			m_pFocus = nullptr;
 		}
-		if (pControl == nullptr) return;
+		if (!pControl) return;
 		// Set focus to new control
-		if (pControl != nullptr
+		if (pControl
 			&& pControl->GetManager () == this
 			&& pControl->IsVisible ()
 			&& pControl->IsEnabled ()) {
@@ -2039,8 +2038,8 @@ namespace DuiLib {
 
 	void CPaintManagerUI::SetFocusNeeded (CControlUI* pControl) {
 		::SetFocus (m_hWndPaint);
-		if (pControl == nullptr) return;
-		if (m_pFocus != nullptr) {
+		if (!pControl) return;
+		if (m_pFocus) {
 			TEventUI event = { 0 };
 			event.Type = UIEVENT_KILLFOCUS;
 			event.pSender = pControl;
@@ -2054,11 +2053,11 @@ namespace DuiLib {
 		info.bForward = false;
 		m_pFocus = m_pRoot->FindControl (__FindControlFromTab, &info, UIFIND_VISIBLE | UIFIND_ENABLED | UIFIND_ME_FIRST);
 		m_bFocusNeeded = true;
-		if (m_pRoot != nullptr) m_pRoot->NeedUpdate ();
+		if (m_pRoot) m_pRoot->NeedUpdate ();
 	}
 
 	bool CPaintManagerUI::SetTimer (CControlUI* pControl, UINT nTimerID, UINT uElapse) {
-		ASSERT (pControl != nullptr);
+		ASSERT (pControl);
 		ASSERT (uElapse > 0);
 		for (int i = 0; i < m_aTimers.GetSize (); i++) {
 			TIMERINFO* pTimer = static_cast<TIMERINFO*>(m_aTimers[i]);
@@ -2079,7 +2078,7 @@ namespace DuiLib {
 		m_uTimerID = (++m_uTimerID) % 0xF0; //0xf1-0xfe特殊用途
 		if (!::SetTimer (m_hWndPaint, m_uTimerID, uElapse, nullptr)) return FALSE;
 		TIMERINFO* pTimer = new TIMERINFO;
-		if (pTimer == nullptr) return FALSE;
+		if (!pTimer) return FALSE;
 		pTimer->hWnd = m_hWndPaint;
 		pTimer->pSender = pControl;
 		pTimer->nLocalID = nTimerID;
@@ -2089,7 +2088,7 @@ namespace DuiLib {
 	}
 
 	bool CPaintManagerUI::KillTimer (CControlUI* pControl, UINT nTimerID) {
-		ASSERT (pControl != nullptr);
+		ASSERT (pControl);
 		for (int i = 0; i < m_aTimers.GetSize (); i++) {
 			TIMERINFO* pTimer = static_cast<TIMERINFO*>(m_aTimers[i]);
 			if (pTimer->pSender == pControl
@@ -2106,7 +2105,7 @@ namespace DuiLib {
 	}
 
 	void CPaintManagerUI::KillTimer (CControlUI* pControl) {
-		ASSERT (pControl != nullptr);
+		ASSERT (pControl);
 		int count = m_aTimers.GetSize ();
 		for (int i = 0, j = 0; i < count; i++) {
 			TIMERINFO* pTimer = static_cast<TIMERINFO*>(m_aTimers[i - j]);
@@ -2169,7 +2168,7 @@ namespace DuiLib {
 		info1.pFocus = m_pFocus;
 		info1.bForward = bForward;
 		CControlUI* pControl = m_pRoot->FindControl (__FindControlFromTab, &info1, UIFIND_VISIBLE | UIFIND_ENABLED | UIFIND_ME_FIRST);
-		if (pControl == nullptr) {
+		if (!pControl) {
 			if (bForward) {
 				// Wrap around
 				FINDTABINFO info2 = { 0 };
@@ -2180,7 +2179,7 @@ namespace DuiLib {
 				pControl = info1.pLast;
 			}
 		}
-		if (pControl != nullptr) SetFocus (pControl);
+		if (pControl) SetFocus (pControl);
 		m_bFocusNeeded = false;
 		return true;
 	}
@@ -2259,7 +2258,7 @@ namespace DuiLib {
 	}
 
 	bool CPaintManagerUI::AddNativeWindow (CControlUI* pControl, HWND hChildWnd) {
-		if (pControl == nullptr || hChildWnd == nullptr) return false;
+		if (!pControl || !hChildWnd) return false;
 
 		RECT rcChildWnd = GetNativeWindowRect (hChildWnd);
 		Invalidate (rcChildWnd);
@@ -2294,14 +2293,14 @@ namespace DuiLib {
 	}
 
 	void CPaintManagerUI::AddDelayedCleanup (CControlUI* pControl) {
-		if (pControl == nullptr) return;
+		if (!pControl) return;
 		pControl->SetManager (this, nullptr, false);
 		m_aDelayedCleanup.Add (pControl);
 		PostAsyncNotify ();
 	}
 
 	void CPaintManagerUI::AddMouseLeaveNeeded (CControlUI* pControl) {
-		if (pControl == nullptr) return;
+		if (!pControl) return;
 		for (int i = 0; i < m_aNeedMouseLeaveNeeded.GetSize (); i++) {
 			if (static_cast<CControlUI*>(m_aNeedMouseLeaveNeeded[i]) == pControl) {
 				return;
@@ -2311,7 +2310,7 @@ namespace DuiLib {
 	}
 
 	bool CPaintManagerUI::RemoveMouseLeaveNeeded (CControlUI* pControl) {
-		if (pControl == nullptr) return false;
+		if (!pControl) return false;
 		for (int i = 0; i < m_aNeedMouseLeaveNeeded.GetSize (); i++) {
 			if (static_cast<CControlUI*>(m_aNeedMouseLeaveNeeded[i]) == pControl) {
 				return m_aNeedMouseLeaveNeeded.Remove (i);
@@ -2338,7 +2337,7 @@ namespace DuiLib {
 
 		if (!bAsync) {
 			// Send to all listeners
-			if (Msg.pSender != nullptr) {
+			if (Msg.pSender) {
 				if (Msg.pSender->OnNotify) Msg.pSender->OnNotify (&Msg);
 			}
 			for (int i = 0; i < m_aNotifiers.GetSize (); i++) {
@@ -2467,7 +2466,7 @@ namespace DuiLib {
 		if (bItalic) lf.lfItalic = TRUE;
 
 		HFONT hFont = ::CreateFontIndirect (&lf);
-		if (hFont == nullptr) return;
+		if (!hFont) return;
 
 		if (bShared) {
 			::DeleteObject (m_SharedResInfo.m_DefaultFontInfo.hFont);
@@ -2519,7 +2518,7 @@ namespace DuiLib {
 		if (bUnderline) lf.lfUnderline = TRUE;
 		if (bItalic) lf.lfItalic = TRUE;
 		HFONT hFont = ::CreateFontIndirect (&lf);
-		if (hFont == nullptr) return nullptr;
+		if (!hFont) return nullptr;
 
 		TFontInfo* pFontInfo = new TFontInfo;
 		if (!pFontInfo) return false;
@@ -2599,7 +2598,7 @@ namespace DuiLib {
 					std::string pwd = FawTools::get_gb18030 (sFilePwd);
 					hz = OpenZip (sFile.c_str (), pwd.c_str ());
 				}
-				if (hz == nullptr) break;
+				if (!hz) break;
 				ZIPENTRY ze;
 				int i = 0;
 				CDuiString key = pstrPath;
@@ -2888,7 +2887,7 @@ namespace DuiLib {
 			data = CRenderEngine::LoadImage (bitmap, _T (""), mask, instance);
 		}
 
-		if (data == nullptr) {
+		if (!data) {
 			return nullptr;
 		}
 		data->bUseHSL = bUseHSL;
@@ -2931,7 +2930,7 @@ namespace DuiLib {
 	const TImageInfo* CPaintManagerUI::AddImage (string_view_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared) {
 		// 因无法确定外部HBITMAP格式，不能使用hsl调整
 		if (bitmap.empty ()) return nullptr;
-		if (hBitmap == nullptr || iWidth <= 0 || iHeight <= 0) return nullptr;
+		if (!hBitmap || iWidth <= 0 || iHeight <= 0) return nullptr;
 
 		TImageInfo* data = new TImageInfo;
 		data->pBits = nullptr;
@@ -3045,7 +3044,7 @@ namespace DuiLib {
 			string_view_t bitmap = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!bitmap.empty ()) {
 				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (bitmap));
-				if (data != nullptr) {
+				if (data) {
 					if (!data->sResType.empty ()) {
 						if (isdigit (bitmap[0])) {
 							int iIndex = _ttoi (bitmap.data ());
@@ -3054,7 +3053,7 @@ namespace DuiLib {
 					} else {
 						pNewData = CRenderEngine::LoadImage (bitmap, nullptr, data->dwMask);
 					}
-					if (pNewData == nullptr) continue;
+					if (!pNewData) continue;
 
 					CRenderEngine::FreeImage (data, false);
 					data->hBitmap = pNewData->hBitmap;
@@ -3084,7 +3083,7 @@ namespace DuiLib {
 			string_view_t bitmap = m_ResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!bitmap.empty ()) {
 				data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (bitmap));
-				if (data != nullptr) {
+				if (data) {
 					if (!data->sResType.empty ()) {
 						if (isdigit (bitmap[0])) {
 							int iIndex = _ttoi (bitmap.data ());
@@ -3095,7 +3094,7 @@ namespace DuiLib {
 					}
 
 					CRenderEngine::FreeImage (data, false);
-					if (pNewData == nullptr) {
+					if (!pNewData) {
 						m_ResInfo.m_ImageHash.Remove (bitmap);
 						continue;
 					}
@@ -3124,7 +3123,7 @@ namespace DuiLib {
 		CDuiString sStrModify = pStrModify;
 		CDuiString sKey = sStrImage + sStrModify;
 		TDrawInfo* pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (sKey));
-		if (pDrawInfo == nullptr && !sKey.empty ()) {
+		if (!pDrawInfo && !sKey.empty ()) {
 			pDrawInfo = new TDrawInfo ();
 			pDrawInfo->Parse (pStrImage, pStrModify, this);
 			m_ResInfo.m_DrawInfoHash.Insert (sKey, pDrawInfo);
@@ -3137,7 +3136,7 @@ namespace DuiLib {
 		CDuiString sStrModify = pStrModify;
 		CDuiString sKey = sStrImage + sStrModify;
 		TDrawInfo* pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (sKey));
-		if (pDrawInfo != nullptr) {
+		if (pDrawInfo) {
 			m_ResInfo.m_DrawInfoHash.Remove (sKey);
 			delete pDrawInfo;
 			pDrawInfo = nullptr;
@@ -3162,13 +3161,13 @@ namespace DuiLib {
 	void CPaintManagerUI::AddDefaultAttributeList (string_view_t pStrControlName, string_view_t pStrControlAttrList, bool bShared) {
 		if (bShared || m_bForceUseSharedRes) {
 			CDuiString* pDefaultAttr = new CDuiString (pStrControlAttrList);
-			if (pDefaultAttr != nullptr) {
+			if (pDefaultAttr) {
 				CDuiString* pOldDefaultAttr = static_cast<CDuiString*>(m_SharedResInfo.m_AttrHash.Set (pStrControlName, (LPVOID) pDefaultAttr));
 				if (pOldDefaultAttr) delete pOldDefaultAttr;
 			}
 		} else {
 			CDuiString* pDefaultAttr = new CDuiString (pStrControlAttrList);
-			if (pDefaultAttr != nullptr) {
+			if (pDefaultAttr) {
 				CDuiString* pOldDefaultAttr = static_cast<CDuiString*>(m_ResInfo.m_AttrHash.Set (pStrControlName, (LPVOID) pDefaultAttr));
 				if (pOldDefaultAttr) delete pOldDefaultAttr;
 			}
@@ -3225,7 +3224,7 @@ namespace DuiLib {
 	void CPaintManagerUI::AddWindowCustomAttribute (string_view_t pstrName, string_view_t pstrAttr) {
 		if (pstrName.empty () || pstrAttr.empty ()) return;
 		CDuiString* pCostomAttr = new CDuiString (pstrAttr);
-		if (m_mWindowCustomAttrHash.Find (pstrName) == nullptr)
+		if (!m_mWindowCustomAttrHash.Find (pstrName))
 			m_mWindowCustomAttrHash.Set (pstrName, (LPVOID) pCostomAttr);
 		else
 			delete pCostomAttr;
@@ -3275,26 +3274,26 @@ namespace DuiLib {
 	}
 
 	CControlUI* CPaintManagerUI::FindSubControlByPoint (CControlUI* pParent, POINT pt) const {
-		if (pParent == nullptr) pParent = GetRoot ();
+		if (!pParent) pParent = GetRoot ();
 		ASSERT (pParent);
 		return pParent->FindControl (__FindControlFromPoint, &pt, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
 	}
 
 	CControlUI* CPaintManagerUI::FindSubControlByName (CControlUI* pParent, string_view_t pstrName) const {
-		if (pParent == nullptr) pParent = GetRoot ();
+		if (!pParent) pParent = GetRoot ();
 		ASSERT (pParent);
 		return pParent->FindControl (__FindControlFromName, (LPVOID) pstrName.data (), UIFIND_ALL);
 	}
 
 	CControlUI* CPaintManagerUI::FindSubControlByClass (CControlUI* pParent, string_view_t pstrClass, int iIndex) {
-		if (pParent == nullptr) pParent = GetRoot ();
+		if (!pParent) pParent = GetRoot ();
 		ASSERT (pParent);
 		m_aFoundControls.Resize (iIndex + 1);
 		return pParent->FindControl (__FindControlFromClass, (LPVOID) pstrClass.data (), UIFIND_ALL);
 	}
 
 	CStdPtrArray* CPaintManagerUI::FindSubControlsByClass (CControlUI* pParent, string_view_t pstrClass) {
-		if (pParent == nullptr) pParent = GetRoot ();
+		if (!pParent) pParent = GetRoot ();
 		ASSERT (pParent);
 		m_aFoundControls.Empty ();
 		pParent->FindControl (__FindControlsFromClass, (LPVOID) pstrClass.data (), UIFIND_ALL);
@@ -3334,7 +3333,7 @@ namespace DuiLib {
 		if ((pThis->GetControlFlags () & UIFLAG_TABSTOP) == 0) return nullptr;
 		pInfo->pLast = pThis;
 		if (pInfo->bNextIsIt) return pThis;
-		if (pInfo->pFocus == nullptr) return pThis;
+		if (!pInfo->pFocus) return pThis;
 		return nullptr;  // Examine all controls
 	}
 
@@ -3359,10 +3358,10 @@ namespace DuiLib {
 		CStdPtrArray* pFoundControls = pThis->GetManager ()->GetFoundControls ();
 		if (pstrType == _T ("*") || pstrType == pType) {
 			int iIndex = -1;
-			while (pFoundControls->GetAt (++iIndex) != nullptr);
+			while (pFoundControls->GetAt (++iIndex));
 			if (iIndex < pFoundControls->GetSize ()) pFoundControls->SetAt (iIndex, pThis);
 		}
-		if (pFoundControls->GetAt (pFoundControls->GetSize () - 1) != nullptr) return pThis;
+		if (pFoundControls->GetAt (pFoundControls->GetSize () - 1)) return pThis;
 		return nullptr;
 	}
 
@@ -3611,12 +3610,12 @@ namespace DuiLib {
 		::SendMessage (m_hTargetWnd, WM_LBUTTONUP, 0, MAKELPARAM (ptMouse.x, ptMouse.y));
 
 		if (pFmtEtc->cfFormat == CF_DIB && medium.tymed == TYMED_HGLOBAL) {
-			if (medium.hGlobal != nullptr) {
+			if (medium.hGlobal) {
 				LPBITMAPINFOHEADER  lpbi = (BITMAPINFOHEADER*) GlobalLock (medium.hGlobal);
-				if (lpbi != nullptr) {
+				if (lpbi) {
 					HBITMAP hbm = NULL;
 					HDC hdc = GetDC (nullptr);
-					if (hdc != nullptr) {
+					if (hdc) {
 						int i = ((BITMAPFILEHEADER *) lpbi)->bfOffBits;
 						hbm = CreateDIBitmap (hdc, (LPBITMAPINFOHEADER) lpbi,
 							(LONG) CBM_INIT,
@@ -3635,9 +3634,9 @@ namespace DuiLib {
 			}
 		}
 		if (pFmtEtc->cfFormat == CF_BITMAP && medium.tymed == TYMED_GDI) {
-			if (medium.hBitmap != nullptr) {
+			if (medium.hBitmap) {
 				HBITMAP hBmp = (HBITMAP) SendMessage (m_hTargetWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM) medium.hBitmap);
-				if (hBmp != nullptr)
+				if (hBmp)
 					DeleteObject (hBmp);
 				return false; //don't free the bitmap
 			}
@@ -3672,13 +3671,13 @@ namespace DuiLib {
 			DeleteDC (hdcMem);
 			ReleaseDC (m_hTargetWnd, hDC);
 			hBmp = (HBITMAP) SendMessage (m_hTargetWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hBmp);
-			if (hBmp != nullptr)
+			if (hBmp)
 				DeleteObject (hBmp);
 			return true;
 		}
 		if (pFmtEtc->cfFormat == CF_HDROP && medium.tymed == TYMED_HGLOBAL) {
 			HDROP hDrop = (HDROP) GlobalLock (medium.hGlobal);
-			if (hDrop != nullptr) {
+			if (hDrop) {
 				TCHAR szFileName[MAX_PATH];
 				UINT cFiles = DragQueryFile (hDrop, 0xFFFFFFFF, nullptr, 0);
 				if (cFiles > 0) {
@@ -3686,7 +3685,7 @@ namespace DuiLib {
 					HBITMAP hBitmap = (HBITMAP) LoadImage (nullptr, szFileName, IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
 					if (hBitmap) {
 						HBITMAP hBmp = (HBITMAP) SendMessage (m_hTargetWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hBitmap);
-						if (hBmp != nullptr)
+						if (hBmp)
 							DeleteObject (hBmp);
 					}
 				}

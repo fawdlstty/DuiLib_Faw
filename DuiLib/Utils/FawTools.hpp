@@ -124,6 +124,7 @@ namespace DuiLib {
 				return formatted.get ();
 			} catch (...) {
 			}
+			return "";
 		}
 		static std::wstring format_strW (std::wstring_view str, ...) {
 			if (str.empty ())
@@ -148,6 +149,31 @@ namespace DuiLib {
 				return formatted.get ();
 			} catch (...) {
 			}
+			return L"";
+		}
+		static string_t format_str (string_view_t str, ...) {
+			if (str.empty ())
+				return _T ("");
+			try {
+				va_list ap;
+				//À´Ô´£ºhttp://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
+				ptrdiff_t final_n, n = (str.length ()) * 2;
+				std::unique_ptr<TCHAR[]> formatted;
+				while (true) {
+					formatted.reset (new TCHAR[n]);
+					//strcpy_s (&formatted [0], fmt_str.size (), fmt_str);
+					va_start (ap, str);
+					final_n = _vsntprintf_s (formatted.get (), n, _TRUNCATE, str.data (), ap);
+					va_end (ap);
+					if (final_n < 0 || final_n >= n)
+						n += abs (final_n - n + 1);
+					else
+						break;
+				}
+				return formatted.get ();
+			} catch (...) {
+			}
+			return _T ("");
 		}
 
 		//
@@ -280,13 +306,5 @@ namespace DuiLib {
 		//}
 	};
 }
-
-#ifndef format_str
-#	ifdef UNICODE
-#		define format_str format_strW;
-#	else
-#		define format_str format_strA;
-#	endif
-#endif
 
 #endif //__FAW_TOOLS_HPP__

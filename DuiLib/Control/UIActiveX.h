@@ -16,7 +16,7 @@ namespace DuiLib {
 	class CSafeRelease {
 	public:
 		CSafeRelease (T* p): m_p (p) {};
-		virtual ~CSafeRelease () { if (m_p != nullptr) m_p->Release (); }
+		virtual ~CSafeRelease () { if (m_p) m_p->Release (); }
 		T* Detach () { T* t = m_p; m_p = nullptr; return t; }
 		T* m_p;
 	};

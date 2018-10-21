@@ -32,13 +32,13 @@ namespace DuiLib {
 		static DWORD AdjustColor (DWORD dwColor, short H, short S, short L);
 		static HBITMAP CreateARGB32Bitmap (HDC hDC, int cx, int cy, BYTE** pBits);
 		static void AdjustImage (bool bUseHSL, TImageInfo* imageInfo, short H, short S, short L);
-		static TImageInfo* LoadImage (std::variant<UINT, string_t> bitmap, string_view_t type = _T (""), DWORD mask = 0, HINSTANCE instance = nullptr);
+		static TImageInfo* LoadImage (std::variant<UINT, string_t> bitmap, string_view_t type = _T (""), DWORD mask = 0, HINSTANCE instance = NULL);
 #ifdef USE_XIMAGE_EFFECT
 		static CxImage *LoadGifImageX (std::variant<UINT, string_t> bitmap, string_view_t type = _T (""), DWORD mask = 0);
 #endif
 		static void FreeImage (TImageInfo* bitmap, bool bDelete = true);
-		static TImageInfo* LoadImage (string_view_t pStrImage, string_view_t type = _T (""), DWORD mask = 0, HINSTANCE instance = nullptr);
-		static TImageInfo* LoadImage (UINT nID, string_view_t type = _T (""), DWORD mask = 0, HINSTANCE instance = nullptr);
+		static TImageInfo* LoadImage (string_view_t pStrImage, string_view_t type = _T (""), DWORD mask = 0, HINSTANCE instance = NULL);
+		static TImageInfo* LoadImage (UINT nID, string_view_t type = _T (""), DWORD mask = 0, HINSTANCE instance = NULL);
 
 		static Gdiplus::Image	*GdiplusLoadImage (string_view_t pstrPath);
 		static Gdiplus::Image* GdiplusLoadImage (LPVOID pBuf, size_t dwSize);
@@ -54,7 +54,7 @@ namespace DuiLib {
 			const RECT& rcBmpPart, const RECT& rcCorners, bool bAlpha, BYTE uFade = 255,
 			bool hole = false, bool xtiled = false, bool ytiled = false);
 
-		static bool DrawImageInfo (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, const TDrawInfo* pDrawInfo, HINSTANCE instance = nullptr);
+		static bool DrawImageInfo (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, const TDrawInfo* pDrawInfo, HINSTANCE instance = NULL);
 		static bool DrawImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, string_view_t pStrImage, string_view_t pStrModify = _T (""), HINSTANCE instance = NULL);
 
 		static void DrawColor (HDC hDC, const RECT& rc, DWORD color);

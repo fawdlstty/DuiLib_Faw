@@ -29,7 +29,7 @@ namespace DuiLib {
 	};
 
 
-	CEditWnd::CEditWnd (): m_pOwner (nullptr), m_hBkBrush (nullptr), m_bInit (false), m_bDrawCaret (false) {}
+	CEditWnd::CEditWnd (): m_pOwner (nullptr), m_hBkBrush (NULL), m_bInit (false), m_bDrawCaret (false) {}
 
 	void CEditWnd::Init (CEditUI* pOwner) {
 		m_pOwner = pOwner;
@@ -128,7 +128,7 @@ namespace DuiLib {
 	void CEditWnd::OnFinalMessage (HWND hWnd) {
 		m_pOwner->Invalidate ();
 		// Clear reference and die
-		if (m_hBkBrush != nullptr) ::DeleteObject (m_hBkBrush);
+		if (m_hBkBrush) ::DeleteObject (m_hBkBrush);
 		if (m_pOwner->GetManager ()->IsLayered ()) {
 			m_pOwner->GetManager ()->RemoveNativeWindow (hWnd);
 		}
@@ -169,13 +169,13 @@ namespace DuiLib {
 			::SetTextColor ((HDC) wParam, RGB (GetBValue (dwTextColor), GetGValue (dwTextColor), GetRValue (dwTextColor)));
 			DWORD clrColor = m_pOwner->GetNativeEditBkColor ();
 			if (clrColor < 0xFF000000) {
-				if (m_hBkBrush != nullptr) ::DeleteObject (m_hBkBrush);
+				if (m_hBkBrush) ::DeleteObject (m_hBkBrush);
 				RECT rcWnd = m_pOwner->GetManager ()->GetNativeWindowRect (m_hWnd);
 				HBITMAP hBmpEditBk = CRenderEngine::GenerateBitmap (m_pOwner->GetManager (), rcWnd, m_pOwner, clrColor);
 				m_hBkBrush = ::CreatePatternBrush (hBmpEditBk);
 				::DeleteObject (hBmpEditBk);
 			} else {
-				if (m_hBkBrush == nullptr) {
+				if (!m_hBkBrush) {
 					m_hBkBrush = ::CreateSolidBrush (RGB (GetBValue (clrColor), GetGValue (clrColor), GetRValue (clrColor)));
 				}
 			}
@@ -225,14 +225,12 @@ namespace DuiLib {
 
 	LRESULT CEditWnd::OnEditChanged (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/) {
 		if (!m_bInit) return 0;
-		if (m_pOwner == nullptr) return 0;
+		if (!m_pOwner) return 0;
 		// Copy text back
 		int cchLen = ::GetWindowTextLength (m_hWnd) + 1;
-		LPTSTR pstr = static_cast<LPTSTR>(_alloca (cchLen * sizeof (TCHAR)));
-		ASSERT (pstr);
-		if (pstr == nullptr) return 0;
-		::GetWindowText (m_hWnd, pstr, cchLen);
-		m_pOwner->m_sText = pstr;
+		string_t str (cchLen, _T ('\0'));
+		::GetWindowText (m_hWnd, &str[0], cchLen);
+		m_pOwner->m_sText = str.c_str ();
 		m_pOwner->GetManager ()->SendNotify (m_pOwner, DUI_MSGTYPE_TEXTCHANGED);
 		if (m_pOwner->GetManager ()->IsLayered ()) m_pOwner->Invalidate ();
 		return 0;
@@ -266,7 +264,7 @@ namespace DuiLib {
 
 	void CEditUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CLabelUI::DoEvent (event);
 			return;
 		}
@@ -276,10 +274,10 @@ namespace DuiLib {
 			return;
 		}
 		if (event.Type == UIEVENT_WINDOWSIZE) {
-			if (m_pWindow != nullptr) m_pManager->SetFocusNeeded (this);
+			if (m_pWindow) m_pManager->SetFocusNeeded (this);
 		}
 		if (event.Type == UIEVENT_SCROLLWHEEL) {
-			if (m_pWindow != nullptr) return;
+			if (m_pWindow) return;
 		}
 		if (event.Type == UIEVENT_SETFOCUS && IsEnabled ()) {
 			if (m_pWindow) return;
@@ -294,7 +292,7 @@ namespace DuiLib {
 		if (event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN) {
 			if (IsEnabled ()) {
 				GetManager ()->ReleaseCapture ();
-				if (IsFocused () && m_pWindow == nullptr) {
+				if (IsFocused () && !m_pWindow) {
 					m_pWindow = new CEditWnd ();
 					ASSERT (m_pWindow);
 					m_pWindow->Init (this);
@@ -304,7 +302,7 @@ namespace DuiLib {
 						if (nSize == 0) nSize = 1;
 						Edit_SetSel (m_pWindow->GetHWND (), 0, nSize);
 					}
-				} else if (m_pWindow != nullptr) {
+				} else if (m_pWindow) {
 					if (!m_bAutoSelAll) {
 						POINT pt = event.ptMouse;
 						pt.x -= m_rcItem.left + m_rcTextPadding.left;
@@ -368,13 +366,13 @@ namespace DuiLib {
 
 	void CEditUI::SetText (string_view_t pstrText) {
 		m_sText = pstrText;
-		if (m_pWindow != nullptr) Edit_SetText (m_pWindow->GetHWND (), m_sText.c_str ());
+		if (m_pWindow) Edit_SetText (m_pWindow->GetHWND (), m_sText.c_str ());
 		Invalidate ();
 	}
 
 	void CEditUI::SetMaxChar (UINT uMax) {
 		m_uMaxChar = uMax;
-		if (m_pWindow != nullptr) Edit_LimitText (m_pWindow->GetHWND (), m_uMaxChar);
+		if (m_pWindow) Edit_LimitText (m_pWindow->GetHWND (), m_uMaxChar);
 	}
 
 	UINT CEditUI::GetMaxChar () {
@@ -385,7 +383,7 @@ namespace DuiLib {
 		if (m_bReadOnly == bReadOnly) return;
 
 		m_bReadOnly = bReadOnly;
-		if (m_pWindow != nullptr) Edit_SetReadOnly (m_pWindow->GetHWND (), m_bReadOnly);
+		if (m_pWindow) Edit_SetReadOnly (m_pWindow->GetHWND (), m_bReadOnly);
 		Invalidate ();
 	}
 
@@ -413,7 +411,7 @@ namespace DuiLib {
 		if (m_bPasswordMode == bPasswordMode) return;
 		m_bPasswordMode = bPasswordMode;
 		Invalidate ();
-		if (m_pWindow != nullptr) {
+		if (m_pWindow) {
 			LONG styleValue = ::GetWindowLong (m_pWindow->GetHWND (), GWL_STYLE);
 			bPasswordMode ? styleValue |= ES_PASSWORD : styleValue &= ~ES_PASSWORD;
 			::SetWindowLong (m_pWindow->GetHWND (), GWL_STYLE, styleValue);
@@ -427,7 +425,7 @@ namespace DuiLib {
 	void CEditUI::SetPasswordChar (TCHAR cPasswordChar) {
 		if (m_cPasswordChar == cPasswordChar) return;
 		m_cPasswordChar = cPasswordChar;
-		if (m_pWindow != nullptr) Edit_SetPasswordChar (m_pWindow->GetHWND (), m_cPasswordChar);
+		if (m_pWindow) Edit_SetPasswordChar (m_pWindow->GetHWND (), m_cPasswordChar);
 		Invalidate ();
 	}
 
@@ -496,7 +494,7 @@ namespace DuiLib {
 	}
 
 	void CEditUI::SetSel (long nStartChar, long nEndChar) {
-		if (m_pWindow != nullptr) Edit_SetSel (m_pWindow->GetHWND (), nStartChar, nEndChar);
+		if (m_pWindow) Edit_SetSel (m_pWindow->GetHWND (), nStartChar, nEndChar);
 	}
 
 	void CEditUI::SetSelAll () {
@@ -504,7 +502,7 @@ namespace DuiLib {
 	}
 
 	void CEditUI::SetReplaceSel (string_view_t lpszReplace) {
-		if (m_pWindow != nullptr) Edit_ReplaceSel (m_pWindow->GetHWND (), lpszReplace.data ());
+		if (m_pWindow) Edit_ReplaceSel (m_pWindow->GetHWND (), lpszReplace.data ());
 	}
 
 	void CEditUI::SetTipValue (string_view_t pStrTipValue) {
@@ -527,29 +525,29 @@ namespace DuiLib {
 
 	void CEditUI::SetPos (RECT rc, bool bNeedInvalidate) {
 		CControlUI::SetPos (rc, bNeedInvalidate);
-		if (m_pWindow != nullptr) {
+		if (m_pWindow) {
 			RECT rcPos = m_pWindow->CalPos ();
-			::SetWindowPos (m_pWindow->GetHWND (), nullptr, rcPos.left, rcPos.top, rcPos.right - rcPos.left,
+			::SetWindowPos (m_pWindow->GetHWND (), NULL, rcPos.left, rcPos.top, rcPos.right - rcPos.left,
 				rcPos.bottom - rcPos.top, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 
 	void CEditUI::Move (SIZE szOffset, bool bNeedInvalidate) {
 		CControlUI::Move (szOffset, bNeedInvalidate);
-		if (m_pWindow != nullptr) {
+		if (m_pWindow) {
 			RECT rcPos = m_pWindow->CalPos ();
-			::SetWindowPos (m_pWindow->GetHWND (), nullptr, rcPos.left, rcPos.top, rcPos.right - rcPos.left,
+			::SetWindowPos (m_pWindow->GetHWND (), NULL, rcPos.left, rcPos.top, rcPos.right - rcPos.left,
 				rcPos.bottom - rcPos.top, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 
 	void CEditUI::SetVisible (bool bVisible) {
 		CControlUI::SetVisible (bVisible);
-		if (!IsVisible () && m_pWindow != nullptr) m_pManager->SetFocus (nullptr);
+		if (!IsVisible () && m_pWindow) m_pManager->SetFocus (nullptr);
 	}
 
 	void CEditUI::SetInternVisible (bool bVisible) {
-		if (!IsVisible () && m_pWindow != nullptr) m_pManager->SetFocus (nullptr);
+		if (!IsVisible () && m_pWindow) m_pManager->SetFocus (nullptr);
 	}
 
 	SIZE CEditUI::EstimateSize (SIZE szAvailable) {
@@ -634,11 +632,9 @@ namespace DuiLib {
 		rc.top += m_rcTextPadding.top;
 		rc.bottom -= m_rcTextPadding.bottom;
 		if (IsEnabled ()) {
-			CRenderEngine::DrawText (hDC, m_pManager, rc, sDrawText, mCurTextColor, \
-				m_iFont, DT_SINGLELINE | m_uTextStyle);
+			CRenderEngine::DrawText (hDC, m_pManager, rc, sDrawText, mCurTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
 		} else {
-			CRenderEngine::DrawText (hDC, m_pManager, rc, sDrawText, m_dwDisabledTextColor, \
-				m_iFont, DT_SINGLELINE | m_uTextStyle);
+			CRenderEngine::DrawText (hDC, m_pManager, rc, sDrawText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
 		}
 	}
 }

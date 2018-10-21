@@ -322,7 +322,7 @@ namespace DuiLib {
 		TFontInfo* GetFontInfo(HFONT hFont);
 
 		const TImageInfo* GetImage(string_view_t bitmap);
-		const TImageInfo* GetImageEx(string_view_t bitmap, string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, HINSTANCE instance = nullptr);
+		const TImageInfo* GetImageEx(string_view_t bitmap, string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, HINSTANCE instance = NULL);
 		const TImageInfo* AddImage(string_view_t bitmap, string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, bool bShared = false, HINSTANCE instance = NULL);
 		const TImageInfo* AddImage(string_view_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false);
 		void RemoveImage(string_view_t bitmap, bool bShared = false);

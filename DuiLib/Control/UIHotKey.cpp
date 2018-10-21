@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "UIHotKey.h"
 namespace DuiLib {
-	CHotKeyWnd::CHotKeyWnd (void): m_pOwner (nullptr), m_hBkBrush (nullptr), m_bInit (false) {}
+	CHotKeyWnd::CHotKeyWnd (void): m_pOwner (nullptr), m_hBkBrush (NULL), m_bInit (false) {}
 	void CHotKeyWnd::Init (CHotKeyUI * pOwner) {
 		m_pOwner = pOwner;
 		do {
@@ -10,7 +10,7 @@ namespace DuiLib {
 			}
 			RECT rcPos = CalPos ();
 			UINT uStyle = WS_CHILD | ES_AUTOHSCROLL;
-			HWND hWnd = Create (m_pOwner->GetManager ()->GetPaintWindow (), nullptr, uStyle, 0, rcPos);
+			HWND hWnd = Create (m_pOwner->GetManager ()->GetPaintWindow (), _T (""), uStyle, 0, rcPos);
 			if (!IsWindow (hWnd)) {
 				break;
 			}
@@ -48,7 +48,7 @@ namespace DuiLib {
 
 	void CHotKeyWnd::OnFinalMessage (HWND /*hWnd*/) {
 		// Clear reference and die
-		if (m_hBkBrush != nullptr) ::DeleteObject (m_hBkBrush);
+		if (m_hBkBrush) ::DeleteObject (m_hBkBrush);
 		m_pOwner->m_pWindow = nullptr;
 		delete this;
 	}
@@ -109,7 +109,7 @@ namespace DuiLib {
 
 	LRESULT CHotKeyWnd::OnEditChanged (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
 		if (!m_bInit) return 0;
-		if (m_pOwner == nullptr) return 0;
+		if (!m_pOwner) return 0;
 		GetHotKey (m_pOwner->m_wVirtualKeyCode, m_pOwner->m_wModifiers);
 		if (m_pOwner->m_wVirtualKeyCode == 0) {
 			m_pOwner->m_sText = _T ("нч");
@@ -230,20 +230,20 @@ namespace DuiLib {
 
 	void CHotKeyUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pParent != nullptr) m_pParent->DoEvent (event);
+			if (m_pParent) m_pParent->DoEvent (event);
 			else CLabelUI::DoEvent (event);
 			return;
 		}
 
 		if (event.Type == UIEVENT_SETCURSOR && IsEnabled ()) {
-			::SetCursor (::LoadCursor (nullptr, IDC_IBEAM));
+			::SetCursor (::LoadCursor (NULL, IDC_IBEAM));
 			return;
 		}
 		if (event.Type == UIEVENT_WINDOWSIZE) {
-			if (m_pWindow != nullptr) m_pManager->SetFocusNeeded (this);
+			if (m_pWindow) m_pManager->SetFocusNeeded (this);
 		}
 		if (event.Type == UIEVENT_SCROLLWHEEL) {
-			if (m_pWindow != nullptr) return;
+			if (m_pWindow) return;
 		}
 		if (event.Type == UIEVENT_SETFOCUS && IsEnabled ()) {
 			if (m_pWindow) return;
@@ -258,7 +258,7 @@ namespace DuiLib {
 		if (event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN) {
 			if (IsEnabled ()) {
 				GetManager ()->ReleaseCapture ();
-				if (IsFocused () && m_pWindow == nullptr) {
+				if (IsFocused () && !m_pWindow) {
 					m_pWindow = new CHotKeyWnd ();
 					ASSERT (m_pWindow);
 					m_pWindow->Init (this);
@@ -301,7 +301,7 @@ namespace DuiLib {
 
 	void CHotKeyUI::SetText (string_view_t pstrText) {
 		m_sText = pstrText;
-		if (m_pWindow != nullptr) Edit_SetText (m_pWindow->GetHWND (), m_sText.data ());
+		if (m_pWindow) Edit_SetText (m_pWindow->GetHWND (), m_sText.data ());
 		Invalidate ();
 	}
 
@@ -351,20 +351,20 @@ namespace DuiLib {
 
 	void CHotKeyUI::SetPos (RECT rc) {
 		CControlUI::SetPos (rc);
-		if (m_pWindow != nullptr) {
+		if (m_pWindow) {
 			RECT rcPos = m_pWindow->CalPos ();
-			::SetWindowPos (m_pWindow->GetHWND (), nullptr, rcPos.left, rcPos.top, rcPos.right - rcPos.left,
+			::SetWindowPos (m_pWindow->GetHWND (), NULL, rcPos.left, rcPos.top, rcPos.right - rcPos.left,
 				rcPos.bottom - rcPos.top, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 
 	void CHotKeyUI::SetVisible (bool bVisible) {
 		CControlUI::SetVisible (bVisible);
-		if (!IsVisible () && m_pWindow != nullptr) m_pManager->SetFocus (nullptr);
+		if (!IsVisible () && m_pWindow) m_pManager->SetFocus (nullptr);
 	}
 
 	void CHotKeyUI::SetInternVisible (bool bVisible) {
-		if (!IsVisible () && m_pWindow != nullptr) m_pManager->SetFocus (nullptr);
+		if (!IsVisible () && m_pWindow) m_pManager->SetFocus (nullptr);
 	}
 
 	SIZE CHotKeyUI::EstimateSize (SIZE szAvailable) {

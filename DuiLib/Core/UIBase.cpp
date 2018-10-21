@@ -114,7 +114,7 @@ namespace DuiLib {
 	}
 
 	bool CNotifyPump::AddVirtualWnd (string_view_t strName, CNotifyPump* pObject) {
-		if (m_VirtualWndMap.Find (strName) == nullptr) {
+		if (!m_VirtualWndMap.Find (strName)) {
 			m_VirtualWndMap.Insert (strName, (LPVOID) pObject);
 			return true;
 		}
@@ -122,7 +122,7 @@ namespace DuiLib {
 	}
 
 	bool CNotifyPump::RemoveVirtualWnd (string_view_t strName) {
-		if (m_VirtualWndMap.Find (strName) != nullptr) {
+		if (m_VirtualWndMap.Find (strName)) {
 			m_VirtualWndMap.Remove (strName);
 			return true;
 		}
@@ -134,9 +134,9 @@ namespace DuiLib {
 		const DUI_MSGMAP* pMessageMap = nullptr;
 
 #ifndef UILIB_STATIC
-		for (pMessageMap = GetMessageMap (); pMessageMap != nullptr; pMessageMap = (*pMessageMap->pfnGetBaseMap)())
+		for (pMessageMap = GetMessageMap (); pMessageMap; pMessageMap = (*pMessageMap->pfnGetBaseMap)())
 #else
-		for (pMessageMap = GetMessageMap (); pMessageMap != nullptr; pMessageMap = pMessageMap->pBaseMap)
+		for (pMessageMap = GetMessageMap (); pMessageMap; pMessageMap = pMessageMap->pBaseMap)
 #endif
 		{
 #ifndef UILIB_STATIC
@@ -144,7 +144,7 @@ namespace DuiLib {
 #else
 			ASSERT (pMessageMap != pMessageMap->pBaseMap);
 #endif
-			if ((lpEntry = DuiFindMessageEntry (pMessageMap->lpEntries, msg)) != nullptr) {
+			if ((lpEntry = DuiFindMessageEntry (pMessageMap->lpEntries, msg))) {
 				goto LDispatch;
 			}
 		}
@@ -207,15 +207,15 @@ namespace DuiLib {
 		if (!GetSuperClassName ().empty () && !RegisterSuperclass ()) return nullptr;
 		if (GetSuperClassName ().empty () && !RegisterWindowClass ()) return nullptr;
 		m_hWnd = ::CreateWindowEx (dwExStyle, GetWindowClassName ().data (), pstrName.data (), dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance (), this);
-		ASSERT (m_hWnd != nullptr);
+		ASSERT (m_hWnd);
 		return m_hWnd;
 	}
 
 	HWND CWindowWnd::Subclass (HWND hWnd) {
 		ASSERT (::IsWindow (hWnd));
-		ASSERT (m_hWnd == nullptr);
+		ASSERT (!m_hWnd);
 		m_OldWndProc = SubclassWindow (hWnd, __WndProc);
-		if (m_OldWndProc == nullptr) return nullptr;
+		if (!m_OldWndProc) return nullptr;
 		m_bSubclassed = true;
 		m_hWnd = hWnd;
 		::SetWindowLongPtr (hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(this));
@@ -278,7 +278,7 @@ namespace DuiLib {
 		HWND hWnd = GetHWND ();
 		HWND hWndParent = ::GetParent (m_hWnd);
 		HWND hWndCenter = ::GetWindowOwner (m_hWnd);
-		if (hWndCenter != nullptr)
+		if (hWndCenter)
 			hWnd = hWndCenter;
 
 		// 处理多显示器模式下屏幕居中
@@ -287,7 +287,7 @@ namespace DuiLib {
 		::GetMonitorInfo (::MonitorFromWindow (hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
 		rcArea = oMonitor.rcWork;
 
-		if (hWndCenter == nullptr)
+		if (!hWndCenter)
 			rcCenter = rcArea;
 		else
 			::GetWindowRect (hWndCenter, &rcCenter);
@@ -367,7 +367,7 @@ namespace DuiLib {
 			::SetWindowLongPtr (hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(pThis));
 		} else {
 			pThis = reinterpret_cast<CWindowWnd*>(::GetWindowLongPtr (hWnd, GWLP_USERDATA));
-			if (uMsg == WM_NCDESTROY && pThis != nullptr) {
+			if (uMsg == WM_NCDESTROY && pThis) {
 				LRESULT lRes = ::CallWindowProc (pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
 				::SetWindowLongPtr (pThis->m_hWnd, GWLP_USERDATA, 0L);
 				if (pThis->m_bSubclassed) pThis->Unsubclass ();
@@ -376,7 +376,7 @@ namespace DuiLib {
 				return lRes;
 			}
 		}
-		if (pThis != nullptr) {
+		if (pThis) {
 			return pThis->HandleMessage (uMsg, wParam, lParam);
 		} else {
 			return ::DefWindowProc (hWnd, uMsg, wParam, lParam);
@@ -392,7 +392,7 @@ namespace DuiLib {
 			pThis->m_hWnd = hWnd;
 		} else {
 			pThis = reinterpret_cast<CWindowWnd*>(::GetProp (hWnd, _T ("WndX")));
-			if (uMsg == WM_NCDESTROY && pThis != nullptr) {
+			if (uMsg == WM_NCDESTROY && pThis) {
 				LRESULT lRes = ::CallWindowProc (pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
 				if (pThis->m_bSubclassed) pThis->Unsubclass ();
 				::SetProp (hWnd, _T ("WndX"), nullptr);
@@ -401,7 +401,7 @@ namespace DuiLib {
 				return lRes;
 			}
 		}
-		if (pThis != nullptr) {
+		if (pThis) {
 			return pThis->HandleMessage (uMsg, wParam, lParam);
 		} else {
 			return ::DefWindowProc (hWnd, uMsg, wParam, lParam);
@@ -424,7 +424,7 @@ namespace DuiLib {
 		if (!::GetClientRect (m_hWnd, &rc)) return;
 		if (cx != -1) rc.right = cx;
 		if (cy != -1) rc.bottom = cy;
-		if (!::AdjustWindowRectEx (&rc, GetWindowStyle (m_hWnd), (!(GetWindowStyle (m_hWnd) & WS_CHILD) && (::GetMenu (m_hWnd) != nullptr)), GetWindowExStyle (m_hWnd))) return;
+		if (!::AdjustWindowRectEx (&rc, GetWindowStyle (m_hWnd), (!(GetWindowStyle (m_hWnd) & WS_CHILD) && (::GetMenu (m_hWnd))), GetWindowExStyle (m_hWnd))) return;
 		::SetWindowPos (m_hWnd, nullptr, 0, 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
 	}
 

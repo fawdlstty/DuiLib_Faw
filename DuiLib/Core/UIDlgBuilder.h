@@ -14,10 +14,8 @@ namespace DuiLib {
 	class UILIB_API CDialogBuilder {
 	public:
 		CDialogBuilder ();
-		CControlUI* Create (std::variant<UINT, string_t> xml, string_view_t type = _T (""), IDialogBuilderCallback* pCallback = nullptr,
-			CPaintManagerUI* pManager = nullptr, CControlUI* pParent = nullptr);
-		CControlUI* Create (IDialogBuilderCallback* pCallback = nullptr, CPaintManagerUI* pManager = nullptr,
-			CControlUI* pParent = nullptr);
+		CControlUI* Create (std::variant<UINT, string_t> xml, string_view_t type = _T (""), IDialogBuilderCallback* pCallback = nullptr, CPaintManagerUI* pManager = nullptr, CControlUI* pParent = nullptr);
+		CControlUI* Create (IDialogBuilderCallback* pCallback = nullptr, CPaintManagerUI* pManager = nullptr, CControlUI* pParent = nullptr);
 
 		CMarkup* GetMarkup ();
 

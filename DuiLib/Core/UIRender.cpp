@@ -122,14 +122,14 @@ namespace DuiLib {
 	static BOOL WINAPI AlphaBitBlt (HDC hDC, int nDestX, int nDestY, int dwWidth, int dwHeight, HDC hSrcDC, \
 		int nSrcX, int nSrcY, int wSrc, int hSrc, BLENDFUNCTION ftn) {
 		HDC hTempDC = ::CreateCompatibleDC (hDC);
-		if (nullptr == hTempDC)
+		if (!hTempDC)
 			return FALSE;
 
 		//Creates Source DIB
 		LPBITMAPINFO lpbiSrc = nullptr;
 		// Fill in the BITMAPINFOHEADER
 		lpbiSrc = (LPBITMAPINFO) new BYTE[sizeof (BITMAPINFOHEADER)];
-		if (lpbiSrc == nullptr) {
+		if (!lpbiSrc) {
 			::DeleteDC (hTempDC);
 			return FALSE;
 		}
@@ -148,7 +148,7 @@ namespace DuiLib {
 		COLORREF* pSrcBits = nullptr;
 		HBITMAP hSrcDib = CreateDIBSection (hSrcDC, lpbiSrc, DIB_RGB_COLORS, (void **) &pSrcBits, nullptr, 0);
 
-		if ((nullptr == hSrcDib) || (nullptr == pSrcBits)) {
+		if (!hSrcDib || !pSrcBits) {
 			delete[] lpbiSrc;
 			::DeleteDC (hTempDC);
 			return FALSE;
@@ -162,7 +162,7 @@ namespace DuiLib {
 		LPBITMAPINFO lpbiDest = nullptr;
 		// Fill in the BITMAPINFOHEADER
 		lpbiDest = (LPBITMAPINFO) new BYTE[sizeof (BITMAPINFOHEADER)];
-		if (lpbiDest == nullptr) {
+		if (!lpbiDest) {
 			delete[] lpbiSrc;
 			::DeleteObject (hSrcDib);
 			::DeleteDC (hTempDC);
@@ -186,7 +186,7 @@ namespace DuiLib {
 			hDC, lpbiDest, DIB_RGB_COLORS, (void **) &pDestBits,
 			nullptr, 0);
 
-		if ((nullptr == hDestDib) || (nullptr == pDestBits)) {
+		if (!hDestDib || !pDestBits) {
 			delete[] lpbiSrc;
 			::DeleteObject (hSrcDib);
 			::DeleteDC (hTempDC);
@@ -302,7 +302,7 @@ namespace DuiLib {
 						std::string_view pwd = FawTools::get_gb18030 (sFilePwd);
 						hz = OpenZip (sFile.c_str (), pwd.data ());
 					}
-					if (hz == nullptr) break;
+					if (!hz) break;
 					ZIPENTRY ze;
 					int i = 0;
 					CDuiString key = std::get<1> (bitmap);
@@ -328,9 +328,9 @@ namespace DuiLib {
 					dllinstance = CPaintManagerUI::GetResourceDll ();
 				}
 				HRSRC hResource = ::FindResource (dllinstance, MAKEINTRESOURCE (std::get<0> (bitmap)), type.data ());
-				if (hResource == nullptr) break;
+				if (!hResource) break;
 				HGLOBAL hGlobal = ::LoadResource (dllinstance, hResource);
-				if (hGlobal == nullptr) {
+				if (!hGlobal) {
 					FreeResource (hResource);
 					break;
 				}
@@ -429,11 +429,11 @@ namespace DuiLib {
 	}
 #ifdef USE_XIMAGE_EFFECT
 	static DWORD LoadImage2Memory (const std::variant<UINT, string_t> &bitmap, string_view_t type, LPBYTE &pData) {
-		assert (pData == nullptr);
+		assert (!pData);
 		pData = nullptr;
 		DWORD dwSize (0U);
 		do {
-			if (type == nullptr) {
+			if (!type) {
 				CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 				if (CPaintManagerUI::GetResourceZip ().empty ()) {
 					sFile += bitmap.m_lpstr;
@@ -470,7 +470,7 @@ namespace DuiLib {
 						hz = OpenZip ((void*) sFile, sFilePwd);
 #endif
 					}
-					if (hz == nullptr) break;
+					if (!hz) break;
 					ZIPENTRY ze;
 					int i = 0;
 					CDuiString key = bitmap.m_lpstr;
@@ -494,9 +494,9 @@ namespace DuiLib {
 			} else {
 				HINSTANCE hDll = CPaintManagerUI::GetResourceDll ();
 				HRSRC hResource = ::FindResource (hDll, bitmap.m_lpstr, type);
-				if (hResource == nullptr) break;
+				if (!hResource) break;
 				HGLOBAL hGlobal = ::LoadResource (hDll, hResource);
-				if (hGlobal == nullptr) {
+				if (!hGlobal) {
 					FreeResource (hResource);
 					break;
 				}
@@ -584,7 +584,7 @@ namespace DuiLib {
 					std::string pwd = FawTools::get_gb18030 (sFilePwd);
 					hz = OpenZip (sFile.c_str (), pwd.c_str ());
 				}
-				if (hz == nullptr) break;
+				if (!hz) break;
 				ZIPENTRY ze;
 				int i = 0;
 				CDuiString key = pstrPath;
@@ -625,7 +625,7 @@ namespace DuiLib {
 		}
 
 		Gdiplus::Image* pImage = nullptr;
-		if (pData != nullptr) {
+		if (pData) {
 			pImage = GdiplusLoadImage (pData, dwSize);
 			delete[] pData;
 			pData = nullptr;
@@ -649,7 +649,7 @@ namespace DuiLib {
 	}
 
 	void CRenderEngine::FreeImage (TImageInfo* bitmap, bool bDelete) {
-		if (bitmap == nullptr) return;
+		if (!bitmap) return;
 		if (bitmap->hBitmap) {
 			::DeleteObject (bitmap->hBitmap);
 		}
@@ -670,7 +670,7 @@ namespace DuiLib {
 
 
 	bool CRenderEngine::DrawIconImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rc, const RECT& rcPaint, string_view_t pStrImage, string_view_t pStrModify) {
-		if (pManager == nullptr || hDC == NULL)
+		if (!pManager || !hDC)
 			return false;
 
 		// 1¡¢aaa.jpg
@@ -801,7 +801,7 @@ namespace DuiLib {
 	void CRenderEngine::DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, string_view_t pstrText, DWORD dwTextColor, \
 		int iFont, UINT uStyle, DWORD dwTextBKColor) {
 		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
-		if (pstrText.empty () || pManager == nullptr) return;
+		if (pstrText.empty () || !pManager) return;
 		DrawColor (hDC, rc, dwTextBKColor);
 		DrawText (hDC, pManager, rc, pstrText, dwTextColor, iFont, uStyle);
 	}
@@ -814,8 +814,8 @@ namespace DuiLib {
 		typedef BOOL (WINAPI *LPALPHABLEND)(HDC, int, int, int, int, HDC, int, int, int, int, BLENDFUNCTION);
 		static LPALPHABLEND lpAlphaBlend = (LPALPHABLEND) ::GetProcAddress (::GetModuleHandle (_T ("msimg32.dll")), "AlphaBlend");
 
-		if (lpAlphaBlend == nullptr) lpAlphaBlend = AlphaBitBlt;
-		if (hBitmap == nullptr) return;
+		if (!lpAlphaBlend) lpAlphaBlend = AlphaBitBlt;
+		if (!hBitmap) return;
 
 		HDC hCloneDC = ::CreateCompatibleDC (hDC);
 		HBITMAP hOldBitmap = (HBITMAP) ::SelectObject (hCloneDC, hBitmap);
@@ -1244,7 +1244,7 @@ namespace DuiLib {
 	}
 
 	bool CRenderEngine::DrawImageInfo (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, const TDrawInfo* pDrawInfo, HINSTANCE instance) {
-		if (pManager == nullptr || hDC == nullptr || pDrawInfo == nullptr) return false;
+		if (!pManager || !hDC || !pDrawInfo) return false;
 		RECT rcDest = rcItem;
 		if (pDrawInfo->rcDest.left != 0 || pDrawInfo->rcDest.top != 0 ||
 			pDrawInfo->rcDest.right != 0 || pDrawInfo->rcDest.bottom != 0) {
@@ -1271,7 +1271,7 @@ namespace DuiLib {
 	}
 
 	bool CRenderEngine::DrawImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, string_view_t pStrImage, string_view_t pStrModify, HINSTANCE instance) {
-		if ((pManager == nullptr) || (hDC == nullptr)) return false;
+		if (!pManager || !hDC) return false;
 		const TDrawInfo* pDrawInfo = pManager->GetDrawInfo (pStrImage, pStrModify);
 		return DrawImageInfo (hDC, pManager, rcItem, rcPaint, pDrawInfo, instance);
 	}
@@ -1287,7 +1287,7 @@ namespace DuiLib {
 	void CRenderEngine::DrawGradient (HDC hDC, const RECT& rc, DWORD dwFirst, DWORD dwSecond, bool bVertical, int nSteps) {
 		typedef BOOL (WINAPI *LPALPHABLEND)(HDC, int, int, int, int, HDC, int, int, int, int, BLENDFUNCTION);
 		static LPALPHABLEND lpAlphaBlend = (LPALPHABLEND) ::GetProcAddress (::GetModuleHandle (_T ("msimg32.dll")), "AlphaBlend");
-		if (lpAlphaBlend == nullptr) lpAlphaBlend = AlphaBitBlt;
+		if (!lpAlphaBlend) lpAlphaBlend = AlphaBitBlt;
 		typedef BOOL (WINAPI *PGradientFill)(HDC, PTRIVERTEX, ULONG, PVOID, ULONG, ULONG);
 		static PGradientFill lpGradientFill = (PGradientFill) ::GetProcAddress (::GetModuleHandle (_T ("msimg32.dll")), "GradientFill");
 
@@ -1309,7 +1309,7 @@ namespace DuiLib {
 			ASSERT (hPaintBitmap);
 			hOldPaintBitmap = (HBITMAP) ::SelectObject (hPaintDC, hPaintBitmap);
 		}
-		if (lpGradientFill != nullptr) {
+		if (lpGradientFill) {
 			TRIVERTEX triv[2] =
 			{
 				{ rcPaint.left, rcPaint.top,
@@ -1408,7 +1408,7 @@ namespace DuiLib {
 
 	void CRenderEngine::DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, string_view_t pstrText, DWORD dwTextColor, int iFont, UINT uStyle) {
 		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
-		if (pstrText.empty () || pManager == nullptr) return;
+		if (pstrText.empty () || !pManager) return;
 
 		if (pManager->IsLayered () || pManager->IsUseGdiplusText ()) {
 			HFONT hOldFont = (HFONT)::SelectObject (hDC, pManager->GetFont (iFont));
@@ -1520,7 +1520,7 @@ namespace DuiLib {
 		//   Y Indent:         <y i>                where i = ver indent in pixels 
 
 		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
-		if (pstrText == nullptr || pManager == nullptr) return;
+		if (pstrText.empty () || !pManager) return;
 		if (::IsRectEmpty (&rc)) return;
 
 		bool bDraw = (uStyle & DT_CALCRECT) == 0;
@@ -1536,7 +1536,7 @@ namespace DuiLib {
 		if (bDraw) ::ExtSelectClipRgn (hDC, hRgn, RGN_AND);
 
 		TFontInfo* pDefFontInfo = pManager->GetFontInfo (iFont);
-		if (pDefFontInfo == nullptr) {
+		if (!pDefFontInfo) {
 			pDefFontInfo = pManager->GetDefaultFontInfo ();
 		}
 		TEXTMETRIC* pTm = &pDefFontInfo->tm;
@@ -1660,9 +1660,9 @@ namespace DuiLib {
 						CDuiString *pStr = (CDuiString*) (sLinks + iLinkIndex);
 						if (sHoverLink == *pStr) clrColor = pManager->GetDefaultLinkHoverFontColor ();
 					}
-					//else if( prcLinks == nullptr ) {
-					//    if( ::PtInRect(&rc, ptMouse) )
-					//        clrColor = pManager->GetDefaultLinkHoverFontColor();
+					//else if (!prcLinks) {
+					//    if (::PtInRect (&rc, ptMouse))
+					//        clrColor = pManager->GetDefaultLinkHoverFontColor ();
 					//}
 					aColorArray.Add ((LPVOID) clrColor);
 					::SetTextColor (hDC, RGB (GetBValue (clrColor), GetGValue (clrColor), GetRValue (clrColor)));
@@ -1670,7 +1670,7 @@ namespace DuiLib {
 					if (aFontArray.GetSize () > 0) pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
 					if (pFontInfo->bUnderline == false) {
 						HFONT hFont = pManager->GetFont (pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
-						if (hFont == nullptr) hFont = pManager->AddFont (g_iFontID, pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
+						if (!hFont) hFont = pManager->AddFont (g_iFontID, pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
 						pFontInfo = pManager->GetFontInfo (hFont);
 						aFontArray.Add (pFontInfo);
 						pTm = &pFontInfo->tm;
@@ -1688,7 +1688,7 @@ namespace DuiLib {
 					if (aFontArray.GetSize () > 0) pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
 					if (pFontInfo->bBold == false) {
 						HFONT hFont = pManager->GetFont (pFontInfo->sFontName, pFontInfo->iSize, true, pFontInfo->bUnderline, pFontInfo->bItalic);
-						if (hFont == nullptr) hFont = pManager->AddFont (g_iFontID, pFontInfo->sFontName, pFontInfo->iSize, true, pFontInfo->bUnderline, pFontInfo->bItalic);
+						if (!hFont) hFont = pManager->AddFont (g_iFontID, pFontInfo->sFontName, pFontInfo->iSize, true, pFontInfo->bUnderline, pFontInfo->bItalic);
 						pFontInfo = pManager->GetFontInfo (hFont);
 						aFontArray.Add (pFontInfo);
 						pTm = &pFontInfo->tm;
@@ -1744,7 +1744,7 @@ namespace DuiLib {
 						if (sFontAttr.find (_T ("underline")) != string_t::npos) bUnderline = true;
 						if (sFontAttr.find (_T ("italic")) != string_t::npos) bItalic = true;
 						HFONT hFont = pManager->GetFont (sFontName, iFontSize, bBold, bUnderline, bItalic);
-						if (hFont == nullptr) hFont = pManager->AddFont (g_iFontID, sFontName, iFontSize, bBold, bUnderline, bItalic);
+						if (!hFont) hFont = pManager->AddFont (g_iFontID, sFontName, iFontSize, bBold, bUnderline, bItalic);
 						TFontInfo* pFontInfo = pManager->GetFontInfo (hFont);
 						aFontArray.Add (pFontInfo);
 						pTm = &pFontInfo->tm;
@@ -1775,7 +1775,7 @@ namespace DuiLib {
 						if (aFontArray.GetSize () > 0) pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
 						if (pFontInfo->bItalic == false) {
 							HFONT hFont = pManager->GetFont (pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, pFontInfo->bUnderline, true);
-							if (hFont == nullptr) hFont = pManager->AddFont (g_iFontID, pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, pFontInfo->bUnderline, true);
+							if (!hFont) hFont = pManager->AddFont (g_iFontID, pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, pFontInfo->bUnderline, true);
 							pFontInfo = pManager->GetFontInfo (hFont);
 							aFontArray.Add (pFontInfo);
 							pTm = &pFontInfo->tm;
@@ -1788,7 +1788,7 @@ namespace DuiLib {
 						int iImageListIndex = (int) FawTools::parse_dec (pstrText);
 						if (iImageListIndex < 0 || iImageListIndex >= iImageListNum) iImageListIndex = 0;
 
-						if (_tcsstr (sImageString.c_str (), _T ("file=\'")) != nullptr || _tcsstr (sImageString.c_str (), _T ("res=\'")) != nullptr) {
+						if (_tcsstr (sImageString.c_str (), _T ("file=\'")) || _tcsstr (sImageString.c_str (), _T ("res=\'"))) {
 							CDuiString sImageResType;
 							CDuiString sImageName;
 							string_view_t pStrImage = sImageString;
@@ -1903,7 +1903,7 @@ namespace DuiLib {
 					if (aFontArray.GetSize () > 0) pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
 					if (pFontInfo->bUnderline == false) {
 						HFONT hFont = pManager->GetFont (pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
-						if (hFont == nullptr) hFont = pManager->AddFont (g_iFontID, pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
+						if (!hFont) hFont = pManager->AddFont (g_iFontID, pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
 						pFontInfo = pManager->GetFontInfo (hFont);
 						aFontArray.Add (pFontInfo);
 						pTm = &pFontInfo->tm;
@@ -1980,7 +1980,7 @@ namespace DuiLib {
 					pstrText = pstrText.substr (1);
 					aFontArray.Remove (aFontArray.GetSize () - 1);
 					TFontInfo* pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
-					if (pFontInfo == nullptr) pFontInfo = pDefFontInfo;
+					if (!pFontInfo) pFontInfo = pDefFontInfo;
 					if (pTm->tmItalic && pFontInfo->bItalic == false) {
 						ABC abc;
 						::GetCharABCWidths (hDC, _T (' '), _T (' '), &abc);
@@ -2119,7 +2119,7 @@ namespace DuiLib {
 					if (aColorArray.GetSize () > 0) clrColor = (int) aColorArray.GetAt (aColorArray.GetSize () - 1);
 					::SetTextColor (hDC, RGB (GetBValue (clrColor), GetGValue (clrColor), GetRValue (clrColor)));
 					TFontInfo* pFontInfo = (TFontInfo*) aFontArray.GetAt (aFontArray.GetSize () - 1);
-					if (pFontInfo == nullptr) pFontInfo = pDefFontInfo;
+					if (!pFontInfo) pFontInfo = pDefFontInfo;
 					pTm = &pFontInfo->tm;
 					::SelectObject (hDC, pFontInfo->hFont);
 					if (bInSelected) ::SetBkMode (hDC, OPAQUE);
@@ -2155,16 +2155,16 @@ namespace DuiLib {
 	}
 
 	HBITMAP CRenderEngine::GenerateBitmap (CPaintManagerUI* pManager, RECT rc, CControlUI* pStopControl, DWORD dwFilterColor) {
-		if (pManager == nullptr) return nullptr;
+		if (!pManager) return NULL;
 		int cx = rc.right - rc.left;
 		int cy = rc.bottom - rc.top;
 
 		bool bUseOffscreenBitmap = true;
 		HDC hPaintDC = ::CreateCompatibleDC (pManager->GetPaintDC ());
 		ASSERT (hPaintDC);
-		HBITMAP hPaintBitmap = nullptr;
-		//if (pStopControl == nullptr && !pManager->IsLayered()) hPaintBitmap = pManager->Get();
-		if (hPaintBitmap == nullptr) {
+		HBITMAP hPaintBitmap = NULL;
+		//if (!pStopControl && !pManager->IsLayered()) hPaintBitmap = pManager->Get ();
+		if (!hPaintBitmap) {
 			bUseOffscreenBitmap = false;
 			hPaintBitmap = ::CreateCompatibleBitmap (pManager->GetPaintDC (), rc.right, rc.bottom);
 			ASSERT (hPaintBitmap);
@@ -2188,7 +2188,7 @@ namespace DuiLib {
 		HBITMAP hBitmap = ::CreateDIBSection (pManager->GetPaintDC (), &bmi, DIB_RGB_COLORS, (LPVOID*) &pDest, nullptr, 0);
 		ASSERT (hCloneDC);
 		ASSERT (hBitmap);
-		if (hBitmap != nullptr) {
+		if (hBitmap) {
 			HBITMAP hOldBitmap = (HBITMAP) ::SelectObject (hCloneDC, hBitmap);
 			::BitBlt (hCloneDC, 0, 0, cx, cy, hPaintDC, rc.left, rc.top, SRCCOPY);
 			RECT rcClone = { 0, 0, cx, cy };
@@ -2207,7 +2207,7 @@ namespace DuiLib {
 	}
 
 	HBITMAP CRenderEngine::GenerateBitmap (CPaintManagerUI* pManager, CControlUI* pControl, RECT rc, DWORD dwFilterColor) {
-		if (pManager == nullptr || pControl == nullptr) return nullptr;
+		if (!pManager || !pControl) return NULL;
 		int cx = rc.right - rc.left;
 		int cy = rc.bottom - rc.top;
 
@@ -2231,7 +2231,7 @@ namespace DuiLib {
 		HBITMAP hBitmap = ::CreateDIBSection (pManager->GetPaintDC (), &bmi, DIB_RGB_COLORS, (LPVOID*) &pDest, nullptr, 0);
 		ASSERT (hCloneDC);
 		ASSERT (hBitmap);
-		if (hBitmap != nullptr) {
+		if (hBitmap) {
 			HBITMAP hOldBitmap = (HBITMAP) ::SelectObject (hCloneDC, hBitmap);
 			::BitBlt (hCloneDC, 0, 0, cx, cy, hPaintDC, rc.left, rc.top, SRCCOPY);
 			RECT rcClone = { 0, 0, cx, cy };
@@ -2252,7 +2252,7 @@ namespace DuiLib {
 	SIZE CRenderEngine::GetTextSize (HDC hDC, CPaintManagerUI* pManager, string_view_t pstrText, int iFont, UINT uStyle) {
 		SIZE size = { 0, 0 };
 		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
-		if (pstrText == nullptr || pManager == nullptr) return size;
+		if (pstrText.empty () || !pManager) return size;
 		::SetBkMode (hDC, TRANSPARENT);
 		HFONT hOldFont = (HFONT)::SelectObject (hDC, pManager->GetFont (iFont));
 		GetTextExtentPoint32 (hDC, pstrText.data (), (int) pstrText.length (), &size);
@@ -2272,7 +2272,7 @@ namespace DuiLib {
 	HBITMAP CRenderEngine::CreateARGB32Bitmap (HDC hDC, int cx, int cy, BYTE** pBits) {
 		LPBITMAPINFO lpbiSrc = nullptr;
 		lpbiSrc = (LPBITMAPINFO) new BYTE[sizeof (BITMAPINFOHEADER)];
-		if (lpbiSrc == nullptr) return nullptr;
+		if (!lpbiSrc) return nullptr;
 
 		lpbiSrc->bmiHeader.biSize = sizeof (BITMAPINFOHEADER);
 		lpbiSrc->bmiHeader.biWidth = cx;
@@ -2292,8 +2292,7 @@ namespace DuiLib {
 	}
 
 	void CRenderEngine::AdjustImage (bool bUseHSL, TImageInfo* imageInfo, short H, short S, short L) {
-		if (imageInfo == nullptr || imageInfo->bUseHSL == false || imageInfo->hBitmap == nullptr ||
-			imageInfo->pBits == nullptr || imageInfo->pSrcBits == nullptr)
+		if (!imageInfo || !imageInfo->bUseHSL || !imageInfo->hBitmap || !imageInfo->pBits || !imageInfo->pSrcBits)
 			return;
 		if (bUseHSL == false || (H == 180 && S == 100 && L == 100)) {
 			::CopyMemory (imageInfo->pBits, imageInfo->pSrcBits, imageInfo->nX * imageInfo->nY * 4);

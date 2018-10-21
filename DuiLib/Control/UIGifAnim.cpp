@@ -63,7 +63,7 @@ namespace DuiLib {
 
 	bool CGifAnimUI::DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl) {
 		if (!::IntersectRect (&m_rcPaint, &rcPaint, &m_rcItem)) return true;
-		if (nullptr == m_pGifImage) {
+		if (!m_pGifImage) {
 			InitGifImage ();
 		}
 		DrawFrame (hDC);
@@ -126,7 +126,7 @@ namespace DuiLib {
 	}
 
 	void CGifAnimUI::PlayGif () {
-		if (m_bIsPlaying || m_pGifImage == nullptr || m_nFrameCount <= 1) {
+		if (m_bIsPlaying || !m_pGifImage || m_nFrameCount <= 1) {
 			return;
 		}
 
@@ -138,7 +138,7 @@ namespace DuiLib {
 	}
 
 	void CGifAnimUI::PauseGif () {
-		if (!m_bIsPlaying || m_pGifImage == nullptr) {
+		if (!m_bIsPlaying || !m_pGifImage) {
 			return;
 		}
 
@@ -160,7 +160,7 @@ namespace DuiLib {
 
 	void CGifAnimUI::InitGifImage () {
 		m_pGifImage = CRenderEngine::GdiplusLoadImage (GetBkImage ());
-		if (nullptr == m_pGifImage) return;
+		if (!m_pGifImage) return;
 		UINT nCount = 0;
 		nCount = m_pGifImage->GetFrameDimensionsCount ();
 		GUID* pDimensionIDs = new GUID[nCount];
@@ -184,16 +184,16 @@ namespace DuiLib {
 	}
 
 	void CGifAnimUI::DeleteGif () {
-		if (m_pStream != nullptr) {
+		if (m_pStream) {
 			m_pStream->Release ();
 			m_pStream = nullptr;
 		}
-		if (m_pGifImage != nullptr) {
+		if (m_pGifImage) {
 			delete m_pGifImage;
 			m_pGifImage = nullptr;
 		}
 
-		if (m_pPropertyItem != nullptr) {
+		if (m_pPropertyItem) {
 			free (m_pPropertyItem);
 			m_pPropertyItem = nullptr;
 		}
@@ -215,7 +215,7 @@ namespace DuiLib {
 	}
 
 	void CGifAnimUI::DrawFrame (HDC hDC) {
-		if (nullptr == hDC || nullptr == m_pGifImage) return;
+		if (!hDC || !m_pGifImage) return;
 		GUID pageGuid = Gdiplus::FrameDimensionTime;
 		Gdiplus::Graphics graphics (hDC);
 		graphics.DrawImage (m_pGifImage, m_rcItem.left, m_rcItem.top, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top);
@@ -230,8 +230,7 @@ namespace DuiLib {
 			CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 			if (CPaintManagerUI::GetResourceZip ().empty ()) {
 				sFile += pstrGifPath;
-				HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
-					FILE_ATTRIBUTE_NORMAL, NULL);
+				HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 				if (hFile == INVALID_HANDLE_VALUE) break;
 				dwSize = ::GetFileSize (hFile, NULL);
 				if (dwSize == 0) break;

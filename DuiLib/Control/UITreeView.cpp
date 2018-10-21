@@ -81,7 +81,7 @@ namespace DuiLib {
 	//************************************
 	void CTreeNodeUI::DoEvent (TEventUI& event) {
 		if (!IsMouseEnabled () && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-			if (m_pOwner != nullptr) m_pOwner->DoEvent (event);
+			if (m_pOwner) m_pOwner->DoEvent (event);
 			else CContainerUI::DoEvent (event);
 			return;
 		}
@@ -154,7 +154,7 @@ namespace DuiLib {
 						return;
 				}
 
-				if (m_pManager != nullptr) m_pManager->Invalidate (invalidateRc);
+				if (m_pManager) m_pManager->Invalidate (invalidateRc);
 			} else {
 				CContainerUI::Invalidate ();
 			}

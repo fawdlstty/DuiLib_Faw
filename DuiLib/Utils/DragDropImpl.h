@@ -211,7 +211,7 @@ namespace DuiLib {
 				pDragSourceHelper = nullptr;
 		}
 		virtual ~CDragSourceHelper () {
-			if (pDragSourceHelper != nullptr) {
+			if (pDragSourceHelper) {
 				pDragSourceHelper->Release ();
 				pDragSourceHelper = nullptr;
 			}
@@ -224,7 +224,7 @@ namespace DuiLib {
 			IDataObject* pDataObject,
 			COLORREF crColorKey = GetSysColor (COLOR_WINDOW)// color of the window used for transparent effect.
 		) {
-			if (pDragSourceHelper == nullptr)
+			if (!pDragSourceHelper)
 				return E_FAIL;
 
 			SHDRAGIMAGE di;
@@ -239,7 +239,7 @@ namespace DuiLib {
 			return pDragSourceHelper->InitializeFromBitmap (&di, pDataObject);
 		}
 		HRESULT InitializeFromWindow (HWND hwnd, POINT& pt, IDataObject* pDataObject) {
-			if (pDragSourceHelper == nullptr)
+			if (!pDragSourceHelper)
 				return E_FAIL;
 			return pDragSourceHelper->InitializeFromWindow (hwnd, &pt, pDataObject);
 		}
