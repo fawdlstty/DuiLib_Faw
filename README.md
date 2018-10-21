@@ -81,13 +81,14 @@ CEditUI *ctrl = dynamic_cast<CEditUI*> (parent->find_control (_T ("ctrl_name")))
 ```
 替换为：
 ```C++
-// InitWindow之前的任意位置
+// 任意位置
 BindEditUI ctrl { _T ("ctrl_name") };
 ```
 需注意：
 1. 绑定对象的创建位置不限，既可以在程序运行时绑定，也可以在InitWindow执行完后再绑定
 2. 绑定对象在窗口及PaintManager创建前是无法使用的，只有在两者创建完成后才能使用
 3. PaintManager对象不要设置名称，如果必须设置的场合，需要在Bind/BindCtrls.hpp代码中同步修改
+4. BindXxxxxUI对象的使用方式与CXxxxxUI相同，BindXxxxxUI不能new，使用时直接使用->访问CXxxxxUI里的属性或方法
 
 ### 第三步：自定义控件绑定
 
@@ -99,7 +100,7 @@ DEF_BINDCTRL (UserCtrl);
 ```
 大功告成，此时可以用以下代码实现自定义控件绑定
 ```C++
-BindUserCtrl ctrl { _T ("ctrl_name") };
+BindUserCtrlUI ctrl { _T ("ctrl_name") };
 ```
 
 ## 已更新内容
