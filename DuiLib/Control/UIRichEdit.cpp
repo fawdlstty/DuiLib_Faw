@@ -50,16 +50,10 @@ namespace DuiLib {
 		BOOL Init (CRichEditUI *re, const CREATESTRUCT *pcs);
 		virtual ~CTxtWinHost ();
 
-		ITextServices* GetTextServices (void) {
-			return pserv;
-		}
+		ITextServices* GetTextServices (void) { return pserv; }
 		void SetClientRect (RECT *prc);
-		RECT* GetClientRect () {
-			return &rcClient;
-		}
-		BOOL IsWordWrap (void) {
-			return fWordWrap;
-		}
+		RECT* GetClientRect () { return &rcClient; }
+		BOOL IsWordWrap (void) { return fWordWrap; }
 		void SetWordWrap (BOOL fWordWrap);
 		BOOL IsReadOnly ();
 		void SetReadOnly (BOOL fReadOnly);
@@ -342,20 +336,9 @@ namespace DuiLib {
 
 		// Set window text
 		if (pcs && pcs->lpszName) {
-#ifdef _UNICODE		
-			if (FAILED (pserv->TxSetText ((TCHAR *) pcs->lpszName)))
+			std::wstring _text = FawTools::get_utf16 (pcs->lpszName);
+			if (FAILED (pserv->TxSetText (_text.c_str ())))
 				return FALSE;
-#else
-			size_t iLen = _tcslen (pcs->lpszName);
-			LPWSTR lpText = new WCHAR[iLen + 1];
-			::ZeroMemory (lpText, (iLen + 1) * sizeof (WCHAR));
-			::MultiByteToWideChar (CP_ACP, 0, pcs->lpszName, -1, (LPWSTR) lpText, (int) iLen);
-			if (FAILED (pserv->TxSetText ((LPWSTR) lpText))) {
-				delete[] lpText;
-				return FALSE;
-			}
-			delete[] lpText;
-#endif
 		}
 
 		return TRUE;
@@ -711,8 +694,7 @@ namespace DuiLib {
 			dwStyle &= ~ES_READONLY;
 		}
 
-		pserv->OnTxPropertyBitsChange (TXTBIT_READONLY,
-			fReadOnly ? TXTBIT_READONLY : 0);
+		pserv->OnTxPropertyBitsChange (TXTBIT_READONLY, fReadOnly ? TXTBIT_READONLY : 0);
 	}
 
 	void CTxtWinHost::SetFont (HFONT hFont) {
@@ -742,8 +724,7 @@ namespace DuiLib {
 
 	void CTxtWinHost::SetColor (DWORD dwColor) {
 		cf.crTextColor = RGB (GetBValue (dwColor), GetGValue (dwColor), GetRValue (dwColor));
-		pserv->OnTxPropertyBitsChange (TXTBIT_CHARFORMATCHANGE,
-			TXTBIT_CHARFORMATCHANGE);
+		pserv->OnTxPropertyBitsChange (TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
 	}
 
 	SIZEL* CTxtWinHost::GetExtent () {
@@ -809,8 +790,7 @@ namespace DuiLib {
 	void CTxtWinHost::SetRichTextFlag (BOOL fNew) {
 		fRich = fNew;
 
-		pserv->OnTxPropertyBitsChange (TXTBIT_RICHTEXT,
-			fNew ? TXTBIT_RICHTEXT : 0);
+		pserv->OnTxPropertyBitsChange (TXTBIT_RICHTEXT, fNew ? TXTBIT_RICHTEXT : 0);
 	}
 
 	LONG CTxtWinHost::GetDefaultLeftIndent () {
@@ -840,8 +820,7 @@ namespace DuiLib {
 		fSaveSelection = f_SaveSelection;
 
 		// notify text services of property change
-		pserv->OnTxPropertyBitsChange (TXTBIT_SAVESELECTION,
-			fSaveSelection ? TXTBIT_SAVESELECTION : 0);
+		pserv->OnTxPropertyBitsChange (TXTBIT_SAVESELECTION, fSaveSelection ? TXTBIT_SAVESELECTION : 0);
 
 		return fResult;
 	}
@@ -874,8 +853,7 @@ namespace DuiLib {
 		// Is this in our rectangle?
 		if (PtInRect (&rc, *pt)) {
 			RECT *prcClient = (!fInplaceActive || prc) ? &rc : nullptr;
-			pserv->OnTxSetCursor (DVASPECT_CONTENT, -1, nullptr, nullptr, m_re->GetManager ()->GetPaintDC (),
-				nullptr, prcClient, pt->x, pt->y);
+			pserv->OnTxSetCursor (DVASPECT_CONTENT, -1, nullptr, nullptr, m_re->GetManager ()->GetPaintDC (), NULL, prcClient, pt->x, pt->y);
 
 			return TRUE;
 		}
@@ -914,8 +892,7 @@ namespace DuiLib {
 		chPasswordChar = ch_PasswordChar;
 
 		// notify text services of property change
-		pserv->OnTxPropertyBitsChange (TXTBIT_USEPASSWORD,
-			(chPasswordChar != 0) ? TXTBIT_USEPASSWORD : 0);
+		pserv->OnTxPropertyBitsChange (TXTBIT_USEPASSWORD, (chPasswordChar != 0) ? TXTBIT_USEPASSWORD : 0);
 
 		return chOldPasswordChar;
 	}
@@ -928,8 +905,7 @@ namespace DuiLib {
 			cf.dwEffects &= ~CFE_DISABLED;
 		}
 
-		pserv->OnTxPropertyBitsChange (TXTBIT_CHARFORMATCHANGE,
-			TXTBIT_CHARFORMATCHANGE);
+		pserv->OnTxPropertyBitsChange (TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
 	}
 
 	LONG CTxtWinHost::SetSelBarWidth (LONG l_SelBarWidth) {
