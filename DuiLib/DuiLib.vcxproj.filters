@@ -36,9 +36,6 @@
     <Filter Include="Header Files\Bind">
       <UniqueIdentifier>{abd5beb9-c75f-4d64-9af5-0bfb91ebbf5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Bind">
-      <UniqueIdentifier>{93222cee-9c93-432e-b02c-a41b307028ee}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
@@ -205,9 +202,6 @@
     </ClCompile>
     <ClCompile Include="Utils\unzip.cpp">
       <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Bind\BindBase.cpp">
-      <Filter>Source Files\Bind</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

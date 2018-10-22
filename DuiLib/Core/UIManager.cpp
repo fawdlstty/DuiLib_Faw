@@ -694,10 +694,10 @@ namespace DuiLib {
 		{
 			// Tabbing between controls
 			if (wParam == VK_TAB) {
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass ().data (), _T ("RichEditUI"))) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("RichEditUI")) != string_t::npos) {
 					if (static_cast<CRichEditUI*>(m_pFocus)->IsWantTab ()) return false;
 				}
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && _tcsstr (m_pFocus->GetClass ().data (), _T ("WkeWebkitUI"))) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("WkeWebkitUI")) != string_t::npos) {
 					return false;
 				}
 				SetNextTabControl (::GetKeyState (VK_SHIFT) >= 0);

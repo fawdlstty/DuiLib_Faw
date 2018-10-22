@@ -960,7 +960,6 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bind\BindBase.cpp" />
     <ClCompile Include="Control\UIIPAddressEx.cpp" />
     <ClCompile Include="Control\UIRollText.cpp" />
     <ClCompile Include="Control\UIAnimation.cpp" />

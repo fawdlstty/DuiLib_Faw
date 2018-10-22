@@ -1788,7 +1788,7 @@ namespace DuiLib {
 						int iImageListIndex = (int) FawTools::parse_dec (pstrText);
 						if (iImageListIndex < 0 || iImageListIndex >= iImageListNum) iImageListIndex = 0;
 
-						if (_tcsstr (sImageString.c_str (), _T ("file=\'")) || _tcsstr (sImageString.c_str (), _T ("res=\'"))) {
+						if (sImageString.find (_T ("file=\'")) != string_t::npos || sImageString.find (_T ("res=\'")) != string_t::npos) {
 							CDuiString sImageResType;
 							CDuiString sImageName;
 							string_view_t pStrImage = sImageString;
