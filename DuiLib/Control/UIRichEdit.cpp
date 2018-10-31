@@ -2230,6 +2230,7 @@ namespace DuiLib {
 				case WM_LBUTTONDBLCLK:
 				case WM_RBUTTONDOWN:
 				case WM_RBUTTONUP:
+				case WM_MOUSEMOVE:
 				{
 					POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 					CControlUI* pHover = GetManager ()->FindControl (pt);

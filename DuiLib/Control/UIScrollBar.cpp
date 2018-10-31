@@ -306,21 +306,21 @@ namespace DuiLib {
 
 	void CScrollBarUI::SetPos (RECT rc, bool bNeedInvalidate) {
 		CControlUI::SetPos (rc, bNeedInvalidate);
-		SIZE _cxyFixed = CScrollBarUI::m_cxyFixed;
+		SIZE cxyFixed = m_cxyFixed;
 		if (m_pManager) {
-			GetManager ()->GetDPIObj ()->Scale (&_cxyFixed);
+			GetManager ()->GetDPIObj ()->Scale (&cxyFixed);
 		}
 		rc = m_rcItem;
 		if (m_bHorizontal) {
 			int cx = rc.right - rc.left;
-			if (m_bShowButton1) cx -= _cxyFixed.cy;
-			if (m_bShowButton2) cx -= _cxyFixed.cy;
-			if (cx > _cxyFixed.cy) {
+			if (m_bShowButton1) cx -= cxyFixed.cy;
+			if (m_bShowButton2) cx -= cxyFixed.cy;
+			if (cx > cxyFixed.cy) {
 				m_rcButton1.left = rc.left;
 				m_rcButton1.top = rc.top;
 				if (m_bShowButton1) {
-					m_rcButton1.right = rc.left + _cxyFixed.cy;
-					m_rcButton1.bottom = rc.top + _cxyFixed.cy;
+					m_rcButton1.right = rc.left + cxyFixed.cy;
+					m_rcButton1.bottom = rc.top + cxyFixed.cy;
 				} else {
 					m_rcButton1.right = m_rcButton1.left;
 					m_rcButton1.bottom = m_rcButton1.top;
@@ -329,18 +329,18 @@ namespace DuiLib {
 				m_rcButton2.top = rc.top;
 				m_rcButton2.right = rc.right;
 				if (m_bShowButton2) {
-					m_rcButton2.left = rc.right - _cxyFixed.cy;
-					m_rcButton2.bottom = rc.top + _cxyFixed.cy;
+					m_rcButton2.left = rc.right - cxyFixed.cy;
+					m_rcButton2.bottom = rc.top + cxyFixed.cy;
 				} else {
 					m_rcButton2.left = m_rcButton2.right;
 					m_rcButton2.bottom = m_rcButton2.top;
 				}
 
 				m_rcThumb.top = rc.top;
-				m_rcThumb.bottom = rc.top + _cxyFixed.cy;
+				m_rcThumb.bottom = rc.top + cxyFixed.cy;
 				if (m_nRange > 0) {
 					int cxThumb = cx * (rc.right - rc.left) / (m_nRange + rc.right - rc.left);
-					if (cxThumb < _cxyFixed.cy) cxThumb = _cxyFixed.cy;
+					if (cxThumb < cxyFixed.cy) cxThumb = cxyFixed.cy;
 
 					m_rcThumb.left = m_nScrollPos * (cx - cxThumb) / m_nRange + m_rcButton1.right;
 					m_rcThumb.right = m_rcThumb.left + cxThumb;
@@ -354,12 +354,12 @@ namespace DuiLib {
 				}
 			} else {
 				int cxButton = (rc.right - rc.left) / 2;
-				if (cxButton > _cxyFixed.cy) cxButton = _cxyFixed.cy;
+				if (cxButton > cxyFixed.cy) cxButton = cxyFixed.cy;
 				m_rcButton1.left = rc.left;
 				m_rcButton1.top = rc.top;
 				if (m_bShowButton1) {
 					m_rcButton1.right = rc.left + cxButton;
-					m_rcButton1.bottom = rc.top + _cxyFixed.cy;
+					m_rcButton1.bottom = rc.top + cxyFixed.cy;
 				} else {
 					m_rcButton1.right = m_rcButton1.left;
 					m_rcButton1.bottom = m_rcButton1.top;
@@ -369,7 +369,7 @@ namespace DuiLib {
 				m_rcButton2.right = rc.right;
 				if (m_bShowButton2) {
 					m_rcButton2.left = rc.right - cxButton;
-					m_rcButton2.bottom = rc.top + _cxyFixed.cy;
+					m_rcButton2.bottom = rc.top + cxyFixed.cy;
 				} else {
 					m_rcButton2.left = m_rcButton2.right;
 					m_rcButton2.bottom = m_rcButton2.top;
@@ -379,14 +379,14 @@ namespace DuiLib {
 			}
 		} else {
 			int cy = rc.bottom - rc.top;
-			if (m_bShowButton1) cy -= _cxyFixed.cx;
-			if (m_bShowButton2) cy -= _cxyFixed.cx;
-			if (cy > _cxyFixed.cx) {
+			if (m_bShowButton1) cy -= cxyFixed.cx;
+			if (m_bShowButton2) cy -= cxyFixed.cx;
+			if (cy > cxyFixed.cx) {
 				m_rcButton1.left = rc.left;
 				m_rcButton1.top = rc.top;
 				if (m_bShowButton1) {
-					m_rcButton1.right = rc.left + _cxyFixed.cx;
-					m_rcButton1.bottom = rc.top + _cxyFixed.cx;
+					m_rcButton1.right = rc.left + cxyFixed.cx;
+					m_rcButton1.bottom = rc.top + cxyFixed.cx;
 				} else {
 					m_rcButton1.right = m_rcButton1.left;
 					m_rcButton1.bottom = m_rcButton1.top;
@@ -395,18 +395,18 @@ namespace DuiLib {
 				m_rcButton2.left = rc.left;
 				m_rcButton2.bottom = rc.bottom;
 				if (m_bShowButton2) {
-					m_rcButton2.top = rc.bottom - _cxyFixed.cx;
-					m_rcButton2.right = rc.left + _cxyFixed.cx;
+					m_rcButton2.top = rc.bottom - cxyFixed.cx;
+					m_rcButton2.right = rc.left + cxyFixed.cx;
 				} else {
 					m_rcButton2.top = m_rcButton2.bottom;
 					m_rcButton2.right = m_rcButton2.left;
 				}
 
 				m_rcThumb.left = rc.left;
-				m_rcThumb.right = rc.left + _cxyFixed.cx;
+				m_rcThumb.right = rc.left + cxyFixed.cx;
 				if (m_nRange > 0) {
 					int cyThumb = cy * (rc.bottom - rc.top) / (m_nRange + rc.bottom - rc.top);
-					if (cyThumb < _cxyFixed.cx) cyThumb = _cxyFixed.cx;
+					if (cyThumb < cxyFixed.cx) cyThumb = cxyFixed.cx;
 
 					m_rcThumb.top = m_nScrollPos * (cy - cyThumb) / m_nRange + m_rcButton1.bottom;
 					m_rcThumb.bottom = m_rcThumb.top + cyThumb;
@@ -420,11 +420,11 @@ namespace DuiLib {
 				}
 			} else {
 				int cyButton = (rc.bottom - rc.top) / 2;
-				if (cyButton > _cxyFixed.cx) cyButton = _cxyFixed.cx;
+				if (cyButton > cxyFixed.cx) cyButton = cxyFixed.cx;
 				m_rcButton1.left = rc.left;
 				m_rcButton1.top = rc.top;
 				if (m_bShowButton1) {
-					m_rcButton1.right = rc.left + _cxyFixed.cx;
+					m_rcButton1.right = rc.left + cxyFixed.cx;
 					m_rcButton1.bottom = rc.top + cyButton;
 				} else {
 					m_rcButton1.right = m_rcButton1.left;
@@ -435,7 +435,7 @@ namespace DuiLib {
 				m_rcButton2.bottom = rc.bottom;
 				if (m_bShowButton2) {
 					m_rcButton2.top = rc.bottom - cyButton;
-					m_rcButton2.right = rc.left + _cxyFixed.cx;
+					m_rcButton2.right = rc.left + cxyFixed.cx;
 				} else {
 					m_rcButton2.top = m_rcButton2.bottom;
 					m_rcButton2.right = m_rcButton2.left;
