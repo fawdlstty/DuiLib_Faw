@@ -943,43 +943,6 @@ namespace DuiLib {
 		ASSERT (m_pOwner);
 	}
 
-	BOOL CListBodyUI::SortItems (PULVCompareFunc pfnCompare, UINT_PTR dwData) {
-		if (!pfnCompare)
-			return FALSE;
-		m_pCompareFunc = pfnCompare;
-		m_compareData = dwData;
-		CControlUI **pData = (CControlUI **) m_items.GetData ();
-		qsort_s (m_items.GetData (), m_items.GetSize (), sizeof (CControlUI*), CListBodyUI::ItemComareFunc, this);
-		IListItemUI *pItem = nullptr;
-		for (int i = 0; i < m_items.GetSize (); ++i) {
-			pItem = (IListItemUI*) (static_cast<CControlUI*>(m_items[i])->GetInterface (TEXT ("ListItem")));
-			if (pItem) {
-				pItem->SetIndex (i);
-				pItem->Select (false);
-			}
-		}
-		m_pOwner->SelectItem (-1);
-		if (m_pManager) {
-			SetPos (GetPos ());
-			Invalidate ();
-		}
-
-		return TRUE;
-	}
-
-	int __cdecl CListBodyUI::ItemComareFunc (void *pvlocale, const void *item1, const void *item2) {
-		CListBodyUI *pThis = (CListBodyUI*) pvlocale;
-		if (!pThis || !item1 || !item2)
-			return 0;
-		return pThis->ItemComareFunc (item1, item2);
-	}
-
-	int __cdecl CListBodyUI::ItemComareFunc (const void *item1, const void *item2) {
-		CControlUI *pControl1 = *(CControlUI**) item1;
-		CControlUI *pControl2 = *(CControlUI**) item2;
-		return m_pCompareFunc ((UINT_PTR) pControl1, (UINT_PTR) pControl2, m_compareData);
-	}
-
 	int CListBodyUI::GetScrollStepSize () const {
 		if (m_pOwner) return m_pOwner->GetScrollStepSize ();
 
@@ -1048,13 +1011,7 @@ namespace DuiLib {
 
 	void CListBodyUI::SetPos (RECT rc, bool bNeedInvalidate) {
 		CControlUI::SetPos (rc, bNeedInvalidate);
-		rc = m_rcItem;
-
-		// Adjust for inset
-		rc.left += m_rcInset.left;
-		rc.top += m_rcInset.top;
-		rc.right -= m_rcInset.right;
-		rc.bottom -= m_rcInset.bottom;
+		rc = { m_rcItem.left + m_rcInset.left, m_rcItem.top + m_rcInset.top, m_rcItem.right - m_rcInset.right, m_rcItem.bottom - m_rcInset.bottom };
 		if (m_pOwner->IsFixedScrollbar () && m_pVerticalScrollBar) rc.right -= m_pVerticalScrollBar->GetFixedWidth ();
 		else if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible ()) rc.right -= m_pVerticalScrollBar->GetFixedWidth ();
 		if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight ();
@@ -1070,8 +1027,7 @@ namespace DuiLib {
 		int nEstimateNum = 0;
 		for (int it1 = 0; it1 < m_items.GetSize (); it1++) {
 			CControlUI* pControl = static_cast<CControlUI*>(m_items[it1]);
-			if (!pControl->IsVisible ()) continue;
-			if (pControl->IsFloat ()) continue;
+			if (!pControl->IsVisible () || pControl->IsFloat ()) continue;
 			SIZE sz = pControl->EstimateSize (szAvailable);
 			if (sz.cy == 0) {
 				nAdjustables++;
@@ -1205,6 +1161,84 @@ namespace DuiLib {
 		}
 
 		CVerticalLayoutUI::DoEvent (event);
+	}
+
+	bool CListBodyUI::DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl) {
+		RECT rcTemp = { 0 };
+		if (!::IntersectRect (&rcTemp, &rcPaint, &m_rcItem)) return true;
+
+		CRenderClip clip;
+		CRenderClip::GenerateClip (hDC, rcTemp, clip);
+		CControlUI::DoPaint (hDC, rcPaint, pStopControl);
+
+		if (m_items.GetSize () > 0) {
+			RECT rcInset = GetInset ();
+			RECT rc { m_rcItem.left + rcInset.left, m_rcItem.top + rcInset.top, m_rcItem.right - rcInset.right, m_rcItem.bottom - rcInset.bottom };
+			if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible ()) rc.right -= m_pVerticalScrollBar->GetFixedWidth ();
+			if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight ();
+
+			if (::IntersectRect (&rcTemp, &rcPaint, &rc)) {
+				for (int it = 0; it < m_items.GetSize (); it++) {
+					CControlUI* pControl = static_cast<CControlUI*>(m_items[it]);
+					if (pControl == pStopControl) return false;
+					if (!pControl->IsVisible ()) continue;
+					if (!::IntersectRect (&rcTemp, &rc, &pControl->GetPos ())) continue;
+					if (!pControl->Paint (hDC, rcPaint, pStopControl)) return false;
+				}
+			}
+		}
+
+		if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible ()) {
+			if (m_pVerticalScrollBar == pStopControl) return false;
+			if (::IntersectRect (&rcTemp, &rcPaint, &m_pVerticalScrollBar->GetPos ())) {
+				if (!m_pVerticalScrollBar->Paint (hDC, rcPaint, pStopControl)) return false;
+			}
+		}
+
+		if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) {
+			if (m_pHorizontalScrollBar == pStopControl) return false;
+			if (::IntersectRect (&rcTemp, &rcPaint, &m_pHorizontalScrollBar->GetPos ())) {
+				if (!m_pHorizontalScrollBar->Paint (hDC, rcPaint, pStopControl)) return false;
+			}
+		}
+		return true;
+	}
+
+	BOOL CListBodyUI::SortItems (PULVCompareFunc pfnCompare, UINT_PTR dwData) {
+		if (!pfnCompare)
+			return FALSE;
+		m_pCompareFunc = pfnCompare;
+		m_compareData = dwData;
+		CControlUI **pData = (CControlUI **) m_items.GetData ();
+		qsort_s (m_items.GetData (), m_items.GetSize (), sizeof (CControlUI*), CListBodyUI::ItemComareFunc, this);
+		IListItemUI *pItem = nullptr;
+		for (int i = 0; i < m_items.GetSize (); ++i) {
+			pItem = (IListItemUI*) (static_cast<CControlUI*>(m_items[i])->GetInterface (TEXT ("ListItem")));
+			if (pItem) {
+				pItem->SetIndex (i);
+				pItem->Select (false);
+			}
+		}
+		m_pOwner->SelectItem (-1);
+		if (m_pManager) {
+			SetPos (GetPos ());
+			Invalidate ();
+		}
+
+		return TRUE;
+	}
+
+	int CListBodyUI::ItemComareFunc (void *pvlocale, const void *item1, const void *item2) {
+		CListBodyUI *pThis = (CListBodyUI*) pvlocale;
+		if (!pThis || !item1 || !item2)
+			return 0;
+		return pThis->ItemComareFunc (item1, item2);
+	}
+
+	int CListBodyUI::ItemComareFunc (const void *item1, const void *item2) {
+		CControlUI *pControl1 = *(CControlUI**) item1;
+		CControlUI *pControl2 = *(CControlUI**) item2;
+		return m_pCompareFunc ((UINT_PTR) pControl1, (UINT_PTR) pControl2, m_compareData);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
