@@ -732,7 +732,11 @@ namespace DuiLib {
 
 		if (m_items.GetSize () > 0) {
 			RECT rcInset = GetInset ();
-			RECT rc { m_rcItem.left + rcInset.left, m_rcItem.top + rcInset.top, m_rcItem.right - rcInset.right, m_rcItem.bottom - rcInset.bottom };
+			RECT rc = m_rcItem;
+			rc.left += rcInset.left;
+			rc.top += rcInset.top;
+			rc.right -= rcInset.right;
+			rc.bottom -= rcInset.bottom;
 			if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible ()) rc.right -= m_pVerticalScrollBar->GetFixedWidth ();
 			if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight ();
 
@@ -834,117 +838,152 @@ namespace DuiLib {
 	}
 
 	void CContainerUI::ProcessScrollBar (RECT rc, int cxRequired, int cyRequired) {
-		if (m_pHorizontalScrollBar) {
+		while (m_pHorizontalScrollBar) {
 			// Scroll needed
 			if (cxRequired > rc.right - rc.left && !m_pHorizontalScrollBar->IsVisible ()) {
 				m_pHorizontalScrollBar->SetVisible (true);
 				m_pHorizontalScrollBar->SetScrollRange (cxRequired - (rc.right - rc.left));
 				m_pHorizontalScrollBar->SetScrollPos (0);
 				SetPos (m_rcItem);
-			} else {
-				// No scrollbar required
-				if (m_pHorizontalScrollBar->IsVisible ()) {
-					// Scroll not needed anymore?
-					int cxScroll = cxRequired - (rc.right - rc.left);
-					if (cxScroll <= 0) {
-						m_pHorizontalScrollBar->SetVisible (false);
-						m_pHorizontalScrollBar->SetScrollPos (0);
-						m_pHorizontalScrollBar->SetScrollRange (0);
-						SetPos (m_rcItem);
-					} else {
-						RECT rcScrollBarPos = { rc.left, rc.bottom, rc.right, rc.bottom + m_pHorizontalScrollBar->GetFixedHeight () };
-						m_pHorizontalScrollBar->SetPos (rcScrollBarPos);
+				break;
+			}
 
-						if (m_pHorizontalScrollBar->GetScrollRange () != cxScroll) {
-							int iScrollPos = m_pHorizontalScrollBar->GetScrollPos ();
-							m_pHorizontalScrollBar->SetScrollRange (::abs (cxScroll)); // if scrollpos>range then scrollpos=range
-							if (iScrollPos > m_pHorizontalScrollBar->GetScrollPos ()) {
-								SetPos (m_rcItem);
-							}
-						}
+			// No scrollbar required
+			if (!m_pHorizontalScrollBar->IsVisible ()) break;
+
+			// Scroll not needed anymore?
+			int cxScroll = cxRequired - (rc.right - rc.left);
+			if (cxScroll <= 0) {
+				m_pHorizontalScrollBar->SetVisible (false);
+				m_pHorizontalScrollBar->SetScrollPos (0);
+				m_pHorizontalScrollBar->SetScrollRange (0);
+				SetPos (m_rcItem);
+			} else {
+				RECT rcScrollBarPos = { rc.left, rc.bottom, rc.right, rc.bottom + m_pHorizontalScrollBar->GetFixedHeight () };
+				m_pHorizontalScrollBar->SetPos (rcScrollBarPos);
+
+				if (m_pHorizontalScrollBar->GetScrollRange () != cxScroll) {
+					int iScrollPos = m_pHorizontalScrollBar->GetScrollPos ();
+					m_pHorizontalScrollBar->SetScrollRange (::abs (cxScroll)); // if scrollpos>range then scrollpos=range
+					if (iScrollPos > m_pHorizontalScrollBar->GetScrollPos ()) {
+						SetPos (m_rcItem);
 					}
 				}
 			}
-		} else if (m_pVerticalScrollBar) {
+			break;
+		}
+
+		while (m_pVerticalScrollBar) {
 			// Scroll needed
 			if (cyRequired > rc.bottom - rc.top && !m_pVerticalScrollBar->IsVisible ()) {
 				m_pVerticalScrollBar->SetVisible (true);
 				m_pVerticalScrollBar->SetScrollRange (cyRequired - (rc.bottom - rc.top));
 				m_pVerticalScrollBar->SetScrollPos (0);
 				SetPos (m_rcItem);
-			} else {
-				// No scrollbar required
-				if (m_pVerticalScrollBar->IsVisible ()) {
-					// Scroll not needed anymore?
-					int cyScroll = cyRequired - (rc.bottom - rc.top);
-					if (cyScroll <= 0) {
-						m_pVerticalScrollBar->SetVisible (false);
-						m_pVerticalScrollBar->SetScrollPos (0);
-						m_pVerticalScrollBar->SetScrollRange (0);
-						SetPos (m_rcItem);
-					} else {
-						RECT rcScrollBarPos = { rc.right, rc.top, rc.right + m_pVerticalScrollBar->GetFixedWidth (), rc.bottom };
-						m_pVerticalScrollBar->SetPos (rcScrollBarPos);
+				break;
+			}
 
-						if (m_pVerticalScrollBar->GetScrollRange () != cyScroll) {
-							int iScrollPos = m_pVerticalScrollBar->GetScrollPos ();
-							m_pVerticalScrollBar->SetScrollRange (::abs (cyScroll)); // if scrollpos>range then scrollpos=range
-							if (iScrollPos > m_pVerticalScrollBar->GetScrollPos ()) {
-								SetPos (m_rcItem);
-							}
-						}
-					}
+			// No scrollbar required
+			if (!m_pVerticalScrollBar->IsVisible ()) break;
+
+			// Scroll not needed anymore?
+			int cyScroll = cyRequired - (rc.bottom - rc.top);
+			if (cyScroll <= 0) {
+				m_pVerticalScrollBar->SetVisible (false);
+				m_pVerticalScrollBar->SetScrollPos (0);
+				m_pVerticalScrollBar->SetScrollRange (0);
+				SetPos (m_rcItem);
+				break;
+			}
+
+			RECT rcScrollBarPos = { rc.right, rc.top, rc.right + m_pVerticalScrollBar->GetFixedWidth (), rc.bottom };
+			m_pVerticalScrollBar->SetPos (rcScrollBarPos);
+
+			if (m_pVerticalScrollBar->GetScrollRange () != cyScroll) {
+				int iScrollPos = m_pVerticalScrollBar->GetScrollPos ();
+				m_pVerticalScrollBar->SetScrollRange (::abs (cyScroll)); // if scrollpos>range then scrollpos=range
+				if (iScrollPos > m_pVerticalScrollBar->GetScrollPos ()) {
+					SetPos (m_rcItem);
 				}
 			}
+			break;
 		}
 	}
 
 	bool CContainerUI::SetSubControlText (string_view_t pstrSubControlName, string_view_t pstrText) {
-		CControlUI* pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl)
+		CControlUI* pSubControl = nullptr;
+		pSubControl = this->FindSubControl (pstrSubControlName);
+		if (pSubControl) {
 			pSubControl->SetText (pstrText);
-		return !!pSubControl;
+			return TRUE;
+		} else
+			return FALSE;
 	}
 
 	bool CContainerUI::SetSubControlFixedHeight (string_view_t pstrSubControlName, int cy) {
-		CControlUI* pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl)
+		CControlUI* pSubControl = nullptr;
+		pSubControl = this->FindSubControl (pstrSubControlName);
+		if (pSubControl) {
 			pSubControl->SetFixedHeight (cy);
-		return !!pSubControl;
+			return TRUE;
+		} else
+			return FALSE;
 	}
 
 	bool CContainerUI::SetSubControlFixedWdith (string_view_t pstrSubControlName, int cx) {
-		CControlUI* pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl)
+		CControlUI* pSubControl = nullptr;
+		pSubControl = this->FindSubControl (pstrSubControlName);
+		if (pSubControl) {
 			pSubControl->SetFixedWidth (cx);
-		return !!pSubControl;
+			return TRUE;
+		} else
+			return FALSE;
 	}
 
 	bool CContainerUI::SetSubControlUserData (string_view_t pstrSubControlName, string_view_t pstrText) {
-		CControlUI* pSubControl = this->FindSubControl (pstrSubControlName);
-		if (pSubControl)
+		CControlUI* pSubControl = nullptr;
+		pSubControl = this->FindSubControl (pstrSubControlName);
+		if (pSubControl) {
 			pSubControl->SetUserData (pstrText);
-		return !!pSubControl;
+			return TRUE;
+		} else
+			return FALSE;
 	}
 
 	CDuiString CContainerUI::GetSubControlText (string_view_t pstrSubControlName) {
-		CControlUI* pSubControl = this->FindSubControl (pstrSubControlName);
-		return pSubControl ? pSubControl->GetText () : _T ("");
+		CControlUI* pSubControl = nullptr;
+		pSubControl = this->FindSubControl (pstrSubControlName);
+		if (!pSubControl)
+			return _T ("");
+		else
+			return pSubControl->GetText ();
 	}
 
 	int CContainerUI::GetSubControlFixedHeight (string_view_t pstrSubControlName) {
-		CControlUI* pSubControl = this->FindSubControl (pstrSubControlName);
-		return pSubControl ? pSubControl->GetFixedHeight () : -1;
+		CControlUI* pSubControl = nullptr;
+		pSubControl = this->FindSubControl (pstrSubControlName);
+		if (!pSubControl)
+			return -1;
+		else
+			return pSubControl->GetFixedHeight ();
 	}
 
 	int CContainerUI::GetSubControlFixedWdith (string_view_t pstrSubControlName) {
-		CControlUI* pSubControl = this->FindSubControl (pstrSubControlName);
-		return pSubControl ? pSubControl->GetFixedWidth () : -1;
+		CControlUI* pSubControl = nullptr;
+		pSubControl = this->FindSubControl (pstrSubControlName);
+		if (!pSubControl)
+			return -1;
+		else
+			return pSubControl->GetFixedWidth ();
 	}
 
 	const CDuiString CContainerUI::GetSubControlUserData (string_view_t pstrSubControlName) {
-		CControlUI* pSubControl = this->FindSubControl (pstrSubControlName);
-		return pSubControl ? pSubControl->GetUserData () : _T ("");
+		CControlUI* pSubControl = nullptr;
+		pSubControl = this->FindSubControl (pstrSubControlName);
+		if (!pSubControl)
+			return _T ("");
+		else
+			return pSubControl->GetUserData ();
 	}
 
 	CControlUI* CContainerUI::FindSubControl (string_view_t pstrSubControlName) {

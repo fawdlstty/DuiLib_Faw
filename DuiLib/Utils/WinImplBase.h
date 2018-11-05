@@ -23,7 +23,9 @@ namespace DuiLib {
 
 		DUI_DECLARE_MESSAGE_MAP ()
 		virtual void OnClick (TNotifyUI& msg);
+		virtual void OnHeaderClick (TNotifyUI& msg) {}
 		virtual void OnSelectChanged (TNotifyUI& msg) {}
+		virtual void OnTextChanged (TNotifyUI& msg) {}
 		virtual void OnItemSelect (TNotifyUI& msg) {}
 		virtual void OnTimer (TNotifyUI& msg) {}
 		virtual BOOL IsInStaticControl (CControlUI *pControl);

@@ -264,11 +264,10 @@ namespace DuiLib {
 		void SetScrollPos (SIZE szPos, bool bMsg = true);
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 		void DoEvent (TEventUI& event);
-		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl) override;
 		BOOL SortItems (PULVCompareFunc pfnCompare, UINT_PTR dwData);
 	protected:
-		static int ItemComareFunc (void *pvlocale, const void *item1, const void *item2);
-		int ItemComareFunc (const void *item1, const void *item2);
+		static int __cdecl ItemComareFunc (void *pvlocale, const void *item1, const void *item2);
+		int __cdecl ItemComareFunc (const void *item1, const void *item2);
 	protected:
 		CListUI* m_pOwner;
 		PULVCompareFunc m_pCompareFunc;

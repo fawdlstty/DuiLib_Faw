@@ -72,7 +72,7 @@ namespace DuiLib {
 		RECT GetClientPos () const;
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 		void Move (SIZE szOffset, bool bNeedInvalidate = true);
-		virtual bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
+		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 
 		void SetAttribute (string_view_t pstrName, string_view_t pstrValue);
 
