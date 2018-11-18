@@ -298,6 +298,16 @@ namespace DuiLib {
 		return 0;
 	}
 
+	LRESULT WindowImplBase::OnRButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
+		bHandled = FALSE;
+		return 0;
+	}
+
+	LRESULT WindowImplBase::OnRButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
+		bHandled = FALSE;
+		return 0;
+	}
+
 	LRESULT WindowImplBase::OnMouseMove (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
 		bHandled = FALSE;
 		return 0;
@@ -326,6 +336,8 @@ namespace DuiLib {
 		case WM_SETFOCUS:		lRes = OnSetFocus (uMsg, wParam, lParam, bHandled); break;
 		case WM_LBUTTONUP:		lRes = OnLButtonUp (uMsg, wParam, lParam, bHandled); break;
 		case WM_LBUTTONDOWN:	lRes = OnLButtonDown (uMsg, wParam, lParam, bHandled); break;
+		case WM_RBUTTONUP:		lRes = OnRButtonUp (uMsg, wParam, lParam, bHandled); break;
+		case WM_RBUTTONDOWN:	lRes = OnRButtonDown (uMsg, wParam, lParam, bHandled); break;
 		case WM_MOUSEMOVE:		lRes = OnMouseMove (uMsg, wParam, lParam, bHandled); break;
 		case WM_MOUSEHOVER:		lRes = OnMouseHover (uMsg, wParam, lParam, bHandled); break;
 		default:				bHandled = FALSE; break;

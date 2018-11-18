@@ -172,7 +172,7 @@ namespace DuiLib {
 
 		// 自定义(未处理的)属性
 		void AddCustomAttribute (string_view_t pstrName, string_view_t pstrAttr);
-		string_view_t GetCustomAttribute (string_view_t pstrName) const;
+		string_view_t GetCustomAttribute (string_view_t pstrName);
 		bool RemoveCustomAttribute (string_view_t pstrName);
 		void RemoveAllCustomAttribute ();
 
@@ -256,7 +256,7 @@ namespace DuiLib {
 		RECT				m_rcBorderSize;
 		HINSTANCE			m_instance				= NULL;
 
-		CStdStringPtrMap	m_mCustomAttrHash;
+		std::map<string_t, string_t>	m_mCustomAttrs;
 	};
 
 } // namespace DuiLib

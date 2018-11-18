@@ -165,7 +165,7 @@ namespace DuiLib {
 			//}
 
 			::SetBkMode ((HDC) wParam, TRANSPARENT);
-			DWORD dwTextColor = m_pOwner->GetTextColor ();
+			DWORD dwTextColor = m_pOwner->GetNativeEditTextColor ();
 			::SetTextColor ((HDC) wParam, RGB (GetBValue (dwTextColor), GetGValue (dwTextColor), GetRValue (dwTextColor)));
 			DWORD clrColor = m_pOwner->GetNativeEditBkColor ();
 			if (clrColor < 0xFF000000) {

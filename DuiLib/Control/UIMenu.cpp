@@ -124,7 +124,7 @@ namespace DuiLib {
 	}
 
 	void CMenuWnd::Close (UINT nRet) {
-		ASSERT (::IsWindow (m_hWnd));
+		//ASSERT (::IsWindow (m_hWnd));
 		if (!::IsWindow (m_hWnd)) return;
 		PostMessage (WM_CLOSE, (WPARAM) nRet, 0L);
 		isClosing = true;
@@ -314,7 +314,7 @@ namespace DuiLib {
 			m_pm.GetDPIObj ()->SetScale (CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()->GetDPIObj ()->GetDPI ());
 			CDialogBuilder builder;
 
-			CControlUI* pRoot = builder.Create (m_xml, UINT (0), this, &m_pm);
+			CControlUI* pRoot = builder.Create (m_xml, _T (""), this, &m_pm);
 			bShowShadow = m_pm.GetShadow ()->IsShowShadow ();
 			m_pm.GetShadow ()->ShowShadow (false);
 			m_pm.AttachDialog (pRoot);

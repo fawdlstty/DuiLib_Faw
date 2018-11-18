@@ -67,6 +67,8 @@ namespace DuiLib {
 		virtual LRESULT OnSetFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 		virtual LRESULT OnLButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 		virtual LRESULT OnLButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+		virtual LRESULT OnRButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+		virtual LRESULT OnRButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 		virtual LRESULT OnMouseMove (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 		virtual LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
 		virtual LRESULT HandleCustomMessage (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

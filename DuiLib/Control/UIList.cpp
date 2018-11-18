@@ -278,16 +278,13 @@ namespace DuiLib {
 			return;
 		}
 
-		if (event.Type == UIEVENT_SETFOCUS) {
+		switch (event.Type) {
+		case UIEVENT_SETFOCUS:
 			m_bFocused = true;
 			return;
-		}
-		if (event.Type == UIEVENT_KILLFOCUS) {
+		case UIEVENT_KILLFOCUS:
 			m_bFocused = false;
 			return;
-		}
-
-		switch (event.Type) {
 		case UIEVENT_KEYDOWN:
 			switch (event.chKey) {
 			case VK_UP:
@@ -333,7 +330,6 @@ namespace DuiLib {
 			}
 			break;
 		case UIEVENT_SCROLLWHEEL:
-		{
 			switch (LOWORD (event.wParam)) {
 			case SB_LINEUP:
 				if (m_bScrollSelect && !IsMultiSelect ()) SelectItem (FindSelectable (m_iCurSel - 1, false), true);
@@ -344,8 +340,7 @@ namespace DuiLib {
 				else LineDown ();
 				return;
 			}
-		}
-		break;
+			break;
 		}
 		CVerticalLayoutUI::DoEvent (event);
 	}

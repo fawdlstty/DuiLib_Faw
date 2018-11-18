@@ -717,40 +717,20 @@ namespace DuiLib {
 	}
 
 	void CControlUI::AddCustomAttribute (string_view_t pstrName, string_view_t pstrAttr) {
-		if (pstrName.empty () || pstrAttr.empty ()) return;
-		CDuiString* pCostomAttr = new CDuiString (pstrAttr);
-		if (!m_mCustomAttrHash.Find (pstrName))
-			m_mCustomAttrHash.Set (pstrName, (LPVOID) pCostomAttr);
-		else
-			delete pCostomAttr;
+		m_mCustomAttrs[pstrName.data ()] = pstrAttr;
 	}
 
-	string_view_t CControlUI::GetCustomAttribute (string_view_t pstrName) const {
-		if (pstrName.empty ()) return _T ("");
-		CDuiString* pCostomAttr = static_cast<CDuiString*>(m_mCustomAttrHash.Find (pstrName));
-		if (pCostomAttr) return *pCostomAttr;
-		return nullptr;
+	string_view_t CControlUI::GetCustomAttribute (string_view_t pstrName) {
+		return m_mCustomAttrs[pstrName.data ()];
 	}
 
 	bool CControlUI::RemoveCustomAttribute (string_view_t pstrName) {
-		if (pstrName.empty ()) return false;
-		CDuiString* pCostomAttr = static_cast<CDuiString*>(m_mCustomAttrHash.Find (pstrName));
-		if (!pCostomAttr) return false;
-
-		delete pCostomAttr;
-		return m_mCustomAttrHash.Remove (pstrName);
+		m_mCustomAttrs.erase (pstrName.data ());
+		return true;
 	}
 
 	void CControlUI::RemoveAllCustomAttribute () {
-		CDuiString* pCostomAttr;
-		for (int i = 0; i < m_mCustomAttrHash.GetSize (); i++) {
-			string_view_t key = m_mCustomAttrHash.GetAt (i)->Key;
-			if (!key.empty ()) {
-				pCostomAttr = static_cast<CDuiString*>(m_mCustomAttrHash.Find (key));
-				delete pCostomAttr;
-			}
-		}
-		m_mCustomAttrHash.Resize ();
+		m_mCustomAttrs.clear ();
 	}
 
 	void CControlUI::SetAttribute (string_view_t pstrName, string_view_t pstrValue) {
