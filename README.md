@@ -117,6 +117,10 @@ BindUserCtrlUI ctrl { _T ("ctrl_name") };
 10. 移除了CDuiPoint、CDuiRect、CDuiSize
 11. 整理出公共类FawTools，将大部分重复的代码合并
 12. 实现控件绑定（经研究发现，因为语言的问题，值绑定的效果不好，所以这儿暂时不考虑，如果有好的建议可以提）
+13. 修复Edit控件nativetextcolor属性无效的问题
+14. 新增绘图引用，使得指定的背景图等可以动态改变
+15. 修复设置背景色时移除图片资源的bug
+16. 新增Dynamic属性，避免因caption覆盖内容时，可拖动边框失效的问题
 
 ## 待研究或待添加
 

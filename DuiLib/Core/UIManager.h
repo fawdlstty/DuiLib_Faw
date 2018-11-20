@@ -101,15 +101,16 @@ namespace DuiLib {
 	} TFontInfo;
 
 	typedef struct UILIB_API tagTImageInfo {
-		HBITMAP hBitmap;
-		LPBYTE pBits;
-		LPBYTE pSrcBits;
-		int nX;
-		int nY;
-		bool bAlpha;
-		bool bUseHSL;
-		CDuiString sResType;
-		DWORD dwMask;
+		HBITMAP hBitmap			= NULL;
+		HBITMAP *phBitmap		= nullptr;
+		LPBYTE pBits			= nullptr;
+		LPBYTE pSrcBits			= nullptr;
+		int nX					= 0;
+		int nY					= 0;
+		bool bAlpha				= false;
+		bool bUseHSL			= false;
+		CDuiString sResType		= _T ("");
+		DWORD dwMask			= 0;
 	} TImageInfo;
 
 	typedef struct UILIB_API tagTDrawInfo {
@@ -311,6 +312,7 @@ namespace DuiLib {
 		const TImageInfo* GetImageEx (string_view_t bitmap, string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, HINSTANCE instance = NULL);
 		const TImageInfo* AddImage (string_view_t bitmap, string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, bool bShared = false, HINSTANCE instance = NULL);
 		const TImageInfo* AddImage (string_view_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false);
+		const TImageInfo* AddImage (string_view_t bitmap, HBITMAP *phBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false);
 		void RemoveImage (string_view_t bitmap, bool bShared = false);
 		void RemoveAllImages (bool bShared = false);
 		static void ReloadSharedImages ();

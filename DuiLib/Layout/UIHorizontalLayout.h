@@ -22,6 +22,7 @@ namespace DuiLib {
 
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 		void DoPostPaint (HDC hDC, const RECT& rcPaint);
+		bool IsDynamic (POINT &pt) const override;
 
 		RECT GetThumbRect (bool bUseNew = false) const;
 

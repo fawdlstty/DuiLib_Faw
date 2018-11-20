@@ -124,7 +124,7 @@ namespace DuiLib {
 		bool			m_bAutoDestroy				= true;
 		bool			m_bDelayedDestroy			= true;
 		bool			m_bMouseChildEnabled		= true;
-		int				m_nScrollStepSize			= 0;
+		int				m_nScrollStepSize			= 60;
 
 		CScrollBarUI	*m_pVerticalScrollBar		= nullptr;
 		CScrollBarUI	*m_pHorizontalScrollBar		= nullptr;

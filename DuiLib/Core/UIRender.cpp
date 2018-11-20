@@ -250,7 +250,8 @@ namespace DuiLib {
 		if (!::IntersectRect (&rcTemp, &rcItem, &rc)) return true;
 		if (!::IntersectRect (&rcTemp, &rcItem, &rcPaint)) return true;
 
-		CRenderEngine::DrawImage (hDC, data->hBitmap, rcItem, rcPaint, rcBmpPart, rcCorner, pManager->IsLayered () ? true : data->bAlpha, bFade, bHole, bTiledX, bTiledY);
+		HBITMAP hBmp = (data->hBitmap ? data->hBitmap : *(data->phBitmap));
+		CRenderEngine::DrawImage (hDC, hBmp, rcItem, rcPaint, rcBmpPart, rcCorner, pManager->IsLayered () ? true : data->bAlpha, bFade, bHole, bTiledX, bTiledY);
 
 		return true;
 	}
@@ -422,6 +423,7 @@ namespace DuiLib {
 		data->pBits = nullptr;
 		data->pSrcBits = nullptr;
 		data->hBitmap = hBitmap;
+		data->phBitmap = nullptr;
 		data->nX = x;
 		data->nY = y;
 		data->bAlpha = bAlphaChannel;
@@ -654,6 +656,8 @@ namespace DuiLib {
 			::DeleteObject (bitmap->hBitmap);
 		}
 		bitmap->hBitmap = nullptr;
+		// bitmap->phBitmap ÎÞÐèÊÍ·Å
+		bitmap->phBitmap = nullptr;
 		if (bitmap->pBits) {
 			delete[] bitmap->pBits;
 		}
@@ -1851,8 +1855,8 @@ namespace DuiLib {
 									rcBmpPart.left = iWidth * iImageListIndex;
 									rcBmpPart.right = iWidth * (iImageListIndex + 1);
 									RECT rcCorner { 0, 0, 0, 0 };
-									DrawImage (hDC, pImageInfo->hBitmap, rcImage, rcImage, rcBmpPart, rcCorner, \
-										pImageInfo->bAlpha, 255);
+									HBITMAP hBmp = (pImageInfo->hBitmap ? pImageInfo->hBitmap : *(pImageInfo->phBitmap));
+									DrawImage (hDC, hBmp, rcImage, rcImage, rcBmpPart, rcCorner, pImageInfo->bAlpha, 255);
 								}
 
 								cyLine = MAX (iHeight, cyLine);
@@ -2292,7 +2296,8 @@ namespace DuiLib {
 	}
 
 	void CRenderEngine::AdjustImage (bool bUseHSL, TImageInfo* imageInfo, short H, short S, short L) {
-		if (!imageInfo || !imageInfo->bUseHSL || !imageInfo->hBitmap || !imageInfo->pBits || !imageInfo->pSrcBits)
+		if (!imageInfo || !imageInfo->bUseHSL || !imageInfo->pBits || !imageInfo->pSrcBits
+			|| (!imageInfo->hBitmap && !imageInfo->phBitmap && !*(imageInfo->phBitmap)))
 			return;
 		if (bUseHSL == false || (H == 180 && S == 100 && L == 100)) {
 			::CopyMemory (imageInfo->pBits, imageInfo->pSrcBits, imageInfo->nX * imageInfo->nY * 4);

@@ -2959,6 +2959,38 @@ namespace DuiLib {
 		return data;
 	}
 
+	const TImageInfo* CPaintManagerUI::AddImage (string_view_t bitmap, HBITMAP *phBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared) {
+		// 因无法确定外部HBITMAP格式，不能使用hsl调整
+		if (bitmap.empty ()) return nullptr;
+		if (!phBitmap || !*phBitmap || iWidth <= 0 || iHeight <= 0) return nullptr;
+
+		TImageInfo* data = new TImageInfo;
+		data->pBits = nullptr;
+		data->pSrcBits = nullptr;
+		data->phBitmap = phBitmap;
+		data->pBits = nullptr;
+		data->nX = iWidth;
+		data->nY = iHeight;
+		data->bAlpha = bAlpha;
+		data->bUseHSL = false;
+		data->pSrcBits = nullptr;
+		data->dwMask = 0;
+
+		if (bShared || m_bForceUseSharedRes) {
+			if (!m_SharedResInfo.m_ImageHash.Insert (bitmap, data)) {
+				CRenderEngine::FreeImage (data);
+				data = nullptr;
+			}
+		} else {
+			if (!m_ResInfo.m_ImageHash.Insert (bitmap, data)) {
+				CRenderEngine::FreeImage (data);
+				data = nullptr;
+			}
+		}
+
+		return data;
+	}
+
 	void CPaintManagerUI::RemoveImage (string_view_t bitmap, bool bShared) {
 		TImageInfo* data = nullptr;
 		if (bShared) {
@@ -3057,6 +3089,7 @@ namespace DuiLib {
 
 					CRenderEngine::FreeImage (data, false);
 					data->hBitmap = pNewData->hBitmap;
+					data->phBitmap = pNewData->phBitmap;
 					data->pBits = pNewData->pBits;
 					data->nX = pNewData->nX;
 					data->nY = pNewData->nY;
@@ -3099,6 +3132,7 @@ namespace DuiLib {
 						continue;
 					}
 					data->hBitmap = pNewData->hBitmap;
+					data->phBitmap = pNewData->phBitmap;
 					data->pBits = pNewData->pBits;
 					data->nX = pNewData->nX;
 					data->nY = pNewData->nY;

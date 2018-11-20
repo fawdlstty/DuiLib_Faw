@@ -297,6 +297,11 @@ namespace DuiLib {
 		CContainerUI::DoEvent (event);
 	}
 
+	bool CHorizontalLayoutUI::IsDynamic (POINT &pt) const {
+		RECT rcSeparator = GetThumbRect (false);
+		return (IsEnabled () && ::PtInRect (&rcSeparator, pt)) || CControlUI::IsDynamic (pt);
+	}
+
 	RECT CHorizontalLayoutUI::GetThumbRect (bool bUseNew) const {
 		if ((m_uButtonState & UISTATE_CAPTURED) != 0 && bUseNew) {
 			if (m_iSepWidth >= 0) return { m_rcNewPos.right - m_iSepWidth, m_rcNewPos.top, m_rcNewPos.right, m_rcNewPos.bottom };

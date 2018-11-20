@@ -569,9 +569,8 @@ namespace DuiLib {
 		else if (pstrName == _T ("tipvalue")) SetTipValue (pstrValue);
 		else if (pstrName == _T ("tipvaluecolor")) SetTipValueColor (pstrValue);
 		else if (pstrName == _T ("nativetextcolor")) SetNativeEditTextColor (pstrValue);
-		else if (pstrName == _T ("nativebkcolor")) {
-			SetNativeEditBkColor ((DWORD) FawTools::parse_hex (pstrValue));
-		} else CLabelUI::SetAttribute (pstrName, pstrValue);
+		else if (pstrName == _T ("nativebkcolor")) SetNativeEditBkColor ((DWORD) FawTools::parse_hex (pstrValue));
+		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 
 	void CEditUI::PaintStatusImage (HDC hDC) {

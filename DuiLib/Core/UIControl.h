@@ -155,6 +155,8 @@ namespace DuiLib {
 		virtual void SetFocus ();
 		virtual bool IsFloat () const;
 		virtual void SetFloat (bool bFloat = true);
+		virtual bool IsDynamic (POINT &pt) const;
+		virtual void SetIsDynamic (bool bIsDynamic = true);
 
 		virtual CControlUI* FindControl (FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags);
 
@@ -254,6 +256,7 @@ namespace DuiLib {
 		SIZE				m_cxyBorderRound;
 		RECT				m_rcPaint;
 		RECT				m_rcBorderSize;
+		bool				m_isDynamic				= false;
 		HINSTANCE			m_instance				= NULL;
 
 		std::map<string_t, string_t>	m_mCustomAttrs;

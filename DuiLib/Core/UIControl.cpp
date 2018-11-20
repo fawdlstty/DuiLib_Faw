@@ -176,7 +176,7 @@ namespace DuiLib {
 	}
 
 	void CControlUI::SetBkImage (string_view_t pStrImage) {
-		if (m_pManager) m_pManager->RemoveImage (pStrImage);
+		//if (m_pManager) m_pManager->RemoveImage (pStrImage);
 		if (m_sBkImage == pStrImage) return;
 
 		m_sBkImage = pStrImage;
@@ -596,6 +596,14 @@ namespace DuiLib {
 		NeedParentUpdate ();
 	}
 
+	bool CControlUI::IsDynamic (POINT &pt) const {
+		return m_isDynamic;
+	}
+
+	void CControlUI::SetIsDynamic (bool bIsDynamic) {
+		m_isDynamic = bIsDynamic;
+	}
+
 	CControlUI* CControlUI::FindControl (FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags) {
 		if ((uFlags & UIFIND_VISIBLE) != 0 && !IsVisible ()) return nullptr;
 		if ((uFlags & UIFIND_ENABLED) != 0 && !IsEnabled ()) return nullptr;
@@ -910,6 +918,8 @@ namespace DuiLib {
 				if (pstrList[0] != _T (',')) return;
 				pstrList = pstrList.substr (1);
 			}
+		} else if (pstrName == _T ("isdynamic")) {
+			SetIsDynamic (FawTools::parse_bool (pstrValue));
 		} else {
 			AddCustomAttribute (pstrName, pstrValue);
 		}

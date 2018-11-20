@@ -2138,7 +2138,10 @@ namespace DuiLib {
 			if (FawTools::parse_bool (pstrValue)) m_lTwhStyle |= ES_DISABLENOSCROLL | WS_HSCROLL;
 		}
 		if (pstrName == _T ("autohscroll")) {
-			if (FawTools::parse_bool (pstrValue)) m_lTwhStyle |= ES_AUTOHSCROLL;
+			if (FawTools::parse_bool (pstrValue))
+				m_lTwhStyle |= ES_AUTOHSCROLL;
+			else
+				m_lTwhStyle &= ~ES_AUTOHSCROLL;
 		} else if (pstrName == _T ("multiline")) {
 			SetMultiLine (FawTools::parse_bool (pstrValue));
 		} else if (pstrName == _T ("wanttab")) {
@@ -2173,17 +2176,14 @@ namespace DuiLib {
 				m_lTwhStyle |= ES_RIGHT;
 			}
 		} else if (pstrName == _T ("font")) SetFont (FawTools::parse_dec (pstrValue));
-		else if (pstrName == _T ("textcolor")) {
-			SetTextColor ((DWORD) FawTools::parse_hex (pstrValue));
-		} else if (pstrName == _T ("maxchar")) SetLimitText (FawTools::parse_dec (pstrValue));
+		else if (pstrName == _T ("textcolor")) SetTextColor ((DWORD) FawTools::parse_hex (pstrValue));
+		else if (pstrName == _T ("maxchar")) SetLimitText (FawTools::parse_dec (pstrValue));
 		else if (pstrName == _T ("normalimage")) SetNormalImage (pstrValue);
 		else if (pstrName == _T ("hotimage")) SetHotImage (pstrValue);
 		else if (pstrName == _T ("focusedimage")) SetFocusedImage (pstrValue);
 		else if (pstrName == _T ("disabledimage")) SetDisabledImage (pstrValue);
-		else if (pstrName == _T ("textpadding")) {
-			RECT rcTextPadding = FawTools::parse_rect (pstrValue);
-			SetTextPadding (rcTextPadding);
-		} else if (pstrName == _T ("tipvalue")) SetTipValue (pstrValue);
+		else if (pstrName == _T ("textpadding")) SetTextPadding (FawTools::parse_rect (pstrValue));
+		else if (pstrName == _T ("tipvalue")) SetTipValue (pstrValue);
 		else if (pstrName == _T ("tipvaluecolor")) SetTipValueColor (pstrValue);
 		else if (pstrName == _T ("tipvaluealign")) {
 			if (pstrValue.find (_T ("left")) != string_t::npos) {

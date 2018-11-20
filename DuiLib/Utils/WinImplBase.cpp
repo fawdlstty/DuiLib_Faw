@@ -78,35 +78,32 @@ namespace DuiLib {
 	}
 
 
-	BOOL WindowImplBase::IsInStaticControl (CControlUI *pControl) {
-		BOOL bRet = FALSE;
-		if (!pControl) {
-			return bRet;
-		}
+	BOOL WindowImplBase::IsInStaticControl (CControlUI *pControl, POINT &pt) {
+		if (!pControl || pControl->IsDynamic (pt))
+			return FALSE;
 
 		CDuiString strClassName;
 		static std::vector<CDuiString> vctStaticName { _T ("controlui"), _T ("textui"), _T ("labelui"), _T ("containerui"), _T ("horizontallayoutui"), _T ("verticallayoutui"), _T("tablayoutui"), _T ("childlayoutui"), _T ("dialoglayoutui"), _T ("progresscontainerui") };
 
 		strClassName = pControl->GetClass ();
 		strClassName.MakeLower ();
-		std::vector<CDuiString>::iterator it = std::find (vctStaticName.begin (), vctStaticName.end (), strClassName);
-		if (vctStaticName.end () != it) {
+		if (vctStaticName.end () != std::find (vctStaticName.begin (), vctStaticName.end (), strClassName)) {
 			CControlUI* pParent = pControl->GetParent ();
 			while (pParent) {
+				if (pParent->IsDynamic (pt))
+					return FALSE;
 				strClassName = pParent->GetClass ();
 				strClassName.MakeLower ();
-				it = std::find (vctStaticName.begin (), vctStaticName.end (), strClassName);
-				if (vctStaticName.end () == it) {
-					return bRet;
-				}
+				if (vctStaticName.end () == std::find (vctStaticName.begin (), vctStaticName.end (), strClassName))
+					return FALSE;
 
 				pParent = pParent->GetParent ();
 			}
 
-			bRet = TRUE;
+			return TRUE;
 		}
 
-		return bRet;
+		return FALSE;
 	}
 
 	LRESULT WindowImplBase::OnNcHitTest (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
@@ -140,7 +137,7 @@ namespace DuiLib {
 		if (pt.x >= rcClient.left + rcCaption.left && pt.x < rcClient.right - rcCaption.right
 			&& pt.y >= rcCaption.top && pt.y < rcCaption.bottom) {
 			CControlUI* pControl = m_pm.FindControl (pt);
-			if (IsInStaticControl (pControl)) {
+			if (IsInStaticControl (pControl, pt)) {
 				return HTCAPTION;
 			}
 		}

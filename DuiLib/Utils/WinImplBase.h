@@ -28,7 +28,7 @@ namespace DuiLib {
 		virtual void OnTextChanged (TNotifyUI& msg) {}
 		virtual void OnItemSelect (TNotifyUI& msg) {}
 		virtual void OnTimer (TNotifyUI& msg) {}
-		virtual BOOL IsInStaticControl (CControlUI *pControl);
+		virtual BOOL IsInStaticControl (CControlUI *pControl, POINT &pt);
 
 	protected:
 		virtual string_view_t GetSkinType () {

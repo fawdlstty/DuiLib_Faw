@@ -298,6 +298,11 @@ namespace DuiLib {
 		CContainerUI::DoEvent (event);
 	}
 
+	bool CVerticalLayoutUI::IsDynamic (POINT &pt) const {
+		RECT rcSeparator = GetThumbRect (false);
+		return (IsEnabled () && ::PtInRect (&rcSeparator, pt)) || CControlUI::IsDynamic (pt);
+	}
+
 	RECT CVerticalLayoutUI::GetThumbRect (bool bUseNew) const {
 		if ((m_uButtonState & UISTATE_CAPTURED) != 0 && bUseNew) {
 			if (m_iSepHeight >= 0)

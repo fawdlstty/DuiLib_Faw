@@ -263,7 +263,8 @@ namespace DuiLib {
 			rcBmpPart.right = data->nX;
 			rcBmpPart.bottom = data->nY;
 			RECT corner = m_rcShadowCorner;
-			CRenderEngine::DrawImage (hMemDC, data->hBitmap, rcPaint, rcPaint, rcBmpPart, corner, data->bAlpha, 0xFF, true, false, false);
+			HBITMAP hBmp = (data->hBitmap ? data->hBitmap : *(data->phBitmap));
+			CRenderEngine::DrawImage (hMemDC, hBmp, rcPaint, rcPaint, rcBmpPart, corner, data->bAlpha, 0xFF, true, false, false);
 		} else {
 			ZeroMemory (pvBits, bmi.bmiHeader.biSizeImage);
 			MakeShadow ((UINT32 *) pvBits, hParent, &WndRect);
