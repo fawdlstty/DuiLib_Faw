@@ -121,6 +121,7 @@ BindUserCtrlUI ctrl { _T ("ctrl_name") };
 14. 新增绘图引用，使得指定的背景图等可以动态改变
 15. 修复设置背景色时移除图片资源的bug
 16. 新增Dynamic属性，避免因caption覆盖内容时，可拖动边框失效的问题
+17. VerticalLayout自动计算高度、HorizontalLayout自动计算宽度
 
 ## 待研究或待添加
 
