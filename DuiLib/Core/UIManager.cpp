@@ -383,7 +383,7 @@ namespace DuiLib {
 		m_bCachedResourceZip = true;
 		m_pStrResourceZipPwd = password;  //Garfield 20160325 带密码zip包解密
 		if (m_bCachedResourceZip) {
-			std::string pwd = FawTools::get_gb18030 (password);
+			std::string pwd = FawTools::T_to_gb18030 (password);
 			m_hResourceZip = (HANDLE) OpenZip (pVoid, len, pwd.c_str ());
 		}
 	}
@@ -400,7 +400,7 @@ namespace DuiLib {
 		if (m_bCachedResourceZip) {
 			CDuiString sFile = CPaintManagerUI::GetResourcePath ();
 			sFile += CPaintManagerUI::GetResourceZip ();
-			std::string pwd = FawTools::get_gb18030 (password);
+			std::string pwd = FawTools::T_to_gb18030 (password);
 			m_hResourceZip = (HANDLE) OpenZip (sFile.c_str (), pwd.c_str ());
 		}
 	}
@@ -1945,7 +1945,7 @@ namespace DuiLib {
 		}
 		SetWindowPos (GetPaintWindow (), NULL, prcNewWindow->left, prcNewWindow->top, prcNewWindow->right - prcNewWindow->left, prcNewWindow->bottom - prcNewWindow->top, SWP_NOZORDER | SWP_NOACTIVATE);
 		if (GetRoot ()) GetRoot ()->NeedUpdate ();
-		::PostMessage (GetPaintWindow (), WM_USER_SET_DPI, 0, 0);
+		::PostMessage (GetPaintWindow (), UIMSG_SET_DPI, 0, 0);
 	}
 
 	void DuiLib::CPaintManagerUI::SetAllDPI (int iDPI) {
@@ -2595,7 +2595,7 @@ namespace DuiLib {
 				if (CPaintManagerUI::IsCachedResourceZip ()) hz = (HZIP) CPaintManagerUI::GetResourceZipHandle ();
 				else {
 					CDuiString sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
-					std::string pwd = FawTools::get_gb18030 (sFilePwd);
+					std::string pwd = FawTools::T_to_gb18030 (sFilePwd);
 					hz = OpenZip (sFile.c_str (), pwd.c_str ());
 				}
 				if (!hz) break;
