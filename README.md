@@ -28,21 +28,21 @@
 
 ```C++
 #if (defined _UNICODE) && (defined _DEBUG) && (defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLib_64d.lib")
+#    pragma comment (lib, "../lib/DuiLib_64d.lib")
 #elif (defined _UNICODE) && (defined _DEBUG) && (!defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLib_d.lib")
+#    pragma comment (lib, "../lib/DuiLib_d.lib")
 #elif (defined _UNICODE) && (!defined _DEBUG) && (defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLib_64.lib")
+#    pragma comment (lib, "../lib/DuiLib_64.lib")
 #elif (defined _UNICODE) && (!defined _DEBUG) && (!defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLib.lib")
+#    pragma comment (lib, "../lib/DuiLib.lib")
 #elif (!defined _UNICODE) && (defined _DEBUG) && (defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLibA_64d.lib")
+#    pragma comment (lib, "../lib/DuiLibA_64d.lib")
 #elif (!defined _UNICODE) && (defined _DEBUG) && (!defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLibA_d.lib")
+#    pragma comment (lib, "../lib/DuiLibA_d.lib")
 #elif (!defined _UNICODE) && (!defined _DEBUG) && (defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLibA_64.lib")
+#    pragma comment (lib, "../lib/DuiLibA_64.lib")
 #elif (!defined _UNICODE) && (!defined _DEBUG) && (!defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLibA.lib")
+#    pragma comment (lib, "../lib/DuiLibA.lib")
 #endif
 ```
 
@@ -54,21 +54,21 @@
 
 ```C++
 #if (defined _UNICODE) && (defined _DEBUG) && (defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLib_64sd.lib")
+#    pragma comment (lib, "../lib/DuiLib_64sd.lib")
 #elif (defined _UNICODE) && (defined _DEBUG) && (!defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLib_sd.lib")
+#    pragma comment (lib, "../lib/DuiLib_sd.lib")
 #elif (defined _UNICODE) && (!defined _DEBUG) && (defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLib_64s.lib")
+#    pragma comment (lib, "../lib/DuiLib_64s.lib")
 #elif (defined _UNICODE) && (!defined _DEBUG) && (!defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLib_s.lib")
+#    pragma comment (lib, "../lib/DuiLib_s.lib")
 #elif (!defined _UNICODE) && (defined _DEBUG) && (defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLibA_64sd.lib")
+#    pragma comment (lib, "../lib/DuiLibA_64sd.lib")
 #elif (!defined _UNICODE) && (defined _DEBUG) && (!defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLibA_sd.lib")
+#    pragma comment (lib, "../lib/DuiLibA_sd.lib")
 #elif (!defined _UNICODE) && (!defined _DEBUG) && (defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLibA_64s.lib")
+#    pragma comment (lib, "../lib/DuiLibA_64s.lib")
 #elif (!defined _UNICODE) && (!defined _DEBUG) && (!defined _WIN64)
-#	pragma comment (lib, "../lib/DuiLibA_s.lib")
+#    pragma comment (lib, "../lib/DuiLibA_s.lib")
 #endif
 ```
 
@@ -77,16 +77,21 @@
 ### 第二步：增加变量绑定
 
 需将所有的这种代码：
-```C++
+
+```cpp
 // InitWindow里面
 CEditUI *ctrl = dynamic_cast<CEditUI*> (parent->find_control (_T ("ctrl_name")));
 ```
+
 替换为：
-```C++
+
+```cpp
 // 任意位置
 BindEditUI ctrl { _T ("ctrl_name") };
 ```
+
 需注意：
+
 1. 绑定对象的创建位置不限，既可以在程序运行时绑定，也可以在InitWindow执行完后再绑定
 2. 绑定对象在窗口及PaintManager创建前是无法使用的，只有在两者创建完成后才能使用
 3. PaintManager对象不要设置名称，如果必须设置的场合，需要在Bind/BindCtrls.hpp代码中同步修改
@@ -95,13 +100,16 @@ BindEditUI ctrl { _T ("ctrl_name") };
 ### 第三步：自定义控件绑定
 
 假设XML节点为&lt;UserCtrl name="ctrl_name" /&gt;，那么类名必须风格统一，为CUserCtrlUI；然后在头文件中加入以下代码：
-```C++
+
+```cpp
 #ifdef DEF_BINDCTRL
 DEF_BINDCTRL (UserCtrl);
 #endif //DEF_BINDCTRL
 ```
+
 大功告成，此时可以用以下代码实现自定义控件绑定
-```C++
+
+```cpp
 BindUserCtrlUI ctrl { _T ("ctrl_name") };
 ```
 
@@ -112,7 +120,7 @@ BindUserCtrlUI ctrl { _T ("ctrl_name") };
 3. 修复容器子元素手动右对齐，方法为子控件加入代码：floatalign="right"
 4. 修复Combo控件的SetText功能
 5. 新增图片的dest可为负数，当为负数时，位置固定在目标控件的右边。比如Combo控件固定到右边的下拉箭头
-6. 修改CDuiString实现方式的底层为std::string，使得兼容性更强
+6. 修改CDuiString实现方式的底层为faw::String，使得兼容性更强
 7. Label控件新增autocalcheight，效果类似于autocalcwidth
 8. 使用std::variant代替STRINGorID
 9. 使用std::string_view代替了几乎所有的LPCTSTR
