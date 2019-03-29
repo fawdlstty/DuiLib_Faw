@@ -9,14 +9,14 @@ namespace DuiLib {
 	class BindCtrlBase {
 		//friend class WindowImplBase;
 	public:
-		BindCtrlBase (faw::string_view_t ctrl_name): m_ctrl_name (ctrl_name) { /*s_bind_ctrls[m_ctrl_name.data ()] = this;*/ }
+		BindCtrlBase (faw::String ctrl_name): m_ctrl_name (ctrl_name) { /*s_bind_ctrls[m_ctrl_name.data ()] = this;*/ }
 		virtual ~BindCtrlBase () {}
 
 	protected:
 		virtual faw::string_view_t GetClassType () const = 0;
 		virtual void binded () {}
 		CControlUI *m_ctrl = nullptr;
-		faw::string_view_t m_ctrl_name;
+		faw::String m_ctrl_name;
 
 		//static CPaintManagerUI *s_pm;
 	private:

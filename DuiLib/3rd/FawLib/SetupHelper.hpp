@@ -50,7 +50,6 @@ namespace faw {
 			size_t _last = 0, _ret = 0;
 			HRSRC hResource = ::FindResource (hInstance, _resId, _resType);
 			if (hResource != NULL) {
-				DWORD dwSize = 0;
 				HGLOBAL hGlobal = ::LoadResource (hInstance, hResource);
 				if (hGlobal) {
 					DWORD dwSize = ::SizeofResource (hInstance, hResource);
@@ -137,8 +136,8 @@ namespace faw {
 					return false;
 				_result = psl->QueryInterface (IID_IPersistFile, (void**) &ppf);
 				if (SUCCEEDED (_result)) {
-					psl->SetPath (_dest_file.stra ().c_str ());
-					psl->SetWorkingDirectory (_work_path.stra ().c_str ());
+					psl->SetPath (_dest_file.c_str ());
+					psl->SetWorkingDirectory (_work_path.c_str ());
 					psl->SetShowCmd (SW_SHOW);
 					ppf->Save (_save_path.strw ().c_str (), TRUE);
 				}

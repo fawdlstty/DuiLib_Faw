@@ -133,6 +133,12 @@ namespace faw {
 				lstrcpy (_buf2, _T ("D:\\"));
 			return append_folder_or_file (_buf, _file);
 		}
+		static void show_path (String path) {
+			path.replace_self (_T ('/'), _T ('\\'));
+			String cmd = String::format (_T ("/select,\"%s\""), path.c_str ());
+			::ShellExecute (NULL, _T ("open"), _T ("explorer.exe"), cmd.c_str (), nullptr, SW_SHOW);
+		}
+
 	};
 }
 

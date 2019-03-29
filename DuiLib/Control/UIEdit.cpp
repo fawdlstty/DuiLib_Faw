@@ -228,7 +228,7 @@ namespace DuiLib {
 		if (!m_pOwner) return 0;
 		// Copy text back
 		int cchLen = ::GetWindowTextLength (m_hWnd) + 1;
-		faw::String str (cchLen, _T ('\0'));
+		faw::String str (_T ('\0'), cchLen);
 		::GetWindowText (m_hWnd, &str[0], cchLen);
 		m_pOwner->m_sText = str.c_str ();
 		m_pOwner->GetManager ()->SendNotify (m_pOwner, DUI_MSGTYPE_TEXTCHANGED);

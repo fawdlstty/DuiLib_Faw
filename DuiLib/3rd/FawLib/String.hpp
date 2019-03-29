@@ -126,36 +126,36 @@ namespace faw {
 #endif
 
 		// 比较
-		bool operator== (const char *_s) { String _o (_s); return m_str == _o.m_str; }
-		bool operator== (const wchar_t *_s) { String _o (_s); return m_str == _o.m_str; }
-		bool operator== (const std::string &_s) { String _o (_s); return m_str == _o.m_str; }
-		bool operator== (const std::wstring &_s) { String _o (_s); return m_str == _o.m_str; }
-		bool operator== (String &_o) { return m_str == _o.m_str; }
-		bool operator== (String *_o) { return m_str == _o->m_str; }
+		bool operator== (const char *_s) const { String _o (_s); return m_str == _o.m_str; }
+		bool operator== (const wchar_t *_s) const { String _o (_s); return m_str == _o.m_str; }
+		bool operator== (const std::string &_s) const { String _o (_s); return m_str == _o.m_str; }
+		bool operator== (const std::wstring &_s) const { String _o (_s); return m_str == _o.m_str; }
+		bool operator== (const String &_o) const { return m_str == _o.m_str; }
+		bool operator== (const String *_o) const { return m_str == _o->m_str; }
 #if _HAS_CXX17
-		bool operator== (const std::string_view _s) { String _o (_s); return m_str == _o.m_str; }
-		bool operator== (const std::wstring_view _s) { String _o (_s); return m_str == _o.m_str; }
+		bool operator== (const std::string_view _s) const { String _o (_s); return m_str == _o.m_str; }
+		bool operator== (const std::wstring_view _s) const { String _o (_s); return m_str == _o.m_str; }
 #endif
 		//
 		friend bool operator== (const char *_s, String &_o) { return _o == _s; }
 		friend bool operator== (const wchar_t *_s, String &_o) { return _o == _s; }
 		friend bool operator== (const std::string &_s, String &_o) { return _o == _s; }
 		friend bool operator== (const std::wstring &_s, String &_o) { return _o == _s; }
-		friend bool operator== (String *_o, String &_o2) { return _o2  == *_o; }
+		friend bool operator== (const String *_o, const String &_o2) { return _o2  == *_o; }
 #if _HAS_CXX17
 		friend bool operator== (const std::string_view _s, String &_o) { return _o == _s; }
 		friend bool operator== (const std::wstring_view _s, String &_o) { return _o == _s; }
 #endif
 		//
-		bool operator!= (const char *_s) { String _o (_s); return m_str != _o.m_str; }
-		bool operator!= (const wchar_t *_s) { String _o (_s); return m_str != _o.m_str; }
-		bool operator!= (const std::string &_s) { String _o (_s); return m_str != _o.m_str; }
-		bool operator!= (const std::wstring &_s) { String _o (_s); return m_str != _o.m_str; }
-		bool operator!= (String &_o) { return m_str != _o.m_str; }
-		bool operator!= (String *_o) { return m_str != _o->m_str; }
+		bool operator!= (const char *_s) const { String _o (_s); return m_str != _o.m_str; }
+		bool operator!= (const wchar_t *_s) const { String _o (_s); return m_str != _o.m_str; }
+		bool operator!= (const std::string &_s) const { String _o (_s); return m_str != _o.m_str; }
+		bool operator!= (const std::wstring &_s) const { String _o (_s); return m_str != _o.m_str; }
+		bool operator!= (const String &_o) const { return m_str != _o.m_str; }
+		bool operator!= (const String *_o) const { return m_str != _o->m_str; }
 #if _HAS_CXX17
-		bool operator!= (const std::string_view _s) { String _o (_s); return m_str != _o.m_str; }
-		bool operator!= (const std::wstring_view _s) { String _o (_s); return m_str != _o.m_str; }
+		bool operator!= (const std::string_view _s) const { String _o (_s); return m_str != _o.m_str; }
+		bool operator!= (const std::wstring_view _s) const { String _o (_s); return m_str != _o.m_str; }
 #endif
 		//
 		friend bool operator!= (const char *_s, String &_o) { return _o != _s; }
@@ -653,14 +653,14 @@ namespace faw {
 		size_t find (TCHAR _ch, size_t _off = 0) { return m_str.find (_ch, _off); }
 		size_t rfind (TCHAR _ch, size_t _off = _npos) { return m_str.rfind (_ch, _off); }
 #ifdef _UNICODE
-		size_t find (std::string &_s, size_t _off = 0) { return find (Encoding::gb18030_to_utf16 (_s), _off); }
+		size_t find (std::string &_s, size_t _off = 0) { return m_str.find (Encoding::gb18030_to_utf16 (_s), _off); }
 		size_t find (std::wstring &_s, size_t _off = 0) { return m_str.find (_s, _off); }
-		size_t rfind (std::string &_s, size_t _off = 0) { return rfind (Encoding::gb18030_to_utf16 (_s), _off); }
+		size_t rfind (std::string &_s, size_t _off = 0) { return m_str.rfind (Encoding::gb18030_to_utf16 (_s), _off); }
 		size_t rfind (std::wstring &_s, size_t _off = 0) { return m_str.rfind (_s, _off); }
 #	if _HAS_CXX17
-		size_t find (std::string_view _s, size_t _off = 0) { return find (Encoding::gb18030_to_utf16 (_s), _off); }
+		size_t find (std::string_view _s, size_t _off = 0) { return m_str.find (Encoding::gb18030_to_utf16 (_s), _off); }
 		size_t find (std::wstring_view _s, size_t _off = 0) { return m_str.find (_s, _off); }
-		size_t rfind (std::string_view _s, size_t _off = 0) { return rfind (Encoding::gb18030_to_utf16 (_s), _off); }
+		size_t rfind (std::string_view _s, size_t _off = 0) { return m_str.rfind (Encoding::gb18030_to_utf16 (_s), _off); }
 		size_t rfind (std::wstring_view _s, size_t _off = 0) { return m_str.rfind (_s, _off); }
 #	endif
 #else
@@ -774,7 +774,7 @@ namespace faw {
 			String _s (this);
 			size_t pos = _s.m_str.find (_src);
 			while (pos != _npos) {
-				_s.m_str [pos] = _src;
+				_s.m_str [pos] = _dest;
 				pos = _s.m_str.find (_src, pos + 1);
 			}
 			return _s;
