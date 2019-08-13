@@ -2531,7 +2531,6 @@ namespace DuiLib {
 
 		TFontInfo* pFontInfo = new TFontInfo;
 		if (!pFontInfo) return false;
-		::ZeroMemory (pFontInfo, sizeof (TFontInfo));
 		pFontInfo->hFont = hFont;
 		pFontInfo->sFontName = lf.lfFaceName;
 		pFontInfo->iSize = nSize;
