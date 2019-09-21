@@ -101,6 +101,13 @@ namespace DuiLib {
 		bool bUnderline;
 		bool bItalic;
 		TEXTMETRIC tm;
+		tagTFontInfo () {
+			hFont = NULL;
+			sFontName = _T ("");
+			iSize = 0;
+			bBold = bUnderline = bItalic = false;
+			memset (&tm, 0, sizeof (TEXTMETRIC));
+		}
 	} TFontInfo;
 
 	typedef struct UILIB_API tagTImageInfo {
