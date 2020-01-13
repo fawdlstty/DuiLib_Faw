@@ -91,6 +91,16 @@ namespace DuiLib {
 		int iPosY = rc.top;
 		if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible ()) {
 			iPosY -= m_pVerticalScrollBar->GetScrollPos ();
+		}else {
+			if(nAdjustables <= 0) {
+				UINT iChildAlign = GetChildVAlign(); 
+				if (iChildAlign == DT_VCENTER) {
+					iPosY += (szAvailable.cy -cyFixed) / 2;
+				}
+				else if (iChildAlign == DT_BOTTOM) {
+					iPosY += (szAvailable.cy - cyFixed);
+				}
+			}
 		}
 
 		int iEstimate = 0;
