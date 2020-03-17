@@ -8,9 +8,8 @@ namespace DuiLib {
 		std::vector<CAnimationData*> m_arAnimations;
 	};
 
-	CUIAnimation::CUIAnimation (CControlUI* pOwner): m_pImp (new CUIAnimation::Imp ()) {
-		ASSERT (pOwner);
-		m_pControl = pOwner;
+	CUIAnimation::CUIAnimation (): m_pImp (new CUIAnimation::Imp ()) {
+		m_pControl = nullptr;
 	}
 	CUIAnimation:: ~CUIAnimation () {
 		if (m_pImp) {
@@ -18,6 +17,11 @@ namespace DuiLib {
 			m_pImp = nullptr;
 		}
 	}
+
+	void CUIAnimation::Attach (CControlUI* pOwner) {
+		m_pControl = pOwner;
+	}
+
 	BOOL CUIAnimation::StartAnimation (int nElapse, int nTotalFrame, int nAnimationID /*= 0*/, BOOL bLoop/* = FALSE*/) {
 		CAnimationData* pData = GetAnimationDataByID (nAnimationID);
 		if (pData || nElapse <= 0 || nTotalFrame <= 0 || !m_pControl) {

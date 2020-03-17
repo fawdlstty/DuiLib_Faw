@@ -17,6 +17,7 @@ namespace DuiLib {
 		LPVOID GetInterface (faw::string_view_t pstrName);
 		UINT GetControlFlags () const;
 
+		void SetEnabled (bool bEnabled);
 		bool IsMultiLine ();
 		void SetMultiLine (bool bMultiLine);
 		bool IsWantTab ();

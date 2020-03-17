@@ -4,7 +4,9 @@
 namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CAnimationTabLayoutUI)
 
-	CAnimationTabLayoutUI::CAnimationTabLayoutUI (): CUIAnimation (this) {}
+	CAnimationTabLayoutUI::CAnimationTabLayoutUI () {
+		Attach (this);
+	}
 
 	faw::string_view_t CAnimationTabLayoutUI::GetClass () const {
 		return _T ("AnimationTabLayoutUI");

@@ -50,10 +50,16 @@ namespace DuiLib {
 		BOOL Init (CRichEditUI *re, const CREATESTRUCT *pcs);
 		virtual ~CTxtWinHost ();
 
-		ITextServices* GetTextServices (void) { return pserv; }
+		ITextServices* GetTextServices (void) {
+			return pserv;
+		}
 		void SetClientRect (RECT *prc);
-		RECT* GetClientRect () { return &rcClient; }
-		BOOL IsWordWrap (void) { return fWordWrap; }
+		RECT* GetClientRect () {
+			return &rcClient;
+		}
+		BOOL IsWordWrap (void) {
+			return fWordWrap;
+		}
 		void SetWordWrap (BOOL fWordWrap);
 		BOOL IsReadOnly ();
 		void SetReadOnly (BOOL fReadOnly);
@@ -940,7 +946,7 @@ namespace DuiLib {
 	//
 	//
 	IMPLEMENT_DUICONTROL (CRichEditUI)
-	CRichEditUI::CRichEditUI (): m_lTwhStyle (ES_MULTILINE) {
+		CRichEditUI::CRichEditUI (): m_lTwhStyle (ES_MULTILINE) {
 		m_iLimitText = cInitTextMax;
 #ifndef _UNICODE
 		m_fAccumulateDBC = true;
@@ -970,6 +976,17 @@ namespace DuiLib {
 		if (!IsEnabled ()) return CControlUI::GetControlFlags ();
 
 		return UIFLAG_SETCURSOR | UIFLAG_TABSTOP;
+	}
+
+	void CRichEditUI::SetEnabled (bool bEnabled) {
+		CContainerUI::SetEnabled (bEnabled);
+		if (m_pTwh) {
+			if (IsEnabled ()) {
+				m_pTwh->SetColor (GetTextColor ());
+			} else {
+				m_pTwh->SetColor (m_pManager->GetDefaultDisabledColor ());
+			}
+		}
 	}
 
 	bool CRichEditUI::IsMultiLine () {
@@ -2422,6 +2439,6 @@ namespace DuiLib {
 			if (m_pTwh->IsCaptured ()) bHandled = bWasHandled;
 		}
 		return lResult;
-		}
+	}
 
-	} // namespace DuiLib
+} // namespace DuiLib
