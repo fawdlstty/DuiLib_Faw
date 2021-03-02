@@ -27,8 +27,6 @@
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
-#include "3rd/FawLib/FawLib.hpp"
-
 #include <string>
 #include <string_view>
 #include <vector>
@@ -61,27 +59,29 @@
 
 #ifndef _FAW_STRING_TYPE
 #define _FAW_STRING_TYPE
+namespace faw {
 #ifdef UNICODE
-typedef std::wstring faw::string_t;
+typedef std::wstring string_t;
 #else
-typedef std::string faw::string_t;
+typedef std::string string_t;
 #endif
-
-#define _USE_STRING_VIEW
-#ifdef _USE_STRING_VIEW
-#include <string_view>
-#ifdef UNICODE
-typedef std::wstring_view faw::string_t;
-#else
-typedef std::string_view faw::string_t;
-#endif
-#else //_USE_STRING_VIEW
-namespace std {
-	typedef string string_view;
-	typedef wstring wstring_view;
 }
-typedef faw::string_t faw::string_t;
-#endif //_USE_STRING_VIEW
+
+//#define _USE_STRING_VIEW
+//#ifdef _USE_STRING_VIEW
+//#include <string_view>
+//#ifdef UNICODE
+//typedef std::wstring_view faw::string_t;
+//#else
+//typedef std::string_view faw::string_t;
+//#endif
+//#else //_USE_STRING_VIEW
+//namespace std {
+//	typedef string string_view;
+//	typedef wstring wstring_view;
+//}
+//typedef faw::string_t faw::string_t;
+//#endif //_USE_STRING_VIEW
 #endif
 
 #include "Utils/Utils.h"
