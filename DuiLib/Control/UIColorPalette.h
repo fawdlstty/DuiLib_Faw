@@ -15,9 +15,9 @@ namespace DuiLib {
 		DWORD GetSelectColor ();
 		void SetSelectColor (DWORD dwColor);
 
-		virtual faw::string_view_t GetClass () const;
-		virtual LPVOID GetInterface (faw::string_view_t pstrName);
-		virtual void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		virtual faw::string_t GetClass () const;
+		virtual LPVOID GetInterface (faw::string_t pstrName);
+		virtual void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 		//设置/获取 Pallet（调色板主界面）的高度
 		void SetPalletHeight (int nHeight);
@@ -27,8 +27,8 @@ namespace DuiLib {
 		void SetBarHeight (int nHeight);
 		int GetBarHeight () const;
 		//设置/获取 选择图标的路径
-		void SetThumbImage (faw::string_view_t pszImage);
-		faw::string_view_t GetThumbImage () const;
+		void SetThumbImage (faw::string_t pszImage);
+		faw::string_t GetThumbImage () const;
 
 		virtual void SetPos (RECT rc, bool bNeedInvalidate = true);
 		virtual void DoInit ();
@@ -57,7 +57,7 @@ namespace DuiLib {
 		int			m_nBarHeight		= 10;
 		POINT		m_ptLastPalletMouse;
 		POINT		m_ptLastBarMouse;
-		faw::String  m_strThumbImage;
+		faw::string_t  m_strThumbImage;
 	};
 }
 

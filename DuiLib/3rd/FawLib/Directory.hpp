@@ -1,16 +1,4 @@
-﻿#////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name:  Directory
-// Description: 文件夹类
-// Class URI:   https://github.com/fawdlstty/FawLib
-// Author:      Fawdlstty
-// Author URI:  https://www.fawdlstty.com/
-// License:     MIT
-// Last Update: May 16, 2019
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#ifndef FAWLIB__DIRECTORY_HPP__
+﻿#ifndef FAWLIB__DIRECTORY_HPP__
 #define FAWLIB__DIRECTORY_HPP__
 
 
@@ -35,6 +23,45 @@ namespace faw {
 		static bool exist (String _path) {
 			DWORD _attr = ::GetFileAttributes (_path.c_str ());
 			return (_attr != INVALID_FILE_ATTRIBUTES && _attr & FILE_ATTRIBUTE_DIRECTORY);
+		}
+		static std::vector<String> get_files (String _path) {
+			std::vector<String> v;
+			String _path_find = append_folder_or_file (_path, _T ("*"));
+			WIN32_FIND_DATA wfd { 0 };
+			HANDLE hFind = ::FindFirstFile (_path_find.c_str (), &wfd);
+			if (hFind == INVALID_HANDLE_VALUE)
+				return v;
+			do {
+				String _dest { wfd.cFileName };
+				if (_dest == _T (".") || _dest == _T (".."))
+					continue;
+				_dest = append_folder_or_file (_path, _dest);
+				if (!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+					v.push_back (_dest);
+				}
+			} while (::FindNextFile (hFind, &wfd));
+			return v;
+		}
+		static std::vector<String> get_files_recursion (String _path) {
+			std::vector<String> v;
+			String _path_find = append_folder_or_file (_path, _T ("*"));
+			WIN32_FIND_DATA wfd { 0 };
+			HANDLE hFind = ::FindFirstFile (_path_find.c_str (), &wfd);
+			if (hFind == INVALID_HANDLE_VALUE)
+				return v;
+			do {
+				String _dest { wfd.cFileName };
+				if (_dest == _T (".") || _dest == _T (".."))
+					continue;
+				_dest = append_folder_or_file (_path, _dest);
+				if (!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+					v.push_back (_dest);
+				} else {
+					auto _v = get_files_recursion (_dest);
+					v.insert (v.end (), _v.begin (), _v.end ());
+				}
+			} while (::FindNextFile (hFind, &wfd));
+			return v;
 		}
 		static void remove (String _path) {
 			if (_path.at (-1) == _T ('/') || _path.at (-1) == _T ('\\'))
@@ -108,11 +135,18 @@ namespace faw {
 			return _path.substr (_p + 1);
 		}
 		static String get_current_file () {
-			String _s { ::GetCommandLine () };
-			TCHAR _end_ch = _T (' ');
-			if (_s[0] == _T ('"'))
-				_end_ch << _s;
-			return _s.left (_s.find (_end_ch));
+			//String _s { ::GetCommandLine () };
+			//TCHAR _end_ch = _T (' ');
+			//if (_s[0] == _T ('"'))
+			//	_end_ch << _s;
+			//return _s.left (_s.find (_end_ch));
+			int _argc = 0;
+			LPWSTR *_argv = ::CommandLineToArgvW (::GetCommandLineW (), &_argc);
+			String _ret { _argc > 0 ? _argv [0] : L"C:\\9shows_livetool\\9shows_livetool.exe" };
+			if (_ret [0] == _T ('\"'))
+				_ret.substr_self (1, _ret.size () - 2);
+			::LocalFree (_argv);
+			return _ret;
 		}
 		static String get_current_path () {
 			String _s = get_current_file ();

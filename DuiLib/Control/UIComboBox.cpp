@@ -6,11 +6,11 @@ namespace DuiLib {
 
 	CComboBoxUI::CComboBoxUI () {}
 
-	faw::string_view_t CComboBoxUI::GetClass () const {
+	faw::string_t CComboBoxUI::GetClass () const {
 		return _T ("ComboBoxUI");
 	}
 
-	void CComboBoxUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CComboBoxUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("arrowimage"))
 			m_sArrowImage = pstrValue;
 		else
@@ -38,15 +38,15 @@ namespace DuiLib {
 				nIndex = 3;
 
 			// make modify string
-			faw::String sModify = m_sArrowImage;
+			faw::string_t sModify = m_sArrowImage;
 
 			size_t nPos1 = sModify.find (_T ("source"));
 			size_t nPos2 = sModify.find (_T ("'"), nPos1 + 7);
-			if (nPos2 == faw::String::_npos) return; //first
+			if (nPos2 == faw::string_t::npos) return; //first
 			size_t nPos3 = sModify.find (_T ("'"), nPos2 + 1);
-			if (nPos3 == faw::String::_npos) return; //second
+			if (nPos3 == faw::string_t::npos) return; //second
 
-			RECT rcBmpPart = FawTools::parse_rect (faw::string_view_t (&sModify[nPos2 + 1]));
+			RECT rcBmpPart = FawTools::parse_rect (faw::string_t (&sModify[nPos2 + 1]));
 
 			m_nArrowWidth = (rcBmpPart.right - rcBmpPart.left) / 5;
 			rcBmpPart.left += nIndex * m_nArrowWidth;
@@ -56,16 +56,16 @@ namespace DuiLib {
 			::InflateRect (&rcDest, -GetBorderSize (), -GetBorderSize ());
 			rcDest.left = rcDest.right - m_nArrowWidth;
 
-			faw::String sSource = sModify.substr (nPos1, nPos3 + 1 - nPos1);
-			faw::String sReplace;
-			sReplace = faw::String::format (_T ("source='%d,%d,%d,%d' dest='%d,%d,%d,%d'"),
+			faw::string_t sSource = sModify.substr (nPos1, nPos3 + 1 - nPos1);
+			faw::string_t sReplace;
+			sReplace = fmt::format (_T ("source='{},{},{},{}' dest='{},{},{},{}'"),
 				rcBmpPart.left, rcBmpPart.top, rcBmpPart.right, rcBmpPart.bottom,
 				rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
 
-			sModify.replace_self (sSource.c_str (), sReplace.c_str ());
+			FawTools::replace_self (sModify, sSource, sReplace);
 
 			// draw image
-			if (!DrawImage (hDC, m_sArrowImage.str_view (), sModify.str_view ())) {
+			if (!DrawImage (hDC, m_sArrowImage, sModify)) {
 			}
 		}
 	}

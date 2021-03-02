@@ -23,20 +23,20 @@ namespace DuiLib {
 		if (m_pManager) m_pManager->ReapObjects (this);
 	}
 
-	faw::string_view_t CControlUI::GetName () const {
-		return m_sName.str_view ();
+	faw::string_t CControlUI::GetName () const {
+		return m_sName;
 	}
 
-	void CControlUI::SetName (faw::string_view_t pstrName) {
+	void CControlUI::SetName (faw::string_t pstrName) {
 		m_sName = pstrName;
 	}
 
-	LPVOID CControlUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CControlUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_CONTROL) return this;
 		return nullptr;
 	}
 
-	faw::string_view_t CControlUI::GetClass () const {
+	faw::string_t CControlUI::GetClass () const {
 		return _T ("ControlUI");
 	}
 
@@ -76,17 +76,17 @@ namespace DuiLib {
 		m_pManager->KillTimer (this, nTimerID);
 	}
 
-	faw::String CControlUI::GetText () const {
+	faw::string_t CControlUI::GetText () const {
 		if (!IsResourceText ()) return m_sText;
-		return CResourceManager::GetInstance ()->GetText (m_sText.str_view ());
+		return CResourceManager::GetInstance ()->GetText (m_sText);
 	}
 
-	void CControlUI::SetText (faw::String pstrText) {
+	void CControlUI::SetText (faw::string_t pstrText) {
 		if (m_sText == pstrText) return;
 
 		m_sText = pstrText;
 		// 解析xml换行符
-		m_sText.replace_self (_T ("{\\n}"), _T ("\r\n"));
+		FawTools::replace_self (m_sText, _T ("{\\n}"), _T ("\r\n"));
 		Invalidate ();
 	}
 
@@ -116,11 +116,11 @@ namespace DuiLib {
 		m_bDropEnabled = bDrop;
 	}
 
-	faw::string_view_t CControlUI::GetGradient () {
-		return m_sGradient.str_view ();
+	faw::string_t CControlUI::GetGradient () {
+		return m_sGradient;
 	}
 
-	void CControlUI::SetGradient (faw::string_view_t pStrImage) {
+	void CControlUI::SetGradient (faw::string_t pStrImage) {
 		if (m_sGradient == pStrImage) return;
 
 		m_sGradient = pStrImage;
@@ -171,11 +171,11 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	faw::string_view_t CControlUI::GetBkImage () {
-		return m_sBkImage.str_view ();
+	faw::string_t CControlUI::GetBkImage () {
+		return m_sBkImage;
 	}
 
-	void CControlUI::SetBkImage (faw::string_view_t pStrImage) {
+	void CControlUI::SetBkImage (faw::string_t pStrImage) {
 		//if (m_pManager) m_pManager->RemoveImage (pStrImage);
 		if (m_sBkImage == pStrImage) return;
 
@@ -183,11 +183,11 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	faw::string_view_t CControlUI::GetForeImage () const {
-		return m_sForeImage.str_view ();
+	faw::string_t CControlUI::GetForeImage () const {
+		return m_sForeImage;
 	}
 
-	void CControlUI::SetForeImage (faw::string_view_t pStrImage) {
+	void CControlUI::SetForeImage (faw::string_t pStrImage) {
 		if (m_sForeImage == pStrImage) return;
 
 		m_sForeImage = pStrImage;
@@ -254,7 +254,7 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	bool CControlUI::DrawImage (HDC hDC, faw::string_view_t pStrImage, faw::string_view_t pStrModify) {
+	bool CControlUI::DrawImage (HDC hDC, faw::string_t pStrImage, faw::string_t pStrModify) {
 		return CRenderEngine::DrawImageString (hDC, m_pManager, m_rcItem, m_rcPaint, pStrImage, pStrModify, m_instance);
 	}
 
@@ -465,14 +465,14 @@ namespace DuiLib {
 		return m_uFloatAlign;
 	}
 
-	faw::String CControlUI::GetToolTip () const {
+	faw::string_t CControlUI::GetToolTip () const {
 		if (!IsResourceText ()) return m_sToolTip;
-		return CResourceManager::GetInstance ()->GetText (m_sToolTip.str_view ());
+		return CResourceManager::GetInstance ()->GetText (m_sToolTip);
 	}
 
-	void CControlUI::SetToolTip (faw::string_view_t pstrText) {
-		faw::String strTemp (pstrText);
-		strTemp.replace_self (_T ("<n>"), _T ("\r\n"));
+	void CControlUI::SetToolTip (faw::string_t pstrText) {
+		faw::string_t strTemp (pstrText);
+		FawTools::replace_self (strTemp, _T ("<n>"), _T ("\r\n"));
 		m_sToolTip = strTemp;
 	}
 
@@ -510,11 +510,11 @@ namespace DuiLib {
 		m_bMenuUsed = bMenuUsed;
 	}
 
-	const faw::String& CControlUI::GetUserData () {
+	const faw::string_t& CControlUI::GetUserData () {
 		return m_sUserData;
 	}
 
-	void CControlUI::SetUserData (faw::string_view_t pstrText) {
+	void CControlUI::SetUserData (faw::string_t pstrText) {
 		m_sUserData = pstrText;
 	}
 
@@ -709,12 +709,12 @@ namespace DuiLib {
 	}
 
 
-	void CControlUI::SetVirtualWnd (faw::string_view_t pstrValue) {
+	void CControlUI::SetVirtualWnd (faw::string_t pstrValue) {
 		m_sVirtualWnd = pstrValue;
 		m_pManager->UsedVirtualWnd (true);
 	}
 
-	faw::String CControlUI::GetVirtualWnd () const {
+	faw::string_t CControlUI::GetVirtualWnd () const {
 		if (!m_sVirtualWnd.empty ())
 			return m_sVirtualWnd;
 		CControlUI* pParent = GetParent ();
@@ -725,15 +725,15 @@ namespace DuiLib {
 		}
 	}
 
-	void CControlUI::AddCustomAttribute (faw::string_view_t pstrName, faw::string_view_t pstrAttr) {
+	void CControlUI::AddCustomAttribute (faw::string_t pstrName, faw::string_t pstrAttr) {
 		m_mCustomAttrs[pstrName.data ()] = pstrAttr;
 	}
 
-	faw::string_view_t CControlUI::GetCustomAttribute (faw::string_view_t pstrName) {
-		return m_mCustomAttrs[pstrName].str_view ();
+	faw::string_t CControlUI::GetCustomAttribute (faw::string_t pstrName) {
+		return m_mCustomAttrs[pstrName];
 	}
 
-	bool CControlUI::RemoveCustomAttribute (faw::string_view_t pstrName) {
+	bool CControlUI::RemoveCustomAttribute (faw::string_t pstrName) {
 		m_mCustomAttrs.erase (pstrName.data ());
 		return true;
 	}
@@ -742,10 +742,10 @@ namespace DuiLib {
 		m_mCustomAttrs.clear ();
 	}
 
-	void CControlUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CControlUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		// 样式表
 		if (m_pManager) {
-			faw::string_view_t pStyle = m_pManager->GetStyle (pstrValue);
+			faw::string_t pStyle = m_pManager->GetStyle (pstrValue);
 			if (!pStyle.empty ()) {
 				ApplyAttributeList (pStyle);
 				return;
@@ -761,9 +761,9 @@ namespace DuiLib {
 			SetFixedWidth (rcPos.right - rcPos.left);
 			SetFixedHeight (rcPos.bottom - rcPos.top);
 		} else if (pstrName == _T ("float")) {
-			faw::String nValue = pstrValue;
+			faw::string_t nValue = pstrValue;
 			// 动态计算相对比例
-			if (nValue.find (',') == faw::String::_npos) {
+			if (nValue.find (',') == faw::string_t::npos) {
 				SetFloat (FawTools::parse_bool (pstrValue));
 			} else {
 				TPercentInfo piFloatPercent = FawTools::parse_TPercentInfo (pstrValue);
@@ -774,11 +774,11 @@ namespace DuiLib {
 			UINT uAlign = GetFloatAlign ();
 			// 解析文字属性
 			while (!pstrValue.empty ()) {
-				faw::String sValue;
+				faw::string_t sValue;
 				while (pstrValue[0] == _T (',') || pstrValue[0] == _T (' ')) pstrValue = pstrValue.substr (1);
 
 				while (!pstrValue.empty () && pstrValue[0] != _T (',') && pstrValue[0] != _T (' ')) {
-					faw::string_view_t pstrTemp = pstrValue.substr (1);
+					faw::string_t pstrTemp = pstrValue.substr (1);
 					while (pstrValue.length () > pstrTemp.length ()) {
 						sValue += pstrValue[0];
 						pstrValue = pstrValue.substr (1);
@@ -827,7 +827,7 @@ namespace DuiLib {
 		} else if (pstrName == _T ("colorhsl")) {
 			SetColorHSL (FawTools::parse_bool (pstrValue));
 		} else if (pstrName == _T ("bordersize")) {
-			if (pstrValue.find (',') == faw::String::_npos) {
+			if (pstrValue.find (',') == faw::string_t::npos) {
 				SetBorderSize (FawTools::parse_dec (pstrValue));
 			} else {
 				RECT rcPadding = FawTools::parse_rect (pstrValue);
@@ -891,19 +891,19 @@ namespace DuiLib {
 		}
 	}
 
-	CControlUI* CControlUI::ApplyAttributeList (faw::string_view_t pstrValue) {
+	CControlUI* CControlUI::ApplyAttributeList (faw::string_t pstrValue) {
 		// 解析样式表
 		if (m_pManager) {
-			faw::string_view_t pStyle = m_pManager->GetStyle (pstrValue);
+			faw::string_t pStyle = m_pManager->GetStyle (pstrValue);
 			if (!pStyle.empty ()) {
 				return ApplyAttributeList (pStyle);
 			}
 		}
-		faw::String sXmlData = pstrValue;
-		sXmlData.replace_self (_T ("&quot;"), _T ("\""));
+		faw::string_t sXmlData = pstrValue;
+		FawTools::replace_self (sXmlData, _T ("&quot;"), _T ("\""));
 		auto pairs = FawTools::parse_keyvalue_pairs (sXmlData);
 		for (auto[str_key, str_value] : pairs)
-			SetAttribute (str_key.str_view (), str_value.str_view ());
+			SetAttribute (str_key, str_value);
 		return this;
 	}
 
@@ -956,7 +956,7 @@ namespace DuiLib {
 
 	void CControlUI::PaintBkColor (HDC hDC) {
 		if (m_dwBackColor != 0) {
-			bool bVer = (!m_sGradient.is_equal_nocase (_T ("hor")));
+			bool bVer = (!FawTools::is_equal_nocase (m_sGradient, _T ("hor")));
 			if (m_dwBackColor2 != 0) {
 				if (m_dwBackColor3 != 0) {
 					RECT rc = m_rcItem;
@@ -975,7 +975,7 @@ namespace DuiLib {
 
 	void CControlUI::PaintBkImage (HDC hDC) {
 		if (m_sBkImage.empty ()) return;
-		if (!DrawImage (hDC, m_sBkImage.str_view ())) {
+		if (!DrawImage (hDC, m_sBkImage)) {
 		}
 	}
 
@@ -989,7 +989,7 @@ namespace DuiLib {
 
 	void CControlUI::PaintForeImage (HDC hDC) {
 		if (m_sForeImage.empty ()) return;
-		DrawImage (hDC, m_sForeImage.str_view ());
+		DrawImage (hDC, m_sForeImage);
 	}
 
 	void CControlUI::PaintText (HDC hDC) {

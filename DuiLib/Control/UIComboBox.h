@@ -11,15 +11,15 @@ namespace DuiLib {
 		DECLARE_DUICONTROL (CComboBoxUI)
 	public:
 		CComboBoxUI ();
-		faw::string_view_t GetClass () const;
+		faw::string_t GetClass () const;
 
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 		void PaintText (HDC hDC);
 		void PaintStatusImage (HDC hDC);
 
 	protected:
-		faw::String m_sArrowImage;
+		faw::string_t m_sArrowImage;
 		int        m_nArrowWidth	= 0;
 	};
 }

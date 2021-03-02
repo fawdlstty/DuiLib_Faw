@@ -10,12 +10,12 @@ namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CFlashUI)
 
 		CFlashUI::CFlashUI (void) {
-		faw::String strFlashCLSID = _T ("{D27CDB6E-AE6D-11CF-96B8-444553540000}");
+		faw::string_t strFlashCLSID = _T ("{D27CDB6E-AE6D-11CF-96B8-444553540000}");
 		OLECHAR szCLSID[100] = { 0 };
 #ifndef _UNICODE
-		::MultiByteToWideChar (::GetACP (), 0, strFlashCLSID, -1, szCLSID, lengthof (szCLSID) - 1);
+		::MultiByteToWideChar (::GetACP (), 0, strFlashCLSID.data (), -1, szCLSID, lengthof (szCLSID) - 1);
 #else
-		_tcsncpy (szCLSID, strFlashCLSID.c_str (), lengthof (szCLSID) - 1);
+		_tcsncpy (szCLSID, strFlashCLSID.data (), lengthof (szCLSID) - 1);
 #endif
 		::CLSIDFromString (szCLSID, &m_clsid);
 	}
@@ -28,11 +28,11 @@ namespace DuiLib {
 		ReleaseControl ();
 	}
 
-	faw::string_view_t CFlashUI::GetClass () const {
+	faw::string_t CFlashUI::GetClass () const {
 		return DUI_CTRL_FLASH;
 	}
 
-	LPVOID CFlashUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CFlashUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_FLASH) return static_cast<CFlashUI*>(this);
 		return CActiveXUI::GetInterface (pstrName);
 	}

@@ -52,29 +52,29 @@ namespace DuiLib {
 		}
 
 		// "true" or "True" or "TRUE" -> true
-		static bool parse_bool (faw::String str) {
-			static std::map<faw::String, bool> mbool { { _T ("true"), true }, { _T ("false"), false }, { _T ("on"), true }, { _T ("off"), false }, { _T ("yes"), true }, { _T ("no"), false }, { _T ("ok"), true }, { _T ("cancel"), false }, { _T ("1"), true }, { _T ("0"), false } };
+		static bool parse_bool (faw::string_t str) {
+			static std::map<faw::string_t, bool> mbool { { _T ("true"), true }, { _T ("false"), false }, { _T ("on"), true }, { _T ("off"), false }, { _T ("yes"), true }, { _T ("no"), false }, { _T ("ok"), true }, { _T ("cancel"), false }, { _T ("1"), true }, { _T ("0"), false } };
 			if (mbool.find (str) != mbool.end ())
 				return mbool[str];
 			return !str.empty ();
 		}
 
-		// "a"="a" "b"=b c="c" d=d -> std::map<faw::String, faw::String>
-		static std::map<faw::String, faw::String> parse_keyvalue_pairs (faw::String str) {
-			std::map<faw::String, faw::String> m;
+		// "a"="a" "b"=b c="c" d=d -> std::map<faw::string_t, faw::string_t>
+		static std::map<faw::string_t, faw::string_t> parse_keyvalue_pairs (faw::string_t str) {
+			std::map<faw::string_t, faw::string_t> m;
 			size_t begin = 0;
-			faw::String str_key = _T (""), str_value = _T ("");
+			faw::string_t str_key = _T (""), str_value = _T ("");
 			while (begin < str.size ()) { 	// parse str_key
 				TCHAR ch = str[begin];
 				TCHAR sp = (ch == _T ('\"') || ch == _T ('\'') ? ch : _T ('='));
 				if (ch == sp) ++begin;
 				size_t p = str.find (sp, begin);
-				if (p == faw::String::_npos) break;
+				if (p == faw::string_t::npos) break;
 				str_key = str.substr (begin, p - begin);
-				if (p == faw::String::_npos) break;
+				if (p == faw::string_t::npos) break;
 				// parse str_value
 				p = str.find (_T ('='), begin);
-				if (p == faw::String::_npos) break;
+				if (p == faw::string_t::npos) break;
 				begin = p + 1;
 				if (begin >= str.size ()) break;
 				ch = str[begin];
@@ -84,11 +84,11 @@ namespace DuiLib {
 					++begin;
 				}
 				p = str.find (sp, begin);
-				if (p == faw::String::_npos) break;
+				if (p == faw::string_t::npos) break;
 				str_value = str.substr (begin, p - begin);
 				// reset
-				m[faw::String (str_key)] = faw::String (str_value);
-				if (p != faw::String::_npos) {
+				m[faw::string_t (str_key)] = faw::string_t (str_value);
+				if (p != faw::string_t::npos) {
 					begin = p + 1;
 					if (begin >= str.size ()) break;
 					if (ch == sp && str[begin] == _T (' ')) ++begin;
@@ -96,7 +96,7 @@ namespace DuiLib {
 				str_key = str_value = _T ("");
 			}
 			if (!str_key.empty ())
-				m[faw::String (str_key)] = faw::String (str_value);
+				m[faw::string_t (str_key)] = faw::string_t (str_value);
 			return m;
 		}
 
@@ -151,7 +151,7 @@ namespace DuiLib {
 			}
 			return L"";
 		}
-		static faw::String format_str (faw::string_view_t str, ...) {
+		static faw::string_t format_str (faw::string_t str, ...) {
 			if (str.empty ())
 				return _T ("");
 			try {
@@ -183,7 +183,46 @@ namespace DuiLib {
 				if (v[i] == item)
 					return i;
 			}
-			return faw::String::_npos;
+			return faw::string_t::npos;
+		}
+
+		static void replace_self (faw::string_t &_str, faw::string_t _s1, faw::string_t _s2) {
+			size_t pos = _str.find (_s1);
+			while (pos != faw::string_t::npos) {
+				_str.replace (pos, _s1.size (), _s2);
+				pos = _str.find (_s1, pos + 2);
+			}
+		}
+
+		static bool is_equal_nocase (faw::string_t _s1, faw::string_t _s2) {
+			if (_s1.size () != _s2.size ())
+				return false;
+			for (size_t i = 0; i < _s1.size (); ++i) {
+				char _ch1 = _s1 [i];
+				_ch1 = (_ch1 >= 'a' && _ch1 <= 'z') ? (_ch1 - 'a' + 'A') : _ch1;
+				char _ch2 = _s2 [i];
+				_ch2 = (_ch2 >= 'a' && _ch2 <= 'z') ? (_ch2 - 'a' + 'A') : _ch2;
+				if (_ch1 != _ch2)
+					return false;
+			}
+			return true;
+		}
+
+		static void lower (faw::string_t &_s1) {
+			for (size_t i = 0; i < _s1.size (); ++i) {
+				char _ch1 = _s1 [i];
+				_s1 [i] = (_ch1 >= 'A' && _ch1 <= 'Z') ? (_ch1 - 'A' + 'a') : _ch1;
+			}
+		}
+
+		static faw::string_t right (faw::string_t &_s1, size_t n) {
+			if (_s1.empty () || n == 0) {
+				return _T ("");
+			} else if (_s1.size () < n) {
+				return _s1;
+			} else {
+				return _s1.substr (_s1.size () - n);
+			}
 		}
 
 
@@ -199,25 +238,25 @@ namespace DuiLib {
 		static std::string gb18030_to_utf8 (std::string_view _old) { return utf16_to_utf8 (gb18030_to_utf16 (_old)); }
 		static std::string utf8_to_gb18030 (std::string_view _old) { return utf16_to_gb18030 (utf8_to_utf16 (_old)); }
 #ifdef UNICODE
-		static std::string T_to_gb18030 (faw::string_view_t _old) { return utf16_to_gb18030 (_old); }
-		static std::string T_to_utf8 (faw::string_view_t _old) { return utf16_to_utf8 (_old); }
-		static std::wstring T_to_utf16 (faw::string_view_t _old) { return std::wstring (_old); }
-		static faw::String gb18030_to_T (std::string_view _old) { return gb18030_to_utf16 (_old); }
-		static faw::String utf8_to_T (std::string_view _old) { return utf8_to_utf16 (_old); }
-		static faw::String utf16_to_T (std::wstring_view _old) { return std::wstring (_old); }
+		static std::string T_to_gb18030 (faw::string_t _old) { return utf16_to_gb18030 (_old); }
+		static std::string T_to_utf8 (faw::string_t _old) { return utf16_to_utf8 (_old); }
+		static std::wstring T_to_utf16 (faw::string_t _old) { return std::wstring (_old); }
+		static faw::string_t gb18030_to_T (std::string_view _old) { return gb18030_to_utf16 (_old); }
+		static faw::string_t utf8_to_T (std::string_view _old) { return utf8_to_utf16 (_old); }
+		static faw::string_t utf16_to_T (std::wstring_view _old) { return std::wstring (_old); }
 #else
-		static std::string T_to_gb18030 (faw::string_view_t _old) { return std::string (_old); }
-		static std::string T_to_utf8 (faw::string_view_t _old) { return gb18030_to_utf8 (_old); }
-		static std::wstring T_to_utf16 (faw::string_view_t _old) { return gb18030_to_utf16 (_old); }
-		static faw::String gb18030_to_T (std::string_view _old) { return std::string (_old); }
-		static faw::String utf8_to_T (std::string_view _old) { return utf8_to_gb18030 (_old); }
-		static faw::String utf16_to_T (std::wstring_view _old) { return utf16_to_gb18030 (_old); }
+		static std::string T_to_gb18030 (faw::string_t _old) { return std::string (_old); }
+		static std::string T_to_utf8 (faw::string_t _old) { return gb18030_to_utf8 (_old); }
+		static std::wstring T_to_utf16 (faw::string_t _old) { return gb18030_to_utf16 (_old); }
+		static faw::string_t gb18030_to_T (std::string_view _old) { return std::string (_old); }
+		static faw::string_t utf8_to_T (std::string_view _old) { return utf8_to_gb18030 (_old); }
+		static faw::string_t utf16_to_T (std::wstring_view _old) { return utf16_to_gb18030 (_old); }
 #endif
 
 	private:
 		// "1,2,3,4" -> std::vector<size_t>
 		template <typename T>
-		static std::vector<int64_t> split_number (T &str, size_t expect = faw::String::_npos) {
+		static std::vector<int64_t> split_number (T &str, size_t expect = faw::string_t::npos) {
 			std::vector<int64_t> v;
 			int64_t n = 0;
 			size_t i = 0;
@@ -234,13 +273,13 @@ namespace DuiLib {
 					n = 0;
 					has_num = false;
 					is_sign = false;
-					if (expect != faw::String::_npos && v.size () >= expect)
+					if (expect != faw::string_t::npos && v.size () >= expect)
 						break;
 				}
 			}
 			if (has_num)
 				v.push_back (is_sign ? -n : n);
-			while (expect != faw::String::_npos && v.size () < expect)
+			while (expect != faw::string_t::npos && v.size () < expect)
 				v.push_back (0);
 			if constexpr (!std::is_const<T>::value)
 				str = str.substr (i);
@@ -248,7 +287,7 @@ namespace DuiLib {
 		}
 
 		template <typename T>
-		static std::vector<double> split_double (T &str, size_t expect = faw::String::_npos) {
+		static std::vector<double> split_double (T &str, size_t expect = faw::string_t::npos) {
 			std::vector<double> v;
 			double n = 0.0, l = 1.0;
 			size_t i = 0;
@@ -271,13 +310,13 @@ namespace DuiLib {
 					v.push_back (is_sign ? -n : n);
 					n = 0.0;
 					has_num = false;
-					if (expect != faw::String::_npos && v.size () >= expect)
+					if (expect != faw::string_t::npos && v.size () >= expect)
 						break;
 				}
 			}
 			if (has_num)
 				v.push_back (is_sign ? -n : n);
-			while (expect != faw::String::_npos && v.size () < expect)
+			while (expect != faw::string_t::npos && v.size () < expect)
 				v.push_back (0.0);
 			if constexpr (!std::is_const<T>::value)
 				str = str.substr (i);
@@ -302,8 +341,8 @@ namespace DuiLib {
 			return s.c_str ();
 		}
 
-		//static std::vector<faw::String> split (faw::string_view_t str, TCHAR sp) {
-		//	std::vector<faw::String> v;
+		//static std::vector<faw::string_t> split (faw::string_t str, TCHAR sp) {
+		//	std::vector<faw::string_t> v;
 		//	return v;
 		//}
 	};

@@ -1,16 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name:  SetupHelper
-// Description: 安装包帮助类
-// Class URI:   https://github.com/fawdlstty/FawLib
-// Author:      Fawdlstty
-// Author URI:  https://www.fawdlstty.com/
-// License:     MIT
-// Last Update: May 25, 2019
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#ifndef FAWLIB__SETUP_HELPER_HPP__
+﻿#ifndef FAWLIB__SETUP_HELPER_HPP__
 #define FAWLIB__SETUP_HELPER_HPP__
 
 

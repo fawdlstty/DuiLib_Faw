@@ -12,9 +12,9 @@ namespace DuiLib {
 		CFadeButtonUI ();
 		virtual ~CFadeButtonUI ();
 
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
-		void SetNormalImage (faw::string_view_t pStrImage);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
+		void SetNormalImage (faw::string_t pStrImage);
 
 		void DoEvent (TEventUI& event);
 		void OnTimer (int nTimerID);
@@ -25,9 +25,9 @@ namespace DuiLib {
 		virtual void OnAnimationStop (INT nAnimationID) {}
 
 	protected:
-		faw::String m_sOldImage;
-		faw::String m_sNewImage;
-		faw::String m_sLastImage;
+		faw::string_t m_sOldImage;
+		faw::string_t m_sNewImage;
+		faw::string_t m_sLastImage;
 		BYTE       m_bFadeAlpha;
 		BOOL       m_bMouseHove		= FALSE;
 		BOOL       m_bMouseLeave	= FALSE;

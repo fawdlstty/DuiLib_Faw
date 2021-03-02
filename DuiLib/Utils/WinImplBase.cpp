@@ -32,15 +32,15 @@ namespace DuiLib {
 		return CS_DBLCLKS;
 	}
 
-	CControlUI* WindowImplBase::CreateControl (faw::string_view_t pstrClass) {
+	CControlUI* WindowImplBase::CreateControl (faw::string_t pstrClass) {
 		return nullptr;
 	}
 
-	faw::string_view_t WindowImplBase::QueryControlText (faw::string_view_t lpstrId, faw::string_view_t lpstrType) {
+	faw::string_t WindowImplBase::QueryControlText (faw::string_t lpstrId, faw::string_t lpstrType) {
 		return nullptr;
 	}
 
-	LRESULT WindowImplBase::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, bool& /*bHandled*/) {
+	std::optional<LRESULT> WindowImplBase::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM /*lParam*/) {
 		if (uMsg == WM_KEYDOWN) {
 			switch (wParam) {
 			case VK_RETURN:
@@ -50,30 +50,29 @@ namespace DuiLib {
 				break;
 			}
 		}
-		return FALSE;
-	}
-
-	LRESULT WindowImplBase::OnClose (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
 		return 0;
 	}
 
-	LRESULT WindowImplBase::OnDestroy (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnClose (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
+	}
+
+	std::optional<LRESULT> WindowImplBase::OnDestroy (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
 #if defined(WIN32) && !defined(UNDER_CE)
-	LRESULT WindowImplBase::OnNcActivate (UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled) {
-		if (::IsIconic (GetHWND ())) bHandled = FALSE;
+	std::optional<LRESULT> WindowImplBase::OnNcActivate (UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/) {
+		if (::IsIconic (GetHWND ()))
+			return std::nullopt;
 		return (wParam == 0) ? TRUE : FALSE;
 	}
 
-	LRESULT WindowImplBase::OnNcCalcSize (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> WindowImplBase::OnNcCalcSize (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		return 0;
 	}
 
-	LRESULT WindowImplBase::OnNcPaint (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/) {
+	std::optional<LRESULT> WindowImplBase::OnNcPaint (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
 		return 0;
 	}
 
@@ -82,18 +81,18 @@ namespace DuiLib {
 		if (!pControl || pControl->IsDynamic (pt))
 			return FALSE;
 
-		faw::String strClassName;
-		static std::vector<faw::String> vctStaticName { _T ("controlui"), _T ("textui"), _T ("labelui"), _T ("containerui"), _T ("horizontallayoutui"), _T ("verticallayoutui"), _T("tablayoutui"), _T ("childlayoutui"), _T ("dialoglayoutui"), _T ("progresscontainerui") };
+		faw::string_t strClassName;
+		static std::vector<faw::string_t> vctStaticName { _T ("controlui"), _T ("textui"), _T ("labelui"), _T ("containerui"), _T ("horizontallayoutui"), _T ("verticallayoutui"), _T("tablayoutui"), _T ("childlayoutui"), _T ("dialoglayoutui"), _T ("progresscontainerui") };
 
 		strClassName = pControl->GetClass ();
-		strClassName.lower_self ();
+		FawTools::lower (strClassName);
 		if (vctStaticName.end () != std::find (vctStaticName.begin (), vctStaticName.end (), strClassName)) {
 			CControlUI* pParent = pControl->GetParent ();
 			while (pParent) {
 				if (pParent->IsDynamic (pt))
 					return FALSE;
 				strClassName = pParent->GetClass ();
-				strClassName.lower_self ();
+				FawTools::lower (strClassName);
 				if (vctStaticName.end () == std::find (vctStaticName.begin (), vctStaticName.end (), strClassName))
 					return FALSE;
 
@@ -106,7 +105,7 @@ namespace DuiLib {
 		return FALSE;
 	}
 
-	LRESULT WindowImplBase::OnNcHitTest (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> WindowImplBase::OnNcHitTest (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		POINT pt { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 		::ScreenToClient (GetHWND (), &pt);
 
@@ -145,7 +144,7 @@ namespace DuiLib {
 		return HTCLIENT;
 	}
 
-	LRESULT WindowImplBase::OnGetMinMaxInfo (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> WindowImplBase::OnGetMinMaxInfo (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		MONITORINFO Monitor = {};
 		Monitor.cbSize = sizeof (Monitor);
 		::GetMonitorInfo (::MonitorFromWindow (m_hWnd, MONITOR_DEFAULTTOPRIMARY), &Monitor);
@@ -164,22 +163,19 @@ namespace DuiLib {
 		lpMMI->ptMinTrackSize.x = m_pm.GetMinInfo ().cx;
 		lpMMI->ptMinTrackSize.y = m_pm.GetMinInfo ().cy;
 
-		bHandled = TRUE;
 		return 0;
 	}
 
-	LRESULT WindowImplBase::OnMouseWheel (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnMouseWheel (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnMouseHover (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnMouseHover (UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		return std::nullopt;
 	}
 #endif
 
-	LRESULT WindowImplBase::OnSize (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> WindowImplBase::OnSize (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		SIZE szRoundCorner = m_pm.GetRoundCorner ();
 #if defined(WIN32) && !defined(UNDER_CE)
 		if (!::IsIconic (GetHWND ())) {
@@ -192,18 +188,15 @@ namespace DuiLib {
 			::DeleteObject (hRgn);
 		}
 #endif
-		bHandled = FALSE;
-		return 0;
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnChar (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnChar (UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnSysCommand (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> WindowImplBase::OnSysCommand (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		if (wParam == SC_CLOSE) {
-			bHandled = TRUE;
 			SendMessage (WM_CLOSE);
 			return 0;
 		}
@@ -229,7 +222,7 @@ namespace DuiLib {
 		return lRes;
 	}
 
-	LRESULT WindowImplBase::OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> WindowImplBase::OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		// 调整窗口样式
 		LONG styleValue = ::GetWindowLong (GetHWND (), GWL_STYLE);
 		styleValue &= ~WS_CAPTION;
@@ -243,18 +236,18 @@ namespace DuiLib {
 		// 创建主窗口
 		CControlUI* pRoot = nullptr;
 		CDialogBuilder builder;
-		faw::String sSkinType = GetSkinType ();
-		std::variant<UINT, faw::String> xml;
+		faw::string_t sSkinType = GetSkinType ();
+		std::variant<UINT, faw::string_t> xml;
 		if (!sSkinType.empty ()) {
-			std::variant<UINT, faw::String> xml = FawTools::parse_dec (GetSkinFile ());
-			pRoot = builder.Create (xml, sSkinType.str_view (), this, &m_pm);
+			std::variant<UINT, faw::string_t> xml = FawTools::parse_dec (GetSkinFile ());
+			pRoot = builder.Create (xml, sSkinType, this, &m_pm);
 		} else {
-			std::variant<UINT, faw::String> xml = faw::String (GetSkinFile ());
+			std::variant<UINT, faw::string_t> xml = faw::string_t (GetSkinFile ());
 			pRoot = builder.Create (xml, _T (""), this, &m_pm);
 		}
 
 		if (!pRoot) {
-			faw::String sError = _T ("加载资源文件失败：");
+			faw::string_t sError = _T ("加载资源文件失败：");
 			sError += GetSkinFile ();
 			MessageBox (nullptr, sError.c_str (), _T ("Duilib"), MB_OK | MB_ICONERROR);
 			ExitProcess (1);
@@ -270,88 +263,81 @@ namespace DuiLib {
 		return 0;
 	}
 
-	LRESULT WindowImplBase::OnKeyDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnKeyDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnKillFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnKillFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnSetFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnSetFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnLButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnLButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnLButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnLButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnRButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnRButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnRButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnRButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
-	LRESULT WindowImplBase::OnMouseMove (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::OnMouseMove (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
+		return std::nullopt;
 	}
 
 	LRESULT WindowImplBase::HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		LRESULT lRes = 0;
-		BOOL bHandled = TRUE;
+		std::optional<LRESULT> lRes = 0;
 		switch (uMsg) {
-		case WM_CREATE:			lRes = OnCreate (uMsg, wParam, lParam, bHandled); break;
-		case WM_CLOSE:			lRes = OnClose (uMsg, wParam, lParam, bHandled); break;
-		case WM_DESTROY:		lRes = OnDestroy (uMsg, wParam, lParam, bHandled); break;
+		case WM_CREATE:			lRes = OnCreate (uMsg, wParam, lParam); break;
+		case WM_CLOSE:			lRes = OnClose (uMsg, wParam, lParam); break;
+		case WM_DESTROY:		lRes = OnDestroy (uMsg, wParam, lParam); break;
 #if defined(WIN32) && !defined(UNDER_CE)
-		case WM_NCACTIVATE:		lRes = OnNcActivate (uMsg, wParam, lParam, bHandled); break;
-		case WM_NCCALCSIZE:		lRes = OnNcCalcSize (uMsg, wParam, lParam, bHandled); break;
-		case WM_NCPAINT:		lRes = OnNcPaint (uMsg, wParam, lParam, bHandled); break;
-		case WM_NCHITTEST:		lRes = OnNcHitTest (uMsg, wParam, lParam, bHandled); break;
-		case WM_GETMINMAXINFO:	lRes = OnGetMinMaxInfo (uMsg, wParam, lParam, bHandled); break;
-		case WM_MOUSEWHEEL:		lRes = OnMouseWheel (uMsg, wParam, lParam, bHandled); break;
+		case WM_NCACTIVATE:		lRes = OnNcActivate (uMsg, wParam, lParam); break;
+		case WM_NCCALCSIZE:		lRes = OnNcCalcSize (uMsg, wParam, lParam); break;
+		case WM_NCPAINT:		lRes = OnNcPaint (uMsg, wParam, lParam); break;
+		case WM_NCHITTEST:		lRes = OnNcHitTest (uMsg, wParam, lParam); break;
+		case WM_GETMINMAXINFO:	lRes = OnGetMinMaxInfo (uMsg, wParam, lParam); break;
+		case WM_MOUSEWHEEL:		lRes = OnMouseWheel (uMsg, wParam, lParam); break;
 #endif
-		case WM_SIZE:			lRes = OnSize (uMsg, wParam, lParam, bHandled); break;
-		case WM_CHAR:			lRes = OnChar (uMsg, wParam, lParam, bHandled); break;
-		case WM_SYSCOMMAND:		lRes = OnSysCommand (uMsg, wParam, lParam, bHandled); break;
-		case WM_KEYDOWN:		lRes = OnKeyDown (uMsg, wParam, lParam, bHandled); break;
-		case WM_KILLFOCUS:		lRes = OnKillFocus (uMsg, wParam, lParam, bHandled); break;
-		case WM_SETFOCUS:		lRes = OnSetFocus (uMsg, wParam, lParam, bHandled); break;
-		case WM_LBUTTONUP:		lRes = OnLButtonUp (uMsg, wParam, lParam, bHandled); break;
-		case WM_LBUTTONDOWN:	lRes = OnLButtonDown (uMsg, wParam, lParam, bHandled); break;
-		case WM_RBUTTONUP:		lRes = OnRButtonUp (uMsg, wParam, lParam, bHandled); break;
-		case WM_RBUTTONDOWN:	lRes = OnRButtonDown (uMsg, wParam, lParam, bHandled); break;
-		case WM_MOUSEMOVE:		lRes = OnMouseMove (uMsg, wParam, lParam, bHandled); break;
-		case WM_MOUSEHOVER:		lRes = OnMouseHover (uMsg, wParam, lParam, bHandled); break;
-		default:				bHandled = FALSE; break;
+		case WM_SIZE:			lRes = OnSize (uMsg, wParam, lParam); break;
+		case WM_CHAR:			lRes = OnChar (uMsg, wParam, lParam); break;
+		case WM_SYSCOMMAND:		lRes = OnSysCommand (uMsg, wParam, lParam); break;
+		case WM_KEYDOWN:		lRes = OnKeyDown (uMsg, wParam, lParam); break;
+		case WM_KILLFOCUS:		lRes = OnKillFocus (uMsg, wParam, lParam); break;
+		case WM_SETFOCUS:		lRes = OnSetFocus (uMsg, wParam, lParam); break;
+		case WM_LBUTTONUP:		lRes = OnLButtonUp (uMsg, wParam, lParam); break;
+		case WM_LBUTTONDOWN:	lRes = OnLButtonDown (uMsg, wParam, lParam); break;
+		case WM_RBUTTONUP:		lRes = OnRButtonUp (uMsg, wParam, lParam); break;
+		case WM_RBUTTONDOWN:	lRes = OnRButtonDown (uMsg, wParam, lParam); break;
+		case WM_MOUSEMOVE:		lRes = OnMouseMove (uMsg, wParam, lParam); break;
+		case WM_MOUSEHOVER:		lRes = OnMouseHover (uMsg, wParam, lParam); break;
+		default:				lRes = std::nullopt; break;
 		}
-		if (bHandled) return lRes;
+		if (lRes.has_value ())
+			return lRes.value ();
 
-		lRes = HandleCustomMessage (uMsg, wParam, lParam, bHandled);
-		if (bHandled) return lRes;
+		lRes = HandleCustomMessage (uMsg, wParam, lParam);
+		if (lRes.has_value ())
+			return lRes.value ();
 
-		if (m_pm.MessageHandler (uMsg, wParam, lParam, lRes))
-			return lRes;
+		lRes = m_pm.MessageHandler (uMsg, wParam, lParam);
+		if (lRes.has_value ())
+			return lRes.value ();
 		return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
 	}
 
-	LRESULT WindowImplBase::HandleCustomMessage (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-		bHandled = FALSE;
-		return 0;
+	std::optional<LRESULT> WindowImplBase::HandleCustomMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		return std::nullopt;
 	}
 
 	LONG WindowImplBase::GetStyle () {
@@ -362,7 +348,7 @@ namespace DuiLib {
 	}
 
 	void WindowImplBase::OnClick (TNotifyUI& msg) {
-		faw::String sCtrlName = msg.pSender->GetName ();
+		faw::string_t sCtrlName = msg.pSender->GetName ();
 		if (sCtrlName == _T ("closebtn")) {
 			Close ();
 			return;

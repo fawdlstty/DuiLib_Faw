@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <optional>
+
 struct IOleObject;
 
 
@@ -32,8 +34,8 @@ namespace DuiLib {
 		CActiveXUI ();
 		virtual ~CActiveXUI ();
 
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 
 		HWND GetHostWindow () const;
 
@@ -43,11 +45,11 @@ namespace DuiLib {
 		virtual void SetMFC (bool bMFC = false);
 
 		bool CreateControl (const CLSID clsid);
-		bool CreateControl (faw::string_view_t pstrCLSID);
+		bool CreateControl (faw::string_t pstrCLSID);
 		HRESULT GetControl (const IID iid, LPVOID* ppRet);
 		CLSID GetClisd () const;
-		faw::string_view_t GetModuleName () const;
-		void SetModuleName (faw::string_view_t pstrText);
+		faw::string_t GetModuleName () const;
+		void SetModuleName (faw::string_t pstrText);
 
 		void SetVisible (bool bVisible = true);
 		void SetInternVisible (bool bVisible = true);
@@ -55,9 +57,9 @@ namespace DuiLib {
 		void Move (SIZE szOffset, bool bNeedInvalidate = true);
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
-		LRESULT MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+		std::optional<LRESULT> MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	protected:
 		virtual void ReleaseControl ();
@@ -65,7 +67,7 @@ namespace DuiLib {
 
 	protected:
 		CLSID			m_clsid			= IID_NULL;
-		faw::String		m_sModuleName;
+		faw::string_t		m_sModuleName;
 		bool			m_bCreated		= false;
 		bool			m_bDelayCreate	= true;
 		bool			m_bMFC			= false;

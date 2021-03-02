@@ -34,4 +34,9 @@
 #define MIN min
 #define CLAMP(x,a,b) (MIN(b,MAX(a,x)))
 
+#include <optional>
+
+#include "Utils/FawTools.hpp"
+#include "../fmt/include/fmt/core.h"
+
 #endif //__DUILIB_FAW__STDAFX_H__

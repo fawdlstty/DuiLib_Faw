@@ -1,16 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name:  FawLib
-// Description: FawLib统一引入头文件
-// Class URI:   https://github.com/fawdlstty/FawLib
-// Author:      Fawdlstty
-// Author URI:  https://www.fawdlstty.com/
-// License:     MIT
-// Last Update: Apr 02, 2019
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#ifndef FAWLIB__FAWLIB_HPP__
+﻿#ifndef FAWLIB__FAWLIB_HPP__
 #define FAWLIB__FAWLIB_HPP__
 
 

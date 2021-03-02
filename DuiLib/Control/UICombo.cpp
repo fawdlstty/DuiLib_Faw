@@ -9,7 +9,7 @@ namespace DuiLib {
 	class CComboWnd: public CWindowWnd, public INotifyUI {
 	public:
 		void Init (CComboUI* pOwner);
-		faw::string_view_t GetWindowClassName () const;
+		faw::string_t GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -35,7 +35,7 @@ namespace DuiLib {
 			EnsureVisible (m_iOldSel);
 		} else if (msg.sType == _T ("click")) {
 			// 测试代码
-			faw::String sName = msg.pSender->GetName ();
+			faw::string_t sName = msg.pSender->GetName ();
 			CControlUI* pCtrl = msg.pSender;
 			while (pCtrl) {
 				IListItemUI* pListItem = (IListItemUI*) pCtrl->GetInterface (DUI_CTRL_LISTITEM);
@@ -96,7 +96,7 @@ namespace DuiLib {
 		::SendMessage (hWndParent, WM_NCACTIVATE, TRUE, 0L);
 	}
 
-	faw::string_view_t CComboWnd::GetWindowClassName () const {
+	faw::string_t CComboWnd::GetWindowClassName () const {
 		return _T ("ComboWnd");
 	}
 
@@ -135,7 +135,7 @@ namespace DuiLib {
 			// the items back to the righfull owner/manager when the window closes.
 			m_pLayout = new CVerticalLayoutUI;
 			m_pLayout->SetManager (&m_pm, nullptr, true);
-			faw::string_view_t pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("VerticalLayout"));
+			faw::string_t pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("VerticalLayout"));
 			if (!pDefaultAttributes.empty ()) {
 				m_pLayout->ApplyAttributeList (pDefaultAttributes);
 			}
@@ -208,8 +208,9 @@ namespace DuiLib {
 			if (m_hWnd != (HWND) wParam) PostMessage (WM_CLOSE);
 		}
 
-		LRESULT lRes = 0;
-		if (m_pm.MessageHandler (uMsg, wParam, lParam, lRes)) return lRes;
+		std::optional<LRESULT> lRes = m_pm.MessageHandler (uMsg, wParam, lParam);
+		if (lRes.has_value ())
+			return lRes.value ();
 		return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
 	}
 
@@ -268,11 +269,11 @@ namespace DuiLib {
 		::ZeroMemory (&m_ListInfo.rcColumn, sizeof (m_ListInfo.rcColumn));
 	}
 
-	faw::string_view_t CComboUI::GetClass () const {
+	faw::string_t CComboUI::GetClass () const {
 		return _T ("ComboUI");
 	}
 
-	LPVOID CComboUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CComboUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_COMBO) return static_cast<CComboUI*>(this);
 		if (pstrName == _T ("IListOwner")) return static_cast<IListOwnerUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
@@ -526,13 +527,13 @@ namespace DuiLib {
 		return true;
 	}
 
-	faw::String CComboUI::GetText () const {
+	faw::string_t CComboUI::GetText () const {
 		if (m_iCurSel < 0) return __super::GetText ();
 		CControlUI* pControl = static_cast<CControlUI*>(m_items[m_iCurSel]);
 		return pControl->GetText ();
 	}
 
-	void CComboUI::SetText (faw::String pstrText) {
+	void CComboUI::SetText (faw::string_t pstrText) {
 		int iOldSel = m_iCurSel;
 		m_iCurSel = -2;
 		for (int i = 0; i < m_items.GetSize (); ++i) {
@@ -555,11 +556,11 @@ namespace DuiLib {
 		if (!IsEnabled ()) m_uButtonState = 0;
 	}
 
-	faw::string_view_t CComboUI::GetDropBoxAttributeList () {
-		return m_sDropBoxAttributes.str_view ();
+	faw::string_t CComboUI::GetDropBoxAttributeList () {
+		return m_sDropBoxAttributes;
 	}
 
-	void CComboUI::SetDropBoxAttributeList (faw::string_view_t pstrList) {
+	void CComboUI::SetDropBoxAttributeList (faw::string_t pstrList) {
 		m_sDropBoxAttributes = pstrList;
 	}
 
@@ -646,47 +647,47 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	faw::string_view_t CComboUI::GetNormalImage () const {
-		return m_sNormalImage.str_view ();
+	faw::string_t CComboUI::GetNormalImage () const {
+		return m_sNormalImage;
 	}
 
-	void CComboUI::SetNormalImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetNormalImage (faw::string_t pStrImage) {
 		m_sNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CComboUI::GetHotImage () const {
-		return m_sHotImage.str_view ();
+	faw::string_t CComboUI::GetHotImage () const {
+		return m_sHotImage;
 	}
 
-	void CComboUI::SetHotImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetHotImage (faw::string_t pStrImage) {
 		m_sHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CComboUI::GetPushedImage () const {
-		return m_sPushedImage.str_view ();
+	faw::string_t CComboUI::GetPushedImage () const {
+		return m_sPushedImage;
 	}
 
-	void CComboUI::SetPushedImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetPushedImage (faw::string_t pStrImage) {
 		m_sPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CComboUI::GetFocusedImage () const {
-		return m_sFocusedImage.str_view ();
+	faw::string_t CComboUI::GetFocusedImage () const {
+		return m_sFocusedImage;
 	}
 
-	void CComboUI::SetFocusedImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetFocusedImage (faw::string_t pStrImage) {
 		m_sFocusedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CComboUI::GetDisabledImage () const {
-		return m_sDisabledImage.str_view ();
+	faw::string_t CComboUI::GetDisabledImage () const {
+		return m_sDisabledImage;
 	}
 
-	void CComboUI::SetDisabledImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetDisabledImage (faw::string_t pStrImage) {
 		m_sDisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -727,7 +728,7 @@ namespace DuiLib {
 		m_ListInfo.dwBkColor = dwBkColor;
 	}
 
-	void CComboUI::SetItemBkImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetItemBkImage (faw::string_t pStrImage) {
 		m_ListInfo.sBkImage = pStrImage;
 	}
 
@@ -739,8 +740,8 @@ namespace DuiLib {
 		return m_ListInfo.dwBkColor;
 	}
 
-	faw::string_view_t CComboUI::GetItemBkImage () const {
-		return m_ListInfo.sBkImage.str_view ();
+	faw::string_t CComboUI::GetItemBkImage () const {
+		return m_ListInfo.sBkImage;
 	}
 
 	bool CComboUI::IsAlternateBk () const {
@@ -759,7 +760,7 @@ namespace DuiLib {
 		m_ListInfo.dwSelectedBkColor = dwBkColor;
 	}
 
-	void CComboUI::SetSelectedItemImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetSelectedItemImage (faw::string_t pStrImage) {
 		m_ListInfo.sSelectedImage = pStrImage;
 	}
 
@@ -771,8 +772,8 @@ namespace DuiLib {
 		return m_ListInfo.dwSelectedBkColor;
 	}
 
-	faw::string_view_t CComboUI::GetSelectedItemImage () const {
-		return m_ListInfo.sSelectedImage.str_view ();
+	faw::string_t CComboUI::GetSelectedItemImage () const {
+		return m_ListInfo.sSelectedImage;
 	}
 
 	void CComboUI::SetHotItemTextColor (DWORD dwTextColor) {
@@ -783,7 +784,7 @@ namespace DuiLib {
 		m_ListInfo.dwHotBkColor = dwBkColor;
 	}
 
-	void CComboUI::SetHotItemImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetHotItemImage (faw::string_t pStrImage) {
 		m_ListInfo.sHotImage = pStrImage;
 	}
 
@@ -794,8 +795,8 @@ namespace DuiLib {
 		return m_ListInfo.dwHotBkColor;
 	}
 
-	faw::string_view_t CComboUI::GetHotItemImage () const {
-		return m_ListInfo.sHotImage.str_view ();
+	faw::string_t CComboUI::GetHotItemImage () const {
+		return m_ListInfo.sHotImage;
 	}
 
 	void CComboUI::SetDisabledItemTextColor (DWORD dwTextColor) {
@@ -806,7 +807,7 @@ namespace DuiLib {
 		m_ListInfo.dwDisabledBkColor = dwBkColor;
 	}
 
-	void CComboUI::SetDisabledItemImage (faw::string_view_t pStrImage) {
+	void CComboUI::SetDisabledItemImage (faw::string_t pStrImage) {
 		m_ListInfo.sDisabledImage = pStrImage;
 	}
 
@@ -818,8 +819,8 @@ namespace DuiLib {
 		return m_ListInfo.dwDisabledBkColor;
 	}
 
-	faw::string_view_t CComboUI::GetDisabledItemImage () const {
-		return m_ListInfo.sDisabledImage.str_view ();
+	faw::string_t CComboUI::GetDisabledItemImage () const {
+		return m_ListInfo.sDisabledImage;
 	}
 
 	DWORD CComboUI::GetItemLineColor () const {
@@ -856,30 +857,30 @@ namespace DuiLib {
 	void CComboUI::Move (SIZE szOffset, bool bNeedInvalidate) {
 		CControlUI::Move (szOffset, bNeedInvalidate);
 	}
-	void CComboUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CComboUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("align")) {
-			if (pstrValue.find (_T ("left")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("left")) != faw::string_t::npos) {
 				m_uTextStyle &= ~(DT_CENTER | DT_RIGHT | DT_SINGLELINE);
 				m_uTextStyle |= DT_LEFT;
 			}
-			if (pstrValue.find (_T ("center")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("center")) != faw::string_t::npos) {
 				m_uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_uTextStyle |= DT_CENTER;
 			}
-			if (pstrValue.find (_T ("right")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("right")) != faw::string_t::npos) {
 				m_uTextStyle &= ~(DT_LEFT | DT_CENTER | DT_SINGLELINE);
 				m_uTextStyle |= DT_RIGHT;
 			}
 		} else if (pstrName == _T ("valign")) {
-			if (pstrValue.find (_T ("top")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("top")) != faw::string_t::npos) {
 				m_uTextStyle &= ~(DT_BOTTOM | DT_VCENTER);
 				m_uTextStyle |= (DT_TOP | DT_SINGLELINE);
 			}
-			if (pstrValue.find (_T ("vcenter")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("vcenter")) != faw::string_t::npos) {
 				m_uTextStyle &= ~(DT_TOP | DT_BOTTOM);
 				m_uTextStyle |= (DT_VCENTER | DT_SINGLELINE);
 			}
-			if (pstrValue.find (_T ("bottom")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("bottom")) != faw::string_t::npos) {
 				m_uTextStyle &= ~(DT_TOP | DT_VCENTER);
 				m_uTextStyle |= (DT_BOTTOM | DT_SINGLELINE);
 			}
@@ -921,28 +922,28 @@ namespace DuiLib {
 			SetDropBoxInset (rcDropboxInset);
 		} else if (pstrName == _T ("itemfont")) SetItemFont (_ttoi (pstrValue.data ()));
 		else if (pstrName == _T ("itemalign")) {
-			if (pstrValue.find (_T ("left")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("left")) != faw::string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_CENTER | DT_RIGHT);
 				m_ListInfo.uTextStyle |= DT_LEFT;
 			}
-			if (pstrValue.find (_T ("center")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("center")) != faw::string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_LEFT | DT_RIGHT);
 				m_ListInfo.uTextStyle |= DT_CENTER;
 			}
-			if (pstrValue.find (_T ("right")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("right")) != faw::string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_LEFT | DT_CENTER);
 				m_ListInfo.uTextStyle |= DT_RIGHT;
 			}
 		} else if (pstrName == _T ("itemvalign")) {
-			if (pstrValue.find (_T ("top")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("top")) != faw::string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_VCENTER | DT_BOTTOM);
 				m_ListInfo.uTextStyle |= DT_TOP;
 			}
-			if (pstrValue.find (_T ("vcenter")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("vcenter")) != faw::string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_TOP | DT_BOTTOM | DT_WORDBREAK);
 				m_ListInfo.uTextStyle |= DT_VCENTER | DT_SINGLELINE;
 			}
-			if (pstrValue.find (_T ("bottom")) != faw::String::_npos) {
+			if (pstrValue.find (_T ("bottom")) != faw::string_t::npos) {
 				m_ListInfo.uTextStyle &= ~(DT_TOP | DT_VCENTER);
 				m_ListInfo.uTextStyle |= DT_BOTTOM;
 			}
@@ -1000,28 +1001,28 @@ namespace DuiLib {
 
 		if ((m_uButtonState & UISTATE_DISABLED) != 0) {
 			if (!m_sDisabledImage.empty ()) {
-				if (DrawImage (hDC, m_sDisabledImage.str_view ()))
+				if (DrawImage (hDC, m_sDisabledImage))
 					return;
 			}
 		} else if ((m_uButtonState & UISTATE_PUSHED) != 0) {
 			if (!m_sPushedImage.empty ()) {
-				if (DrawImage (hDC, m_sPushedImage.str_view ()))
+				if (DrawImage (hDC, m_sPushedImage))
 					return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sHotImage.empty ()) {
-				if (DrawImage (hDC, m_sHotImage.str_view ()))
+				if (DrawImage (hDC, m_sHotImage))
 					return;
 			}
 		} else if ((m_uButtonState & UISTATE_FOCUSED) != 0) {
 			if (!m_sFocusedImage.empty ()) {
-				if (DrawImage (hDC, m_sFocusedImage.str_view ()))
+				if (DrawImage (hDC, m_sFocusedImage))
 					return;
 			}
 		}
 
 		if (!m_sNormalImage.empty ()) {
-			if (!DrawImage (hDC, m_sNormalImage.str_view ())) {
+			if (!DrawImage (hDC, m_sNormalImage)) {
 			} else return;
 		}
 	}
@@ -1036,19 +1037,19 @@ namespace DuiLib {
 		rc.top += m_rcTextPadding.top;
 		rc.bottom -= m_rcTextPadding.bottom;
 
-		faw::String sText = GetText ();
+		faw::string_t sText = GetText ();
 		if (sText.empty ()) return;
 		int nLinks = 0;
 		if (IsEnabled ()) {
 			if (m_bShowHtml)
-				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText.str_view (), m_dwTextColor, nullptr, nullptr, nLinks, m_iFont, m_uTextStyle);
+				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, m_dwTextColor, nullptr, nullptr, nLinks, m_iFont, m_uTextStyle);
 			else
-				CRenderEngine::DrawText (hDC, m_pManager, rc, sText.str_view (), m_dwTextColor, m_iFont, m_uTextStyle);
+				CRenderEngine::DrawText (hDC, m_pManager, rc, sText, m_dwTextColor, m_iFont, m_uTextStyle);
 		} else {
 			if (m_bShowHtml)
-				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText.str_view (), m_dwDisabledTextColor, nullptr, nullptr, nLinks, m_iFont, m_uTextStyle);
+				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, m_dwDisabledTextColor, nullptr, nullptr, nLinks, m_iFont, m_uTextStyle);
 			else
-				CRenderEngine::DrawText (hDC, m_pManager, rc, sText.str_view (), m_dwDisabledTextColor, m_iFont, m_uTextStyle);
+				CRenderEngine::DrawText (hDC, m_pManager, rc, sText, m_dwDisabledTextColor, m_iFont, m_uTextStyle);
 		}
 	}
 

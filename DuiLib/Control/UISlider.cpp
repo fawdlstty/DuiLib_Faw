@@ -8,7 +8,7 @@ namespace DuiLib {
 		m_szThumb.cx = m_szThumb.cy = 10;
 	}
 
-	faw::string_view_t CSliderUI::GetClass () const {
+	faw::string_t CSliderUI::GetClass () const {
 		return _T ("SliderUI");
 	}
 
@@ -17,7 +17,7 @@ namespace DuiLib {
 		else return 0;
 	}
 
-	LPVOID CSliderUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CSliderUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_SLIDER) return static_cast<CSliderUI*>(this);
 		return CProgressUI::GetInterface (pstrName);
 	}
@@ -62,29 +62,29 @@ namespace DuiLib {
 		return rcThumb;
 	}
 
-	faw::string_view_t CSliderUI::GetThumbImage () const {
-		return m_sThumbImage.str_view ();
+	faw::string_t CSliderUI::GetThumbImage () const {
+		return m_sThumbImage;
 	}
 
-	void CSliderUI::SetThumbImage (faw::string_view_t pStrImage) {
+	void CSliderUI::SetThumbImage (faw::string_t pStrImage) {
 		m_sThumbImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CSliderUI::GetThumbHotImage () const {
-		return m_sThumbHotImage.str_view ();
+	faw::string_t CSliderUI::GetThumbHotImage () const {
+		return m_sThumbHotImage;
 	}
 
-	void CSliderUI::SetThumbHotImage (faw::string_view_t pStrImage) {
+	void CSliderUI::SetThumbHotImage (faw::string_t pStrImage) {
 		m_sThumbHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CSliderUI::GetThumbPushedImage () const {
-		return m_sThumbPushedImage.str_view ();
+	faw::string_t CSliderUI::GetThumbPushedImage () const {
+		return m_sThumbPushedImage;
 	}
 
-	void CSliderUI::SetThumbPushedImage (faw::string_view_t pStrImage) {
+	void CSliderUI::SetThumbPushedImage (faw::string_t pStrImage) {
 		m_sThumbPushedImage = pStrImage;
 		Invalidate ();
 	}
@@ -218,7 +218,7 @@ namespace DuiLib {
 		return m_bSendMove;
 	}
 
-	void CSliderUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CSliderUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("thumbimage")) SetThumbImage (pstrValue);
 		else if (pstrName == _T ("thumbhotimage")) SetThumbHotImage (pstrValue);
 		else if (pstrName == _T ("thumbpushedimage")) SetThumbPushedImage (pstrValue);
@@ -246,23 +246,23 @@ namespace DuiLib {
 		if ((m_uButtonState & UISTATE_CAPTURED) != 0) {
 			if (!m_sThumbPushedImage.empty ()) {
 				m_sImageModify.clear ();
-				m_sImageModify = faw::String::format (_T ("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-				if (!DrawImage (hDC, m_sThumbPushedImage.str_view (), m_sImageModify.str_view ())) {
+				m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+				if (!DrawImage (hDC, m_sThumbPushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sThumbHotImage.empty ()) {
 				m_sImageModify.clear ();
-				m_sImageModify = faw::String::format (_T ("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-				if (!DrawImage (hDC, m_sThumbHotImage.str_view (), m_sImageModify.str_view ())) {
+				m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+				if (!DrawImage (hDC, m_sThumbHotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sThumbImage.empty ()) {
 			m_sImageModify.clear ();
-			m_sImageModify = faw::String::format (_T ("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-			if (!DrawImage (hDC, m_sThumbImage.str_view (), m_sImageModify.str_view ())) {
+			m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+			if (!DrawImage (hDC, m_sThumbImage, m_sImageModify)) {
 			} else return;
 		}
 	}

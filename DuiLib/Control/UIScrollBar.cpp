@@ -8,11 +8,11 @@ namespace DuiLib {
 		m_cxyFixed.cx = DEFAULT_SCROLLBAR_SIZE;
 	}
 
-	faw::string_view_t CScrollBarUI::GetClass () const {
+	faw::string_t CScrollBarUI::GetClass () const {
 		return _T ("ScrollBarUI");
 	}
 
-	LPVOID CScrollBarUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CScrollBarUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_SCROLLBAR) return static_cast<CScrollBarUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
@@ -114,38 +114,38 @@ namespace DuiLib {
 		SetPos (m_rcItem);
 	}
 
-	faw::string_view_t CScrollBarUI::GetButton1NormalImage () {
-		return m_sButton1NormalImage.str_view ();
+	faw::string_t CScrollBarUI::GetButton1NormalImage () {
+		return m_sButton1NormalImage;
 	}
 
-	void CScrollBarUI::SetButton1NormalImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetButton1NormalImage (faw::string_t pStrImage) {
 		m_sButton1NormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetButton1HotImage () {
-		return m_sButton1HotImage.str_view ();
+	faw::string_t CScrollBarUI::GetButton1HotImage () {
+		return m_sButton1HotImage;
 	}
 
-	void CScrollBarUI::SetButton1HotImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetButton1HotImage (faw::string_t pStrImage) {
 		m_sButton1HotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetButton1PushedImage () {
-		return m_sButton1PushedImage.str_view ();
+	faw::string_t CScrollBarUI::GetButton1PushedImage () {
+		return m_sButton1PushedImage;
 	}
 
-	void CScrollBarUI::SetButton1PushedImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetButton1PushedImage (faw::string_t pStrImage) {
 		m_sButton1PushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetButton1DisabledImage () {
-		return m_sButton1DisabledImage.str_view ();
+	faw::string_t CScrollBarUI::GetButton1DisabledImage () {
+		return m_sButton1DisabledImage;
 	}
 
-	void CScrollBarUI::SetButton1DisabledImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetButton1DisabledImage (faw::string_t pStrImage) {
 		m_sButton1DisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -159,146 +159,146 @@ namespace DuiLib {
 		SetPos (m_rcItem);
 	}
 
-	faw::string_view_t CScrollBarUI::GetButton2NormalImage () {
-		return m_sButton2NormalImage.str_view ();
+	faw::string_t CScrollBarUI::GetButton2NormalImage () {
+		return m_sButton2NormalImage;
 	}
 
-	void CScrollBarUI::SetButton2NormalImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetButton2NormalImage (faw::string_t pStrImage) {
 		m_sButton2NormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetButton2HotImage () {
-		return m_sButton2HotImage.str_view ();
+	faw::string_t CScrollBarUI::GetButton2HotImage () {
+		return m_sButton2HotImage;
 	}
 
-	void CScrollBarUI::SetButton2HotImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetButton2HotImage (faw::string_t pStrImage) {
 		m_sButton2HotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetButton2PushedImage () {
-		return m_sButton2PushedImage.str_view ();
+	faw::string_t CScrollBarUI::GetButton2PushedImage () {
+		return m_sButton2PushedImage;
 	}
 
-	void CScrollBarUI::SetButton2PushedImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetButton2PushedImage (faw::string_t pStrImage) {
 		m_sButton2PushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetButton2DisabledImage () {
-		return m_sButton2DisabledImage.str_view ();
+	faw::string_t CScrollBarUI::GetButton2DisabledImage () {
+		return m_sButton2DisabledImage;
 	}
 
-	void CScrollBarUI::SetButton2DisabledImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetButton2DisabledImage (faw::string_t pStrImage) {
 		m_sButton2DisabledImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetThumbNormalImage () {
-		return m_sThumbNormalImage.str_view ();
+	faw::string_t CScrollBarUI::GetThumbNormalImage () {
+		return m_sThumbNormalImage;
 	}
 
-	void CScrollBarUI::SetThumbNormalImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetThumbNormalImage (faw::string_t pStrImage) {
 		m_sThumbNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetThumbHotImage () {
-		return m_sThumbHotImage.str_view ();
+	faw::string_t CScrollBarUI::GetThumbHotImage () {
+		return m_sThumbHotImage;
 	}
 
-	void CScrollBarUI::SetThumbHotImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetThumbHotImage (faw::string_t pStrImage) {
 		m_sThumbHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetThumbPushedImage () {
-		return m_sThumbPushedImage.str_view ();
+	faw::string_t CScrollBarUI::GetThumbPushedImage () {
+		return m_sThumbPushedImage;
 	}
 
-	void CScrollBarUI::SetThumbPushedImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetThumbPushedImage (faw::string_t pStrImage) {
 		m_sThumbPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetThumbDisabledImage () {
-		return m_sThumbDisabledImage.str_view ();
+	faw::string_t CScrollBarUI::GetThumbDisabledImage () {
+		return m_sThumbDisabledImage;
 	}
 
-	void CScrollBarUI::SetThumbDisabledImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetThumbDisabledImage (faw::string_t pStrImage) {
 		m_sThumbDisabledImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetRailNormalImage () {
-		return m_sRailNormalImage.str_view ();
+	faw::string_t CScrollBarUI::GetRailNormalImage () {
+		return m_sRailNormalImage;
 	}
 
-	void CScrollBarUI::SetRailNormalImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetRailNormalImage (faw::string_t pStrImage) {
 		m_sRailNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetRailHotImage () {
-		return m_sRailHotImage.str_view ();
+	faw::string_t CScrollBarUI::GetRailHotImage () {
+		return m_sRailHotImage;
 	}
 
-	void CScrollBarUI::SetRailHotImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetRailHotImage (faw::string_t pStrImage) {
 		m_sRailHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetRailPushedImage () {
-		return m_sRailPushedImage.str_view ();
+	faw::string_t CScrollBarUI::GetRailPushedImage () {
+		return m_sRailPushedImage;
 	}
 
-	void CScrollBarUI::SetRailPushedImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetRailPushedImage (faw::string_t pStrImage) {
 		m_sRailPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetRailDisabledImage () {
-		return m_sRailDisabledImage.str_view ();
+	faw::string_t CScrollBarUI::GetRailDisabledImage () {
+		return m_sRailDisabledImage;
 	}
 
-	void CScrollBarUI::SetRailDisabledImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetRailDisabledImage (faw::string_t pStrImage) {
 		m_sRailDisabledImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetBkNormalImage () {
-		return m_sBkNormalImage.str_view ();
+	faw::string_t CScrollBarUI::GetBkNormalImage () {
+		return m_sBkNormalImage;
 	}
 
-	void CScrollBarUI::SetBkNormalImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetBkNormalImage (faw::string_t pStrImage) {
 		m_sBkNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetBkHotImage () {
-		return m_sBkHotImage.str_view ();
+	faw::string_t CScrollBarUI::GetBkHotImage () {
+		return m_sBkHotImage;
 	}
 
-	void CScrollBarUI::SetBkHotImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetBkHotImage (faw::string_t pStrImage) {
 		m_sBkHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetBkPushedImage () {
-		return m_sBkPushedImage.str_view ();
+	faw::string_t CScrollBarUI::GetBkPushedImage () {
+		return m_sBkPushedImage;
 	}
 
-	void CScrollBarUI::SetBkPushedImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetBkPushedImage (faw::string_t pStrImage) {
 		m_sBkPushedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CScrollBarUI::GetBkDisabledImage () {
-		return m_sBkDisabledImage.str_view ();
+	faw::string_t CScrollBarUI::GetBkDisabledImage () {
+		return m_sBkDisabledImage;
 	}
 
-	void CScrollBarUI::SetBkDisabledImage (faw::string_view_t pStrImage) {
+	void CScrollBarUI::SetBkDisabledImage (faw::string_t pStrImage) {
 		m_sBkDisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -644,7 +644,7 @@ namespace DuiLib {
 		if (m_pOwner) m_pOwner->DoEvent (event); else CControlUI::DoEvent (event);
 	}
 
-	void CScrollBarUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CScrollBarUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("button1normalimage")) SetButton1NormalImage (pstrValue);
 		else if (pstrName == _T ("button1hotimage")) SetButton1HotImage (pstrValue);
 		else if (pstrName == _T ("button1pushedimage")) SetButton1PushedImage (pstrValue);
@@ -692,23 +692,23 @@ namespace DuiLib {
 
 		if ((m_uThumbState & UISTATE_DISABLED) != 0) {
 			if (!m_sBkDisabledImage.empty ()) {
-				if (!DrawImage (hDC, m_sBkDisabledImage.str_view ())) {
+				if (!DrawImage (hDC, m_sBkDisabledImage)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_PUSHED) != 0) {
 			if (!m_sBkPushedImage.empty ()) {
-				if (!DrawImage (hDC, m_sBkPushedImage.str_view ())) {
+				if (!DrawImage (hDC, m_sBkPushedImage)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_HOT) != 0) {
 			if (!m_sBkHotImage.empty ()) {
-				if (!DrawImage (hDC, m_sBkHotImage.str_view ())) {
+				if (!DrawImage (hDC, m_sBkHotImage)) {
 				} else return;
 			}
 		}
 
 		if (!m_sBkNormalImage.empty ()) {
-			if (!DrawImage (hDC, m_sBkNormalImage.str_view ())) {
+			if (!DrawImage (hDC, m_sBkNormalImage)) {
 			} else return;
 		}
 	}
@@ -724,27 +724,27 @@ namespace DuiLib {
 		int d3 = MulDiv (m_rcButton1.right - m_rcItem.left, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		int d4 = MulDiv (m_rcButton1.bottom - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		m_sImageModify.clear ();
-		m_sImageModify = faw::String::format (_T ("dest='%d,%d,%d,%d'"), d1, d2, d3, d4);
+		m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 
 		if ((m_uButton1State & UISTATE_DISABLED) != 0) {
 			if (!m_sButton1DisabledImage.empty ()) {
-				if (!DrawImage (hDC, m_sButton1DisabledImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sButton1DisabledImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButton1State & UISTATE_PUSHED) != 0) {
 			if (!m_sButton1PushedImage.empty ()) {
-				if (!DrawImage (hDC, m_sButton1PushedImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sButton1PushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButton1State & UISTATE_HOT) != 0) {
 			if (!m_sButton1HotImage.empty ()) {
-				if (!DrawImage (hDC, m_sButton1HotImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sButton1HotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sButton1NormalImage.empty ()) {
-			if (!DrawImage (hDC, m_sButton1NormalImage.str_view (), m_sImageModify.str_view ())) {
+			if (!DrawImage (hDC, m_sButton1NormalImage, m_sImageModify)) {
 			} else return;
 		}
 
@@ -763,27 +763,27 @@ namespace DuiLib {
 		int d3 = MulDiv (m_rcButton2.right - m_rcItem.left, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		int d4 = MulDiv (m_rcButton2.bottom - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		m_sImageModify.clear ();
-		m_sImageModify = faw::String::format (_T ("dest='%d,%d,%d,%d'"), d1, d2, d3, d4);
+		m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 
 		if ((m_uButton2State & UISTATE_DISABLED) != 0) {
 			if (!m_sButton2DisabledImage.empty ()) {
-				if (!DrawImage (hDC, m_sButton2DisabledImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sButton2DisabledImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButton2State & UISTATE_PUSHED) != 0) {
 			if (!m_sButton2PushedImage.empty ()) {
-				if (!DrawImage (hDC, m_sButton2PushedImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sButton2PushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButton2State & UISTATE_HOT) != 0) {
 			if (!m_sButton2HotImage.empty ()) {
-				if (!DrawImage (hDC, m_sButton2HotImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sButton2HotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sButton2NormalImage.empty ()) {
-			if (!DrawImage (hDC, m_sButton2NormalImage.str_view (), m_sImageModify.str_view ())) {
+			if (!DrawImage (hDC, m_sButton2NormalImage, m_sImageModify)) {
 			} else return;
 		}
 
@@ -801,27 +801,27 @@ namespace DuiLib {
 		int d3 = MulDiv (m_rcThumb.right - m_rcItem.left, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		int d4 = MulDiv (m_rcThumb.bottom - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		m_sImageModify.clear ();
-		m_sImageModify = faw::String::format (_T ("dest='%d,%d,%d,%d'"), d1, d2, d3, d4);
+		m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 
 		if ((m_uThumbState & UISTATE_DISABLED) != 0) {
 			if (!m_sThumbDisabledImage.empty ()) {
-				if (!DrawImage (hDC, m_sThumbDisabledImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sThumbDisabledImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_PUSHED) != 0) {
 			if (!m_sThumbPushedImage.empty ()) {
-				if (!DrawImage (hDC, m_sThumbPushedImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sThumbPushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_HOT) != 0) {
 			if (!m_sThumbHotImage.empty ()) {
-				if (!DrawImage (hDC, m_sThumbHotImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sThumbHotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sThumbNormalImage.empty ()) {
-			if (!DrawImage (hDC, m_sThumbNormalImage.str_view (), m_sImageModify.str_view ())) {
+			if (!DrawImage (hDC, m_sThumbNormalImage, m_sImageModify)) {
 			} else return;
 		}
 
@@ -841,34 +841,34 @@ namespace DuiLib {
 			int d2 = MulDiv ((m_rcThumb.top + m_rcThumb.bottom) / 2 - m_rcItem.top - m_cxyFixed.cx / 2, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d3 = MulDiv (m_rcThumb.right - m_rcItem.left, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d4 = MulDiv ((m_rcThumb.top + m_rcThumb.bottom) / 2 - m_rcItem.top + m_cxyFixed.cx - m_cxyFixed.cx / 2, 100, GetManager ()->GetDPIObj ()->GetScale ());
-			m_sImageModify = faw::String::format (_T ("dest='%d,%d,%d,%d'"), d1, d2, d3, d4);
+			m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 		} else {
 			int d1 = MulDiv ((m_rcThumb.left + m_rcThumb.right) / 2 - m_rcItem.left - m_cxyFixed.cy / 2, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d2 = MulDiv (m_rcThumb.top - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d3 = MulDiv ((m_rcThumb.left + m_rcThumb.right) / 2 - m_rcItem.left + m_cxyFixed.cy - m_cxyFixed.cy / 2, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d4 = MulDiv (m_rcThumb.bottom - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
-			m_sImageModify = faw::String::format (_T ("dest='%d,%d,%d,%d'"), d1, d2, d3, d4);
+			m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 		}
 
 		if ((m_uThumbState & UISTATE_DISABLED) != 0) {
 			if (!m_sRailDisabledImage.empty ()) {
-				if (!DrawImage (hDC, m_sRailDisabledImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sRailDisabledImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_PUSHED) != 0) {
 			if (!m_sRailPushedImage.empty ()) {
-				if (!DrawImage (hDC, m_sRailPushedImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sRailPushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uThumbState & UISTATE_HOT) != 0) {
 			if (!m_sRailHotImage.empty ()) {
-				if (!DrawImage (hDC, m_sRailHotImage.str_view (), m_sImageModify.str_view ())) {
+				if (!DrawImage (hDC, m_sRailHotImage, m_sImageModify)) {
 				} else return;
 			}
 		}
 
 		if (!m_sRailNormalImage.empty ()) {
-			if (!DrawImage (hDC, m_sRailNormalImage.str_view (), m_sImageModify.str_view ())) {
+			if (!DrawImage (hDC, m_sRailNormalImage, m_sImageModify)) {
 			} else return;
 		}
 	}

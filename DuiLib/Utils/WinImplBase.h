@@ -31,47 +31,47 @@ namespace DuiLib {
 		virtual BOOL IsInStaticControl (CControlUI *pControl, POINT &pt);
 
 	protected:
-		virtual faw::string_view_t GetSkinType () {
+		virtual faw::string_t GetSkinType () {
 			return _T ("");
 		}
-		virtual faw::string_view_t GetSkinFile () = 0;
-		virtual faw::string_view_t GetWindowClassName (void) const = 0;
-		virtual faw::string_view_t GetManagerName () { return _T (""); }
+		virtual faw::string_t GetSkinFile () = 0;
+		virtual faw::string_t GetWindowClassName (void) const = 0;
+		virtual faw::string_t GetManagerName () { return _T (""); }
 		virtual LRESULT ResponseDefaultKeyEvent (WPARAM wParam);
 		CPaintManagerUI m_pm;
 
 	public:
 		virtual UINT GetClassStyle () const;
-		virtual CControlUI* CreateControl (faw::string_view_t pstrClass);
-		virtual faw::string_view_t QueryControlText (faw::string_view_t lpstrId, faw::string_view_t lpstrType);
+		virtual CControlUI* CreateControl (faw::string_t pstrClass);
+		virtual faw::string_t QueryControlText (faw::string_t lpstrId, faw::string_t lpstrType);
 
-		virtual LRESULT MessageHandler (UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, bool& /*bHandled*/);
-		virtual LRESULT OnClose (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnDestroy (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+		virtual std::optional<LRESULT> MessageHandler (UINT uMsg, WPARAM wParam, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnClose (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnDestroy (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
 
 #if defined(WIN32) && !defined(UNDER_CE)
-		virtual LRESULT OnNcActivate (UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnNcCalcSize (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNcPaint (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		virtual LRESULT OnNcHitTest (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnGetMinMaxInfo (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMouseWheel (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnMouseHover (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual std::optional<LRESULT> OnNcActivate (UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnNcCalcSize (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		virtual std::optional<LRESULT> OnNcPaint (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnNcHitTest (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		virtual std::optional<LRESULT> OnGetMinMaxInfo (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		virtual std::optional<LRESULT> OnMouseWheel (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnMouseHover (UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
-		virtual LRESULT OnSize (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnChar (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnSysCommand (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnKeyDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnKillFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnSetFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnLButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnLButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnRButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnRButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		virtual LRESULT OnMouseMove (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+		virtual std::optional<LRESULT> OnSize (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		virtual std::optional<LRESULT> OnChar (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		virtual std::optional<LRESULT> OnSysCommand (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		virtual std::optional<LRESULT> OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		virtual std::optional<LRESULT> OnKeyDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnKillFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnSetFocus (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnLButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnLButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnRButtonDown (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnRButtonUp (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
+		virtual std::optional<LRESULT> OnMouseMove (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/);
 		virtual LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
-		virtual LRESULT HandleCustomMessage (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual std::optional<LRESULT> HandleCustomMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
 		virtual LONG GetStyle ();
 	};
 }

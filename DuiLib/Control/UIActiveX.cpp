@@ -18,7 +18,7 @@ namespace DuiLib {
 		CActiveXWnd (): m_iLayeredTick (0), m_bDrawCaret (false) {}
 		HWND Init (CActiveXCtrl* pOwner, HWND hWndParent);
 
-		faw::string_view_t GetWindowClassName () const;
+		faw::string_t GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -26,14 +26,14 @@ namespace DuiLib {
 	protected:
 		void DoVerb (LONG iVerb);
 
-		LRESULT OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnTimer (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnMouseActivate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnSetFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnEraseBkgnd (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnPaint (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnPrint (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		std::optional<LRESULT> OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnTimer (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnMouseActivate (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnSetFocus (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnEraseBkgnd (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnPaint (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnPrint (UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	protected:
 		enum {
@@ -679,7 +679,7 @@ namespace DuiLib {
 		return m_hWnd;
 	}
 
-	faw::string_view_t CActiveXWnd::GetWindowClassName () const {
+	faw::string_t CActiveXWnd::GetWindowClassName () const {
 		return _T ("ActiveXWnd");
 	}
 
@@ -703,33 +703,33 @@ namespace DuiLib {
 	}
 
 	LRESULT CActiveXWnd::HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		LRESULT lRes = 0;
-		BOOL bHandled = TRUE;
+		std::optional<LRESULT> lRes = 0;
 		switch (uMsg) {
-		case WM_CREATE:        lRes = OnCreate (uMsg, wParam, lParam, bHandled); break;
-		case WM_TIMER:         lRes = OnTimer (uMsg, wParam, lParam, bHandled); break;
-		case WM_PAINT:         lRes = OnPaint (uMsg, wParam, lParam, bHandled); break;
-		case WM_PRINT:		   lRes = OnPrint (uMsg, wParam, lParam, bHandled); break;
-		case WM_SETFOCUS:      lRes = OnSetFocus (uMsg, wParam, lParam, bHandled); break;
-		case WM_KILLFOCUS:     lRes = OnKillFocus (uMsg, wParam, lParam, bHandled); break;
-		case WM_ERASEBKGND:    lRes = OnEraseBkgnd (uMsg, wParam, lParam, bHandled); break;
-		case WM_MOUSEACTIVATE: lRes = OnMouseActivate (uMsg, wParam, lParam, bHandled); break;
+		case WM_CREATE:        lRes = OnCreate (uMsg, wParam, lParam); break;
+		case WM_TIMER:         lRes = OnTimer (uMsg, wParam, lParam); break;
+		case WM_PAINT:         lRes = OnPaint (uMsg, wParam, lParam); break;
+		case WM_PRINT:		   lRes = OnPrint (uMsg, wParam, lParam); break;
+		case WM_SETFOCUS:      lRes = OnSetFocus (uMsg, wParam, lParam); break;
+		case WM_KILLFOCUS:     lRes = OnKillFocus (uMsg, wParam, lParam); break;
+		case WM_ERASEBKGND:    lRes = OnEraseBkgnd (uMsg, wParam, lParam); break;
+		case WM_MOUSEACTIVATE: lRes = OnMouseActivate (uMsg, wParam, lParam); break;
 		case WM_MOUSEWHEEL: break;
 		default:
-			bHandled = FALSE;
+			lRes = std::nullopt;
 		}
-		if (!bHandled) return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
-		return lRes;
+		if (lRes == std::nullopt)
+			return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
+		return lRes.value ();
 	}
 
-	LRESULT CActiveXWnd::OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> CActiveXWnd::OnCreate (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		if (m_pOwner->m_pOwner->GetManager ()->IsLayered ()) {
 			::SetTimer (m_hWnd, CARET_TIMERID, ::GetCaretBlinkTime (), nullptr);
 		}
 		return 0;
 	}
 
-	LRESULT CActiveXWnd::OnTimer (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> CActiveXWnd::OnTimer (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		if (wParam == DEFAULT_TIMERID) {
 			if (m_pOwner->m_pOwner->GetManager ()->IsLayered ()) {
 				//m_pOwner->m_pOwner->GetManager()->AddNativeWindow(m_pOwner->m_pOwner, m_hWnd);
@@ -741,16 +741,16 @@ namespace DuiLib {
 			}
 			return 0;
 		}
-		bHandled = FALSE;
-		return 0;
+		return std::nullopt;
 	}
 
-	LRESULT CActiveXWnd::OnEraseBkgnd (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-		if (!m_pOwner->m_pViewObject) bHandled = FALSE;
+	std::optional<LRESULT> CActiveXWnd::OnEraseBkgnd (UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		if (!m_pOwner->m_pViewObject)
+			return std::nullopt;
 		return 1;
 	}
 
-	LRESULT CActiveXWnd::OnMouseActivate (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> CActiveXWnd::OnMouseActivate (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		IOleObject* pUnk = nullptr;
 		m_pOwner->m_pOwner->GetControl (IID_IOleObject, (LPVOID*) &pUnk);
 		if (!pUnk) return 0;
@@ -759,31 +759,29 @@ namespace DuiLib {
 		pUnk->GetMiscStatus (DVASPECT_CONTENT, &dwMiscStatus);
 		if ((dwMiscStatus & OLEMISC_NOUIACTIVATE) != 0) return 0;
 		if (!m_pOwner->m_bInPlaceActive) DoVerb (OLEIVERB_INPLACEACTIVATE);
-		bHandled = FALSE;
-		return 0;
+		return std::nullopt;
 	}
 
-	LRESULT CActiveXWnd::OnSetFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-		bHandled = FALSE;
+	std::optional<LRESULT> CActiveXWnd::OnSetFocus (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		m_pOwner->m_bFocused = true;
-		if (!m_pOwner->m_bUIActivated) DoVerb (OLEIVERB_UIACTIVATE);
-		return 0;
+		if (!m_pOwner->m_bUIActivated)
+			DoVerb (OLEIVERB_UIACTIVATE);
+		return std::nullopt;
 	}
 
-	LRESULT CActiveXWnd::OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-		bHandled = FALSE;
+	std::optional<LRESULT> CActiveXWnd::OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		m_pOwner->m_bFocused = false;
-		return 0;
+		return std::nullopt;
 	}
 
-	LRESULT CActiveXWnd::OnPaint (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> CActiveXWnd::OnPaint (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		PAINTSTRUCT ps = { 0 };
 		::BeginPaint (m_hWnd, &ps);
 		::EndPaint (m_hWnd, &ps);
 		return 1;
 	}
 
-	LRESULT CActiveXWnd::OnPrint (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> CActiveXWnd::OnPrint (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		RECT rcClient = { 0 };
 		::GetClientRect (m_hWnd, &rcClient);
 		m_pOwner->m_pViewObject->Draw (DVASPECT_CONTENT, -1, nullptr, nullptr, NULL, (HDC) wParam, (RECTL*) &rcClient, nullptr, nullptr, NULL);
@@ -822,11 +820,11 @@ namespace DuiLib {
 		ReleaseControl ();
 	}
 
-	faw::string_view_t CActiveXUI::GetClass () const {
+	faw::string_t CActiveXUI::GetClass () const {
 		return _T ("ActiveXUI");
 	}
 
-	LPVOID CActiveXUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CActiveXUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_ACTIVEX) return static_cast<CActiveXUI*>(this);
 		return CControlUI::GetInterface (pstrName);
 	}
@@ -904,20 +902,20 @@ namespace DuiLib {
 		return true;
 	}
 
-	void CActiveXUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CActiveXUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("clsid")) CreateControl (pstrValue);
 		else if (pstrName == _T ("modulename")) SetModuleName (pstrValue);
 		else if (pstrName == _T ("delaycreate")) SetDelayCreate (FawTools::parse_bool (pstrValue));
 		else CControlUI::SetAttribute (pstrName, pstrValue);
 	}
 
-	LRESULT CActiveXUI::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) {
+	std::optional<LRESULT> CActiveXUI::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		if (!m_pControl) return 0;
 		ASSERT (m_pControl->m_bWindowless);
 		if (!m_pControl->m_bInPlaceActive) return 0;
 		if (!m_pControl->m_pInPlaceObject) return 0;
 		if (!IsMouseEnabled () && uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) return 0;
-		bool bWasHandled = true;
+		std::optional<LRESULT> lRes = 0;
 		if ((uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) || uMsg == WM_SETCURSOR) {
 			// Mouse message only go when captured or inside rect
 			DWORD dwHitResult = m_pControl->m_bCaptured ? HITRESULT_HIT : HITRESULT_OUTSIDE;
@@ -931,7 +929,7 @@ namespace DuiLib {
 				}
 			}
 			if (dwHitResult != HITRESULT_HIT) return 0;
-			if (uMsg == WM_SETCURSOR) bWasHandled = false;
+			if (uMsg == WM_SETCURSOR) lRes = std::nullopt;
 		} else if (uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST) {
 			// Keyboard messages just go when we have focus
 			if (!IsFocused ()) return 0;
@@ -939,7 +937,7 @@ namespace DuiLib {
 			switch (uMsg) {
 			case WM_HELP:
 			case WM_CONTEXTMENU:
-				bWasHandled = false;
+				lRes = std::nullopt;
 				break;
 			default:
 				return 0;
@@ -947,7 +945,8 @@ namespace DuiLib {
 		}
 		LRESULT lResult = 0;
 		HRESULT Hr = m_pControl->m_pInPlaceObject->OnWindowMessage (uMsg, wParam, lParam, &lResult);
-		if (Hr == S_OK) bHandled = bWasHandled;
+		//if (Hr == S_OK) bHandled = bWasHandled;
+		if (Hr != S_OK) return std::nullopt;
 		return lResult;
 	}
 
@@ -972,7 +971,7 @@ namespace DuiLib {
 		m_bMFC = bMFC;
 	}
 
-	bool CActiveXUI::CreateControl (faw::string_view_t pstrCLSID) {
+	bool CActiveXUI::CreateControl (faw::string_t pstrCLSID) {
 		CLSID clsid = { 0 };
 		OLECHAR szCLSID[100] = { 0 };
 #ifndef _UNICODE
@@ -1104,11 +1103,11 @@ namespace DuiLib {
 		return m_clsid;
 	}
 
-	faw::string_view_t CActiveXUI::GetModuleName () const {
-		return m_sModuleName.str_view ();
+	faw::string_t CActiveXUI::GetModuleName () const {
+		return m_sModuleName;
 	}
 
-	void CActiveXUI::SetModuleName (faw::string_view_t pstrText) {
+	void CActiveXUI::SetModuleName (faw::string_t pstrText) {
 		m_sModuleName = pstrText;
 	}
 

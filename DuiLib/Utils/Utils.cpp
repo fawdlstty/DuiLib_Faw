@@ -217,16 +217,12 @@ namespace DuiLib {
 
 
 
-	static UINT HashKey (faw::string_view_t Key) {
+	static UINT HashKey (faw::string_t Key) {
 		UINT i = 0;
 		SIZE_T len = Key.length ();
 		while (len-- > 0) i = (i << 5) + i + Key[len];
 		return i;
 	}
-
-	static UINT HashKey (const faw::String& Key) {
-		return HashKey (Key);
-	};
 
 	CStdStringPtrMap::CStdStringPtrMap (int nSize): m_nCount (0) {
 		if (nSize < 16) nSize = 16;
@@ -279,7 +275,7 @@ namespace DuiLib {
 		m_nCount = 0;
 	}
 
-	LPVOID CStdStringPtrMap::Find (faw::string_view_t key, bool optimize) const {
+	LPVOID CStdStringPtrMap::Find (faw::string_t key, bool optimize) const {
 		if (m_nBuckets == 0 || GetSize () == 0) return nullptr;
 
 		UINT slot = HashKey (key) % m_nBuckets;
@@ -303,7 +299,7 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	bool CStdStringPtrMap::Insert (faw::string_view_t key, LPVOID pData) {
+	bool CStdStringPtrMap::Insert (faw::string_t key, LPVOID pData) {
 		if (m_nBuckets == 0) return false;
 		if (Find (key)) return false;
 
@@ -321,7 +317,7 @@ namespace DuiLib {
 		return true;
 	}
 
-	LPVOID CStdStringPtrMap::Set (faw::string_view_t key, LPVOID pData) {
+	LPVOID CStdStringPtrMap::Set (faw::string_t key, LPVOID pData) {
 		if (m_nBuckets == 0) return pData;
 
 		if (GetSize () > 0) {
@@ -340,7 +336,7 @@ namespace DuiLib {
 		return nullptr;
 	}
 
-	bool CStdStringPtrMap::Remove (faw::string_view_t key) {
+	bool CStdStringPtrMap::Remove (faw::string_t key) {
 		if (m_nBuckets == 0 || GetSize () == 0) return false;
 
 		UINT slot = HashKey (key) % m_nBuckets;
@@ -445,11 +441,11 @@ namespace DuiLib {
 
 	//}
 
-	//const faw::String& CImageString::GetAttributeString() const {
+	//const faw::string_t& CImageString::GetAttributeString() const {
 	//	return m_sImageAttribute;
 	//}
 
-	//void CImageString::SetAttributeString(faw::string_view_t pStrImageAttri) {
+	//void CImageString::SetAttributeString(faw::string_t pStrImageAttri) {
 	//	if (m_sImageAttribute == pStrImageAttri) return;
 	//	Clear ();
 	//	m_sImageAttribute = pStrImageAttri;
@@ -498,7 +494,7 @@ namespace DuiLib {
 	//	return !m_sImageAttribute.empty () && m_bLoadSuccess;
 	//}
 
-	//void CImageString::ModifyAttribute (faw::string_view_t pStrModify) {
+	//void CImageString::ModifyAttribute (faw::string_t pStrModify) {
 	//	//ParseAttribute (pStrModify);
 	//}
 
@@ -518,15 +514,15 @@ namespace DuiLib {
 	//	m_bTiledY = false;
 	//}
 
-	//void CImageString::ParseAttribute(faw::string_view_t pStrImage) {
+	//void CImageString::ParseAttribute(faw::string_t pStrImage) {
 	//	if (!pStrImage.empty ())
 	//		return;
 
 	//	// 1、aaa.jpg
 	//	// 2、file='aaa.jpg' res='' restype='0' dest='0,0,0,0' source='0,0,0,0' corner='0,0,0,0' 
 	//	// mask='#FF0000' fade='255' hole='false' xtiled='false' ytiled='false'
-	//	faw::String sItem;
-	//	faw::String sValue;
+	//	faw::string_t sItem;
+	//	faw::string_t sValue;
 
 	//	while (*pStrImage != _T('\0')) {
 	//		sItem.Empty();

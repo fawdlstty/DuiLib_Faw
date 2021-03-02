@@ -12,19 +12,19 @@ namespace DuiLib {
 	public:
 		void Init (CHotKeyUI * pOwner);
 		RECT CalPos ();
-		faw::string_view_t GetWindowClassName () const;
+		faw::string_t GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
-		faw::string_view_t GetSuperClassName () const;
+		faw::string_t GetSuperClassName () const;
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
-		LRESULT OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnEditChanged (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		std::optional<LRESULT> OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnEditChanged (UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
 		void SetHotKey (WORD wVirtualKeyCode, WORD wModifiers);
 		void GetHotKey (WORD &wVirtualKeyCode, WORD &wModifiers) const;
 		DWORD GetHotKey (void) const;
-		faw::String GetHotKeyName ();
+		faw::string_t GetHotKeyName ();
 		void SetRules (WORD wInvalidComb, WORD wModifiers);
-		faw::String GetKeyName (UINT vk, BOOL fExtended);
+		faw::string_t GetKeyName (UINT vk, BOOL fExtended);
 	protected:
 		CHotKeyUI * m_pOwner;
 		HBRUSH m_hBkBrush;
@@ -36,19 +36,19 @@ namespace DuiLib {
 		friend CHotKeyWnd;
 	public:
 		CHotKeyUI ();
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 		UINT GetControlFlags () const;
 		void SetEnabled (bool bEnable = true);
-		void SetText (faw::String pstrText);
-		faw::string_view_t GetNormalImage ();
-		void SetNormalImage (faw::string_view_t pStrImage);
-		faw::string_view_t GetHotImage ();
-		void SetHotImage (faw::string_view_t pStrImage);
-		faw::string_view_t GetFocusedImage ();
-		void SetFocusedImage (faw::string_view_t pStrImage);
-		faw::string_view_t GetDisabledImage ();
-		void SetDisabledImage (faw::string_view_t pStrImage);
+		void SetText (faw::string_t pstrText);
+		faw::string_t GetNormalImage ();
+		void SetNormalImage (faw::string_t pStrImage);
+		faw::string_t GetHotImage ();
+		void SetHotImage (faw::string_t pStrImage);
+		faw::string_t GetFocusedImage ();
+		void SetFocusedImage (faw::string_t pStrImage);
+		faw::string_t GetDisabledImage ();
+		void SetDisabledImage (faw::string_t pStrImage);
 		void SetNativeBkColor (DWORD dwBkColor);
 		DWORD GetNativeBkColor () const;
 
@@ -57,7 +57,7 @@ namespace DuiLib {
 		void SetInternVisible (bool bVisible = true);
 		SIZE EstimateSize (SIZE szAvailable);
 		void DoEvent (TEventUI& event);
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 		void PaintStatusImage (HDC hDC);
 		void PaintText (HDC hDC);
@@ -69,10 +69,10 @@ namespace DuiLib {
 	protected:
 		CHotKeyWnd * m_pWindow;
 		UINT m_uButtonState;
-		faw::String m_sNormalImage;
-		faw::String m_sHotImage;
-		faw::String m_sFocusedImage;
-		faw::String m_sDisabledImage;
+		faw::string_t m_sNormalImage;
+		faw::string_t m_sHotImage;
+		faw::string_t m_sFocusedImage;
+		faw::string_t m_sDisabledImage;
 		DWORD m_dwHotKeybkColor;
 
 	protected:

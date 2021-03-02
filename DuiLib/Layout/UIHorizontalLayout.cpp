@@ -5,11 +5,11 @@ namespace DuiLib {
 	IMPLEMENT_DUICONTROL (CHorizontalLayoutUI)
 	CHorizontalLayoutUI::CHorizontalLayoutUI () {}
 
-	faw::string_view_t CHorizontalLayoutUI::GetClass () const {
+	faw::string_t CHorizontalLayoutUI::GetClass () const {
 		return _T ("HorizontalLayoutUI");
 	}
 
-	LPVOID CHorizontalLayoutUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CHorizontalLayoutUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_HORIZONTALLAYOUT) return static_cast<CHorizontalLayoutUI*>(this);
 		return CContainerUI::GetInterface (pstrName);
 	}
@@ -223,7 +223,7 @@ namespace DuiLib {
 		return m_autoCalcWidth;
 	}
 
-	void CHorizontalLayoutUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CHorizontalLayoutUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("sepwidth")) SetSepWidth (FawTools::parse_dec (pstrValue));
 		else if (pstrName == _T ("sepimm")) SetSepImmMode (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("autocalcwidth")) SetAutoCalcWidth (FawTools::parse_bool (pstrValue));

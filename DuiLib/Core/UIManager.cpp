@@ -59,7 +59,7 @@ namespace DuiLib {
 		Clear ();
 	}
 
-	void tagTDrawInfo::Parse (faw::string_view_t pStrImage, faw::string_view_t pStrModify, CPaintManagerUI *paintManager) {
+	void tagTDrawInfo::Parse (faw::string_t pStrImage, faw::string_t pStrModify, CPaintManagerUI *paintManager) {
 		// 1、aaa.jpg
 		// 2、file='aaa.jpg' res='' restype='0' dest='0,0,0,0' source='0,0,0,0' corner='0,0,0,0' 
 		// mask='#FF0000' fade='255' hole='false' xtiled='false' ytiled='false'
@@ -68,7 +68,7 @@ namespace DuiLib {
 		sImageName = pStrImage;
 
 		for (size_t i = 0; i < 2; ++i) {
-			std::map<faw::String, faw::String> m = FawTools::parse_keyvalue_pairs (i == 0 ? pStrImage : pStrModify);
+			std::map<faw::string_t, faw::string_t> m = FawTools::parse_keyvalue_pairs (i == 0 ? pStrImage : pStrModify);
 			for (auto[str_key, str_value] : m) {
 				if (str_key == _T ("file") || str_key == _T ("res")) {
 					sImageName = str_value;
@@ -108,9 +108,8 @@ namespace DuiLib {
 
 		// 调整DPI资源
 		if (paintManager->GetDPIObj ()->GetScale () != 100) {
-			faw::String sScale;
-			sScale = faw::String::format (_T ("@%d."), paintManager->GetDPIObj ()->GetScale ());
-			sImageName.replace_self (_T ("."), sScale.str_view ());
+			faw::string_t sScale = fmt::format (_T ("@{}."), (int) paintManager->GetDPIObj ()->GetScale ());
+			FawTools::replace_self (sImageName, _T ("."), sScale);
 		}
 	}
 	void tagTDrawInfo::Clear () {
@@ -138,9 +137,9 @@ namespace DuiLib {
 	HPEN m_hUpdateRectPen = nullptr;
 
 	HINSTANCE CPaintManagerUI::m_hResourceInstance = nullptr;
-	faw::String CPaintManagerUI::m_pStrResourcePath;
-	faw::String CPaintManagerUI::m_pStrResourceZip;
-	faw::String CPaintManagerUI::m_pStrResourceZipPwd;  //Garfield 20160325 带密码zip包解密
+	faw::string_t CPaintManagerUI::m_pStrResourcePath;
+	faw::string_t CPaintManagerUI::m_pStrResourceZip;
+	faw::string_t CPaintManagerUI::m_pStrResourceZipPwd;  //Garfield 20160325 带密码zip包解密
 	HANDLE CPaintManagerUI::m_hResourceZip = nullptr;
 	bool CPaintManagerUI::m_bCachedResourceZip = true;
 	int CPaintManagerUI::m_nResType = UILIB_FILE;
@@ -287,7 +286,7 @@ namespace DuiLib {
 		}
 	}
 
-	void CPaintManagerUI::Init (HWND hWnd, faw::string_view_t pstrName) {
+	void CPaintManagerUI::Init (HWND hWnd, faw::string_t pstrName) {
 		ASSERT (::IsWindow (hWnd));
 
 		m_mNameHash.Resize ();
@@ -322,18 +321,18 @@ namespace DuiLib {
 		return m_hInstance;
 	}
 
-	faw::String CPaintManagerUI::GetInstancePath () {
+	faw::string_t CPaintManagerUI::GetInstancePath () {
 		if (!m_hInstance) return _T ('\0');
 
 		TCHAR tszModule[MAX_PATH + 1] = { 0 };
 		::GetModuleFileName (m_hInstance, tszModule, MAX_PATH);
-		faw::String sInstancePath = tszModule;
+		faw::string_t sInstancePath = tszModule;
 		size_t pos = sInstancePath.rfind (_T ('\\'));
-		if (pos != faw::String::_npos) sInstancePath = sInstancePath.left_self (pos + 1);
+		if (pos != faw::string_t::npos) sInstancePath = sInstancePath.substr (0, pos + 1);
 		return sInstancePath;
 	}
 
-	faw::String CPaintManagerUI::GetCurrentPath () {
+	faw::string_t CPaintManagerUI::GetCurrentPath () {
 		TCHAR tszModule[MAX_PATH + 1] = { 0 };
 		::GetCurrentDirectory (MAX_PATH, tszModule);
 		return tszModule;
@@ -343,16 +342,16 @@ namespace DuiLib {
 		return m_hResourceInstance ? m_hResourceInstance : m_hInstance;
 	}
 
-	const faw::string_view_t CPaintManagerUI::GetResourcePath () {
-		return m_pStrResourcePath.str_view ();
+	const faw::string_t CPaintManagerUI::GetResourcePath () {
+		return m_pStrResourcePath;
 	}
 
-	const faw::string_view_t CPaintManagerUI::GetResourceZip () {
-		return m_pStrResourceZip.str_view ();
+	const faw::string_t CPaintManagerUI::GetResourceZip () {
+		return m_pStrResourceZip;
 	}
 
-	const faw::string_view_t CPaintManagerUI::GetResourceZipPwd () {
-		return m_pStrResourceZipPwd.str_view ();
+	const faw::string_t CPaintManagerUI::GetResourceZipPwd () {
+		return m_pStrResourceZipPwd;
 	}
 
 	bool CPaintManagerUI::IsCachedResourceZip () {
@@ -367,7 +366,7 @@ namespace DuiLib {
 		m_hInstance = hInst;
 	}
 
-	void CPaintManagerUI::SetCurrentPath (faw::string_view_t pStrPath) {
+	void CPaintManagerUI::SetCurrentPath (faw::string_t pStrPath) {
 		::SetCurrentDirectory (pStrPath.data ());
 	}
 
@@ -375,14 +374,14 @@ namespace DuiLib {
 		m_hResourceInstance = hInst;
 	}
 
-	void CPaintManagerUI::SetResourcePath (faw::string_view_t pStrPath) {
+	void CPaintManagerUI::SetResourcePath (faw::string_t pStrPath) {
 		m_pStrResourcePath = pStrPath;
 		if (m_pStrResourcePath.empty ()) return;
 		TCHAR cEnd = m_pStrResourcePath[m_pStrResourcePath.size () - 1];
 		if (cEnd != _T ('\\') && cEnd != _T ('/')) m_pStrResourcePath += _T ('\\');
 	}
 
-	void CPaintManagerUI::SetResourceZip (LPVOID pVoid, unsigned int len, faw::string_view_t password) {
+	void CPaintManagerUI::SetResourceZip (LPVOID pVoid, unsigned int len, faw::string_t password) {
 		if (m_pStrResourceZip == _T ("membuffer")) return;
 		if (m_bCachedResourceZip && m_hResourceZip) {
 			CloseZip ((HZIP) m_hResourceZip);
@@ -397,7 +396,7 @@ namespace DuiLib {
 		}
 	}
 
-	void CPaintManagerUI::SetResourceZip (faw::string_view_t pStrPath, bool bCachedResourceZip, faw::string_view_t password) {
+	void CPaintManagerUI::SetResourceZip (faw::string_t pStrPath, bool bCachedResourceZip, faw::string_t password) {
 		if (m_pStrResourceZip == pStrPath && m_bCachedResourceZip == bCachedResourceZip) return;
 		if (m_bCachedResourceZip && m_hResourceZip) {
 			CloseZip ((HZIP) m_hResourceZip);
@@ -407,7 +406,7 @@ namespace DuiLib {
 		m_bCachedResourceZip = bCachedResourceZip;
 		m_pStrResourceZipPwd = password;
 		if (m_bCachedResourceZip) {
-			faw::String sFile = CPaintManagerUI::GetResourcePath ();
+			faw::string_t sFile = CPaintManagerUI::GetResourcePath ();
 			sFile += CPaintManagerUI::GetResourceZip ();
 			std::string pwd = FawTools::T_to_gb18030 (password);
 			m_hResourceZip = (HANDLE) OpenZip (sFile.c_str (), pwd.c_str ());
@@ -452,7 +451,7 @@ namespace DuiLib {
 		}
 	}
 
-	CPaintManagerUI* CPaintManagerUI::GetPaintManager (faw::string_view_t pstrName) {
+	CPaintManagerUI* CPaintManagerUI::GetPaintManager (faw::string_t pstrName) {
 		//if (pstrName.empty ()) return nullptr;
 		for (int i = 0; i < m_aPreMessages.GetSize (); i++) {
 			CPaintManagerUI* pManager = static_cast<CPaintManagerUI*>(m_aPreMessages[i]);
@@ -465,7 +464,7 @@ namespace DuiLib {
 		return &m_aPreMessages;
 	}
 
-	bool CPaintManagerUI::LoadPlugin (faw::string_view_t pstrModuleName) {
+	bool CPaintManagerUI::LoadPlugin (faw::string_t pstrModuleName) {
 		ASSERT (!pstrModuleName.empty ());
 		if (pstrModuleName.empty ()) return false;
 		HMODULE hModule = ::LoadLibrary (pstrModuleName.data ());
@@ -499,8 +498,8 @@ namespace DuiLib {
 		m_iHoverTime = iTime;
 	}
 
-	faw::string_view_t CPaintManagerUI::GetName () const {
-		return m_sName.str_view ();
+	faw::string_t CPaintManagerUI::GetName () const {
+		return m_sName;
 	}
 
 	HDC CPaintManagerUI::GetPaintDC () const {
@@ -658,11 +657,11 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	faw::string_view_t CPaintManagerUI::GetLayeredImage () {
-		return m_diLayered.sDrawString.str_view ();
+	faw::string_t CPaintManagerUI::GetLayeredImage () {
+		return m_diLayered.sDrawString;
 	}
 
-	void CPaintManagerUI::SetLayeredImage (faw::string_view_t pstrImage) {
+	void CPaintManagerUI::SetLayeredImage (faw::string_t pstrImage) {
 		m_diLayered.sDrawString = pstrImage;
 		RECT rcnullptr = { 0 };
 		CRenderEngine::DrawImageInfo (nullptr, this, rcnullptr, rcnullptr, &m_diLayered);
@@ -690,10 +689,10 @@ namespace DuiLib {
 		return m_trh;
 	}
 
-	bool CPaintManagerUI::PreMessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& /*lRes*/) {
+	std::optional<LRESULT> CPaintManagerUI::PreMessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		for (int i = 0; i < m_aPreMessageFilters.GetSize (); i++) {
 			bool bHandled = false;
-			LRESULT lResult = static_cast<IMessageFilterUI*>(m_aPreMessageFilters[i])->MessageHandler (uMsg, wParam, lParam, bHandled);
+			std::optional<LRESULT> lResult = static_cast<IMessageFilterUI*>(m_aPreMessageFilters[i])->MessageHandler (uMsg, wParam, lParam);
 			if (bHandled) {
 				return true;
 			}
@@ -703,10 +702,10 @@ namespace DuiLib {
 		{
 			// Tabbing between controls
 			if (wParam == VK_TAB) {
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("RichEditUI")) != faw::String::_npos) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("RichEditUI")) != faw::string_t::npos) {
 					if (static_cast<CRichEditUI*>(m_pFocus)->IsWantTab ()) return false;
 				}
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("WkeWebkitUI")) != faw::String::_npos) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("WkeWebkitUI")) != faw::string_t::npos) {
 					return false;
 				}
 				SetNextTabControl (::GetKeyState (VK_SHIFT) >= 0);
@@ -744,14 +743,13 @@ namespace DuiLib {
 		return false;
 	}
 
-	bool CPaintManagerUI::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes) {
-		if (!m_hWndPaint) return false;
+	std::optional<LRESULT> CPaintManagerUI::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		if (!m_hWndPaint) return std::nullopt;
 		// Cycle through listeners
+		std::optional<LRESULT> lRes = 0;
 		for (int i = 0; i < m_aMessageFilters.GetSize (); i++) {
-			bool bHandled = false;
-			LRESULT lResult = static_cast<IMessageFilterUI*>(m_aMessageFilters[i])->MessageHandler (uMsg, wParam, lParam, bHandled);
-			if (bHandled) {
-				lRes = lResult;
+			lRes = static_cast<IMessageFilterUI*>(m_aMessageFilters[i])->MessageHandler (uMsg, wParam, lParam);
+			if (lRes.has_value ()) {
 				switch (uMsg) {
 				case WM_MOUSEMOVE:
 				case WM_LBUTTONDOWN:
@@ -771,7 +769,7 @@ namespace DuiLib {
 				}
 				break;
 				}
-				return true;
+				return lRes.value ();
 			}
 		}
 
@@ -779,14 +777,12 @@ namespace DuiLib {
 			switch (uMsg) {
 			case WM_NCACTIVATE:
 				if (!::IsIconic (m_hWndPaint)) {
-					lRes = (wParam == 0) ? TRUE : FALSE;
-					return true;
+					return (wParam == 0) ? 1 : 0;
 				}
 				break;
 			case WM_NCCALCSIZE:
 			case WM_NCPAINT:
-				lRes = 0;
-				return true;
+				return 0;
 			}
 		}
 		// Custom handling of events
@@ -846,9 +842,8 @@ namespace DuiLib {
 		case WM_ERASEBKGND:
 		{
 			// We'll do the painting here...
-			lRes = 1;
 		}
-		return true;
+		return 1;
 		case WM_PAINT:
 		{
 			if (!m_pRoot) {
@@ -856,14 +851,14 @@ namespace DuiLib {
 				::BeginPaint (m_hWndPaint, &ps);
 				CRenderEngine::DrawColor (m_hDcPaint, ps.rcPaint, 0xFF000000);
 				::EndPaint (m_hWndPaint, &ps);
-				return true;
+				return lRes;
 			}
 
 			RECT rcClient = { 0 };
 			::GetClientRect (m_hWndPaint, &rcClient);
 
 			RECT rcPaint = { 0 };
-			if (!::GetUpdateRect (m_hWndPaint, &rcPaint, FALSE)) return true;
+			if (!::GetUpdateRect (m_hWndPaint, &rcPaint, FALSE)) return lRes;
 
 			//if( m_bLayered ) {
 			//	m_bOffscreenPaint = true;
@@ -872,14 +867,14 @@ namespace DuiLib {
 			//		PAINTSTRUCT ps = { 0 };
 			//		::BeginPaint(m_hWndPaint, &ps);
 			//		::EndPaint(m_hWndPaint, &ps);
-			//		return true;
+			//		return lRes;
 			//	}
 			//	if( rcPaint.right > rcClient.right ) rcPaint.right = rcClient.right;
 			//	if( rcPaint.bottom > rcClient.bottom ) rcPaint.bottom = rcClient.bottom;
 			//	::ZeroMemory(&m_rcLayeredUpdate, sizeof(m_rcLayeredUpdate));
 			//}
 			//else {
-			//	if( !::GetUpdateRect(m_hWndPaint, &rcPaint, FALSE) ) return true;
+			//	if( !::GetUpdateRect(m_hWndPaint, &rcPaint, FALSE) ) return lRes;
 			//}
 
 			// Set focus to first control?
@@ -935,7 +930,7 @@ namespace DuiLib {
 						if (m_bLayered && m_bLayeredChanged) {
 							Invalidate ();
 							SetPainting (false);
-							return true;
+							return lRes;
 						}
 						// 更新阴影窗口显示
 						m_shadow.Update (m_hWndPaint);
@@ -1124,7 +1119,7 @@ namespace DuiLib {
 			if (bNeedSizeMsg) {
 				this->SendNotify (m_pRoot, DUI_MSGTYPE_WINDOWSIZE, 0, 0, true);
 			}
-			return true;
+			return lRes;
 		}
 		case WM_PRINTCLIENT:
 		{
@@ -1219,7 +1214,7 @@ namespace DuiLib {
 				m_pEventHover->Event (event);
 			}
 			// Create tooltip information
-			faw::String sToolTip = pHover->GetToolTip ();
+			faw::string_t sToolTip = pHover->GetToolTip ();
 			if (sToolTip.empty ()) return true;
 			::ZeroMemory (&m_ToolTip, sizeof (TOOLINFO));
 			m_ToolTip.cbSize = sizeof (TOOLINFO);
@@ -1777,7 +1772,7 @@ namespace DuiLib {
 		if (pControl == m_pEventClick) m_pEventClick = nullptr;
 		if (pControl == m_pFocus) m_pFocus = nullptr;
 		KillTimer (pControl);
-		const faw::string_view_t sName = pControl->GetName ();
+		const faw::string_t sName = pControl->GetName ();
 		if (!sName.empty ()) {
 			if (pControl == FindControl (sName)) m_mNameHash.Remove (sName);
 		}
@@ -1787,7 +1782,7 @@ namespace DuiLib {
 		}
 	}
 
-	bool CPaintManagerUI::AddOptionGroup (faw::string_view_t pStrGroupName, CControlUI* pControl) {
+	bool CPaintManagerUI::AddOptionGroup (faw::string_t pStrGroupName, CControlUI* pControl) {
 		LPVOID lp = m_mOptionGroup.Find (pStrGroupName);
 		if (lp) {
 			CStdPtrArray* aOptionGroup = static_cast<CStdPtrArray*>(lp);
@@ -1805,13 +1800,13 @@ namespace DuiLib {
 		return true;
 	}
 
-	CStdPtrArray* CPaintManagerUI::GetOptionGroup (faw::string_view_t pStrGroupName) {
+	CStdPtrArray* CPaintManagerUI::GetOptionGroup (faw::string_t pStrGroupName) {
 		LPVOID lp = m_mOptionGroup.Find (pStrGroupName);
 		if (lp) return static_cast<CStdPtrArray*>(lp);
 		return nullptr;
 	}
 
-	void CPaintManagerUI::RemoveOptionGroup (faw::string_view_t pStrGroupName, CControlUI* pControl) {
+	void CPaintManagerUI::RemoveOptionGroup (faw::string_t pStrGroupName, CControlUI* pControl) {
 		LPVOID lp = m_mOptionGroup.Find (pStrGroupName);
 		if (lp) {
 			CStdPtrArray* aOptionGroup = static_cast<CStdPtrArray*>(lp);
@@ -1832,9 +1827,9 @@ namespace DuiLib {
 	void CPaintManagerUI::RemoveAllOptionGroups () {
 		CStdPtrArray* aOptionGroup;
 		for (int i = 0; i < m_mOptionGroup.GetSize (); i++) {
-			faw::String key = m_mOptionGroup.GetAt (i)->Key;
+			faw::string_t key = m_mOptionGroup.GetAt (i)->Key;
 			if (!key.empty ()) {
-				aOptionGroup = static_cast<CStdPtrArray*>(m_mOptionGroup.Find (key.str_view ()));
+				aOptionGroup = static_cast<CStdPtrArray*>(m_mOptionGroup.Find (key));
 				delete aOptionGroup;
 			}
 		}
@@ -1868,9 +1863,9 @@ namespace DuiLib {
 		// 图片
 		TImageInfo* data;
 		for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-			faw::String key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
+			faw::string_t key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!key.empty ()) {
-				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key.str_view (), false));
+				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key, false));
 				if (data) {
 					CRenderEngine::FreeImage (data);
 					data = nullptr;
@@ -1881,9 +1876,9 @@ namespace DuiLib {
 		// 字体
 		TFontInfo* pFontInfo;
 		for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-			faw::String key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
+			faw::string_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 			if (!key.empty ()) {
-				pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key.str_view (), false));
+				pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key, false));
 				if (pFontInfo) {
 					::DeleteObject (pFontInfo->hFont);
 					delete pFontInfo;
@@ -1897,11 +1892,11 @@ namespace DuiLib {
 			::DeleteObject (m_SharedResInfo.m_DefaultFontInfo.hFont);
 		}
 		// 样式
-		faw::String* pStyle;
+		faw::string_t* pStyle;
 		for (int i = 0; i < m_SharedResInfo.m_StyleHash.GetSize (); i++) {
-			faw::String key = m_SharedResInfo.m_StyleHash.GetAt (i)->Key;
+			faw::string_t key = m_SharedResInfo.m_StyleHash.GetAt (i)->Key;
 			if (!key.empty ()) {
-				pStyle = static_cast<faw::String*>(m_SharedResInfo.m_StyleHash.Find (key.str_view (), false));
+				pStyle = static_cast<faw::string_t*>(m_SharedResInfo.m_StyleHash.Find (key, false));
 				if (pStyle) {
 					delete pStyle;
 					pStyle = nullptr;
@@ -1911,11 +1906,11 @@ namespace DuiLib {
 		m_SharedResInfo.m_StyleHash.RemoveAll ();
 
 		// 样式
-		faw::String* pAttr;
+		faw::string_t* pAttr;
 		for (int i = 0; i < m_SharedResInfo.m_AttrHash.GetSize (); i++) {
-			faw::String key = m_SharedResInfo.m_AttrHash.GetAt (i)->Key;
+			faw::string_t key = m_SharedResInfo.m_AttrHash.GetAt (i)->Key;
 			if (!key.empty ()) {
-				pAttr = static_cast<faw::String*>(m_SharedResInfo.m_AttrHash.Find (key.str_view (), false));
+				pAttr = static_cast<faw::string_t*>(m_SharedResInfo.m_AttrHash.Find (key, false));
 				if (pAttr) {
 					delete pAttr;
 					pAttr = nullptr;
@@ -2328,7 +2323,7 @@ namespace DuiLib {
 		return false;
 	}
 
-	void CPaintManagerUI::SendNotify (CControlUI* pControl, faw::string_view_t pstrMessage, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/, bool bAsync /*= false*/) {
+	void CPaintManagerUI::SendNotify (CControlUI* pControl, faw::string_t pstrMessage, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/, bool bAsync /*= false*/) {
 		TNotifyUI Msg;
 		Msg.pSender = pControl;
 		Msg.sType = pstrMessage;
@@ -2462,7 +2457,7 @@ namespace DuiLib {
 		}
 	}
 
-	void CPaintManagerUI::SetDefaultFont (faw::string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
+	void CPaintManagerUI::SetDefaultFont (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
 		LOGFONT lf = { 0 };
 		::GetObject (::GetStockObject (DEFAULT_GUI_FONT), sizeof (LOGFONT), &lf);
 		if (pStrFontName.length () > 0) {
@@ -2515,7 +2510,7 @@ namespace DuiLib {
 			return m_ResInfo.m_CustomFonts.GetSize ();
 	}
 
-	HFONT CPaintManagerUI::AddFont (int id, faw::string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
+	HFONT CPaintManagerUI::AddFont (int id, faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
 		LOGFONT lf = { 0 };
 		::GetObject (::GetStockObject (DEFAULT_GUI_FONT), sizeof (LOGFONT), &lf);
 		if (pStrFontName.length () > 0) {
@@ -2575,11 +2570,11 @@ namespace DuiLib {
 
 		return hFont;
 	}
-	void CPaintManagerUI::AddFontArray (faw::string_view_t pstrPath) {
+	void CPaintManagerUI::AddFontArray (faw::string_t pstrPath) {
 		LPBYTE pData = nullptr;
 		DWORD dwSize = 0;
 		do {
-			faw::String sFile = CPaintManagerUI::GetResourcePath ();
+			faw::string_t sFile = CPaintManagerUI::GetResourcePath ();
 			if (CPaintManagerUI::GetResourceZip ().empty ()) {
 				sFile += pstrPath;
 				HANDLE hFile = ::CreateFile (sFile.c_str (), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -2602,15 +2597,15 @@ namespace DuiLib {
 				HZIP hz = nullptr;
 				if (CPaintManagerUI::IsCachedResourceZip ()) hz = (HZIP) CPaintManagerUI::GetResourceZipHandle ();
 				else {
-					faw::String sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
-					std::string pwd = sFilePwd.stra ();
+					faw::string_t sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
+					std::string pwd = FawTools::T_to_gb18030 (sFilePwd);
 					hz = OpenZip (sFile.c_str (), pwd.c_str ());
 				}
 				if (!hz) break;
 				ZIPENTRY ze;
 				int i = 0;
-				faw::String key = pstrPath;
-				key.replace_self (_T ("\\"), _T ("/"));
+				faw::string_t key = pstrPath;
+				FawTools::replace_self (key, _T ("\\"), _T ("/"));
 				if (FindZipItem (hz, key.c_str (), true, &i, &ze) != 0) break;
 				dwSize = ze.unc_size;
 				if (dwSize == 0) break;
@@ -2663,21 +2658,21 @@ namespace DuiLib {
 		return pFontInfo->hFont;
 	}
 
-	HFONT CPaintManagerUI::GetFont (faw::string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) {
+	HFONT CPaintManagerUI::GetFont (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) {
 		TFontInfo* pFontInfo = nullptr;
 		for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-			faw::String key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
+			faw::string_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 			if (!key.empty ()) {
-				pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key.str_view ()));
+				pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 				if (pFontInfo && pFontInfo->sFontName == pStrFontName && pFontInfo->iSize == nSize &&
 					pFontInfo->bBold == bBold && pFontInfo->bUnderline == bUnderline && pFontInfo->bItalic == bItalic)
 					return pFontInfo->hFont;
 			}
 		}
 		for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-			faw::String key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
+			faw::string_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 			if (!key.empty ()) {
-				pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key.str_view ()));
+				pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 				if (pFontInfo && pFontInfo->sFontName == pStrFontName && pFontInfo->iSize == nSize &&
 					pFontInfo->bBold == bBold && pFontInfo->bUnderline == bUnderline && pFontInfo->bItalic == bItalic)
 					return pFontInfo->hFont;
@@ -2691,17 +2686,17 @@ namespace DuiLib {
 		TFontInfo* pFontInfo = nullptr;
 		if (bShared) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key.str_view ()));
+					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) return _ttoi (key.c_str ());
 				}
 			}
 		} else {
 			for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key.str_view ()));
+					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) return _ttoi (key.c_str ());
 				}
 			}
@@ -2710,13 +2705,13 @@ namespace DuiLib {
 		return -1;
 	}
 
-	int CPaintManagerUI::GetFontIndex (faw::string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
+	int CPaintManagerUI::GetFontIndex (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
 		TFontInfo* pFontInfo = nullptr;
 		if (bShared) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key.str_view ()));
+					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->sFontName == pStrFontName && pFontInfo->iSize == nSize &&
 						pFontInfo->bBold == bBold && pFontInfo->bUnderline == bUnderline && pFontInfo->bItalic == bItalic)
 						return _ttoi (key.c_str ());
@@ -2724,9 +2719,9 @@ namespace DuiLib {
 			}
 		} else {
 			for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key.str_view ()));
+					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->sFontName == pStrFontName && pFontInfo->iSize == nSize &&
 						pFontInfo->bBold == bBold && pFontInfo->bUnderline == bUnderline && pFontInfo->bItalic == bItalic)
 						return _ttoi (key.c_str ());
@@ -2741,9 +2736,9 @@ namespace DuiLib {
 		TFontInfo* pFontInfo = nullptr;
 		if (bShared) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key.str_view ()));
+					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) {
 						::DeleteObject (pFontInfo->hFont);
 						delete pFontInfo;
@@ -2754,13 +2749,13 @@ namespace DuiLib {
 			}
 		} else {
 			for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key.str_view ()));
+					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) {
 						::DeleteObject (pFontInfo->hFont);
 						delete pFontInfo;
-						m_ResInfo.m_CustomFonts.Remove (key.str_view ());
+						m_ResInfo.m_CustomFonts.Remove (key);
 						return;
 					}
 				}
@@ -2795,9 +2790,9 @@ namespace DuiLib {
 		TFontInfo* pFontInfo;
 		if (bShared) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key.str_view (), false));
+					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key, false));
 					if (pFontInfo) {
 						::DeleteObject (pFontInfo->hFont);
 						delete pFontInfo;
@@ -2807,9 +2802,9 @@ namespace DuiLib {
 			m_SharedResInfo.m_CustomFonts.RemoveAll ();
 		} else {
 			for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key.str_view (), false));
+					pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key, false));
 					if (pFontInfo) {
 						::DeleteObject (pFontInfo->hFont);
 						delete pFontInfo;
@@ -2840,17 +2835,17 @@ namespace DuiLib {
 	TFontInfo* CPaintManagerUI::GetFontInfo (HFONT hFont) {
 		TFontInfo* pFontInfo = nullptr;
 		for (int i = 0; i < m_ResInfo.m_CustomFonts.GetSize (); i++) {
-			faw::String key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
+			faw::string_t key = m_ResInfo.m_CustomFonts.GetAt (i)->Key;
 			if (!key.empty ()) {
-				pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key.str_view ()));
+				pFontInfo = static_cast<TFontInfo*>(m_ResInfo.m_CustomFonts.Find (key));
 				if (pFontInfo && pFontInfo->hFont == hFont) break;
 			}
 		}
 		if (!pFontInfo) {
 			for (int i = 0; i < m_SharedResInfo.m_CustomFonts.GetSize (); i++) {
-				faw::String key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
+				faw::string_t key = m_SharedResInfo.m_CustomFonts.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key.str_view ()));
+					pFontInfo = static_cast<TFontInfo*>(m_SharedResInfo.m_CustomFonts.Find (key));
 					if (pFontInfo && pFontInfo->hFont == hFont) break;
 				}
 			}
@@ -2864,13 +2859,13 @@ namespace DuiLib {
 		return pFontInfo;
 	}
 
-	const TImageInfo* CPaintManagerUI::GetImage (faw::string_view_t bitmap) {
+	const TImageInfo* CPaintManagerUI::GetImage (faw::string_t bitmap) {
 		TImageInfo* data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (bitmap));
 		if (!data) data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (bitmap));
 		return data;
 	}
 
-	const TImageInfo* CPaintManagerUI::GetImageEx (faw::string_view_t bitmap, faw::string_view_t type, DWORD mask, bool bUseHSL, HINSTANCE instance) {
+	const TImageInfo* CPaintManagerUI::GetImageEx (faw::string_t bitmap, faw::string_t type, DWORD mask, bool bUseHSL, HINSTANCE instance) {
 		const TImageInfo* data = GetImage (bitmap);
 		if (!data) {
 			if (AddImage (bitmap, type, mask, bUseHSL, false, instance)) {
@@ -2882,7 +2877,7 @@ namespace DuiLib {
 		return data;
 	}
 
-	const TImageInfo* CPaintManagerUI::AddImage (faw::string_view_t bitmap, faw::string_view_t type, DWORD mask, bool bUseHSL, bool bShared, HINSTANCE instance) {
+	const TImageInfo* CPaintManagerUI::AddImage (faw::string_t bitmap, faw::string_t type, DWORD mask, bool bUseHSL, bool bShared, HINSTANCE instance) {
 		if (bitmap.empty ()) return nullptr;
 
 		TImageInfo* data = nullptr;
@@ -2935,7 +2930,7 @@ namespace DuiLib {
 		return data;
 	}
 
-	const TImageInfo* CPaintManagerUI::AddImage (faw::string_view_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared) {
+	const TImageInfo* CPaintManagerUI::AddImage (faw::string_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared) {
 		// 因无法确定外部HBITMAP格式，不能使用hsl调整
 		if (bitmap.empty ()) return nullptr;
 		if (!hBitmap || iWidth <= 0 || iHeight <= 0) return nullptr;
@@ -2967,7 +2962,7 @@ namespace DuiLib {
 		return data;
 	}
 
-	const TImageInfo* CPaintManagerUI::AddImage (faw::string_view_t bitmap, HBITMAP *phBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared) {
+	const TImageInfo* CPaintManagerUI::AddImage (faw::string_t bitmap, HBITMAP *phBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared) {
 		// 因无法确定外部HBITMAP格式，不能使用hsl调整
 		if (bitmap.empty ()) return nullptr;
 		if (!phBitmap || !*phBitmap || iWidth <= 0 || iHeight <= 0) return nullptr;
@@ -2999,7 +2994,7 @@ namespace DuiLib {
 		return data;
 	}
 
-	void CPaintManagerUI::RemoveImage (faw::string_view_t bitmap, bool bShared) {
+	void CPaintManagerUI::RemoveImage (faw::string_t bitmap, bool bShared) {
 		TImageInfo* data = nullptr;
 		if (bShared) {
 			data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (bitmap));
@@ -3020,9 +3015,9 @@ namespace DuiLib {
 		if (bShared) {
 			TImageInfo* data;
 			for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-				faw::String key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
+				faw::string_t key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 				if (!key.empty ()) {
-					data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key.str_view (), false));
+					data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key, false));
 					if (data) {
 						CRenderEngine::FreeImage (data);
 					}
@@ -3032,9 +3027,9 @@ namespace DuiLib {
 		} else {
 			TImageInfo* data;
 			for (int i = 0; i < m_ResInfo.m_ImageHash.GetSize (); i++) {
-				faw::String key = m_ResInfo.m_ImageHash.GetAt (i)->Key;
+				faw::string_t key = m_ResInfo.m_ImageHash.GetAt (i)->Key;
 				if (!key.empty ()) {
-					data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (key.str_view (), false));
+					data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (key, false));
 					if (data) {
 						CRenderEngine::FreeImage (data);
 					}
@@ -3047,9 +3042,9 @@ namespace DuiLib {
 	void CPaintManagerUI::AdjustSharedImagesHSL () {
 		TImageInfo* data;
 		for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-			faw::String key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
+			faw::string_t key = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!key.empty ()) {
-				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key.str_view ()));
+				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (key));
 				if (data && data->bUseHSL) {
 					CRenderEngine::AdjustImage (m_bUseHSL, data, m_H, m_S, m_L);
 				}
@@ -3060,9 +3055,9 @@ namespace DuiLib {
 	void CPaintManagerUI::AdjustImagesHSL () {
 		TImageInfo* data;
 		for (int i = 0; i < m_ResInfo.m_ImageHash.GetSize (); i++) {
-			faw::String key = m_ResInfo.m_ImageHash.GetAt (i)->Key;
+			faw::string_t key = m_ResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!key.empty ()) {
-				data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (key.str_view ()));
+				data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (key));
 				if (data && data->bUseHSL) {
 					CRenderEngine::AdjustImage (m_bUseHSL, data, m_H, m_S, m_L);
 				}
@@ -3081,9 +3076,9 @@ namespace DuiLib {
 		TImageInfo *data = nullptr;
 		TImageInfo *pNewData = nullptr;
 		for (int i = 0; i < m_SharedResInfo.m_ImageHash.GetSize (); i++) {
-			faw::String bitmap = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
+			faw::string_t bitmap = m_SharedResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!bitmap.empty ()) {
-				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (bitmap.str_view ()));
+				data = static_cast<TImageInfo*>(m_SharedResInfo.m_ImageHash.Find (bitmap));
 				if (data) {
 					if (!data->sResType.empty ()) {
 						if (isdigit (bitmap[0])) {
@@ -3121,9 +3116,9 @@ namespace DuiLib {
 		TImageInfo *data = nullptr;
 		TImageInfo *pNewData = nullptr;
 		for (int i = 0; i < m_ResInfo.m_ImageHash.GetSize (); i++) {
-			faw::String bitmap = m_ResInfo.m_ImageHash.GetAt (i)->Key;
+			faw::string_t bitmap = m_ResInfo.m_ImageHash.GetAt (i)->Key;
 			if (!bitmap.empty ()) {
-				data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (bitmap.str_view ()));
+				data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find (bitmap));
 				if (data) {
 					if (!data->sResType.empty ()) {
 						if (isdigit (bitmap[0])) {
@@ -3136,7 +3131,7 @@ namespace DuiLib {
 
 					CRenderEngine::FreeImage (data, false);
 					if (!pNewData) {
-						m_ResInfo.m_ImageHash.Remove (bitmap.str_view ());
+						m_ResInfo.m_ImageHash.Remove (bitmap);
 						continue;
 					}
 					data->hBitmap = pNewData->hBitmap;
@@ -3160,26 +3155,26 @@ namespace DuiLib {
 		if (m_pRoot) m_pRoot->Invalidate ();
 	}
 
-	const TDrawInfo* CPaintManagerUI::GetDrawInfo (faw::string_view_t pStrImage, faw::string_view_t pStrModify) {
-		faw::String sStrImage = pStrImage;
-		faw::String sStrModify = pStrModify;
-		faw::String sKey = sStrImage + sStrModify;
-		TDrawInfo* pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (sKey.str_view ()));
+	const TDrawInfo* CPaintManagerUI::GetDrawInfo (faw::string_t pStrImage, faw::string_t pStrModify) {
+		faw::string_t sStrImage = pStrImage;
+		faw::string_t sStrModify = pStrModify;
+		faw::string_t sKey = sStrImage + sStrModify;
+		TDrawInfo* pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (sKey));
 		if (!pDrawInfo && !sKey.empty ()) {
 			pDrawInfo = new TDrawInfo ();
 			pDrawInfo->Parse (pStrImage, pStrModify, this);
-			m_ResInfo.m_DrawInfoHash.Insert (sKey.str_view (), pDrawInfo);
+			m_ResInfo.m_DrawInfoHash.Insert (sKey, pDrawInfo);
 		}
 		return pDrawInfo;
 	}
 
-	void CPaintManagerUI::RemoveDrawInfo (faw::string_view_t pStrImage, faw::string_view_t pStrModify) {
-		faw::String sStrImage = pStrImage;
-		faw::String sStrModify = pStrModify;
-		faw::String sKey = sStrImage + sStrModify;
-		TDrawInfo* pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (sKey.str_view ()));
+	void CPaintManagerUI::RemoveDrawInfo (faw::string_t pStrImage, faw::string_t pStrModify) {
+		faw::string_t sStrImage = pStrImage;
+		faw::string_t sStrModify = pStrModify;
+		faw::string_t sKey = sStrImage + sStrModify;
+		TDrawInfo* pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (sKey));
 		if (pDrawInfo) {
-			m_ResInfo.m_DrawInfoHash.Remove (sKey.str_view ());
+			m_ResInfo.m_DrawInfoHash.Remove (sKey);
 			delete pDrawInfo;
 			pDrawInfo = nullptr;
 		}
@@ -3188,9 +3183,9 @@ namespace DuiLib {
 	void CPaintManagerUI::RemoveAllDrawInfos () {
 		TDrawInfo* pDrawInfo = nullptr;
 		for (int i = 0; i < m_ResInfo.m_DrawInfoHash.GetSize (); i++) {
-			faw::String key = m_ResInfo.m_DrawInfoHash.GetAt (i)->Key;
+			faw::string_t key = m_ResInfo.m_DrawInfoHash.GetAt (i)->Key;
 			if (!key.empty ()) {
-				pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (key.str_view (), false));
+				pDrawInfo = static_cast<TDrawInfo*>(m_ResInfo.m_DrawInfoHash.Find (key, false));
 				if (pDrawInfo) {
 					delete pDrawInfo;
 					pDrawInfo = nullptr;
@@ -3200,38 +3195,38 @@ namespace DuiLib {
 		m_ResInfo.m_DrawInfoHash.RemoveAll ();
 	}
 
-	void CPaintManagerUI::AddDefaultAttributeList (faw::string_view_t pStrControlName, faw::string_view_t pStrControlAttrList, bool bShared) {
+	void CPaintManagerUI::AddDefaultAttributeList (faw::string_t pStrControlName, faw::string_t pStrControlAttrList, bool bShared) {
 		if (bShared || m_bForceUseSharedRes) {
-			faw::String* pDefaultAttr = new faw::String (pStrControlAttrList);
+			faw::string_t* pDefaultAttr = new faw::string_t (pStrControlAttrList);
 			if (pDefaultAttr) {
-				faw::String* pOldDefaultAttr = static_cast<faw::String*>(m_SharedResInfo.m_AttrHash.Set (pStrControlName, (LPVOID) pDefaultAttr));
+				faw::string_t* pOldDefaultAttr = static_cast<faw::string_t*>(m_SharedResInfo.m_AttrHash.Set (pStrControlName, (LPVOID) pDefaultAttr));
 				if (pOldDefaultAttr) delete pOldDefaultAttr;
 			}
 		} else {
-			faw::String* pDefaultAttr = new faw::String (pStrControlAttrList);
+			faw::string_t* pDefaultAttr = new faw::string_t (pStrControlAttrList);
 			if (pDefaultAttr) {
-				faw::String* pOldDefaultAttr = static_cast<faw::String*>(m_ResInfo.m_AttrHash.Set (pStrControlName, (LPVOID) pDefaultAttr));
+				faw::string_t* pOldDefaultAttr = static_cast<faw::string_t*>(m_ResInfo.m_AttrHash.Set (pStrControlName, (LPVOID) pDefaultAttr));
 				if (pOldDefaultAttr) delete pOldDefaultAttr;
 			}
 		}
 	}
 
-	faw::string_view_t CPaintManagerUI::GetDefaultAttributeList (faw::string_view_t pStrControlName) const {
-		faw::String* pDefaultAttr = static_cast<faw::String*>(m_ResInfo.m_AttrHash.Find (pStrControlName));
-		if (!pDefaultAttr) pDefaultAttr = static_cast<faw::String*>(m_SharedResInfo.m_AttrHash.Find (pStrControlName));
-		if (pDefaultAttr) return pDefaultAttr->str_view ();
+	faw::string_t CPaintManagerUI::GetDefaultAttributeList (faw::string_t pStrControlName) const {
+		faw::string_t* pDefaultAttr = static_cast<faw::string_t*>(m_ResInfo.m_AttrHash.Find (pStrControlName));
+		if (!pDefaultAttr) pDefaultAttr = static_cast<faw::string_t*>(m_SharedResInfo.m_AttrHash.Find (pStrControlName));
+		if (pDefaultAttr) return *pDefaultAttr;
 		return _T ("");
 	}
 
-	bool CPaintManagerUI::RemoveDefaultAttributeList (faw::string_view_t pStrControlName, bool bShared) {
+	bool CPaintManagerUI::RemoveDefaultAttributeList (faw::string_t pStrControlName, bool bShared) {
 		if (bShared) {
-			faw::String* pDefaultAttr = static_cast<faw::String*>(m_SharedResInfo.m_AttrHash.Find (pStrControlName));
+			faw::string_t* pDefaultAttr = static_cast<faw::string_t*>(m_SharedResInfo.m_AttrHash.Find (pStrControlName));
 			if (!pDefaultAttr) return false;
 
 			delete pDefaultAttr;
 			return m_SharedResInfo.m_AttrHash.Remove (pStrControlName);
 		} else {
-			faw::String* pDefaultAttr = static_cast<faw::String*>(m_ResInfo.m_AttrHash.Find (pStrControlName));
+			faw::string_t* pDefaultAttr = static_cast<faw::string_t*>(m_ResInfo.m_AttrHash.Find (pStrControlName));
 			if (!pDefaultAttr) return false;
 
 			delete pDefaultAttr;
@@ -3241,21 +3236,21 @@ namespace DuiLib {
 
 	void CPaintManagerUI::RemoveAllDefaultAttributeList (bool bShared) {
 		if (bShared) {
-			faw::String* pDefaultAttr;
+			faw::string_t* pDefaultAttr;
 			for (int i = 0; i < m_SharedResInfo.m_AttrHash.GetSize (); i++) {
-				faw::String key = m_SharedResInfo.m_AttrHash.GetAt (i)->Key;
+				faw::string_t key = m_SharedResInfo.m_AttrHash.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pDefaultAttr = static_cast<faw::String*>(m_SharedResInfo.m_AttrHash.Find (key.str_view ()));
+					pDefaultAttr = static_cast<faw::string_t*>(m_SharedResInfo.m_AttrHash.Find (key));
 					if (pDefaultAttr) delete pDefaultAttr;
 				}
 			}
 			m_SharedResInfo.m_AttrHash.RemoveAll ();
 		} else {
-			faw::String* pDefaultAttr;
+			faw::string_t* pDefaultAttr;
 			for (int i = 0; i < m_ResInfo.m_AttrHash.GetSize (); i++) {
-				faw::String key = m_ResInfo.m_AttrHash.GetAt (i)->Key;
+				faw::string_t key = m_ResInfo.m_AttrHash.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pDefaultAttr = static_cast<faw::String*>(m_ResInfo.m_AttrHash.Find (key.str_view ()));
+					pDefaultAttr = static_cast<faw::string_t*>(m_ResInfo.m_AttrHash.Find (key));
 					if (pDefaultAttr) delete pDefaultAttr;
 				}
 			}
@@ -3263,25 +3258,25 @@ namespace DuiLib {
 		}
 	}
 
-	void CPaintManagerUI::AddWindowCustomAttribute (faw::string_view_t pstrName, faw::string_view_t pstrAttr) {
+	void CPaintManagerUI::AddWindowCustomAttribute (faw::string_t pstrName, faw::string_t pstrAttr) {
 		if (pstrName.empty () || pstrAttr.empty ()) return;
-		faw::String* pCostomAttr = new faw::String (pstrAttr);
+		faw::string_t* pCostomAttr = new faw::string_t (pstrAttr);
 		if (!m_mWindowCustomAttrHash.Find (pstrName))
 			m_mWindowCustomAttrHash.Set (pstrName, (LPVOID) pCostomAttr);
 		else
 			delete pCostomAttr;
 	}
 
-	faw::string_view_t CPaintManagerUI::GetWindowCustomAttribute (faw::string_view_t pstrName) const {
+	faw::string_t CPaintManagerUI::GetWindowCustomAttribute (faw::string_t pstrName) const {
 		if (pstrName.empty ()) return _T ("");
-		faw::String* pCostomAttr = static_cast<faw::String*>(m_mWindowCustomAttrHash.Find (pstrName));
-		if (pCostomAttr) return pCostomAttr->str_view ();
+		faw::string_t* pCostomAttr = static_cast<faw::string_t*>(m_mWindowCustomAttrHash.Find (pstrName));
+		if (pCostomAttr) return *pCostomAttr;
 		return _T ("");
 	}
 
-	bool CPaintManagerUI::RemoveWindowCustomAttribute (faw::string_view_t pstrName) {
+	bool CPaintManagerUI::RemoveWindowCustomAttribute (faw::string_t pstrName) {
 		if (pstrName.empty ()) return false;
-		faw::String* pCostomAttr = static_cast<faw::String*>(m_mWindowCustomAttrHash.Find (pstrName));
+		faw::string_t* pCostomAttr = static_cast<faw::string_t*>(m_mWindowCustomAttrHash.Find (pstrName));
 		if (!pCostomAttr) return false;
 
 		delete pCostomAttr;
@@ -3289,11 +3284,11 @@ namespace DuiLib {
 	}
 
 	void CPaintManagerUI::RemoveAllWindowCustomAttribute () {
-		faw::String* pCostomAttr;
+		faw::string_t* pCostomAttr;
 		for (int i = 0; i < m_mWindowCustomAttrHash.GetSize (); i++) {
-			faw::String key = m_mWindowCustomAttrHash.GetAt (i)->Key;
+			faw::string_t key = m_mWindowCustomAttrHash.GetAt (i)->Key;
 			if (!key.empty ()) {
-				pCostomAttr = static_cast<faw::String*>(m_mWindowCustomAttrHash.Find (key.str_view ()));
+				pCostomAttr = static_cast<faw::string_t*>(m_mWindowCustomAttrHash.Find (key));
 				delete pCostomAttr;
 			}
 		}
@@ -3310,7 +3305,7 @@ namespace DuiLib {
 		return m_pRoot->FindControl (__FindControlFromPoint, &pt, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
 	}
 
-	CControlUI* CPaintManagerUI::FindControl (faw::string_view_t pstrName) const {
+	CControlUI* CPaintManagerUI::FindControl (faw::string_t pstrName) const {
 		ASSERT (m_pRoot);
 		return static_cast<CControlUI*>(m_mNameHash.Find (pstrName));
 	}
@@ -3321,20 +3316,20 @@ namespace DuiLib {
 		return pParent->FindControl (__FindControlFromPoint, &pt, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
 	}
 
-	CControlUI* CPaintManagerUI::FindSubControlByName (CControlUI* pParent, faw::string_view_t pstrName) const {
+	CControlUI* CPaintManagerUI::FindSubControlByName (CControlUI* pParent, faw::string_t pstrName) const {
 		if (!pParent) pParent = GetRoot ();
 		ASSERT (pParent);
 		return pParent->FindControl (__FindControlFromName, (LPVOID) pstrName.data (), UIFIND_ALL);
 	}
 
-	CControlUI* CPaintManagerUI::FindSubControlByClass (CControlUI* pParent, faw::string_view_t pstrClass, int iIndex) {
+	CControlUI* CPaintManagerUI::FindSubControlByClass (CControlUI* pParent, faw::string_t pstrClass, int iIndex) {
 		if (!pParent) pParent = GetRoot ();
 		ASSERT (pParent);
 		m_aFoundControls.Resize (iIndex + 1);
 		return pParent->FindControl (__FindControlFromClass, (LPVOID) pstrClass.data (), UIFIND_ALL);
 	}
 
-	CStdPtrArray* CPaintManagerUI::FindSubControlsByClass (CControlUI* pParent, faw::string_view_t pstrClass) {
+	CStdPtrArray* CPaintManagerUI::FindSubControlsByClass (CControlUI* pParent, faw::string_t pstrClass) {
 		if (!pParent) pParent = GetRoot ();
 		ASSERT (pParent);
 		m_aFoundControls.Empty ();
@@ -3348,7 +3343,7 @@ namespace DuiLib {
 
 	CControlUI* CALLBACK CPaintManagerUI::__FindControlFromNameHash (CControlUI* pThis, LPVOID pData) {
 		CPaintManagerUI* pManager = static_cast<CPaintManagerUI*>(pData);
-		const faw::string_view_t sName = pThis->GetName ();
+		const faw::string_t sName = pThis->GetName ();
 		if (sName.empty ()) return nullptr;
 		// Add this control to the hash list
 		pManager->m_mNameHash.Set (sName, pThis);
@@ -3383,20 +3378,20 @@ namespace DuiLib {
 		if (!pThis->IsVisible ()) return nullptr;
 		FINDSHORTCUT* pFS = static_cast<FINDSHORTCUT*>(pData);
 		if (pFS->ch == toupper (pThis->GetShortcut ())) pFS->bPickNext = true;
-		if (pThis->GetClass ().find (_T ("LabelUI")) != faw::String::_npos) return nullptr;   // Labels never get focus!
+		if (pThis->GetClass ().find (_T ("LabelUI")) != faw::string_t::npos) return nullptr;   // Labels never get focus!
 		return pFS->bPickNext ? pThis : nullptr;
 	}
 
 	CControlUI* CALLBACK CPaintManagerUI::__FindControlFromName (CControlUI* pThis, LPVOID pData) {
-		faw::string_view_t pstrName = static_cast<LPCTSTR>(pData);
-		const faw::string_view_t sName = pThis->GetName ();
+		faw::string_t pstrName = static_cast<LPCTSTR>(pData);
+		const faw::string_t sName = pThis->GetName ();
 		if (sName.empty ()) return nullptr;
 		return (sName == pstrName ? pThis : nullptr);
 	}
 
 	CControlUI* CALLBACK CPaintManagerUI::__FindControlFromClass (CControlUI* pThis, LPVOID pData) {
-		faw::string_view_t pstrType = static_cast<LPCTSTR>(pData);
-		faw::string_view_t pType = pThis->GetClass ();
+		faw::string_t pstrType = static_cast<LPCTSTR>(pData);
+		faw::string_t pType = pThis->GetClass ();
 		CStdPtrArray* pFoundControls = pThis->GetManager ()->GetFoundControls ();
 		if (pstrType == _T ("*") || pstrType == pType) {
 			int iIndex = -1;
@@ -3408,8 +3403,8 @@ namespace DuiLib {
 	}
 
 	CControlUI* CALLBACK CPaintManagerUI::__FindControlsFromClass (CControlUI* pThis, LPVOID pData) {
-		faw::string_view_t pstrType = static_cast<LPCTSTR>(pData);
-		faw::string_view_t pType = pThis->GetClass ();
+		faw::string_t pstrType = static_cast<LPCTSTR>(pData);
+		faw::string_t pType = pThis->GetClass ();
 		if (pstrType == _T ("*") || pstrType == pType)
 			pThis->GetManager ()->GetFoundControls ()->Add ((LPVOID) pThis);
 		return nullptr;
@@ -3437,7 +3432,7 @@ namespace DuiLib {
 		// each window and any child control attached.
 		UINT uStyle = GetWindowStyle (pMsg->hwnd);
 		UINT uChildRes = uStyle & WS_CHILD;
-		LRESULT lRes = 0;
+		std::optional<LRESULT> lRes = 0;
 		if (uChildRes != 0) {
 			HWND hWndParent = ::GetParent (pMsg->hwnd);
 
@@ -3449,7 +3444,7 @@ namespace DuiLib {
 						if (pT->TranslateAccelerator (pMsg))
 							return true;
 
-						pT->PreMessageHandler (pMsg->message, pMsg->wParam, pMsg->lParam, lRes);
+						lRes = pT->PreMessageHandler (pMsg->message, pMsg->wParam, pMsg->lParam);
 					}
 					hTempParent = GetParent (hTempParent);
 				}
@@ -3461,7 +3456,8 @@ namespace DuiLib {
 					if (pT->TranslateAccelerator (pMsg))
 						return true;
 
-					if (pT->PreMessageHandler (pMsg->message, pMsg->wParam, pMsg->lParam, lRes))
+					lRes = pT->PreMessageHandler (pMsg->message, pMsg->wParam, pMsg->lParam);
+					if (lRes.has_value ())
 						return true;
 
 					return false;
@@ -3490,8 +3486,8 @@ namespace DuiLib {
 	}
 
 	// 样式管理
-	void CPaintManagerUI::AddStyle (faw::string_view_t pName, faw::string_view_t pDeclarationList, bool bShared) {
-		faw::String* pStyle = new faw::String (pDeclarationList);
+	void CPaintManagerUI::AddStyle (faw::string_t pName, faw::string_t pDeclarationList, bool bShared) {
+		faw::string_t* pStyle = new faw::string_t (pDeclarationList);
 
 		if (bShared || m_bForceUseSharedRes) {
 			if (!m_SharedResInfo.m_StyleHash.Insert (pName, pStyle)) {
@@ -3504,23 +3500,23 @@ namespace DuiLib {
 		}
 	}
 
-	faw::string_view_t CPaintManagerUI::GetStyle (faw::string_view_t pName) const {
-		faw::String* pStyle = static_cast<faw::String*>(m_ResInfo.m_StyleHash.Find (pName));
-		if (!pStyle) pStyle = static_cast<faw::String*>(m_SharedResInfo.m_StyleHash.Find (pName));
+	faw::string_t CPaintManagerUI::GetStyle (faw::string_t pName) const {
+		faw::string_t* pStyle = static_cast<faw::string_t*>(m_ResInfo.m_StyleHash.Find (pName));
+		if (!pStyle) pStyle = static_cast<faw::string_t*>(m_SharedResInfo.m_StyleHash.Find (pName));
 		if (pStyle) return pStyle->c_str ();
 		else return _T ("");
 	}
 
-	BOOL CPaintManagerUI::RemoveStyle (faw::string_view_t pName, bool bShared) {
-		faw::String* pStyle = nullptr;
+	BOOL CPaintManagerUI::RemoveStyle (faw::string_t pName, bool bShared) {
+		faw::string_t* pStyle = nullptr;
 		if (bShared) {
-			pStyle = static_cast<faw::String*>(m_SharedResInfo.m_StyleHash.Find (pName));
+			pStyle = static_cast<faw::string_t*>(m_SharedResInfo.m_StyleHash.Find (pName));
 			if (pStyle) {
 				delete pStyle;
 				m_SharedResInfo.m_StyleHash.Remove (pName);
 			}
 		} else {
-			pStyle = static_cast<faw::String*>(m_ResInfo.m_StyleHash.Find (pName));
+			pStyle = static_cast<faw::string_t*>(m_ResInfo.m_StyleHash.Find (pName));
 			if (pStyle) {
 				delete pStyle;
 				m_ResInfo.m_StyleHash.Remove (pName);
@@ -3536,21 +3532,21 @@ namespace DuiLib {
 
 	void CPaintManagerUI::RemoveAllStyle (bool bShared) {
 		if (bShared) {
-			faw::String* pStyle;
+			faw::string_t* pStyle;
 			for (int i = 0; i < m_SharedResInfo.m_StyleHash.GetSize (); i++) {
-				faw::String key = m_SharedResInfo.m_StyleHash.GetAt (i)->Key;
+				faw::string_t key = m_SharedResInfo.m_StyleHash.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pStyle = static_cast<faw::String*>(m_SharedResInfo.m_StyleHash.Find (key.str_view ()));
+					pStyle = static_cast<faw::string_t*>(m_SharedResInfo.m_StyleHash.Find (key));
 					delete pStyle;
 				}
 			}
 			m_SharedResInfo.m_StyleHash.RemoveAll ();
 		} else {
-			faw::String* pStyle;
+			faw::string_t* pStyle;
 			for (int i = 0; i < m_ResInfo.m_StyleHash.GetSize (); i++) {
-				faw::String key = m_ResInfo.m_StyleHash.GetAt (i)->Key;
+				faw::string_t key = m_ResInfo.m_StyleHash.GetAt (i)->Key;
 				if (!key.empty ()) {
-					pStyle = static_cast<faw::String*>(m_ResInfo.m_StyleHash.Find (key.str_view ()));
+					pStyle = static_cast<faw::string_t*>(m_ResInfo.m_StyleHash.Find (key));
 					delete pStyle;
 				}
 			}
@@ -3558,12 +3554,12 @@ namespace DuiLib {
 		}
 	}
 
-	const TImageInfo* CPaintManagerUI::GetImageString (faw::string_view_t pStrImage, faw::string_view_t pStrModify) {
-		faw::String sImageName = pStrImage;
-		faw::String sImageResType = _T ("");
+	const TImageInfo* CPaintManagerUI::GetImageString (faw::string_t pStrImage, faw::string_t pStrModify) {
+		faw::string_t sImageName = pStrImage;
+		faw::string_t sImageResType = _T ("");
 		DWORD dwMask = 0;
 		for (size_t i = 0; i < 2; ++i) {
-			std::map<faw::String, faw::String> m = FawTools::parse_keyvalue_pairs (i == 0 ? pStrImage : pStrModify);
+			std::map<faw::string_t, faw::string_t> m = FawTools::parse_keyvalue_pairs (i == 0 ? pStrImage : pStrModify);
 			for (auto[str_key, str_value] : m) {
 				if (str_key == _T ("file") || str_key == _T ("res")) {
 					sImageName = str_value;
@@ -3574,7 +3570,7 @@ namespace DuiLib {
 				}
 			}
 		}
-		return GetImageEx (sImageName.str_view (), sImageResType.str_view (), dwMask);
+		return GetImageEx (sImageName, sImageResType, dwMask);
 	}
 
 	bool CPaintManagerUI::InitDragDrop () {

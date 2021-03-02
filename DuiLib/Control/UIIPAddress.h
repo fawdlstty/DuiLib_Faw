@@ -15,8 +15,8 @@ namespace DuiLib {
 		friend class CIPAddressWnd;
 	public:
 		CIPAddressUI ();
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 
 		DWORD GetIP ();
 		void SetIP (DWORD dwIP);
@@ -28,7 +28,7 @@ namespace DuiLib {
 
 		void DoEvent (TEventUI& event);
 
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 	protected:
 		DWORD			m_dwIP;

@@ -6,14 +6,14 @@ namespace DuiLib {
 	COptionUI::COptionUI () {}
 
 	COptionUI::~COptionUI () {
-		if (!m_sGroupName.empty () && m_pManager) m_pManager->RemoveOptionGroup (m_sGroupName.str_view (), this);
+		if (!m_sGroupName.empty () && m_pManager) m_pManager->RemoveOptionGroup (m_sGroupName, this);
 	}
 
-	faw::string_view_t COptionUI::GetClass () const {
+	faw::string_t COptionUI::GetClass () const {
 		return _T ("OptionUI");
 	}
 
-	LPVOID COptionUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID COptionUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_OPTION) return static_cast<COptionUI*>(this);
 		return CButtonUI::GetInterface (pstrName);
 	}
@@ -21,28 +21,28 @@ namespace DuiLib {
 	void COptionUI::SetManager (CPaintManagerUI* pManager, CControlUI* pParent, bool bInit) {
 		CControlUI::SetManager (pManager, pParent, bInit);
 		if (bInit && !m_sGroupName.empty ()) {
-			if (m_pManager) m_pManager->AddOptionGroup (m_sGroupName.str_view (), this);
+			if (m_pManager) m_pManager->AddOptionGroup (m_sGroupName, this);
 		}
 	}
 
-	faw::string_view_t COptionUI::GetGroup () const {
-		return m_sGroupName.str_view ();
+	faw::string_t COptionUI::GetGroup () const {
+		return m_sGroupName;
 	}
 
-	void COptionUI::SetGroup (faw::string_view_t pStrGroupName) {
+	void COptionUI::SetGroup (faw::string_t pStrGroupName) {
 		if (pStrGroupName.empty ()) {
 			if (m_sGroupName.empty ()) return;
 			m_sGroupName.clear ();
 		} else {
 			if (m_sGroupName == pStrGroupName) return;
-			if (!m_sGroupName.empty () && m_pManager) m_pManager->RemoveOptionGroup (m_sGroupName.str_view (), this);
+			if (!m_sGroupName.empty () && m_pManager) m_pManager->RemoveOptionGroup (m_sGroupName, this);
 			m_sGroupName = pStrGroupName;
 		}
 
 		if (!m_sGroupName.empty ()) {
-			if (m_pManager) m_pManager->AddOptionGroup (m_sGroupName.str_view (), this);
+			if (m_pManager) m_pManager->AddOptionGroup (m_sGroupName, this);
 		} else {
-			if (m_pManager) m_pManager->RemoveOptionGroup (m_sGroupName.str_view (), this);
+			if (m_pManager) m_pManager->RemoveOptionGroup (m_sGroupName, this);
 		}
 
 		Selected (m_bSelected);
@@ -62,7 +62,7 @@ namespace DuiLib {
 		if (m_pManager) {
 			if (!m_sGroupName.empty ()) {
 				if (m_bSelected) {
-					CStdPtrArray* aOptionGroup = m_pManager->GetOptionGroup (m_sGroupName.str_view ());
+					CStdPtrArray* aOptionGroup = m_pManager->GetOptionGroup (m_sGroupName);
 					for (int i = 0; i < aOptionGroup->GetSize (); i++) {
 						COptionUI* pControl = static_cast<COptionUI*>(aOptionGroup->GetAt (i));
 						if (pControl != this) {
@@ -101,29 +101,29 @@ namespace DuiLib {
 		}
 	}
 
-	faw::string_view_t COptionUI::GetSelectedImage () {
-		return m_sSelectedImage.str_view ();
+	faw::string_t COptionUI::GetSelectedImage () {
+		return m_sSelectedImage;
 	}
 
-	void COptionUI::SetSelectedImage (faw::string_view_t pStrImage) {
+	void COptionUI::SetSelectedImage (faw::string_t pStrImage) {
 		m_sSelectedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t COptionUI::GetSelectedHotImage () {
-		return m_sSelectedHotImage.str_view ();
+	faw::string_t COptionUI::GetSelectedHotImage () {
+		return m_sSelectedHotImage;
 	}
 
-	void COptionUI::SetSelectedHotImage (faw::string_view_t pStrImage) {
+	void COptionUI::SetSelectedHotImage (faw::string_t pStrImage) {
 		m_sSelectedHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t COptionUI::GetSelectedPushedImage () {
-		return m_sSelectedPushedImage.str_view ();
+	faw::string_t COptionUI::GetSelectedPushedImage () {
+		return m_sSelectedPushedImage;
 	}
 
-	void COptionUI::SetSelectedPushedImage (faw::string_view_t pStrImage) {
+	void COptionUI::SetSelectedPushedImage (faw::string_t pStrImage) {
 		m_sSelectedPushedImage = pStrImage;
 		Invalidate ();
 	}
@@ -145,11 +145,11 @@ namespace DuiLib {
 		return m_dwSelectedBkColor;
 	}
 
-	faw::string_view_t COptionUI::GetSelectedForedImage () {
-		return m_sSelectedForeImage.str_view ();
+	faw::string_t COptionUI::GetSelectedForedImage () {
+		return m_sSelectedForeImage;
 	}
 
-	void COptionUI::SetSelectedForedImage (faw::string_view_t pStrImage) {
+	void COptionUI::SetSelectedForedImage (faw::string_t pStrImage) {
 		m_sSelectedForeImage = pStrImage;
 		Invalidate ();
 	}
@@ -163,11 +163,11 @@ namespace DuiLib {
 		return m_nSelectedStateCount;
 	}
 
-	faw::string_view_t COptionUI::GetSelectedStateImage () {
-		return m_sSelectedStateImage.str_view ();
+	faw::string_t COptionUI::GetSelectedStateImage () {
+		return m_sSelectedStateImage;
 	}
 
-	void COptionUI::SetSelectedStateImage (faw::string_view_t pStrImage) {
+	void COptionUI::SetSelectedStateImage (faw::string_t pStrImage) {
 		m_sSelectedStateImage = pStrImage;
 		Invalidate ();
 	}
@@ -179,7 +179,7 @@ namespace DuiLib {
 	int COptionUI::GetSelectedFont () const {
 		return m_iSelectedFont;
 	}
-	void COptionUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void COptionUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("group")) SetGroup (pstrValue);
 		else if (pstrName == _T ("selected")) Selected (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("selectedimage")) SetSelectedImage (pstrValue);
@@ -208,8 +208,8 @@ namespace DuiLib {
 		if (IsSelected ()) {
 			if (!m_sSelectedStateImage.empty () && m_nSelectedStateCount > 0) {
 				TDrawInfo info;
-				info.Parse (m_sSelectedStateImage.str_view (), _T (""), m_pManager);
-				const TImageInfo* pImage = m_pManager->GetImageEx (info.sImageName.str_view (), info.sResType.str_view (), info.dwMask, info.bHSL);
+				info.Parse (m_sSelectedStateImage, _T (""), m_pManager);
+				const TImageInfo* pImage = m_pManager->GetImageEx (info.sImageName, info.sResType, info.dwMask, info.bHSL);
 				if (m_sSelectedImage.empty () && pImage) {
 					SIZE szImage = { pImage->nX, pImage->nY };
 					SIZE szStatus = { pImage->nX / m_nSelectedStateCount, pImage->nY };
@@ -220,22 +220,22 @@ namespace DuiLib {
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedImage = faw::String::format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName.c_str (), info.sResType.c_str (), info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 						if (m_nSelectedStateCount > 1) {
 							int iLeft = rcSrc.left + 1 * szStatus.cx;
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedHotImage = faw::String::format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName.c_str (), info.sResType.c_str (), info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
-							m_sSelectedPushedImage = faw::String::format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName.c_str (), info.sResType.c_str (), info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedHotImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedPushedImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 						if (m_nSelectedStateCount > 2) {
 							int iLeft = rcSrc.left + 2 * szStatus.cx;
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedPushedImage = faw::String::format (_T ("res='%s' restype='%s' dest='%d,%d,%d,%d' source='%d,%d,%d,%d'"), info.sImageName.c_str (), info.sResType.c_str (), info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedPushedImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 					}
 				}
@@ -243,15 +243,15 @@ namespace DuiLib {
 
 
 			if ((m_uButtonState & UISTATE_PUSHED) != 0 && !m_sSelectedPushedImage.empty ()) {
-				if (!DrawImage (hDC, m_sSelectedPushedImage.str_view ())) {
+				if (!DrawImage (hDC, m_sSelectedPushedImage)) {
 				} else return;
 			} else if ((m_uButtonState & UISTATE_HOT) != 0 && !m_sSelectedHotImage.empty ()) {
-				if (!DrawImage (hDC, m_sSelectedHotImage.str_view ())) {
+				if (!DrawImage (hDC, m_sSelectedHotImage)) {
 				} else return;
 			}
 
 			if (!m_sSelectedImage.empty ()) {
-				if (!DrawImage (hDC, m_sSelectedImage.str_view ())) {
+				if (!DrawImage (hDC, m_sSelectedImage)) {
 				}
 			}
 		} else {
@@ -262,7 +262,7 @@ namespace DuiLib {
 	void COptionUI::PaintForeImage (HDC hDC) {
 		if (IsSelected ()) {
 			if (!m_sSelectedForeImage.empty ()) {
-				if (!DrawImage (hDC, m_sSelectedForeImage.str_view ())) {
+				if (!DrawImage (hDC, m_sSelectedForeImage)) {
 				} else return;
 			}
 		}
@@ -282,7 +282,7 @@ namespace DuiLib {
 			if (GetSelectedFont () != -1) {
 				iFont = GetSelectedFont ();
 			}
-			faw::String sText = GetText ();
+			faw::string_t sText = GetText ();
 			if (sText.empty ()) return;
 			int nLinks = 0;
 			RECT rc = m_rcItem;
@@ -294,10 +294,10 @@ namespace DuiLib {
 			rc.bottom -= _rcTextPadding.bottom;
 
 			if (m_bShowHtml)
-				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText.str_view (), IsEnabled () ? m_dwTextColor : m_dwDisabledTextColor, \
+				CRenderEngine::DrawHtmlText (hDC, m_pManager, rc, sText, IsEnabled () ? m_dwTextColor : m_dwDisabledTextColor, \
 					nullptr, nullptr, nLinks, iFont, m_uTextStyle);
 			else
-				CRenderEngine::DrawText (hDC, m_pManager, rc, sText.str_view (), IsEnabled () ? m_dwTextColor : m_dwDisabledTextColor, \
+				CRenderEngine::DrawText (hDC, m_pManager, rc, sText, IsEnabled () ? m_dwTextColor : m_dwDisabledTextColor, \
 					iFont, m_uTextStyle);
 
 			m_dwTextColor = oldTextColor;
@@ -313,10 +313,10 @@ namespace DuiLib {
 
 	}
 
-	faw::string_view_t CCheckBoxUI::GetClass () const {
+	faw::string_t CCheckBoxUI::GetClass () const {
 		return _T ("CheckBoxUI");
 	}
-	LPVOID CCheckBoxUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CCheckBoxUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_CHECKBOX) return static_cast<CCheckBoxUI*>(this);
 		return COptionUI::GetInterface (pstrName);
 	}
@@ -329,7 +329,7 @@ namespace DuiLib {
 		return IsSelected ();
 	}
 
-	void CCheckBoxUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CCheckBoxUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("EnableAutoCheck")) SetAutoCheck (FawTools::parse_bool (pstrValue));
 
 		COptionUI::SetAttribute (pstrName, pstrValue);
@@ -362,7 +362,7 @@ namespace DuiLib {
 		if (m_pManager) {
 			if (!m_sGroupName.empty ()) {
 				if (m_bSelected) {
-					CStdPtrArray* aOptionGroup = m_pManager->GetOptionGroup (m_sGroupName.str_view ());
+					CStdPtrArray* aOptionGroup = m_pManager->GetOptionGroup (m_sGroupName);
 					for (int i = 0; i < aOptionGroup->GetSize (); i++) {
 						COptionUI* pControl = static_cast<COptionUI*>(aOptionGroup->GetAt (i));
 						if (pControl != this) {

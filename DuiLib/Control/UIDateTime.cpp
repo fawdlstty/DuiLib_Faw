@@ -15,8 +15,8 @@ namespace DuiLib {
 		void Init (CDateTimeUI* pOwner);
 		RECT CalPos ();
 
-		faw::string_view_t GetWindowClassName () const;
-		faw::string_view_t GetSuperClassName () const;
+		faw::string_t GetWindowClassName () const;
+		faw::string_t GetSuperClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -72,11 +72,11 @@ namespace DuiLib {
 		return rcPos;
 	}
 
-	faw::string_view_t CDateTimeWnd::GetWindowClassName () const {
+	faw::string_t CDateTimeWnd::GetWindowClassName () const {
 		return _T ("DateTimeWnd");
 	}
 
-	faw::string_view_t CDateTimeWnd::GetSuperClassName () const {
+	faw::string_t CDateTimeWnd::GetSuperClassName () const {
 		return DATETIMEPICK_CLASS;
 	}
 
@@ -88,17 +88,15 @@ namespace DuiLib {
 	}
 
 	LRESULT CDateTimeWnd::HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		LRESULT lRes = 0;
-		BOOL bHandled = TRUE;
+		std::optional<LRESULT> lRes = 0;
 		if (uMsg == WM_CREATE) {
 			//m_pOwner->GetManager()->AddNativeWindow(m_pOwner, m_hWnd);
-			bHandled = FALSE;
+			lRes = std::nullopt;
 		} else if (uMsg == WM_KEYDOWN && wParam == VK_ESCAPE) {
 			memcpy (&m_pOwner->m_sysTime, &m_oldSysTime, sizeof (SYSTEMTIME));
 			m_pOwner->m_nDTUpdateFlag = DT_UPDATE;
 			m_pOwner->UpdateText ();
 			PostMessage (WM_CLOSE);
-			return lRes;
 		} else if (uMsg == OCM_NOTIFY) {
 			NMHDR* pHeader = (NMHDR*) lParam;
 			if (pHeader && pHeader->hwndFrom == m_hWnd) {
@@ -118,20 +116,23 @@ namespace DuiLib {
 					m_bDropOpen = false;
 				}
 			}
-			bHandled = FALSE;
+			lRes = std::nullopt;
 		} else if (uMsg == WM_KILLFOCUS) {
 			if (!m_bDropOpen) {
 				PostMessage (WM_CLOSE);
 			}
-			bHandled = FALSE;
+			lRes = std::nullopt;
 		} else if (uMsg == WM_PAINT) {
 			if (m_pOwner->GetManager ()->IsLayered ()) {
 				//m_pOwner->GetManager()->AddNativeWindow(m_pOwner, m_hWnd);
 			}
-			bHandled = FALSE;
-		} else bHandled = FALSE;
-		if (!bHandled) return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
-		return lRes;
+			lRes = std::nullopt;
+		} else {
+			lRes = std::nullopt;
+		}
+		if (lRes == std::nullopt)
+			return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
+		return lRes.value ();
 	}
 	//////////////////////////////////////////////////////////////////////////
 	//
@@ -146,11 +147,11 @@ namespace DuiLib {
 		m_nDTUpdateFlag = DT_NONE;
 	}
 
-	faw::string_view_t CDateTimeUI::GetClass () const {
+	faw::string_t CDateTimeUI::GetClass () const {
 		return _T ("DateTimeUI");
 	}
 
-	LPVOID CDateTimeUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CDateTimeUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_DATETIME) return static_cast<CDateTimeUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
@@ -180,7 +181,7 @@ namespace DuiLib {
 		if (m_nDTUpdateFlag == DT_DELETE) {
 			SetText (_T (""));
 		} else if (m_nDTUpdateFlag == DT_UPDATE) {
-			faw::String sText = faw::String::format (_T ("%4d-%02d-%02d"), m_sysTime.wYear, m_sysTime.wMonth, m_sysTime.wDay, m_sysTime.wHour, m_sysTime.wMinute);
+			faw::string_t sText = fmt::format (_T ("{}-{:02}-{:02}"), m_sysTime.wYear, m_sysTime.wMonth, m_sysTime.wDay, m_sysTime.wHour, m_sysTime.wMinute);
 			SetText (sText);
 		}
 	}

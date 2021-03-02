@@ -1,16 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name:  ThreadPool
-// Description: 线程池类
-// Class URI:   https://github.com/fawdlstty/FawLib
-// Author:      Fawdlstty
-// Author URI:  https://www.fawdlstty.com/
-// License:     MIT
-// Last Update: Apr 02, 2019
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#ifndef FAWLIB__THREAD_POOL_HPP__
+﻿#ifndef FAWLIB__THREAD_POOL_HPP__
 #define FAWLIB__THREAD_POOL_HPP__
 
 
@@ -38,7 +26,10 @@ namespace faw {
 						std::function<void ()> _task = std::move (m_tasks.front ());
 						m_tasks.pop ();
 						ul.unlock ();
-						_task ();
+						try {
+							_task ();
+						} catch (...) {
+						}
 					}
 				});
 			}

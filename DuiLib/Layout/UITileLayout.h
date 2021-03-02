@@ -9,8 +9,8 @@ namespace DuiLib {
 	public:
 		CTileLayoutUI ();
 
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 
@@ -19,7 +19,7 @@ namespace DuiLib {
 		int GetColumns () const;
 		void SetColumns (int nCols);
 
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 	protected:
 		SIZE	m_szItem	= { 0 };

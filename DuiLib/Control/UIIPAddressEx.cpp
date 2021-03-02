@@ -11,11 +11,11 @@ namespace DuiLib {
 		UpdateText ();
 	}
 
-	faw::string_view_t CIPAddressExUI::GetClass () const {
+	faw::string_t CIPAddressExUI::GetClass () const {
 		return _T ("IPAddressExUI");
 	}
 
-	LPVOID CIPAddressExUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CIPAddressExUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_IPADDRESS) {
 			return static_cast<CIPAddressExUI*>(this);
 		}
@@ -348,8 +348,8 @@ namespace DuiLib {
 		UpdateText ();
 	}
 
-	faw::String CIPAddressExUI::GetIP () {
-		faw::String strIP = faw::String::format (_T ("%d.%d.%d.%d"), m_nFirst, m_nSecond, m_nThird, m_nFourth);
+	faw::string_t CIPAddressExUI::GetIP () {
+		faw::string_t strIP = fmt::format (_T ("{}.{}.{}.{}"), m_nFirst, m_nSecond, m_nThird, m_nFourth);
 		return strIP;
 	}
 

@@ -31,12 +31,12 @@ namespace DuiLib {
 		void Init (CIPAddressUI* pOwner);
 		RECT CalPos ();
 
-		faw::string_view_t GetWindowClassName () const;
-		faw::string_view_t GetSuperClassName () const;
+		faw::string_t GetWindowClassName () const;
+		faw::string_t GetSuperClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
-		LRESULT OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		std::optional<LRESULT> OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	protected:
 		CIPAddressUI	*m_pOwner	= nullptr;
@@ -75,11 +75,11 @@ namespace DuiLib {
 		return m_pOwner->GetPos ();
 	}
 
-	faw::string_view_t CIPAddressWnd::GetWindowClassName () const {
+	faw::string_t CIPAddressWnd::GetWindowClassName () const {
 		return _T ("IPAddressWnd");
 	}
 
-	faw::string_view_t CIPAddressWnd::GetSuperClassName () const {
+	faw::string_t CIPAddressWnd::GetSuperClassName () const {
 		return WC_IPADDRESS;
 	}
 
@@ -91,37 +91,34 @@ namespace DuiLib {
 	}
 
 	LRESULT CIPAddressWnd::HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		LRESULT lRes = 0;
-		BOOL bHandled = TRUE;
+		std::optional<LRESULT> lRes = 0;
 		if (uMsg == WM_KILLFOCUS) {
-			bHandled = TRUE;
-			return 0;
-			lRes = OnKillFocus (uMsg, wParam, lParam, bHandled);
+			//lRes = OnKillFocus (uMsg, wParam, lParam);
 		} else if (uMsg == WM_KEYUP && (wParam == VK_DELETE || wParam == VK_BACK)) {
 			lRes = ::DefWindowProc (m_hWnd, uMsg, wParam, lParam);
 			m_pOwner->m_nIPUpdateFlag = IP_DELETE;
 			m_pOwner->UpdateText ();
 			PostMessage (WM_CLOSE);
-			return lRes;
 		} else if (uMsg == WM_KEYUP && wParam == VK_ESCAPE) {
 			lRes = ::DefWindowProc (m_hWnd, uMsg, wParam, lParam);
 			m_pOwner->m_nIPUpdateFlag = IP_KEEP;
 			PostMessage (WM_CLOSE);
-			return lRes;
 		} else if (uMsg == OCM_COMMAND) {
 			if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_KILLFOCUS) {
-				lRes = OnKillFocus (uMsg, wParam, lParam, bHandled);
+				lRes = OnKillFocus (uMsg, wParam, lParam);
 			}
-		} else bHandled = FALSE;
-		if (!bHandled) return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
-		return lRes;
+		} else {
+			lRes = std::nullopt;
+		}
+		if (lRes == std::nullopt)
+			return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
+		return lRes.value ();
 	}
 
-	LRESULT CIPAddressWnd::OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> CIPAddressWnd::OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		HWND hWndFocus = GetFocus ();
 		while (hWndFocus) {
 			if (GetFocus () == m_hWnd) {
-				bHandled = TRUE;
 				return 0;
 			}
 			hWndFocus = GetParent (hWndFocus);
@@ -148,11 +145,11 @@ namespace DuiLib {
 		m_nIPUpdateFlag = IP_NONE;
 	}
 
-	faw::string_view_t CIPAddressUI::GetClass () const {
+	faw::string_t CIPAddressUI::GetClass () const {
 		return _T ("DateTimeUI");
 	}
 
-	LPVOID CIPAddressUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CIPAddressUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_IPADDRESS) return static_cast<CIPAddressUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
@@ -181,7 +178,7 @@ namespace DuiLib {
 		else if (m_nIPUpdateFlag == IP_UPDATE) {
 			in_addr addr;
 			addr.S_un.S_addr = m_dwIP;
-			faw::String szIP = FawTools::format_str (_T ("%d.%d.%d.%d"), addr.S_un.S_un_b.s_b4, addr.S_un.S_un_b.s_b3, addr.S_un.S_un_b.s_b2, addr.S_un.S_un_b.s_b1);
+			faw::string_t szIP = FawTools::format_str (_T ("%d.%d.%d.%d"), addr.S_un.S_un_b.s_b4, addr.S_un.S_un_b.s_b3, addr.S_un.S_un_b.s_b2, addr.S_un.S_un_b.s_b1);
 			SetText (szIP);
 		}
 	}
@@ -228,7 +225,7 @@ namespace DuiLib {
 		CLabelUI::DoEvent (event);
 	}
 
-	void CIPAddressUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CIPAddressUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 }

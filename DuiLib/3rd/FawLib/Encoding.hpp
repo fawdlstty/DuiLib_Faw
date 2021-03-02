@@ -1,16 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name:  Encoding
-// Description: 编码转换类
-// Class URI:   https://github.com/fawdlstty/FawLib
-// Author:      Fawdlstty
-// Author URI:  https://www.fawdlstty.com/
-// License:     MIT
-// Last Update: Apr 02, 2019
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#ifndef FAWLIB__ENCODING_HPP__
+﻿#ifndef FAWLIB__ENCODING_HPP__
 #define FAWLIB__ENCODING_HPP__
 
 
@@ -278,6 +266,8 @@ namespace faw {
 				if (ch == '%') {
 					ret += (char) ((hex_char_to_dec (data[i + 1]) << 4) | hex_char_to_dec (data[i + 2]));
 					i += 2;
+				} else if (ch == '+') {
+					ret += ' ';
 				} else {
 					ret += ch;
 				}

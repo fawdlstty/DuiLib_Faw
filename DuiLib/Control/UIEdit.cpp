@@ -9,13 +9,13 @@ namespace DuiLib {
 		void Init (CEditUI* pOwner);
 		RECT CalPos ();
 
-		faw::string_view_t GetWindowClassName () const;
-		faw::string_view_t GetSuperClassName () const;
+		faw::string_t GetWindowClassName () const;
+		faw::string_t GetSuperClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
-		LRESULT OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnEditChanged (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		std::optional<LRESULT> OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> OnEditChanged (UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	protected:
 		enum {
@@ -117,11 +117,11 @@ namespace DuiLib {
 		return rcPos;
 	}
 
-	faw::string_view_t CEditWnd::GetWindowClassName () const {
+	faw::string_t CEditWnd::GetWindowClassName () const {
 		return _T ("EditWnd");
 	}
 
-	faw::string_view_t CEditWnd::GetSuperClassName () const {
+	faw::string_t CEditWnd::GetSuperClassName () const {
 		return WC_EDIT;
 	}
 
@@ -137,17 +137,17 @@ namespace DuiLib {
 	}
 
 	LRESULT CEditWnd::HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		LRESULT lRes = 0;
-		BOOL bHandled = TRUE;
+		std::optional<LRESULT> lRes = 0;
 		if (uMsg == WM_CREATE) {
 			//m_pOwner->GetManager()->AddNativeWindow(m_pOwner, m_hWnd);
 			//if( m_pOwner->GetManager()->IsLayered() ) {
 			//	::SetTimer(m_hWnd, DEFAULT_TIMERID, ::GetCaretBlinkTime(), nullptr);
 			//}
-			bHandled = FALSE;
-		} else if (uMsg == WM_KILLFOCUS) lRes = OnKillFocus (uMsg, wParam, lParam, bHandled);
-		else if (uMsg == OCM_COMMAND) {
-			if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_CHANGE) lRes = OnEditChanged (uMsg, wParam, lParam, bHandled);
+			lRes = std::nullopt;
+		} else if (uMsg == WM_KILLFOCUS) {
+			lRes = OnKillFocus (uMsg, wParam, lParam);
+		} else if (uMsg == OCM_COMMAND) {
+			if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_CHANGE) lRes = OnEditChanged (uMsg, wParam, lParam);
 			else if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_UPDATE) {
 				RECT rcClient = { 0 };
 				::GetClientRect (m_hWnd, &rcClient);
@@ -184,7 +184,7 @@ namespace DuiLib {
 			//if (m_pOwner->GetManager()->IsLayered()) {
 			//	m_pOwner->GetManager()->AddNativeWindow(m_pOwner, m_hWnd);
 			//}
-			bHandled = FALSE;
+			lRes = std::nullopt;
 		} else if (uMsg == WM_PRINT) {
 			//if (m_pOwner->GetManager()->IsLayered()) {
 			//	lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
@@ -198,7 +198,7 @@ namespace DuiLib {
 			//	}
 			//	return lRes;
 			//}
-			bHandled = FALSE;
+			lRes = std::nullopt;
 		} else if (uMsg == WM_TIMER) {
 			if (wParam == CARET_TIMERID) {
 				m_bDrawCaret = !m_bDrawCaret;
@@ -207,14 +207,17 @@ namespace DuiLib {
 				::InvalidateRect (m_hWnd, &rcClient, FALSE);
 				return 0;
 			}
-			bHandled = FALSE;
-		} else bHandled = FALSE;
+			lRes = std::nullopt;
+		} else {
+			lRes = std::nullopt;
+		}
 
-		if (!bHandled) return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
-		return lRes;
+		if (lRes == std::nullopt)
+			return CWindowWnd::HandleMessage (uMsg, wParam, lParam);
+		return lRes.value ();
 	}
 
-	LRESULT CEditWnd::OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+	std::optional<LRESULT> CEditWnd::OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		LRESULT lRes = ::DefWindowProc (m_hWnd, uMsg, wParam, lParam);
 		//if ((HWND)wParam != m_pOwner->GetManager()->GetPaintWindow()) {
 		//	::SendMessage(m_pOwner->GetManager()->GetPaintWindow(), WM_KILLFOCUS, wParam, lParam);
@@ -223,12 +226,13 @@ namespace DuiLib {
 		return lRes;
 	}
 
-	LRESULT CEditWnd::OnEditChanged (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/) {
+	std::optional<LRESULT> CEditWnd::OnEditChanged (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
 		if (!m_bInit) return 0;
 		if (!m_pOwner) return 0;
 		// Copy text back
 		int cchLen = ::GetWindowTextLength (m_hWnd) + 1;
-		faw::String str (_T ('\0'), cchLen);
+		faw::string_t str;
+		str.resize (cchLen, _T ('\0'));
 		::GetWindowText (m_hWnd, &str[0], cchLen);
 		m_pOwner->m_sText = str.c_str ();
 		m_pOwner->GetManager ()->SendNotify (m_pOwner, DUI_MSGTYPE_TEXTCHANGED);
@@ -247,11 +251,11 @@ namespace DuiLib {
 		SetBkColor (0xFFFFFFFF);
 	}
 
-	faw::string_view_t CEditUI::GetClass () const {
+	faw::string_t CEditUI::GetClass () const {
 		return _T ("EditUI");
 	}
 
-	LPVOID CEditUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CEditUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_EDIT) return static_cast<CEditUI*>(this);
 		return CLabelUI::GetInterface (pstrName);
 	}
@@ -364,7 +368,7 @@ namespace DuiLib {
 		}
 	}
 
-	void CEditUI::SetText (faw::String pstrText) {
+	void CEditUI::SetText (faw::string_t pstrText) {
 		m_sText = pstrText;
 		if (m_pWindow) Edit_SetText (m_pWindow->GetHWND (), m_sText.c_str ());
 		Invalidate ();
@@ -433,38 +437,38 @@ namespace DuiLib {
 		return m_cPasswordChar;
 	}
 
-	faw::string_view_t CEditUI::GetNormalImage () {
-		return m_sNormalImage.str_view ();
+	faw::string_t CEditUI::GetNormalImage () {
+		return m_sNormalImage;
 	}
 
-	void CEditUI::SetNormalImage (faw::string_view_t pStrImage) {
+	void CEditUI::SetNormalImage (faw::string_t pStrImage) {
 		m_sNormalImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CEditUI::GetHotImage () {
-		return m_sHotImage.str_view ();
+	faw::string_t CEditUI::GetHotImage () {
+		return m_sHotImage;
 	}
 
-	void CEditUI::SetHotImage (faw::string_view_t pStrImage) {
+	void CEditUI::SetHotImage (faw::string_t pStrImage) {
 		m_sHotImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CEditUI::GetFocusedImage () {
-		return m_sFocusedImage.str_view ();
+	faw::string_t CEditUI::GetFocusedImage () {
+		return m_sFocusedImage;
 	}
 
-	void CEditUI::SetFocusedImage (faw::string_view_t pStrImage) {
+	void CEditUI::SetFocusedImage (faw::string_t pStrImage) {
 		m_sFocusedImage = pStrImage;
 		Invalidate ();
 	}
 
-	faw::string_view_t CEditUI::GetDisabledImage () {
-		return m_sDisabledImage.str_view ();
+	faw::string_t CEditUI::GetDisabledImage () {
+		return m_sDisabledImage;
 	}
 
-	void CEditUI::SetDisabledImage (faw::string_view_t pStrImage) {
+	void CEditUI::SetDisabledImage (faw::string_t pStrImage) {
 		m_sDisabledImage = pStrImage;
 		Invalidate ();
 	}
@@ -477,7 +481,7 @@ namespace DuiLib {
 		return m_dwEditbkColor;
 	}
 
-	void CEditUI::SetNativeEditTextColor (faw::string_view_t pStrColor) {
+	void CEditUI::SetNativeEditTextColor (faw::string_t pStrColor) {
 		m_dwEditTextColor = (DWORD) FawTools::parse_hex (pStrColor);
 	}
 
@@ -501,20 +505,20 @@ namespace DuiLib {
 		SetSel (0, -1);
 	}
 
-	void CEditUI::SetReplaceSel (faw::string_view_t lpszReplace) {
+	void CEditUI::SetReplaceSel (faw::string_t lpszReplace) {
 		if (m_pWindow) Edit_ReplaceSel (m_pWindow->GetHWND (), lpszReplace.data ());
 	}
 
-	void CEditUI::SetTipValue (faw::string_view_t pStrTipValue) {
+	void CEditUI::SetTipValue (faw::string_t pStrTipValue) {
 		m_sTipValue = pStrTipValue;
 	}
 
-	faw::String CEditUI::GetTipValue () {
+	faw::string_t CEditUI::GetTipValue () {
 		if (!IsResourceText ()) return m_sTipValue;
-		return CResourceManager::GetInstance ()->GetText (m_sTipValue.str_view ());
+		return CResourceManager::GetInstance ()->GetText (m_sTipValue);
 	}
 
-	void CEditUI::SetTipValueColor (faw::string_view_t pStrColor) {
+	void CEditUI::SetTipValueColor (faw::string_t pStrColor) {
 		m_dwTipValueColor = (DWORD) FawTools::parse_hex (pStrColor);
 	}
 
@@ -555,7 +559,7 @@ namespace DuiLib {
 		return CControlUI::EstimateSize (szAvailable);
 	}
 
-	void CEditUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CEditUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("readonly")) SetReadOnly (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("numberonly")) SetNumberOnly (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("autoselall")) SetAutoSelAll (FawTools::parse_bool (pstrValue));
@@ -581,23 +585,23 @@ namespace DuiLib {
 
 		if ((m_uButtonState & UISTATE_DISABLED) != 0) {
 			if (!m_sDisabledImage.empty ()) {
-				if (!DrawImage (hDC, m_sDisabledImage.str_view ())) {
+				if (!DrawImage (hDC, m_sDisabledImage)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_FOCUSED) != 0) {
 			if (!m_sFocusedImage.empty ()) {
-				if (!DrawImage (hDC, m_sFocusedImage.str_view ())) {
+				if (!DrawImage (hDC, m_sFocusedImage)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sHotImage.empty ()) {
-				if (!DrawImage (hDC, m_sHotImage.str_view ())) {
+				if (!DrawImage (hDC, m_sHotImage)) {
 				} else return;
 			}
 		}
 
 		if (!m_sNormalImage.empty ()) {
-			if (!DrawImage (hDC, m_sNormalImage.str_view ())) {
+			if (!DrawImage (hDC, m_sNormalImage)) {
 			} else return;
 		}
 	}
@@ -608,16 +612,16 @@ namespace DuiLib {
 		if (m_dwTextColor == 0) mCurTextColor = m_dwTextColor = m_pManager->GetDefaultFontColor ();
 		if (m_dwDisabledTextColor == 0) m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor ();
 
-		faw::String sDrawText = GetText ();
-		faw::String sTipValue = GetTipValue ();
+		faw::string_t sDrawText = GetText ();
+		faw::string_t sTipValue = GetTipValue ();
 		if (sDrawText == sTipValue || sDrawText == _T ("")) {
 			mCurTextColor = m_dwTipValueColor;
 			sDrawText = sTipValue;
 		} else {
-			faw::String sTemp = sDrawText;
+			faw::string_t sTemp = sDrawText;
 			if (m_bPasswordMode) {
 				sDrawText.clear ();
-				faw::string_view_t pStr = sTemp.str_view ();
+				faw::string_t pStr = sTemp;
 				while (!pStr.empty ()) {
 					sDrawText += m_cPasswordChar;
 					pStr = pStr.substr (1);
@@ -631,9 +635,9 @@ namespace DuiLib {
 		rc.top += m_rcTextPadding.top;
 		rc.bottom -= m_rcTextPadding.bottom;
 		if (IsEnabled ()) {
-			CRenderEngine::DrawText (hDC, m_pManager, rc, sDrawText.str_view (), mCurTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+			CRenderEngine::DrawText (hDC, m_pManager, rc, sDrawText, mCurTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
 		} else {
-			CRenderEngine::DrawText (hDC, m_pManager, rc, sDrawText.str_view (), m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+			CRenderEngine::DrawText (hDC, m_pManager, rc, sDrawText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
 		}
 	}
 }

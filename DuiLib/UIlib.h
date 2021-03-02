@@ -62,25 +62,25 @@
 #ifndef _FAW_STRING_TYPE
 #define _FAW_STRING_TYPE
 #ifdef UNICODE
-typedef std::wstring faw::String;
+typedef std::wstring faw::string_t;
 #else
-typedef std::string faw::String;
+typedef std::string faw::string_t;
 #endif
 
 #define _USE_STRING_VIEW
 #ifdef _USE_STRING_VIEW
 #include <string_view>
 #ifdef UNICODE
-typedef std::wstring_view faw::string_view_t;
+typedef std::wstring_view faw::string_t;
 #else
-typedef std::string_view faw::string_view_t;
+typedef std::string_view faw::string_t;
 #endif
 #else //_USE_STRING_VIEW
 namespace std {
 	typedef string string_view;
 	typedef wstring wstring_view;
 }
-typedef faw::String faw::string_view_t;
+typedef faw::string_t faw::string_t;
 #endif //_USE_STRING_VIEW
 #endif
 

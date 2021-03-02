@@ -1,16 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name:  Register
-// Description: 注册表操作类
-// Class URI:   https://github.com/fawdlstty/FawLib
-// Author:      Fawdlstty
-// Author URI:  https://www.fawdlstty.com/
-// License:     MIT
-// Last Update: May 20, 2019
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#ifndef FAWLIB__REGISTER_HPP__
+﻿#ifndef FAWLIB__REGISTER_HPP__
 #define FAWLIB__REGISTER_HPP__
 
 

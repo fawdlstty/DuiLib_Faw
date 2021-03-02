@@ -8,11 +8,11 @@ namespace DuiLib {
 		Attach (this);
 	}
 
-	faw::string_view_t CAnimationTabLayoutUI::GetClass () const {
+	faw::string_t CAnimationTabLayoutUI::GetClass () const {
 		return _T ("AnimationTabLayoutUI");
 	}
 
-	LPVOID CAnimationTabLayoutUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CAnimationTabLayoutUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == _T ("AnimationTabLayout"))
 			return static_cast<CAnimationTabLayoutUI*>(this);
 		return CTabLayoutUI::GetInterface (pstrName);
@@ -108,7 +108,7 @@ namespace DuiLib {
 		NeedParentUpdate ();
 	}
 
-	void CAnimationTabLayoutUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CAnimationTabLayoutUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("animation_direction") && pstrValue == _T ("vertical")) m_bIsVerticalDirection = true; // pstrValue = "vertical" or "horizontal"
 		return CTabLayoutUI::SetAttribute (pstrName, pstrValue);
 	}

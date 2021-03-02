@@ -57,7 +57,7 @@ namespace DuiLib {
 	// 返回类型: LPCTstring_view_t
 	// 函数说明: 
 	//************************************
-	faw::string_view_t CTreeNodeUI::GetClass () const {
+	faw::string_t CTreeNodeUI::GetClass () const {
 		return _T ("TreeNodeUI");
 	}
 
@@ -67,7 +67,7 @@ namespace DuiLib {
 	// 参数信息: LPCstring_view_ttrName
 	// 函数说明: 
 	//************************************
-	LPVOID CTreeNodeUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CTreeNodeUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == _T ("TreeNode"))
 			return static_cast<CTreeNodeUI*>(this);
 		return CListContainerElementUI::GetInterface (pstrName);
@@ -267,16 +267,16 @@ namespace DuiLib {
 	// 参数信息: LPCstring_view_ttrValue
 	// 函数说明: 
 	//************************************
-	void CTreeNodeUI::SetItemText (faw::string_view_t pstrValue) {
+	void CTreeNodeUI::SetItemText (faw::string_t pstrValue) {
 		pItemButton->SetText (pstrValue);
 	}
 
 	//************************************
 	// 函数名称: GetItemText
-	// 返回类型: faw::String
+	// 返回类型: faw::string_t
 	// 函数说明: 
 	//************************************
-	faw::String CTreeNodeUI::GetItemText () {
+	faw::string_t CTreeNodeUI::GetItemText () {
 		return pItemButton->GetText ();
 	}
 
@@ -415,7 +415,7 @@ namespace DuiLib {
 	// 参数信息: LPCstring_view_ttrValue
 	// 函数说明: 
 	//************************************
-	void CTreeNodeUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CTreeNodeUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("text"))
 			pItemButton->SetText (pstrValue);
 		else if (pstrName == _T ("horizattr"))
@@ -675,7 +675,7 @@ namespace DuiLib {
 	// 返回类型: LPCTstring_view_t
 	// 函数说明: 
 	//************************************
-	faw::string_view_t CTreeViewUI::GetClass () const {
+	faw::string_t CTreeViewUI::GetClass () const {
 		return _T ("TreeViewUI");
 	}
 
@@ -690,7 +690,7 @@ namespace DuiLib {
 	// 参数信息: LPCstring_view_ttrName
 	// 函数说明: 
 	//************************************
-	LPVOID CTreeViewUI::GetInterface (faw::string_view_t pstrName) {
+	LPVOID CTreeViewUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == _T ("TreeView")) return static_cast<CTreeViewUI*>(this);
 		return CListUI::GetInterface (pstrName);
 	}
@@ -1097,7 +1097,7 @@ namespace DuiLib {
 	// 参数信息: LPCstring_view_ttrValue
 	// 函数说明: 
 	//************************************
-	void CTreeViewUI::SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue) {
+	void CTreeViewUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
 		if (pstrName == _T ("visiblefolderbtn"))
 			SetVisibleFolderBtn (FawTools::parse_bool (pstrValue));
 		else if (pstrName == _T ("visiblecheckbtn"))

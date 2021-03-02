@@ -2,6 +2,9 @@
 #define __UIMANAGER_H__
 
 #pragma once
+
+#include <optional>
+
 namespace DuiLib {
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -95,7 +98,7 @@ namespace DuiLib {
 
 	typedef struct UILIB_API tagTFontInfo {
 		HFONT hFont;
-		faw::String sFontName;
+		faw::string_t sFontName;
 		int iSize;
 		bool bBold;
 		bool bUnderline;
@@ -119,19 +122,19 @@ namespace DuiLib {
 		int nY					= 0;
 		bool bAlpha				= false;
 		bool bUseHSL			= false;
-		faw::String sResType		= _T ("");
+		faw::string_t sResType		= _T ("");
 		DWORD dwMask			= 0;
 	} TImageInfo;
 
 	typedef struct UILIB_API tagTDrawInfo {
 		tagTDrawInfo ();
-		void Parse (faw::string_view_t pStrImage, faw::string_view_t pStrModify, CPaintManagerUI *paintManager);
+		void Parse (faw::string_t pStrImage, faw::string_t pStrModify, CPaintManagerUI *paintManager);
 		void Clear ();
 
-		faw::String sDrawString;
-		faw::String sDrawModify;
-		faw::String sImageName;
-		faw::String sResType;
+		faw::string_t sDrawString;
+		faw::string_t sDrawModify;
+		faw::string_t sImageName;
+		faw::string_t sResType;
 		RECT rcDest = { 0 };
 		RECT rcSource = { 0 };
 		RECT rcCorner = { 0 };
@@ -142,7 +145,7 @@ namespace DuiLib {
 		bool bTiledY;
 		bool bHSL;
 		SIZE szIcon;
-		faw::String sIconAlign;
+		faw::string_t sIconAlign;
 	} TDrawInfo;
 
 	typedef struct UILIB_API tagTPercentInfo {
@@ -195,7 +198,7 @@ namespace DuiLib {
 	// MessageFilter interface
 	class IMessageFilterUI {
 	public:
-		virtual LRESULT MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) = 0;
+		virtual std::optional<LRESULT> MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 	};
 
 	class ITranslateAccelerator {
@@ -206,7 +209,7 @@ namespace DuiLib {
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
-	typedef CControlUI* (*LPCREATECONTROL)(faw::string_view_t pstrType);
+	typedef CControlUI* (*LPCREATECONTROL)(faw::string_t pstrType);
 
 	class UILIB_API CPaintManagerUI: public CIDropTarget {
 	public:
@@ -214,13 +217,13 @@ namespace DuiLib {
 		virtual ~CPaintManagerUI ();
 
 	public:
-		void Init (HWND hWnd, faw::string_view_t pstrName = _T (""));
+		void Init (HWND hWnd, faw::string_t pstrName = _T (""));
 		bool IsUpdateNeeded () const;
 		void NeedUpdate ();
 		void Invalidate ();
 		void Invalidate (RECT& rcItem);
 
-		faw::string_view_t GetName () const;
+		faw::string_t GetName () const;
 		HDC GetPaintDC () const;
 		HWND GetPaintWindow () const;
 		HWND GetTooltipWindow () const;
@@ -255,8 +258,8 @@ namespace DuiLib {
 		void SetLayeredInset (RECT& rcLayeredInset);
 		BYTE GetLayeredOpacity ();
 		void SetLayeredOpacity (BYTE nOpacity);
-		faw::string_view_t GetLayeredImage ();
-		void SetLayeredImage (faw::string_view_t pstrImage);
+		faw::string_t GetLayeredImage ();
+		void SetLayeredImage (faw::string_t pstrImage);
 
 		CShadowUI* GetShadow ();
 
@@ -266,28 +269,28 @@ namespace DuiLib {
 		int GetGdiplusTextRenderingHint () const;
 
 		static HINSTANCE GetInstance ();
-		static faw::String GetInstancePath ();
-		static faw::String GetCurrentPath ();
+		static faw::string_t GetInstancePath ();
+		static faw::string_t GetCurrentPath ();
 		static HINSTANCE GetResourceDll ();
-		static const faw::string_view_t GetResourcePath ();
-		static const faw::string_view_t GetResourceZip ();
-		static const faw::string_view_t GetResourceZipPwd ();
+		static const faw::string_t GetResourcePath ();
+		static const faw::string_t GetResourceZip ();
+		static const faw::string_t GetResourceZipPwd ();
 		static bool IsCachedResourceZip ();
 		static HANDLE GetResourceZipHandle ();
 		static void SetInstance (HINSTANCE hInst);
-		static void SetCurrentPath (faw::string_view_t pStrPath);
+		static void SetCurrentPath (faw::string_t pStrPath);
 		static void SetResourceDll (HINSTANCE hInst);
-		static void SetResourcePath (faw::string_view_t pStrPath);
-		static void SetResourceZip (LPVOID pVoid, unsigned int len, faw::string_view_t password = _T (""));
-		static void SetResourceZip (faw::string_view_t pstrZip, bool bCachedResourceZip = false, faw::string_view_t password = _T (""));
+		static void SetResourcePath (faw::string_t pStrPath);
+		static void SetResourceZip (LPVOID pVoid, unsigned int len, faw::string_t password = _T (""));
+		static void SetResourceZip (faw::string_t pstrZip, bool bCachedResourceZip = false, faw::string_t password = _T (""));
 		static void SetResourceType (int nType);
 		static int GetResourceType ();
 		static bool GetHSL (short* H, short* S, short* L);
 		static void SetHSL (bool bUseHSL, short H, short S, short L); // H:0~360, S:0~200, L:0~200 
 		static void ReloadSkin ();
-		static CPaintManagerUI* GetPaintManager (faw::string_view_t pstrName);
+		static CPaintManagerUI* GetPaintManager (faw::string_t pstrName);
 		static CStdPtrArray* GetPaintManagers ();
-		static bool LoadPlugin (faw::string_view_t pstrModuleName);
+		static bool LoadPlugin (faw::string_t pstrModuleName);
 		static CStdPtrArray* GetPlugins ();
 
 		bool IsForceUseSharedRes () const;
@@ -306,52 +309,52 @@ namespace DuiLib {
 		DWORD GetDefaultSelectedBkColor () const;
 		void SetDefaultSelectedBkColor (DWORD dwColor, bool bShared = false);
 		TFontInfo* GetDefaultFontInfo ();
-		void SetDefaultFont (faw::string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
+		void SetDefaultFont (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
 		DWORD GetCustomFontCount (bool bShared = false) const;
-		void AddFontArray (faw::string_view_t pstrPath);
-		HFONT AddFont (int id, faw::string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
+		void AddFontArray (faw::string_t pstrPath);
+		HFONT AddFont (int id, faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
 		HFONT GetFont (int id);
-		HFONT GetFont (faw::string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
+		HFONT GetFont (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
 		int GetFontIndex (HFONT hFont, bool bShared = false);
-		int GetFontIndex (faw::string_view_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
+		int GetFontIndex (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
 		void RemoveFont (HFONT hFont, bool bShared = false);
 		void RemoveFont (int id, bool bShared = false);
 		void RemoveAllFonts (bool bShared = false);
 		TFontInfo* GetFontInfo (int id);
 		TFontInfo* GetFontInfo (HFONT hFont);
 
-		const TImageInfo* GetImage (faw::string_view_t bitmap);
-		const TImageInfo* GetImageEx (faw::string_view_t bitmap, faw::string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, HINSTANCE instance = NULL);
-		const TImageInfo* AddImage (faw::string_view_t bitmap, faw::string_view_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, bool bShared = false, HINSTANCE instance = NULL);
-		const TImageInfo* AddImage (faw::string_view_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false);
-		const TImageInfo* AddImage (faw::string_view_t bitmap, HBITMAP *phBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false);
-		void RemoveImage (faw::string_view_t bitmap, bool bShared = false);
+		const TImageInfo* GetImage (faw::string_t bitmap);
+		const TImageInfo* GetImageEx (faw::string_t bitmap, faw::string_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, HINSTANCE instance = NULL);
+		const TImageInfo* AddImage (faw::string_t bitmap, faw::string_t type = _T (""), DWORD mask = 0, bool bUseHSL = false, bool bShared = false, HINSTANCE instance = NULL);
+		const TImageInfo* AddImage (faw::string_t bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false);
+		const TImageInfo* AddImage (faw::string_t bitmap, HBITMAP *phBitmap, int iWidth, int iHeight, bool bAlpha, bool bShared = false);
+		void RemoveImage (faw::string_t bitmap, bool bShared = false);
 		void RemoveAllImages (bool bShared = false);
 		static void ReloadSharedImages ();
 		void ReloadImages ();
 
-		const TDrawInfo* GetDrawInfo (faw::string_view_t pStrImage, faw::string_view_t pStrModify);
-		void RemoveDrawInfo (faw::string_view_t pStrImage, faw::string_view_t pStrModify);
+		const TDrawInfo* GetDrawInfo (faw::string_t pStrImage, faw::string_t pStrModify);
+		void RemoveDrawInfo (faw::string_t pStrImage, faw::string_t pStrModify);
 		void RemoveAllDrawInfos ();
 
-		void AddDefaultAttributeList (faw::string_view_t pStrControlName, faw::string_view_t pStrControlAttrList, bool bShared = false);
-		faw::string_view_t GetDefaultAttributeList (faw::string_view_t pStrControlName) const;
-		bool RemoveDefaultAttributeList (faw::string_view_t pStrControlName, bool bShared = false);
+		void AddDefaultAttributeList (faw::string_t pStrControlName, faw::string_t pStrControlAttrList, bool bShared = false);
+		faw::string_t GetDefaultAttributeList (faw::string_t pStrControlName) const;
+		bool RemoveDefaultAttributeList (faw::string_t pStrControlName, bool bShared = false);
 		void RemoveAllDefaultAttributeList (bool bShared = false);
 
-		void AddWindowCustomAttribute (faw::string_view_t pstrName, faw::string_view_t pstrAttr);
-		faw::string_view_t GetWindowCustomAttribute (faw::string_view_t pstrName) const;
-		bool RemoveWindowCustomAttribute (faw::string_view_t pstrName);
+		void AddWindowCustomAttribute (faw::string_t pstrName, faw::string_t pstrAttr);
+		faw::string_t GetWindowCustomAttribute (faw::string_t pstrName) const;
+		bool RemoveWindowCustomAttribute (faw::string_t pstrName);
 		void RemoveAllWindowCustomAttribute ();
 
 		// 样式管理
-		void AddStyle (faw::string_view_t pName, faw::string_view_t pStyle, bool bShared = false);
-		faw::string_view_t GetStyle (faw::string_view_t pName) const;
-		BOOL RemoveStyle (faw::string_view_t pName, bool bShared = false);
+		void AddStyle (faw::string_t pName, faw::string_t pStyle, bool bShared = false);
+		faw::string_t GetStyle (faw::string_t pName) const;
+		BOOL RemoveStyle (faw::string_t pName, bool bShared = false);
 		const CStdStringPtrMap& GetStyles (bool bShared = false) const;
 		void RemoveAllStyle (bool bShared = false);
 
-		const TImageInfo* GetImageString (faw::string_view_t pStrImage, faw::string_view_t pStrModify = _T (""));
+		const TImageInfo* GetImageString (faw::string_t pStrImage, faw::string_t pStrModify = _T (""));
 
 		// 初始化拖拽
 		bool InitDragDrop ();
@@ -361,9 +364,9 @@ namespace DuiLib {
 		bool InitControls (CControlUI* pControl, CControlUI* pParent = nullptr);
 		void ReapObjects (CControlUI* pControl);
 
-		bool AddOptionGroup (faw::string_view_t pStrGroupName, CControlUI* pControl);
-		CStdPtrArray* GetOptionGroup (faw::string_view_t pStrGroupName);
-		void RemoveOptionGroup (faw::string_view_t pStrGroupName, CControlUI* pControl);
+		bool AddOptionGroup (faw::string_t pStrGroupName, CControlUI* pControl);
+		CStdPtrArray* GetOptionGroup (faw::string_t pStrGroupName);
+		void RemoveOptionGroup (faw::string_t pStrGroupName, CControlUI* pControl);
 		void RemoveAllOptionGroups ();
 
 		CControlUI* GetFocus () const;
@@ -387,7 +390,7 @@ namespace DuiLib {
 		bool AddNotifier (INotifyUI* pControl);
 		bool RemoveNotifier (INotifyUI* pControl);
 		void SendNotify (TNotifyUI& Msg, bool bAsync = false);
-		void SendNotify (CControlUI* pControl, faw::string_view_t pstrMessage, WPARAM wParam = 0, LPARAM lParam = 0, bool bAsync = false);
+		void SendNotify (CControlUI* pControl, faw::string_t pstrMessage, WPARAM wParam = 0, LPARAM lParam = 0, bool bAsync = false);
 
 		bool AddPreMessageFilter (IMessageFilterUI* pFilter);
 		bool RemovePreMessageFilter (IMessageFilterUI* pFilter);
@@ -416,11 +419,11 @@ namespace DuiLib {
 
 		CControlUI* GetRoot () const;
 		CControlUI* FindControl (POINT pt) const;
-		CControlUI* FindControl (faw::string_view_t pstrName) const;
+		CControlUI* FindControl (faw::string_t pstrName) const;
 		CControlUI* FindSubControlByPoint (CControlUI* pParent, POINT pt) const;
-		CControlUI* FindSubControlByName (CControlUI* pParent, faw::string_view_t pstrName) const;
-		CControlUI* FindSubControlByClass (CControlUI* pParent, faw::string_view_t pstrClass, int iIndex = 0);
-		CStdPtrArray* FindSubControlsByClass (CControlUI* pParent, faw::string_view_t pstrClass);
+		CControlUI* FindSubControlByName (CControlUI* pParent, faw::string_t pstrName) const;
+		CControlUI* FindSubControlByClass (CControlUI* pParent, faw::string_t pstrClass, int iIndex = 0);
+		CStdPtrArray* FindSubControlsByClass (CControlUI* pParent, faw::string_t pstrClass);
 
 		static void MessageLoop ();
 		static bool TranslateMessage (const LPMSG pMsg);
@@ -432,8 +435,8 @@ namespace DuiLib {
 		void SetDPI (int iDPI);
 		static void SetAllDPI (int iDPI);
 
-		bool MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
-		bool PreMessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
+		std::optional<LRESULT> MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam);
+		std::optional<LRESULT> PreMessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam);
 		void UsedVirtualWnd (bool bUsed);
 
 	private:
@@ -453,7 +456,7 @@ namespace DuiLib {
 		void PostAsyncNotify ();
 
 	private:
-		faw::String m_sName;
+		faw::string_t m_sName;
 		HWND m_hWndPaint;	//所附加的窗体的句柄
 		HDC m_hDcPaint;
 		HDC m_hDcOffscreen;
@@ -543,9 +546,9 @@ namespace DuiLib {
 		//
 		static HINSTANCE m_hInstance;
 		static HINSTANCE m_hResourceInstance;
-		static faw::String m_pStrResourcePath;
-		static faw::String m_pStrResourceZip;
-		static faw::String m_pStrResourceZipPwd;
+		static faw::string_t m_pStrResourcePath;
+		static faw::string_t m_pStrResourceZip;
+		static faw::string_t m_pStrResourceZipPwd;
 		static HANDLE m_hResourceZip;
 		static bool m_bCachedResourceZip;
 		static int m_nResType;

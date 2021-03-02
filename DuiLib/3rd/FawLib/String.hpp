@@ -1,16 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name:  Encoding
-// Description: 编码转换类
-// Class URI:   https://github.com/fawdlstty/FawLib
-// Author:      Fawdlstty
-// Author URI:  https://www.fawdlstty.com/
-// License:     MIT
-// Last Update: Jan 24, 2019
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#ifndef FAWLIB__STRING_HPP__
+﻿#ifndef FAWLIB__STRING_HPP__
 #define FAWLIB__STRING_HPP__
 
 

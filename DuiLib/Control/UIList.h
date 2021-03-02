@@ -19,17 +19,17 @@ namespace DuiLib {
 		RECT rcTextPadding = { 0 };
 		DWORD dwTextColor;
 		DWORD dwBkColor;
-		faw::String sBkImage;
+		faw::string_t sBkImage;
 		bool bAlternateBk;
 		DWORD dwSelectedTextColor;
 		DWORD dwSelectedBkColor;
-		faw::String sSelectedImage;
+		faw::string_t sSelectedImage;
 		DWORD dwHotTextColor;
 		DWORD dwHotBkColor;
-		faw::String sHotImage;
+		faw::string_t sHotImage;
 		DWORD dwDisabledTextColor;
 		DWORD dwDisabledBkColor;
-		faw::String sDisabledImage;
+		faw::string_t sDisabledImage;
 		DWORD dwLineColor;
 		bool bShowRowLine;
 		bool bShowColumnLine;
@@ -44,7 +44,7 @@ namespace DuiLib {
 
 	class IListCallbackUI {
 	public:
-		virtual faw::string_view_t GetItemText (CControlUI* pList, int iItem, int iSubItem) = 0;
+		virtual faw::string_t GetItemText (CControlUI* pList, int iItem, int iSubItem) = 0;
 	};
 
 	class IListOwnerUI {
@@ -103,9 +103,9 @@ namespace DuiLib {
 	public:
 		CListUI ();
 
-		faw::string_view_t GetClass () const;
+		faw::string_t GetClass () const;
 		UINT GetControlFlags () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		LPVOID GetInterface (faw::string_t pstrName);
 
 		bool GetScrollSelect ();
 		void SetScrollSelect (bool bScrollSelect);
@@ -154,17 +154,17 @@ namespace DuiLib {
 		void SetItemTextPadding (RECT rc);
 		void SetItemTextColor (DWORD dwTextColor);
 		void SetItemBkColor (DWORD dwBkColor);
-		void SetItemBkImage (faw::string_view_t pStrImage);
+		void SetItemBkImage (faw::string_t pStrImage);
 		void SetAlternateBk (bool bAlternateBk);
 		void SetSelectedItemTextColor (DWORD dwTextColor);
 		void SetSelectedItemBkColor (DWORD dwBkColor);
-		void SetSelectedItemImage (faw::string_view_t pStrImage);
+		void SetSelectedItemImage (faw::string_t pStrImage);
 		void SetHotItemTextColor (DWORD dwTextColor);
 		void SetHotItemBkColor (DWORD dwBkColor);
-		void SetHotItemImage (faw::string_view_t pStrImage);
+		void SetHotItemImage (faw::string_t pStrImage);
 		void SetDisabledItemTextColor (DWORD dwTextColor);
 		void SetDisabledItemBkColor (DWORD dwBkColor);
-		void SetDisabledItemImage (faw::string_view_t pStrImage);
+		void SetDisabledItemImage (faw::string_t pStrImage);
 		void SetItemLineColor (DWORD dwLineColor);
 		void SetItemShowRowLine (bool bShowLine = false);
 		void SetItemShowColumnLine (bool bShowLine = false);
@@ -175,17 +175,17 @@ namespace DuiLib {
 		RECT GetItemTextPadding () const;
 		DWORD GetItemTextColor () const;
 		DWORD GetItemBkColor () const;
-		faw::string_view_t GetItemBkImage () const;
+		faw::string_t GetItemBkImage () const;
 		bool IsAlternateBk () const;
 		DWORD GetSelectedItemTextColor () const;
 		DWORD GetSelectedItemBkColor () const;
-		faw::string_view_t GetSelectedItemImage () const;
+		faw::string_t GetSelectedItemImage () const;
 		DWORD GetHotItemTextColor () const;
 		DWORD GetHotItemBkColor () const;
-		faw::string_view_t GetHotItemImage () const;
+		faw::string_t GetHotItemImage () const;
 		DWORD GetDisabledItemTextColor () const;
 		DWORD GetDisabledItemBkColor () const;
-		faw::string_view_t GetDisabledItemImage () const;
+		faw::string_t GetDisabledItemImage () const;
 		DWORD GetItemLineColor () const;
 
 		void SetMultiExpanding (bool bMultiExpandable);
@@ -195,7 +195,7 @@ namespace DuiLib {
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
 		void Move (SIZE szOffset, bool bNeedInvalidate = true);
 		void DoEvent (TEventUI& event);
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 		IListCallbackUI* GetTextCallback () const;
 		void SetTextCallback (IListCallbackUI* pCallback);
@@ -282,12 +282,12 @@ namespace DuiLib {
 	public:
 		CListHeaderUI ();
 
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 
 		SIZE EstimateSize (SIZE szAvailable);
 		void SetPos (RECT rc, bool bNeedInvalidate = true);
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 		void SetScaleHeader (bool bIsScale);
 		bool IsScaleHeader () const;
@@ -306,8 +306,8 @@ namespace DuiLib {
 	public:
 		CListHeaderItemUI ();
 
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 		UINT GetControlFlags () const;
 
 		void SetEnabled (bool bEnable = true);
@@ -325,22 +325,22 @@ namespace DuiLib {
 		void SetFont (int index);
 		bool IsShowHtml ();
 		void SetShowHtml (bool bShowHtml = true);
-		faw::string_view_t GetNormalImage () const;
-		void SetNormalImage (faw::string_view_t pStrImage);
-		faw::string_view_t GetHotImage () const;
-		void SetHotImage (faw::string_view_t pStrImage);
-		faw::string_view_t GetPushedImage () const;
-		void SetPushedImage (faw::string_view_t pStrImage);
-		faw::string_view_t GetFocusedImage () const;
-		void SetFocusedImage (faw::string_view_t pStrImage);
-		faw::string_view_t GetSepImage () const;
-		void SetSepImage (faw::string_view_t pStrImage);
+		faw::string_t GetNormalImage () const;
+		void SetNormalImage (faw::string_t pStrImage);
+		faw::string_t GetHotImage () const;
+		void SetHotImage (faw::string_t pStrImage);
+		faw::string_t GetPushedImage () const;
+		void SetPushedImage (faw::string_t pStrImage);
+		faw::string_t GetFocusedImage () const;
+		void SetFocusedImage (faw::string_t pStrImage);
+		faw::string_t GetSepImage () const;
+		void SetSepImage (faw::string_t pStrImage);
 		void SetScale (int nScale);
 		int GetScale () const;
 
 		void DoEvent (TEventUI& event);
 		SIZE EstimateSize (SIZE szAvailable);
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 		RECT GetThumbRect () const;
 
 		void PaintText (HDC hDC);
@@ -356,12 +356,12 @@ namespace DuiLib {
 		UINT m_uTextStyle;
 		bool m_bShowHtml;
 		RECT m_rcTextPadding = { 0 };
-		faw::String m_sNormalImage;
-		faw::String m_sHotImage;
-		faw::String m_sPushedImage;
-		faw::String m_sFocusedImage;
-		faw::String m_sSepImage;
-		faw::String m_sSepImageModify;
+		faw::string_t m_sNormalImage;
+		faw::string_t m_sHotImage;
+		faw::string_t m_sPushedImage;
+		faw::string_t m_sFocusedImage;
+		faw::string_t m_sSepImage;
+		faw::string_t m_sSepImageModify;
 		int m_nScale;
 	};
 
@@ -373,9 +373,9 @@ namespace DuiLib {
 	public:
 		CListElementUI ();
 
-		faw::string_view_t GetClass () const;
+		faw::string_t GetClass () const;
 		UINT GetControlFlags () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		LPVOID GetInterface (faw::string_t pstrName);
 
 		void SetEnabled (bool bEnable = true);
 
@@ -396,7 +396,7 @@ namespace DuiLib {
 		bool Activate ();
 
 		void DoEvent (TEventUI& event);
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 		void DrawItemBk (HDC hDC, const RECT& rcItem);
 
@@ -415,10 +415,10 @@ namespace DuiLib {
 		DECLARE_DUICONTROL (CListLabelElementUI)
 	public:
 		CListLabelElementUI ();
-		CListLabelElementUI (faw::string_view_t text, int height = 20);
+		CListLabelElementUI (faw::string_t text, int height = 20);
 
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 
 		void DoEvent (TEventUI& event);
 		SIZE EstimateSize (SIZE szAvailable);
@@ -437,15 +437,15 @@ namespace DuiLib {
 		CListTextElementUI ();
 		virtual ~CListTextElementUI ();
 
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 		UINT GetControlFlags () const;
 
-		faw::String GetText (int iIndex) const;
-		void SetText (int iIndex, faw::String pstrText);
+		faw::string_t GetText (int iIndex) const;
+		void SetText (int iIndex, faw::string_t pstrText);
 
 		void SetOwner (CControlUI* pOwner);
-		faw::String* GetLinkContent (int iIndex);
+		faw::string_t* GetLinkContent (int iIndex);
 
 		void DoEvent (TEventUI& event);
 		SIZE EstimateSize (SIZE szAvailable);
@@ -458,7 +458,7 @@ namespace DuiLib {
 		};
 		int m_nLinks;
 		RECT m_rcLinks[MAX_LINK];
-		faw::String m_sLinks[MAX_LINK];
+		faw::string_t m_sLinks[MAX_LINK];
 		int m_nHoverLink;
 		IListUI* m_pOwner;
 		CStdPtrArray m_aTexts;
@@ -472,9 +472,9 @@ namespace DuiLib {
 	public:
 		CListContainerElementUI ();
 
-		faw::string_view_t GetClass () const;
+		faw::string_t GetClass () const;
 		UINT GetControlFlags () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		LPVOID GetInterface (faw::string_t pstrName);
 
 		int GetIndex () const;
 		void SetIndex (int iIndex);
@@ -494,7 +494,7 @@ namespace DuiLib {
 		bool Activate ();
 
 		void DoEvent (TEventUI& event);
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 		bool DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl);
 
 		virtual void DrawItemText (HDC hDC, const RECT& rcItem);

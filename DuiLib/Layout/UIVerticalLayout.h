@@ -9,8 +9,8 @@ namespace DuiLib {
 	public:
 		CVerticalLayoutUI ();
 
-		faw::string_view_t GetClass () const;
-		LPVOID GetInterface (faw::string_view_t pstrName);
+		faw::string_t GetClass () const;
+		LPVOID GetInterface (faw::string_t pstrName);
 		UINT GetControlFlags () const;
 
 		void SetSepHeight (int iHeight);
@@ -19,7 +19,7 @@ namespace DuiLib {
 		bool IsSepImmMode () const;
 		void SetAutoCalcHeight (bool autoCalcHeight);
 		bool IsAutoCalcHeight () const;
-		void SetAttribute (faw::string_view_t pstrName, faw::string_view_t pstrValue);
+		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 		void DoEvent (TEventUI& event);
 
 		SIZE EstimateSize (SIZE szAvailable) override;
