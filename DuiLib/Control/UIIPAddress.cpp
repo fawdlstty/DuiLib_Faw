@@ -31,8 +31,8 @@ namespace DuiLib {
 		void Init (CIPAddressUI* pOwner);
 		RECT CalPos ();
 
-		faw::string_t GetWindowClassName () const;
-		faw::string_t GetSuperClassName () const;
+		LPCTSTR GetWindowClassName () const;
+		LPCTSTR GetSuperClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -75,11 +75,11 @@ namespace DuiLib {
 		return m_pOwner->GetPos ();
 	}
 
-	faw::string_t CIPAddressWnd::GetWindowClassName () const {
+	LPCTSTR CIPAddressWnd::GetWindowClassName () const {
 		return _T ("IPAddressWnd");
 	}
 
-	faw::string_t CIPAddressWnd::GetSuperClassName () const {
+	LPCTSTR CIPAddressWnd::GetSuperClassName () const {
 		return WC_IPADDRESS;
 	}
 

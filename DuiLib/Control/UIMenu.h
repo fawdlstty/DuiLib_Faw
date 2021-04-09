@@ -264,7 +264,7 @@ namespace DuiLib {
 		void Init (CMenuElementUI* pOwner, std::variant<UINT, faw::string_t> xml, POINT point,
 			CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo = nullptr,
 			DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top);
-		faw::string_t GetWindowClassName () const;
+		LPCTSTR GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
 		void Notify (TNotifyUI& msg);
 		CControlUI* CreateControl (faw::string_t pstrClassName);

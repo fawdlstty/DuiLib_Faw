@@ -225,7 +225,7 @@ namespace DuiLib {
 		::SendMessage (hWndParent, WM_NCACTIVATE, TRUE, 0L);
 	}
 
-	faw::string_t CMenuWnd::GetWindowClassName () const {
+	LPCTSTR CMenuWnd::GetWindowClassName () const {
 		return _T ("DuiMenuWnd");
 	}
 

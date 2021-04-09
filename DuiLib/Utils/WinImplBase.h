@@ -35,7 +35,7 @@ namespace DuiLib {
 			return _T ("");
 		}
 		virtual faw::string_t GetSkinFile () = 0;
-		virtual faw::string_t GetWindowClassName (void) const = 0;
+		virtual LPCTSTR GetWindowClassName (void) const = 0;
 		virtual faw::string_t GetManagerName () { return _T (""); }
 		virtual LRESULT ResponseDefaultKeyEvent (WPARAM wParam);
 		CPaintManagerUI m_pm;

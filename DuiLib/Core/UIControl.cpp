@@ -902,7 +902,7 @@ namespace DuiLib {
 		faw::string_t sXmlData = pstrValue;
 		FawTools::replace_self (sXmlData, _T ("&quot;"), _T ("\""));
 		auto pairs = FawTools::parse_keyvalue_pairs (sXmlData);
-		for (auto[str_key, str_value] : pairs)
+		for (const auto& [str_key, str_value] : pairs)
 			SetAttribute (str_key, str_value);
 		return this;
 	}

@@ -691,11 +691,9 @@ namespace DuiLib {
 
 	std::optional<LRESULT> CPaintManagerUI::PreMessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		for (int i = 0; i < m_aPreMessageFilters.GetSize (); i++) {
-			bool bHandled = false;
-			std::optional<LRESULT> lResult = static_cast<IMessageFilterUI*>(m_aPreMessageFilters[i])->MessageHandler (uMsg, wParam, lParam);
-			if (bHandled) {
-				return true;
-			}
+			const std::optional<LRESULT> _ret = static_cast<IMessageFilterUI*>(m_aPreMessageFilters[i])->MessageHandler (uMsg, wParam, lParam);
+			if (_ret.has_value ())
+				return 0;
 		}
 		switch (uMsg) {
 		case WM_KEYDOWN:
@@ -703,13 +701,13 @@ namespace DuiLib {
 			// Tabbing between controls
 			if (wParam == VK_TAB) {
 				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("RichEditUI")) != faw::string_t::npos) {
-					if (static_cast<CRichEditUI*>(m_pFocus)->IsWantTab ()) return false;
+					if (dynamic_cast<CRichEditUI*>(m_pFocus)->IsWantTab ()) return std::nullopt;
 				}
 				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("WkeWebkitUI")) != faw::string_t::npos) {
-					return false;
+					return std::nullopt;
 				}
 				SetNextTabControl (::GetKeyState (VK_SHIFT) >= 0);
-				return true;
+				return 0;
 			}
 		}
 		break;
@@ -722,7 +720,7 @@ namespace DuiLib {
 			if (pControl) {
 				pControl->SetFocus ();
 				pControl->Activate ();
-				return true;
+				return 0;
 			}
 		}
 		break;
@@ -740,13 +738,13 @@ namespace DuiLib {
 		}
 		break;
 		}
-		return false;
+		return std::nullopt;
 	}
 
 	std::optional<LRESULT> CPaintManagerUI::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		if (!m_hWndPaint) return std::nullopt;
 		// Cycle through listeners
-		std::optional<LRESULT> lRes = 0;
+		std::optional<LRESULT> lRes = std::nullopt;
 		for (int i = 0; i < m_aMessageFilters.GetSize (); i++) {
 			lRes = static_cast<IMessageFilterUI*>(m_aMessageFilters[i])->MessageHandler (uMsg, wParam, lParam);
 			if (lRes.has_value ()) {
@@ -1173,7 +1171,7 @@ namespace DuiLib {
 			}
 			if (m_pRoot) m_pRoot->NeedUpdate ();
 		}
-		return true;
+		return 0;
 		case WM_TIMER:
 		{
 			for (int i = 0; i < m_aTimers.GetSize (); i++) {
@@ -1215,7 +1213,7 @@ namespace DuiLib {
 			}
 			// Create tooltip information
 			faw::string_t sToolTip = pHover->GetToolTip ();
-			if (sToolTip.empty ()) return true;
+			if (sToolTip.empty ()) return 0;
 			::ZeroMemory (&m_ToolTip, sizeof (TOOLINFO));
 			m_ToolTip.cbSize = sizeof (TOOLINFO);
 			m_ToolTip.uFlags = TTF_IDISHWND;
@@ -1234,7 +1232,7 @@ namespace DuiLib {
 				::SendMessage (m_hwndTooltip, TTM_TRACKACTIVATE, TRUE, (LPARAM) &m_ToolTip);
 			}
 		}
-		return true;
+		return 0;
 		case WM_MOUSELEAVE:
 		{
 			if (m_hwndTooltip) ::SendMessage (m_hwndTooltip, TTM_TRACKACTIVATE, FALSE, (LPARAM) &m_ToolTip);
@@ -1284,11 +1282,11 @@ namespace DuiLib {
 			if (bNeedDrag && m_bDragMode && wParam == MK_LBUTTON) {
 				::ReleaseCapture ();
 				CIDropSource* pdsrc = new CIDropSource;
-				if (!pdsrc) return 0;
+				if (!pdsrc) return std::nullopt;
 				pdsrc->AddRef ();
 
 				CIDataObject* pdobj = new CIDataObject (pdsrc);
-				if (!pdobj) return 0;
+				if (!pdobj) return std::nullopt;
 				pdobj->AddRef ();
 
 				FORMATETC fmtetc = { 0 };
@@ -1637,7 +1635,7 @@ namespace DuiLib {
 		{
 			if (!m_pRoot) break;
 			if (LOWORD (lParam) != HTCLIENT) break;
-			if (m_bMouseCapture) return true;
+			if (m_bMouseCapture) return 0;
 
 			POINT pt = { 0 };
 			::GetCursorPos (&pt);
@@ -1655,7 +1653,7 @@ namespace DuiLib {
 			event.dwTimestamp = ::GetTickCount ();
 			pControl->Event (event);
 		}
-		return true;
+		return 0;
 		case WM_SETFOCUS:
 		{
 			if (m_pFocus) {
@@ -1679,7 +1677,7 @@ namespace DuiLib {
 			if (lParam == 0) break;
 			LPNMHDR lpNMHDR = (LPNMHDR) lParam;
 			if (lpNMHDR) lRes = ::SendMessage (lpNMHDR->hwndFrom, OCM__BASE + uMsg, wParam, lParam);
-			return true;
+			return 0;
 		}
 		break;
 		case WM_COMMAND:
@@ -1687,7 +1685,7 @@ namespace DuiLib {
 			if (lParam == 0) break;
 			HWND hWndChild = (HWND) lParam;
 			lRes = ::SendMessage (hWndChild, OCM__BASE + uMsg, wParam, lParam);
-			if (lRes != 0) return true;
+			if (lRes != 0) return 0;
 		}
 		break;
 		case WM_CTLCOLOREDIT:
@@ -1698,13 +1696,13 @@ namespace DuiLib {
 			if (lParam == 0) break;
 			HWND hWndChild = (HWND) lParam;
 			lRes = ::SendMessage (hWndChild, OCM__BASE + uMsg, wParam, lParam);
-			if (lRes != 0) return true;
+			if (lRes != 0) return 0;
 		}
 		break;
 		default:
 			break;
 		}
-		return false;
+		return std::nullopt;
 	}
 
 	bool CPaintManagerUI::IsUpdateNeeded () const {
@@ -1728,6 +1726,9 @@ namespace DuiLib {
 		if (rcItem.right < rcItem.left) rcItem.right = rcItem.left;
 		if (rcItem.bottom < rcItem.top) rcItem.bottom = rcItem.top;
 		::UnionRect (&m_rcLayeredUpdate, &m_rcLayeredUpdate, &rcItem);
+		// TODO 不加这一段将使得InvalidateRect被多次调用
+		if (rcItem.right - rcItem.left <= 0 || rcItem.bottom - rcItem.top <= 0)
+			return;
 		::InvalidateRect (m_hWndPaint, &rcItem, FALSE);
 	}
 

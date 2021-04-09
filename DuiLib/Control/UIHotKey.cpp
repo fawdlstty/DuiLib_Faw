@@ -41,7 +41,7 @@ namespace DuiLib {
 	}
 
 
-	faw::string_t CHotKeyWnd::GetWindowClassName () const {
+	LPCTSTR CHotKeyWnd::GetWindowClassName () const {
 		return _T ("HotKeyClass");
 	}
 
@@ -98,7 +98,7 @@ namespace DuiLib {
 	}
 
 
-	faw::string_t CHotKeyWnd::GetSuperClassName () const {
+	LPCTSTR CHotKeyWnd::GetSuperClassName () const {
 		return HOTKEY_CLASS;
 	}
 

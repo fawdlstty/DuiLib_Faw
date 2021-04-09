@@ -72,9 +72,9 @@ typedef std::string string_t;
 #include <string_view>
 namespace faw {
 #ifdef UNICODE
-typedef std::wstring_view faw::string_t;
+typedef std::wstring_view string_view_t;
 #else
-typedef std::string_view faw::string_t;
+typedef std::string_view string_view_t;
 #endif
 }
 #else //_USE_STRING_VIEW
@@ -82,7 +82,9 @@ namespace std {
 	typedef string string_view;
 	typedef wstring wstring_view;
 }
-typedef faw::string_t faw::string_view_t;
+namespace faw {
+	typedef string_t string_view_t;
+}
 #endif //_USE_STRING_VIEW
 #endif
 

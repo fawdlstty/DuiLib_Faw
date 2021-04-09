@@ -81,8 +81,8 @@ namespace DuiLib {
 		void ResizeClient (int cx = -1, int cy = -1);
 
 	protected:
-		virtual faw::string_t GetWindowClassName () const = 0;
-		virtual faw::string_t GetSuperClassName () const { return _T (""); }
+		virtual LPCTSTR GetWindowClassName () const = 0;
+		virtual LPCTSTR GetSuperClassName () const { return nullptr; }
 		virtual UINT GetClassStyle () const { return 0; }
 
 		virtual LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);

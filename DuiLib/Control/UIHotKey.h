@@ -12,9 +12,9 @@ namespace DuiLib {
 	public:
 		void Init (CHotKeyUI * pOwner);
 		RECT CalPos ();
-		faw::string_t GetWindowClassName () const;
+		LPCTSTR GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
-		faw::string_t GetSuperClassName () const;
+		LPCTSTR GetSuperClassName () const;
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
 		std::optional<LRESULT> OnKillFocus (UINT uMsg, WPARAM wParam, LPARAM lParam);
 		std::optional<LRESULT> OnEditChanged (UINT uMsg, WPARAM wParam, LPARAM lParam);

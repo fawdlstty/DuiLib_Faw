@@ -18,7 +18,7 @@ namespace DuiLib {
 		CActiveXWnd (): m_iLayeredTick (0), m_bDrawCaret (false) {}
 		HWND Init (CActiveXCtrl* pOwner, HWND hWndParent);
 
-		faw::string_t GetWindowClassName () const;
+		LPCTSTR GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -679,7 +679,7 @@ namespace DuiLib {
 		return m_hWnd;
 	}
 
-	faw::string_t CActiveXWnd::GetWindowClassName () const {
+	LPCTSTR CActiveXWnd::GetWindowClassName () const {
 		return _T ("ActiveXWnd");
 	}
 

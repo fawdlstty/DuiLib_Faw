@@ -9,7 +9,7 @@ namespace DuiLib {
 	class CComboWnd: public CWindowWnd, public INotifyUI {
 	public:
 		void Init (CComboUI* pOwner);
-		faw::string_t GetWindowClassName () const;
+		LPCTSTR GetWindowClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -96,7 +96,7 @@ namespace DuiLib {
 		::SendMessage (hWndParent, WM_NCACTIVATE, TRUE, 0L);
 	}
 
-	faw::string_t CComboWnd::GetWindowClassName () const {
+	LPCTSTR CComboWnd::GetWindowClassName () const {
 		return _T ("ComboWnd");
 	}
 

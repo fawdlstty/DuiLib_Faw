@@ -2205,9 +2205,9 @@ namespace DuiLib {
 	}
 
 	std::optional<LRESULT> CRichEditUI::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		if (!IsVisible () || !IsEnabled ()) return 0;
-		if (!IsMouseEnabled () && uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) return 0;
-		if (uMsg == WM_MOUSEWHEEL && (LOWORD (wParam) & MK_CONTROL) == 0) return 0;
+		if (!IsVisible () || !IsEnabled ()) return std::nullopt;
+		if (!IsMouseEnabled () && uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) return std::nullopt;
+		if (uMsg == WM_MOUSEWHEEL && (LOWORD (wParam) & MK_CONTROL) == 0) return std::nullopt;
 
 		if (uMsg == WM_IME_COMPOSITION) {
 			// 解决微软输入法位置异常的问题
@@ -2225,7 +2225,7 @@ namespace DuiLib {
 				ImmReleaseContext (GetManager ()->GetPaintWindow (), hIMC);
 			}
 
-			return 0;
+			return std::nullopt;
 		}
 		std::optional<LRESULT> lRes = 0;
 		if ((uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) || uMsg == WM_SETCURSOR) {
@@ -2241,8 +2241,7 @@ namespace DuiLib {
 					POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 					CControlUI* pHover = GetManager ()->FindControl (pt);
 					if (pHover != this) {
-						return 0;
-						// return std::nullopt;
+						return std::nullopt;
 					}
 				}
 				break;
@@ -2260,7 +2259,7 @@ namespace DuiLib {
 				} else if (uMsg == WM_MOUSEWHEEL) ::ScreenToClient (GetManager ()->GetPaintWindow (), &pt);
 				if (::PtInRect (&rc, pt) && !GetManager ()->IsCaptured ()) dwHitResult = HITRESULT_HIT;
 			}
-			if (dwHitResult != HITRESULT_HIT) return 0;
+			if (dwHitResult != HITRESULT_HIT) return std::nullopt;
 			if (uMsg == WM_SETCURSOR) lRes = std::nullopt;
 			else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK || uMsg == WM_RBUTTONDOWN) {
 				if (!GetManager ()->IsNoActivate ()) ::SetFocus (GetManager ()->GetPaintWindow ());
@@ -2272,7 +2271,7 @@ namespace DuiLib {
 #else
 		else if ((uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST) || uMsg == WM_CHAR || uMsg == WM_IME_CHAR) {
 #endif
-			if (!IsFocused ()) return 0;
+			if (!IsFocused ()) return std::nullopt;
 		}
 #ifdef _USEIMM
 		else if (uMsg == WM_IME_STARTCOMPOSITION) {
@@ -2293,7 +2292,7 @@ namespace DuiLib {
 
 				::ImmReleaseContext (GetManager ()->GetPaintWindow (), hMic);
 			}
-			return 0;
+			return std::nullopt;
 		}
 #endif
 		else if (uMsg == WM_CONTEXTMENU) {
@@ -2301,8 +2300,7 @@ namespace DuiLib {
 			::ScreenToClient (GetManager ()->GetPaintWindow (), &pt);
 			CControlUI* pHover = GetManager ()->FindControl (pt);
 			if (pHover != this) {
-				return 0;
-				// return std::nullopt;
+				return std::nullopt;
 			}
 			//创建一个弹出式菜单
 			HMENU hPopMenu = CreatePopupMenu ();
@@ -2332,7 +2330,7 @@ namespace DuiLib {
 			DestroyMenu (hPopMenu);
 		} else if (uMsg == WM_COMMAND) {
 			lRes = std::nullopt;
-			if (!IsFocused ()) return 0;
+			if (!IsFocused ()) return std::nullopt;
 			UINT uCmd = (UINT) wParam;
 			switch (uCmd) {
 			case ID_RICH_UNDO:		Undo ();		break;
@@ -2350,7 +2348,7 @@ namespace DuiLib {
 				lRes = std::nullopt;
 				break;
 			default:
-				return 0;
+				return std::nullopt;
 			}
 		}
 		if (WM_CHAR == uMsg) {
@@ -2371,7 +2369,7 @@ namespace DuiLib {
 							m_chLeadByte = (WORD) wParam << 8;
 
 							//TCHAR a = (WORD)wParam << 8 ;
-							return 0;
+							return std::nullopt;
 						}
 					} else {
 						// This is the second WM_CHAR message,

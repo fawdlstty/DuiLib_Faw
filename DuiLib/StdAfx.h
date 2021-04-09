@@ -37,6 +37,6 @@
 #include <optional>
 
 #include "Utils/FawTools.hpp"
-#include "../fmt/include/fmt/core.h"
+#include <fmt/core.h>
 
 #endif //__DUILIB_FAW__STDAFX_H__

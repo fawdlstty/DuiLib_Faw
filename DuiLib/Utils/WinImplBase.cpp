@@ -50,7 +50,7 @@ namespace DuiLib {
 				break;
 			}
 		}
-		return 0;
+		return std::nullopt;
 	}
 
 	std::optional<LRESULT> WindowImplBase::OnClose (UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/) {
@@ -201,18 +201,18 @@ namespace DuiLib {
 			return 0;
 		}
 #if defined(WIN32) && !defined(UNDER_CE)
-		BOOL bZoomed = ::IsZoomed (GetHWND ());
+		const BOOL bZoomed = ::IsZoomed (GetHWND ());
 		LRESULT lRes = CWindowWnd::HandleMessage (uMsg, wParam, lParam);
 		if (::IsZoomed (GetHWND ()) != bZoomed) {
 			if (!bZoomed) {
-				CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl (_T ("maxbtn")));
+				CControlUI* pControl = m_pm.FindControl (_T ("maxbtn"));
 				if (pControl) pControl->SetVisible (false);
-				pControl = static_cast<CControlUI*>(m_pm.FindControl (_T ("restorebtn")));
+				pControl = m_pm.FindControl (_T ("restorebtn"));
 				if (pControl) pControl->SetVisible (true);
 			} else {
-				CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl (_T ("maxbtn")));
+				CControlUI* pControl = m_pm.FindControl (_T ("maxbtn"));
 				if (pControl) pControl->SetVisible (true);
-				pControl = static_cast<CControlUI*>(m_pm.FindControl (_T ("restorebtn")));
+				pControl = m_pm.FindControl (_T ("restorebtn"));
 				if (pControl) pControl->SetVisible (false);
 			}
 		}
@@ -239,10 +239,10 @@ namespace DuiLib {
 		faw::string_t sSkinType = GetSkinType ();
 		std::variant<UINT, faw::string_t> xml;
 		if (!sSkinType.empty ()) {
-			std::variant<UINT, faw::string_t> xml = FawTools::parse_dec (GetSkinFile ());
+			xml = FawTools::parse_dec (GetSkinFile ());
 			pRoot = builder.Create (xml, sSkinType, this, &m_pm);
 		} else {
-			std::variant<UINT, faw::string_t> xml = faw::string_t (GetSkinFile ());
+			xml = faw::string_t (GetSkinFile ());
 			pRoot = builder.Create (xml, _T (""), this, &m_pm);
 		}
 

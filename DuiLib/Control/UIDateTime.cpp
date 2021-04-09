@@ -15,8 +15,8 @@ namespace DuiLib {
 		void Init (CDateTimeUI* pOwner);
 		RECT CalPos ();
 
-		faw::string_t GetWindowClassName () const;
-		faw::string_t GetSuperClassName () const;
+		LPCTSTR GetWindowClassName () const;
+		LPCTSTR GetSuperClassName () const;
 		void OnFinalMessage (HWND hWnd);
 
 		LRESULT HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -72,11 +72,11 @@ namespace DuiLib {
 		return rcPos;
 	}
 
-	faw::string_t CDateTimeWnd::GetWindowClassName () const {
+	LPCTSTR CDateTimeWnd::GetWindowClassName () const {
 		return _T ("DateTimeWnd");
 	}
 
-	faw::string_t CDateTimeWnd::GetSuperClassName () const {
+	LPCTSTR CDateTimeWnd::GetSuperClassName () const {
 		return DATETIMEPICK_CLASS;
 	}
 
