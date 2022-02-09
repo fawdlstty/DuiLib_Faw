@@ -724,7 +724,7 @@ namespace DuiLib {
 		int d3 = MulDiv (m_rcButton1.right - m_rcItem.left, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		int d4 = MulDiv (m_rcButton1.bottom - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		m_sImageModify.clear ();
-		m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
+		m_sImageModify = std::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 
 		if ((m_uButton1State & UISTATE_DISABLED) != 0) {
 			if (!m_sButton1DisabledImage.empty ()) {
@@ -763,7 +763,7 @@ namespace DuiLib {
 		int d3 = MulDiv (m_rcButton2.right - m_rcItem.left, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		int d4 = MulDiv (m_rcButton2.bottom - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		m_sImageModify.clear ();
-		m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
+		m_sImageModify = std::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 
 		if ((m_uButton2State & UISTATE_DISABLED) != 0) {
 			if (!m_sButton2DisabledImage.empty ()) {
@@ -801,7 +801,7 @@ namespace DuiLib {
 		int d3 = MulDiv (m_rcThumb.right - m_rcItem.left, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		int d4 = MulDiv (m_rcThumb.bottom - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
 		m_sImageModify.clear ();
-		m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
+		m_sImageModify = std::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 
 		if ((m_uThumbState & UISTATE_DISABLED) != 0) {
 			if (!m_sThumbDisabledImage.empty ()) {
@@ -841,13 +841,13 @@ namespace DuiLib {
 			int d2 = MulDiv ((m_rcThumb.top + m_rcThumb.bottom) / 2 - m_rcItem.top - m_cxyFixed.cx / 2, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d3 = MulDiv (m_rcThumb.right - m_rcItem.left, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d4 = MulDiv ((m_rcThumb.top + m_rcThumb.bottom) / 2 - m_rcItem.top + m_cxyFixed.cx - m_cxyFixed.cx / 2, 100, GetManager ()->GetDPIObj ()->GetScale ());
-			m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
+			m_sImageModify = std::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 		} else {
 			int d1 = MulDiv ((m_rcThumb.left + m_rcThumb.right) / 2 - m_rcItem.left - m_cxyFixed.cy / 2, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d2 = MulDiv (m_rcThumb.top - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d3 = MulDiv ((m_rcThumb.left + m_rcThumb.right) / 2 - m_rcItem.left + m_cxyFixed.cy - m_cxyFixed.cy / 2, 100, GetManager ()->GetDPIObj ()->GetScale ());
 			int d4 = MulDiv (m_rcThumb.bottom - m_rcItem.top, 100, GetManager ()->GetDPIObj ()->GetScale ());
-			m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
+			m_sImageModify = std::format (_T ("dest='{},{},{},{}'"), d1, d2, d3, d4);
 		}
 
 		if ((m_uThumbState & UISTATE_DISABLED) != 0) {

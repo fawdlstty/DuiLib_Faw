@@ -220,22 +220,22 @@ namespace DuiLib {
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 						if (m_nSelectedStateCount > 1) {
 							int iLeft = rcSrc.left + 1 * szStatus.cx;
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedHotImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
-							m_sSelectedPushedImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedHotImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedPushedImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 						if (m_nSelectedStateCount > 2) {
 							int iLeft = rcSrc.left + 2 * szStatus.cx;
 							int iRight = iLeft + szStatus.cx;
 							int iTop = rcSrc.top;
 							int iBottom = iTop + szStatus.cy;
-							m_sSelectedPushedImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+							m_sSelectedPushedImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 						}
 					}
 				}

@@ -99,8 +99,8 @@ namespace DuiLib {
 					m_sNewImage = m_sNormalImage;
 				}
 				faw::string_t sFadeOut, sFadeIn;
-				sFadeOut = fmt::format (_T ("fade='{}'"), 255 - m_bFadeAlpha);
-				sFadeIn = fmt::format (_T ("fade='{}'"), m_bFadeAlpha);
+				sFadeOut = std::format (_T ("fade='{}'"), 255 - m_bFadeAlpha);
+				sFadeIn = std::format (_T ("fade='{}'"), m_bFadeAlpha);
 				DrawImage (hDC, m_sOldImage, sFadeOut);
 				DrawImage (hDC, m_sNewImage, sFadeIn);
 				return;

@@ -346,7 +346,7 @@ namespace DuiLib {
 		if (!::GetClassInfoEx (nullptr, GetSuperClassName (), &wc)) {
 			if (!::GetClassInfoEx (CPaintManagerUI::GetInstance (), GetSuperClassName (), &wc)) {
 				ASSERT (!"Unable to locate window class");
-				return nullptr;
+				return false;
 			}
 		}
 		m_OldWndProc = wc.lpfnWndProc;

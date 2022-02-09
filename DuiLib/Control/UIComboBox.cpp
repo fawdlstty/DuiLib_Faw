@@ -46,7 +46,8 @@ namespace DuiLib {
 			size_t nPos3 = sModify.find (_T ("'"), nPos2 + 1);
 			if (nPos3 == faw::string_t::npos) return; //second
 
-			RECT rcBmpPart = FawTools::parse_rect (faw::string_t (&sModify[nPos2 + 1]));
+			faw::string_t _str = &sModify [nPos2 + 1];
+			RECT rcBmpPart = FawTools::parse_rect (_str);
 
 			m_nArrowWidth = (rcBmpPart.right - rcBmpPart.left) / 5;
 			rcBmpPart.left += nIndex * m_nArrowWidth;
@@ -58,7 +59,7 @@ namespace DuiLib {
 
 			faw::string_t sSource = sModify.substr (nPos1, nPos3 + 1 - nPos1);
 			faw::string_t sReplace;
-			sReplace = fmt::format (_T ("source='{},{},{},{}' dest='{},{},{},{}'"),
+			sReplace = std::format (_T ("source='{},{},{},{}' dest='{},{},{},{}'"),
 				rcBmpPart.left, rcBmpPart.top, rcBmpPart.right, rcBmpPart.bottom,
 				rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
 

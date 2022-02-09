@@ -8,19 +8,19 @@ namespace DuiLib {
 	public:
 		// "1,2,3,4" -> RECT
 		template <typename T>
-		static RECT parse_rect (T &str) { auto v = split_number (str, 4); return { (LONG) v[0], (LONG) v[1], (LONG) v[2], (LONG) v[3] }; }
+		static RECT parse_rect (T str) { auto v = split_number (str, 4); return { (LONG) v[0], (LONG) v[1], (LONG) v[2], (LONG) v[3] }; }
 
 		// "1.0,2.0,3.0,4.0" -> TPercentInfo
 		template <typename T>
-		static TPercentInfo parse_TPercentInfo (T &str) { auto v = split_double (str, 4); return { v[0], v[1], v[2], v[3] }; }
+		static TPercentInfo parse_TPercentInfo (T str) { auto v = split_double (str, 4); return { v[0], v[1], v[2], v[3] }; }
 
 		// "1,2" -> SIZE
 		template <typename T>
-		static SIZE parse_size (T &str) { auto v = split_number (str, 2); return { (LONG) v[0], (LONG) v[1] }; }
+		static SIZE parse_size (T str) { auto v = split_number (str, 2); return { (LONG) v[0], (LONG) v[1] }; }
 
 		// "#FFFF0000" or "FF0000" -> size_t
 		template <typename T>
-		static size_t parse_hex (T &str) {
+		static size_t parse_hex (T str) {
 			size_t n = 0, i = (str.size () > 0 && str[0] == _T ('#')) ? 1 : 0;
 			for (; i < str.size (); ++i) {
 				TCHAR ch = str[i];
@@ -36,7 +36,7 @@ namespace DuiLib {
 
 		// "12345" -> size_t
 		template <typename T>
-		static int parse_dec (T &str) {
+		static int parse_dec (T str) {
 			int n = 0;
 			bool is_sign = (str.size () > 0 && str[0] == _T ('-'));
 			size_t i = is_sign ? 1 : 0;

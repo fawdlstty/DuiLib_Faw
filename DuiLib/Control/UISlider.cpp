@@ -246,14 +246,14 @@ namespace DuiLib {
 		if ((m_uButtonState & UISTATE_CAPTURED) != 0) {
 			if (!m_sThumbPushedImage.empty ()) {
 				m_sImageModify.clear ();
-				m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+				m_sImageModify = std::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
 				if (!DrawImage (hDC, m_sThumbPushedImage, m_sImageModify)) {
 				} else return;
 			}
 		} else if ((m_uButtonState & UISTATE_HOT) != 0) {
 			if (!m_sThumbHotImage.empty ()) {
 				m_sImageModify.clear ();
-				m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+				m_sImageModify = std::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
 				if (!DrawImage (hDC, m_sThumbHotImage, m_sImageModify)) {
 				} else return;
 			}
@@ -261,7 +261,7 @@ namespace DuiLib {
 
 		if (!m_sThumbImage.empty ()) {
 			m_sImageModify.clear ();
-			m_sImageModify = fmt::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+			m_sImageModify = std::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
 			if (!DrawImage (hDC, m_sThumbImage, m_sImageModify)) {
 			} else return;
 		}

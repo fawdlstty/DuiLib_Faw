@@ -370,7 +370,7 @@ namespace DuiLib {
 	}
 
 	TITEM *CStdStringPtrMap::GetAt (int iIndex) const {
-		if (m_nBuckets == 0 || GetSize () == 0) return false;
+		if (m_nBuckets == 0 || GetSize () == 0) return nullptr;
 
 		int pos = 0;
 		int len = m_nBuckets;

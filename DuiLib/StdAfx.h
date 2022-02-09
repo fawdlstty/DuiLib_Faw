@@ -1,12 +1,9 @@
-﻿// StdAfx.h : include file for standard system include files,
-//  or project specific include files that are used frequently, but
-//      are changed infrequently
-//
-
-#ifndef __DUILIB_FAW__STDAFX_H__
+﻿#ifndef __DUILIB_FAW__STDAFX_H__
 #define __DUILIB_FAW__STDAFX_H__
 
-#pragma once
+
+
+#pragma warning (disable: 4251)
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -37,6 +34,8 @@
 #include <optional>
 
 #include "Utils/FawTools.hpp"
-#include <fmt/core.h>
+#include <format>
+
+
 
 #endif //__DUILIB_FAW__STDAFX_H__

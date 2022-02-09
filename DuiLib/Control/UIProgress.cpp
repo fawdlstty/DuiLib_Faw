@@ -121,9 +121,9 @@ namespace DuiLib {
 			rc.right = rc.left + sw;
 			rc.bottom = rc.top + sh;
 			if (m_bStretchForeImage) {
-				m_sForeImageModify = fmt::format (_T ("dest='{},{},{},{}'"), rc.left, rc.top, rc.right, rc.bottom);
+				m_sForeImageModify = std::format (_T ("dest='{},{},{},{}'"), rc.left, rc.top, rc.right, rc.bottom);
 			} else {
-				m_sForeImageModify = fmt::format (_T ("dest='{},{},{},{}' source='{},{},{},{}'"), rc.left, rc.top, rc.right, rc.bottom, rc.left, rc.top, rc.right, rc.bottom);
+				m_sForeImageModify = std::format (_T ("dest='{},{},{},{}' source='{},{},{},{}'"), rc.left, rc.top, rc.right, rc.bottom, rc.left, rc.top, rc.right, rc.bottom);
 			}
 
 			if (DrawImage (hDC, m_sForeImage, m_sForeImageModify))
@@ -144,7 +144,7 @@ namespace DuiLib {
 	void CProgressUI::UpdateText () {
 		if (m_bShowText) {
 			faw::string_t sText;
-			sText = fmt::format (_T ("{:.02}%"), (m_nValue - m_nMin) * 100.0 / (m_nMax - m_nMin));
+			sText = std::format (_T ("{:.02}%"), (m_nValue - m_nMin) * 100.0 / (m_nMax - m_nMin));
 			SetText (sText);
 		}
 	}

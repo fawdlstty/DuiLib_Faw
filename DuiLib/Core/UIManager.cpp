@@ -108,7 +108,7 @@ namespace DuiLib {
 
 		// 调整DPI资源
 		if (paintManager->GetDPIObj ()->GetScale () != 100) {
-			faw::string_t sScale = fmt::format (_T ("@{}."), (int) paintManager->GetDPIObj ()->GetScale ());
+			faw::string_t sScale = std::format (_T ("@{}."), (int) paintManager->GetDPIObj ()->GetScale ());
 			FawTools::replace_self (sImageName, _T ("."), sScale);
 		}
 	}
@@ -322,7 +322,7 @@ namespace DuiLib {
 	}
 
 	faw::string_t CPaintManagerUI::GetInstancePath () {
-		if (!m_hInstance) return _T ('\0');
+		if (!m_hInstance) return _T ("");
 
 		TCHAR tszModule[MAX_PATH + 1] = { 0 };
 		::GetModuleFileName (m_hInstance, tszModule, MAX_PATH);
@@ -2526,7 +2526,7 @@ namespace DuiLib {
 		if (!hFont) return nullptr;
 
 		TFontInfo* pFontInfo = new TFontInfo;
-		if (!pFontInfo) return false;
+		if (!pFontInfo) return nullptr;
 		pFontInfo->hFont = hFont;
 		pFontInfo->sFontName = lf.lfFaceName;
 		pFontInfo->iSize = nSize;

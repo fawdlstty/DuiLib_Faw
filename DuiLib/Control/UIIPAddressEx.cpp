@@ -349,7 +349,7 @@ namespace DuiLib {
 	}
 
 	faw::string_t CIPAddressExUI::GetIP () {
-		faw::string_t strIP = fmt::format (_T ("{}.{}.{}.{}"), m_nFirst, m_nSecond, m_nThird, m_nFourth);
+		faw::string_t strIP = std::format (_T ("{}.{}.{}.{}"), m_nFirst, m_nSecond, m_nThird, m_nFourth);
 		return strIP;
 	}
 

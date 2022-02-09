@@ -239,7 +239,8 @@ namespace DuiLib {
 		faw::string_t sSkinType = GetSkinType ();
 		std::variant<UINT, faw::string_t> xml;
 		if (!sSkinType.empty ()) {
-			xml = FawTools::parse_dec (GetSkinFile ());
+			faw::string_t _str = GetSkinFile ();
+			xml = (UINT) FawTools::parse_dec (_str);
 			pRoot = builder.Create (xml, sSkinType, this, &m_pm);
 		} else {
 			xml = faw::string_t (GetSkinFile ());

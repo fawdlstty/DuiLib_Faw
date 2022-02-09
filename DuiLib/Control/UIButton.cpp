@@ -391,29 +391,29 @@ namespace DuiLib {
 						int iRight = iLeft + szStatus.cx;
 						int iTop = rcSrc.top;
 						int iBottom = iTop + szStatus.cy;
-						m_sNormalImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+						m_sNormalImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 					}
 					if (m_nStateCount > 1) {
 						int iLeft = rcSrc.left + 1 * szStatus.cx;
 						int iRight = iLeft + szStatus.cx;
 						int iTop = rcSrc.top;
 						int iBottom = iTop + szStatus.cy;
-						m_sHotImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
-						m_sPushedImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+						m_sHotImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+						m_sPushedImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 					}
 					if (m_nStateCount > 2) {
 						int iLeft = rcSrc.left + 2 * szStatus.cx;
 						int iRight = iLeft + szStatus.cx;
 						int iTop = rcSrc.top;
 						int iBottom = iTop + szStatus.cy;
-						m_sPushedImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+						m_sPushedImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 					}
 					if (m_nStateCount > 3) {
 						int iLeft = rcSrc.left + 3 * szStatus.cx;
 						int iRight = iLeft + szStatus.cx;
 						int iTop = rcSrc.top;
 						int iBottom = iTop + szStatus.cy;
-						m_sDisabledImage = fmt::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
+						m_sDisabledImage = std::format (_T ("res='{}' restype='{}' dest='{},{},{},{}' source='{},{},{},{}'"), info.sImageName, info.sResType, info.rcDest.left, info.rcDest.top, info.rcDest.right, info.rcDest.bottom, iLeft, iTop, iRight, iBottom);
 					}
 				}
 			}

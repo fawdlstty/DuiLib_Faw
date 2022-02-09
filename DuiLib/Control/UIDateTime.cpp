@@ -181,7 +181,7 @@ namespace DuiLib {
 		if (m_nDTUpdateFlag == DT_DELETE) {
 			SetText (_T (""));
 		} else if (m_nDTUpdateFlag == DT_UPDATE) {
-			faw::string_t sText = fmt::format (_T ("{}-{:02}-{:02}"), m_sysTime.wYear, m_sysTime.wMonth, m_sysTime.wDay, m_sysTime.wHour, m_sysTime.wMinute);
+			faw::string_t sText = std::format (_T ("{}-{:02}-{:02}"), m_sysTime.wYear, m_sysTime.wMonth, m_sysTime.wDay, m_sysTime.wHour, m_sysTime.wMinute);
 			SetText (sText);
 		}
 	}

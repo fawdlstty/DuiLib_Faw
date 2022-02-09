@@ -283,13 +283,13 @@ namespace DuiLib {
 						WORD id = (WORD) FawTools::parse_dec (szValue);
 						pControl = builder.Create ((UINT) id, m_pstrtype, m_pCallback, pManager, pParent);
 					} else {
-						pControl = builder.Create (szValue, (UINT) 0, m_pCallback, pManager, pParent);
+						pControl = builder.Create (szValue, _T (""), m_pCallback, pManager, pParent);
 					}
 				}
 				continue;
 			} else {
 				faw::string_t strClass;
-				strClass = fmt::format (_T ("C{}UI"), pstrClass);
+				strClass = std::format (_T ("C{}UI"), pstrClass);
 				pControl = dynamic_cast<CControlUI*>(CControlFactory::GetInstance ()->CreateControl (strClass));
 
 				// 检查插件

@@ -1230,7 +1230,7 @@ namespace DuiLib {
 
 		Gdiplus::Graphics graphics (hDC);
 		Gdiplus::SolidBrush brush (Gdiplus::Color ((LOBYTE ((color) >> 24)), GetBValue (color), GetGValue (color), GetRValue (color)));
-		graphics.FillRectangle (&brush, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
+		graphics.FillRectangle (&brush, (INT) rc.left, (INT) rc.top, (INT) (rc.right - rc.left), (INT) (rc.bottom - rc.top));
 	}
 
 	void CRenderEngine::DrawGradient (HDC hDC, const RECT& rc, DWORD dwFirst, DWORD dwSecond, bool bVertical, int nSteps) {
@@ -1341,7 +1341,7 @@ namespace DuiLib {
 		Gdiplus::Pen pen (Gdiplus::Color (dwPenColor), (Gdiplus::REAL)nSize);
 		pen.SetAlignment (Gdiplus::PenAlignmentInset);
 
-		graphics.DrawRectangle (&pen, rc.left, rc.top, rc.right - rc.left - 1, rc.bottom - rc.top - 1);
+		graphics.DrawRectangle (&pen, (INT) rc.left, (INT) rc.top, (INT) (rc.right - rc.left - 1), (INT) (rc.bottom - rc.top - 1));
 #endif
 	}
 

@@ -697,7 +697,7 @@ namespace DuiLib {
 			};
 			GetManager ()->GetDPIObj ()->ScaleBack (&rcDest);
 			faw::string_t pStrImage;
-			pStrImage = fmt::format (_T ("dest='{},{},{},{}'"), rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
+			pStrImage = std::format (_T ("dest='{},{},{},{}'"), rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
 			DrawImage (hDC, m_strIcon, pStrImage);
 		}
 	}
@@ -727,7 +727,7 @@ namespace DuiLib {
 			};
 			GetManager ()->GetDPIObj ()->ScaleBack (&rcDest);
 			faw::string_t pStrImage;
-			pStrImage = fmt::format (_T ("dest='{},{},{},{}'"), rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
+			pStrImage = std::format (_T ("dest='{},{},{},{}'"), rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
 			DrawImage (hDC, strExplandIcon, pStrImage);
 		}
 	}

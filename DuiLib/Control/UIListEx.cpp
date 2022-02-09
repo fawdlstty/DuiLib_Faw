@@ -651,7 +651,7 @@ namespace DuiLib {
 			rcThumb.bottom -= m_rcItem.top;
 
 			m_sSepImageModify.clear ();
-			m_sSepImageModify = fmt::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+			m_sSepImageModify = std::format (_T ("dest='{},{},{},{}'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
 			if (!DrawImage (hDC, m_sSepImage, m_sSepImageModify)) {
 			}
 		}
