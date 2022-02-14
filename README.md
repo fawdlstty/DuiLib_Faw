@@ -88,6 +88,9 @@ CEditUI *ctrl = dynamic_cast<CEditUI*> (parent->find_control (_T ("ctrl_name")))
 ```cpp
 // 任意位置
 BindEditUI ctrl { _T ("ctrl_name") };
+
+// 多窗口推荐传入m_pm，避免出现无法找到控件的问题
+BindEditUI ctrl { _T ("ctrl_name"), &m_pm };
 ```
 
 需注意：
