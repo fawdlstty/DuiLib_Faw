@@ -447,7 +447,7 @@ namespace DuiLib {
 		ReloadSharedImages ();
 		for (int i = 0; i < m_aPreMessages.GetSize (); i++) {
 			CPaintManagerUI* pManager = static_cast<CPaintManagerUI*>(m_aPreMessages[i]);
-			pManager->ReloadImages ();
+			if (pManager) pManager->ReloadImages ();
 		}
 	}
 

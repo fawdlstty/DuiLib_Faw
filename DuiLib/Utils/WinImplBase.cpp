@@ -199,6 +199,12 @@ namespace DuiLib {
 		if (wParam == SC_CLOSE) {
 			SendMessage (WM_CLOSE);
 			return 0;
+		} else if (WM_USER + 0x101 == uMsg) {
+			auto f = reinterpret_cast<std::function<LRESULT ()>*>(lParam);
+			LRESULT r = (*f) ();
+			if (!wParam)
+				delete f;
+			return r;
 		}
 #if defined(WIN32) && !defined(UNDER_CE)
 		const BOOL bZoomed = ::IsZoomed (GetHWND ());
