@@ -1676,7 +1676,7 @@ namespace DuiLib {
 		{
 			if (lParam == 0) break;
 			LPNMHDR lpNMHDR = (LPNMHDR) lParam;
-			if (lpNMHDR) lRes = ::SendMessage (lpNMHDR->hwndFrom, OCM__BASE + uMsg, wParam, lParam);
+			if (lpNMHDR) return ::SendMessage (lpNMHDR->hwndFrom, OCM__BASE + uMsg, wParam, lParam);
 			return 0;
 		}
 		break;
@@ -1685,7 +1685,7 @@ namespace DuiLib {
 			if (lParam == 0) break;
 			HWND hWndChild = (HWND) lParam;
 			lRes = ::SendMessage (hWndChild, OCM__BASE + uMsg, wParam, lParam);
-			if (lRes != 0) return 0;
+			if (lRes != std::nullopt) return lRes;
 		}
 		break;
 		case WM_CTLCOLOREDIT:
@@ -1696,7 +1696,7 @@ namespace DuiLib {
 			if (lParam == 0) break;
 			HWND hWndChild = (HWND) lParam;
 			lRes = ::SendMessage (hWndChild, OCM__BASE + uMsg, wParam, lParam);
-			if (lRes != 0) return 0;
+			if (lRes != std::nullopt) return lRes;
 		}
 		break;
 		default:

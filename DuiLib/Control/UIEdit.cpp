@@ -62,7 +62,7 @@ namespace DuiLib {
 		SetWindowFont (m_hWnd, hFont, TRUE);
 		Edit_LimitText (m_hWnd, m_pOwner->GetMaxChar ());
 		if (m_pOwner->IsPasswordMode ()) Edit_SetPasswordChar (m_hWnd, m_pOwner->GetPasswordChar ());
-		Edit_SetText (m_hWnd, m_pOwner->GetText ().c_str ());
+		Edit_SetText (m_hWnd, m_pOwner->GetText ().data ());
 		Edit_SetModify (m_hWnd, FALSE);
 		SendMessage (EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELPARAM (0, 0));
 		Edit_Enable (m_hWnd, m_pOwner->IsEnabled () == true);
@@ -137,37 +137,40 @@ namespace DuiLib {
 	}
 
 	LRESULT CEditWnd::HandleMessage (UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		std::optional<LRESULT> lRes = 0;
+		std::optional<LRESULT> lRes = std::nullopt;
 		if (uMsg == WM_CREATE) {
 			//m_pOwner->GetManager()->AddNativeWindow(m_pOwner, m_hWnd);
 			//if( m_pOwner->GetManager()->IsLayered() ) {
 			//	::SetTimer(m_hWnd, DEFAULT_TIMERID, ::GetCaretBlinkTime(), nullptr);
 			//}
-			lRes = std::nullopt;
 		} else if (uMsg == WM_KILLFOCUS) {
 			lRes = OnKillFocus (uMsg, wParam, lParam);
 		} else if (uMsg == OCM_COMMAND) {
-			if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_CHANGE) lRes = OnEditChanged (uMsg, wParam, lParam);
-			else if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_UPDATE) {
+			if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_CHANGE) {
+				lRes = OnEditChanged (uMsg, wParam, lParam);
+			} else if (GET_WM_COMMAND_CMD (wParam, lParam) == EN_UPDATE) {
 				RECT rcClient = { 0 };
 				::GetClientRect (m_hWnd, &rcClient);
 				::InvalidateRect (m_hWnd, &rcClient, FALSE);
+				lRes = 0;
 			}
 		} else if (uMsg == WM_KEYDOWN && TCHAR (wParam) == VK_RETURN) {
 			m_pOwner->GetManager ()->SendNotify (m_pOwner, DUI_MSGTYPE_RETURN);
+			lRes = 0;
 		} else if (uMsg == WM_KEYDOWN && TCHAR (wParam) == VK_TAB) {
 			if (m_pOwner->GetManager ()->IsLayered ()) {
 				m_pOwner->GetManager ()->SetNextTabControl ();
 			}
+			lRes = 0;
 		} else if (uMsg == OCM__BASE + WM_CTLCOLOREDIT || uMsg == OCM__BASE + WM_CTLCOLORSTATIC) {
 			//if (m_pOwner->GetManager()->IsLayered() && !m_pOwner->GetManager()->IsPainting()) {
 			//	m_pOwner->GetManager()->AddNativeWindow(m_pOwner, m_hWnd);
 			//}
 
 			::SetBkMode ((HDC) wParam, TRANSPARENT);
-			DWORD dwTextColor = m_pOwner->GetNativeEditTextColor ();
+			DWORD dwTextColor = m_pOwner->GetTextColor ();
 			::SetTextColor ((HDC) wParam, RGB (GetBValue (dwTextColor), GetGValue (dwTextColor), GetRValue (dwTextColor)));
-			DWORD clrColor = m_pOwner->GetNativeEditBkColor ();
+			DWORD clrColor = m_pOwner->GetBkColor ();
 			if (clrColor < 0xFF000000) {
 				if (m_hBkBrush) ::DeleteObject (m_hBkBrush);
 				RECT rcWnd = m_pOwner->GetManager ()->GetNativeWindowRect (m_hWnd);
@@ -179,12 +182,11 @@ namespace DuiLib {
 					m_hBkBrush = ::CreateSolidBrush (RGB (GetBValue (clrColor), GetGValue (clrColor), GetRValue (clrColor)));
 				}
 			}
-			return (LRESULT) m_hBkBrush;
+			lRes = (LRESULT) m_hBkBrush;
 		} else if (uMsg == WM_PAINT) {
 			//if (m_pOwner->GetManager()->IsLayered()) {
 			//	m_pOwner->GetManager()->AddNativeWindow(m_pOwner, m_hWnd);
 			//}
-			lRes = std::nullopt;
 		} else if (uMsg == WM_PRINT) {
 			//if (m_pOwner->GetManager()->IsLayered()) {
 			//	lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
@@ -198,18 +200,14 @@ namespace DuiLib {
 			//	}
 			//	return lRes;
 			//}
-			lRes = std::nullopt;
 		} else if (uMsg == WM_TIMER) {
 			if (wParam == CARET_TIMERID) {
 				m_bDrawCaret = !m_bDrawCaret;
 				RECT rcClient = { 0 };
 				::GetClientRect (m_hWnd, &rcClient);
 				::InvalidateRect (m_hWnd, &rcClient, FALSE);
-				return 0;
+				lRes = 0;
 			}
-			lRes = std::nullopt;
-		} else {
-			lRes = std::nullopt;
 		}
 
 		if (lRes == std::nullopt)
@@ -473,22 +471,6 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	void CEditUI::SetNativeEditBkColor (DWORD dwBkColor) {
-		m_dwEditbkColor = dwBkColor;
-	}
-
-	DWORD CEditUI::GetNativeEditBkColor () const {
-		return m_dwEditbkColor;
-	}
-
-	void CEditUI::SetNativeEditTextColor (faw::string_t pStrColor) {
-		m_dwEditTextColor = (DWORD) FawTools::parse_hex (pStrColor);
-	}
-
-	DWORD CEditUI::GetNativeEditTextColor () const {
-		return m_dwEditTextColor;
-	}
-
 	bool CEditUI::IsAutoSelAll () {
 		return m_bAutoSelAll;
 	}
@@ -572,8 +554,6 @@ namespace DuiLib {
 		else if (pstrName == _T ("disabledimage")) SetDisabledImage (pstrValue);
 		else if (pstrName == _T ("tipvalue")) SetTipValue (pstrValue);
 		else if (pstrName == _T ("tipvaluecolor")) SetTipValueColor (pstrValue);
-		else if (pstrName == _T ("nativetextcolor")) SetNativeEditTextColor (pstrValue);
-		else if (pstrName == _T ("nativebkcolor")) SetNativeEditBkColor ((DWORD) FawTools::parse_hex (pstrValue));
 		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 

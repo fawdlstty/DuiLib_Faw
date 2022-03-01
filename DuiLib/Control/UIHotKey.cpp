@@ -73,7 +73,7 @@ namespace DuiLib {
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = ::BeginPaint (m_hWnd, &ps);
 			DWORD dwTextColor = m_pOwner->GetTextColor ();
-			DWORD dwBkColor = m_pOwner->GetNativeBkColor ();
+			DWORD dwBkColor = m_pOwner->GetBkColor ();
 			faw::string_t strText = GetHotKeyName ();
 			RECT rect = { 0 };
 			::GetClientRect (m_hWnd, &rect);
@@ -211,7 +211,7 @@ namespace DuiLib {
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DUICONTROL (CHotKeyUI)
 
-		CHotKeyUI::CHotKeyUI (): m_pWindow (nullptr), m_wVirtualKeyCode (0), m_wModifiers (0), m_uButtonState (0), m_dwHotKeybkColor (0xFFFFFFFF) {
+	CHotKeyUI::CHotKeyUI (): m_pWindow (nullptr), m_wVirtualKeyCode (0), m_wModifiers (0), m_uButtonState (0) {
 		SetTextPadding ({ 4, 3, 4, 3 });
 		SetBkColor (0xFFFFFFFF);
 	}
@@ -344,14 +344,6 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
-	void CHotKeyUI::SetNativeBkColor (DWORD dwBkColor) {
-		m_dwHotKeybkColor = dwBkColor;
-	}
-
-	DWORD CHotKeyUI::GetNativeBkColor () const {
-		return m_dwHotKeybkColor;
-	}
-
 	void CHotKeyUI::SetPos (RECT rc) {
 		CControlUI::SetPos (rc);
 		if (m_pWindow) {
@@ -380,7 +372,6 @@ namespace DuiLib {
 		else if (pstrName == _T ("hotimage")) SetHotImage (pstrValue);
 		else if (pstrName == _T ("focusedimage")) SetFocusedImage (pstrValue);
 		else if (pstrName == _T ("disabledimage")) SetDisabledImage (pstrValue);
-		else if (pstrName == _T ("nativebkcolor")) SetNativeBkColor ((DWORD) FawTools::parse_hex (pstrValue));
 		else CLabelUI::SetAttribute (pstrName, pstrValue);
 	}
 

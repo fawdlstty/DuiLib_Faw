@@ -38,10 +38,6 @@ namespace DuiLib {
 		void SetFocusedImage (faw::string_t pStrImage);
 		faw::string_t GetDisabledImage ();
 		void SetDisabledImage (faw::string_t pStrImage);
-		void SetNativeEditBkColor (DWORD dwBkColor);
-		DWORD GetNativeEditBkColor () const;
-		void SetNativeEditTextColor (faw::string_t pStrColor);
-		DWORD GetNativeEditTextColor () const;
 
 		bool IsAutoSelAll ();
 		void SetAutoSelAll (bool bAutoSelAll);
@@ -80,8 +76,6 @@ namespace DuiLib {
 		faw::string_t	m_sDisabledImage;
 		faw::string_t	m_sTipValue;
 		DWORD		m_dwTipValueColor	= 0xFFBAC0C5;
-		DWORD		m_dwEditbkColor		= 0xFFFFFFFF;
-		DWORD		m_dwEditTextColor	= 0x00000000;
 		int			m_iWindowStyls		= 0;
 	};
 }
