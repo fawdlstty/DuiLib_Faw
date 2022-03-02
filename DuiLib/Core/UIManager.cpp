@@ -2511,7 +2511,23 @@ namespace DuiLib {
 			return m_ResInfo.m_CustomFonts.GetSize ();
 	}
 
+	static int CALLBACK _enum_font_cb (CONST LOGFONTA *, CONST TEXTMETRICA *, DWORD, LPARAM lParam) {
+		return 10;
+	}
+
+	static faw::string_t _CheckFontExist (HDC _dc, faw::string_t _fonts) {
+		auto _v = FawTools::split (_fonts, _T (','));
+		LOGFONT _lf = { 0 };
+		for (auto _font : _v) {
+			lstrcpy (_lf.lfFaceName, _font.data ());
+			if (EnumFontFamiliesEx (_dc, &_lf, (FONTENUMPROC) _enum_font_cb, 0, 0) == 10)
+				return _font;
+		}
+		return _T ("Microsoft YaHei");
+	}
+
 	HFONT CPaintManagerUI::AddFont (int id, faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared) {
+		pStrFontName = _CheckFontExist (m_hDcPaint, pStrFontName);
 		LOGFONT lf = { 0 };
 		::GetObject (::GetStockObject (DEFAULT_GUI_FONT), sizeof (LOGFONT), &lf);
 		if (pStrFontName.length () > 0) {

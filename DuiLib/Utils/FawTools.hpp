@@ -225,6 +225,24 @@ namespace DuiLib {
 			}
 		}
 
+		static std::vector<faw::string_t> split (faw::string_t str, TCHAR sp) {
+			std::vector<faw::string_t> v;
+			faw::string_t _s = _T ("");
+			for (size_t i = 0; i < str.size (); ++i) {
+				TCHAR ch = str [i];
+				if (ch == sp) {
+					if (!_s.empty ())
+						v.push_back (_s);
+					_s = _T ("");
+				} else {
+					_s += ch;
+				}
+			}
+			if (!_s.empty ())
+				v.push_back (_s);
+			return v;
+		}
+
 
 
 		//
@@ -340,11 +358,6 @@ namespace DuiLib {
 				return L"";
 			return s.c_str ();
 		}
-
-		//static std::vector<faw::string_t> split (faw::string_t str, TCHAR sp) {
-		//	std::vector<faw::string_t> v;
-		//	return v;
-		//}
 	};
 }
 
