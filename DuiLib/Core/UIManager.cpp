@@ -175,6 +175,7 @@ namespace DuiLib {
 		m_bMouseTracking (false),
 		m_bMouseCapture (false),
 		m_bUsedVirtualWnd (false),
+		m_bAsyncNotifyPosted (false),
 		m_bForceUseSharedRes (false),
 		m_nOpacity (0xFF),
 		m_bLayered (false),
