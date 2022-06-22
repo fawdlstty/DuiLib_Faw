@@ -7,18 +7,24 @@ namespace DuiLib {
 #define DEF_BINDCTRL(CTRL_TYPE)																									\
 	class Bind##CTRL_TYPE##UI: public BindCtrlBase {																			\
 	public:																														\
+		Bind##CTRL_TYPE##UI (CControlUI *_ctrl): BindCtrlBase (_ctrl) {}														\
 		Bind##CTRL_TYPE##UI (faw::string_t ctrl_name, CPaintManagerUI *pm = nullptr): BindCtrlBase (ctrl_name), m_pm (pm) {}	\
-		C##CTRL_TYPE##UI *operator* () noexcept {																				\
-			if (!m_ctrl) {																										\
-				if (!m_pm) {																									\
-					if (!(m_pm = CPaintManagerUI::GetPaintManager (_T (""))))													\
-						ASSERT (false);																							\
-				}																												\
-				m_ctrl = m_pm->FindControl (m_ctrl_name);															\
-			}																													\
+		C##CTRL_TYPE##UI *operator* () {																						\
+			if (!*this)																											\
+				throw std::exception ("BindControlUI bind failed");																\
 			return static_cast<C##CTRL_TYPE##UI*> (m_ctrl);																		\
 		}																														\
-		C##CTRL_TYPE##UI *operator-> () noexcept { return operator* (); }														\
+		C##CTRL_TYPE##UI *operator-> () { return operator* (); }																\
+		operator bool () noexcept {																								\
+			if (m_ctrl)																											\
+				return true;																									\
+			if (!m_pm)																											\
+				m_pm = CPaintManagerUI::GetPaintManager (_T (""));																\
+			if (!m_pm)																											\
+				return false;																									\
+			m_ctrl = m_pm->FindControl (m_ctrl_name);																			\
+			return !!m_ctrl;																									\
+		}																														\
 	protected:																													\
 		faw::string_t GetClassType () const override { return _T (#CTRL_TYPE##"UI"); }											\
 		CPaintManagerUI *m_pm = nullptr;																						\
@@ -30,18 +36,24 @@ namespace DuiLib {
 	DEF_BINDCTRL (Control);
 	//class BindControlUI: public BindCtrlBase {
 	//public:
+	//	BindControlUI (CControlUI *_ctrl): BindCtrlBase (_ctrl) {}
 	//	BindControlUI (faw::string_t ctrl_name, CPaintManagerUI *pm = nullptr): BindCtrlBase (ctrl_name), m_pm (pm) {}
-	//	CControlUI *operator* () noexcept {
-	//		if (!m_ctrl) {
-	//			if (!m_pm) {
-	//				if (!(m_pm = CPaintManagerUI::GetPaintManager (_T (""))))
-	//					ASSERT (false);
-	//			}
-	//			m_ctrl = m_pm->FindControl (m_ctrl_name);
-	//		}
+	//	CControlUI *operator* () {
+	//		if (!*this)
+	//			throw std::exception ("BindControlUI bind failed");
 	//		return static_cast<CControlUI*> (m_ctrl);
 	//	}
-	//	CControlUI *operator-> () noexcept { return operator* (); }
+	//	CControlUI *operator-> () { return operator* (); }
+	//	operator bool () noexcept {
+	//		if (m_ctrl)
+	//			return true;
+	//		if (!m_pm)
+	//			m_pm = CPaintManagerUI::GetPaintManager (_T (""));
+	//		if (!m_pm)
+	//			return false;
+	//		m_ctrl = m_pm->FindControl (m_ctrl_name);
+	//		return !!m_ctrl;
+	//	}
 	//protected:
 	//	faw::string_t GetClassType () const override { return _T ("ControlUI"); }
 	//	CPaintManagerUI *m_pm = nullptr;

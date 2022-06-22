@@ -199,12 +199,6 @@ namespace DuiLib {
 		if (wParam == SC_CLOSE) {
 			SendMessage (WM_CLOSE);
 			return 0;
-		} else if (WM_USER + 0x101 == uMsg) {
-			auto f = reinterpret_cast<std::function<LRESULT ()>*>(lParam);
-			LRESULT r = (*f) ();
-			if (!wParam)
-				delete f;
-			return r;
 		}
 #if defined(WIN32) && !defined(UNDER_CE)
 		const BOOL bZoomed = ::IsZoomed (GetHWND ());
@@ -328,6 +322,14 @@ namespace DuiLib {
 		case WM_RBUTTONDOWN:	lRes = OnRButtonDown (uMsg, wParam, lParam); break;
 		case WM_MOUSEMOVE:		lRes = OnMouseMove (uMsg, wParam, lParam); break;
 		case WM_MOUSEHOVER:		lRes = OnMouseHover (uMsg, wParam, lParam); break;
+		case WM_USER + 0x101:
+		{
+			auto f=reinterpret_cast<std::function<LRESULT ()>*>(lParam);
+			LRESULT r=(*f) ();
+			if (!wParam)
+				delete f;
+			return r;
+		}
 		default:				lRes = std::nullopt; break;
 		}
 		if (lRes.has_value ())

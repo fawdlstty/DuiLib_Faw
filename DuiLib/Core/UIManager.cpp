@@ -107,7 +107,7 @@ namespace DuiLib {
 		}
 
 		// 调整DPI资源
-		if (paintManager->GetDPIObj ()->GetScale () != 100) {
+		if (paintManager && paintManager->GetDPIObj ()->GetScale () != 100) {
 			faw::string_t sScale = std::format (_T ("@{}."), (int) paintManager->GetDPIObj ()->GetScale ());
 			FawTools::replace_self (sImageName, _T ("."), sScale);
 		}

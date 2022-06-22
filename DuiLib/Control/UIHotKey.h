@@ -49,8 +49,6 @@ namespace DuiLib {
 		void SetFocusedImage (faw::string_t pStrImage);
 		faw::string_t GetDisabledImage ();
 		void SetDisabledImage (faw::string_t pStrImage);
-		void SetNativeBkColor (DWORD dwBkColor);
-		DWORD GetNativeBkColor () const;
 
 		void SetPos (RECT rc);
 		void SetVisible (bool bVisible = true);
@@ -73,7 +71,6 @@ namespace DuiLib {
 		faw::string_t m_sHotImage;
 		faw::string_t m_sFocusedImage;
 		faw::string_t m_sDisabledImage;
-		DWORD m_dwHotKeybkColor;
 
 	protected:
 		WORD m_wVirtualKeyCode;

@@ -9,7 +9,8 @@ namespace DuiLib {
 	class BindCtrlBase {
 		//friend class WindowImplBase;
 	public:
-		BindCtrlBase (faw::string_t ctrl_name): m_ctrl_name (ctrl_name) { /*s_bind_ctrls[m_ctrl_name.data ()] = this;*/ }
+		BindCtrlBase (CControlUI *_ctrl): m_ctrl (_ctrl) {}
+		BindCtrlBase (faw::string_t ctrl_name): m_ctrl_name (ctrl_name) {}
 		virtual ~BindCtrlBase () {}
 
 	protected:

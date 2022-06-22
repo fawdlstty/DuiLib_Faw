@@ -555,7 +555,7 @@ namespace DuiLib {
 
 	Gdiplus::Image* CRenderEngine::GdiplusLoadImage (faw::string_t pstrPath1) {
 		tagTDrawInfo drawInfo;
-		drawInfo.Parse (pstrPath1, NULL, NULL);
+		drawInfo.Parse (pstrPath1, _T (""), NULL);
 		faw::string_t sImageName = drawInfo.sImageName;
 
 		LPBYTE pData = nullptr;
