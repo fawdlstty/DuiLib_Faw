@@ -272,7 +272,7 @@ namespace DuiLib {
 		}
 		if (m_bIsImageMode) {
 			RECT rcPaint = { 0, 0, nShadWndWid, nShadWndHei };
-			const TImageInfo* data = m_pManager->GetImageEx (m_sShadowImage, nullptr, 0);
+			const TImageInfo* data = m_pManager->GetImageEx (m_sShadowImage, _T (""), 0);
 			if (!data) return;
 			RECT rcBmpPart = { 0 };
 			rcBmpPart.right = data->nX;

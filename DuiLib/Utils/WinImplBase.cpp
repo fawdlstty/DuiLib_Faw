@@ -37,7 +37,7 @@ namespace DuiLib {
 	}
 
 	faw::string_t WindowImplBase::QueryControlText (faw::string_t lpstrId, faw::string_t lpstrType) {
-		return nullptr;
+		return _T ("");
 	}
 
 	std::optional<LRESULT> WindowImplBase::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM /*lParam*/) {

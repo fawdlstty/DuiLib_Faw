@@ -181,7 +181,7 @@ namespace DuiLib {
 		for (int i = 0; i < m_mTextResourceHashMap.GetSize (); i++) {
 			faw::string_t lpstrId = m_mTextResourceHashMap.GetAt (i)->Key;
 			if (lpstrId.empty ()) continue;
-			faw::string_t lpstrText = m_pQuerypInterface->QueryControlText (lpstrId, nullptr);
+			faw::string_t lpstrText = m_pQuerypInterface->QueryControlText (lpstrId, _T (""));
 			if (!lpstrText.empty ()) {
 				faw::string_t *lpStr = static_cast<faw::string_t*> (m_mTextResourceHashMap.Find (lpstrId));
 				*lpStr = lpstrText;

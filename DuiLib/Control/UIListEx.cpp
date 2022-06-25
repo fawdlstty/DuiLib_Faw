@@ -1113,7 +1113,7 @@ namespace DuiLib {
 
 				if ((m_uCheckBoxState & UISTATE_SELECTED) != 0) {
 					if (!m_sCheckBoxSelectedImage.empty ()) {
-						if (!DrawCheckBoxImage (hDC, m_sCheckBoxSelectedImage, nullptr, rcCheckBox)) {
+						if (!DrawCheckBoxImage (hDC, m_sCheckBoxSelectedImage, _T (""), rcCheckBox)) {
 						} else goto Label_ForeImage;
 					}
 				}
@@ -1125,34 +1125,34 @@ namespace DuiLib {
 
 				if ((m_uCheckBoxState & UISTATE_DISABLED) != 0) {
 					if (!m_sCheckBoxDisabledImage.empty ()) {
-						if (!DrawCheckBoxImage (hDC, m_sCheckBoxDisabledImage, nullptr, rcCheckBox)) {
+						if (!DrawCheckBoxImage (hDC, m_sCheckBoxDisabledImage, _T (""), rcCheckBox)) {
 						} else return;
 					}
 				} else if ((m_uCheckBoxState & UISTATE_PUSHED) != 0) {
 					if (!m_sCheckBoxPushedImage.empty ()) {
-						if (!DrawCheckBoxImage (hDC, m_sCheckBoxPushedImage, nullptr, rcCheckBox)) {
+						if (!DrawCheckBoxImage (hDC, m_sCheckBoxPushedImage, _T (""), rcCheckBox)) {
 						} else return;
 					}
 				} else if ((m_uCheckBoxState & UISTATE_HOT) != 0) {
 					if (!m_sCheckBoxHotImage.empty ()) {
-						if (!DrawCheckBoxImage (hDC, m_sCheckBoxHotImage, nullptr, rcCheckBox)) {
+						if (!DrawCheckBoxImage (hDC, m_sCheckBoxHotImage, _T (""), rcCheckBox)) {
 						} else return;
 					}
 				} else if ((m_uCheckBoxState & UISTATE_FOCUSED) != 0) {
 					if (!m_sCheckBoxFocusedImage.empty ()) {
-						if (!DrawCheckBoxImage (hDC, m_sCheckBoxFocusedImage, nullptr, rcCheckBox)) {
+						if (!DrawCheckBoxImage (hDC, m_sCheckBoxFocusedImage, _T (""), rcCheckBox)) {
 						} else return;
 					}
 				}
 
 				if (!m_sCheckBoxNormalImage.empty ()) {
-					if (!DrawCheckBoxImage (hDC, m_sCheckBoxNormalImage, nullptr, rcCheckBox)) {
+					if (!DrawCheckBoxImage (hDC, m_sCheckBoxNormalImage, _T (""), rcCheckBox)) {
 					} else return;
 				}
 
 			Label_ForeImage:
 				if (!m_sCheckBoxForeImage.empty ()) {
-					if (!DrawCheckBoxImage (hDC, m_sCheckBoxForeImage, nullptr, rcCheckBox)) {
+					if (!DrawCheckBoxImage (hDC, m_sCheckBoxForeImage, _T (""), rcCheckBox)) {
 					}
 				}
 			}

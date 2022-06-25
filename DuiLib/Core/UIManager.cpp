@@ -3104,7 +3104,7 @@ namespace DuiLib {
 							pNewData = CRenderEngine::LoadImage (iIndex, data->sResType.c_str (), data->dwMask);
 						}
 					} else {
-						pNewData = CRenderEngine::LoadImage (bitmap, nullptr, data->dwMask);
+						pNewData = CRenderEngine::LoadImage (bitmap, _T (""), data->dwMask);
 					}
 					if (!pNewData) continue;
 
@@ -3144,7 +3144,7 @@ namespace DuiLib {
 							pNewData = CRenderEngine::LoadImage (iIndex, data->sResType.c_str (), data->dwMask);
 						}
 					} else {
-						pNewData = CRenderEngine::LoadImage (bitmap, nullptr, data->dwMask);
+						pNewData = CRenderEngine::LoadImage (bitmap, _T (""), data->dwMask);
 					}
 
 					CRenderEngine::FreeImage (data, false);
