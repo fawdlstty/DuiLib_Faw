@@ -167,6 +167,7 @@ namespace DuiLib {
 		}
 		if (event.Type == UIEVENT_MOUSEMOVE) {
 			if ((m_uButtonState & UISTATE_CAPTURED) != 0) {
+				int nOldValue = m_nValue;
 				if (m_bHorizontal) {
 					if (event.ptMouse.x >= m_rcItem.right - m_szThumb.cx / 2) m_nValue = m_nMax;
 					else if (event.ptMouse.x <= m_rcItem.left + m_szThumb.cx / 2) m_nValue = m_nMin;
@@ -176,7 +177,7 @@ namespace DuiLib {
 					else if (event.ptMouse.y <= m_rcItem.top + m_szThumb.cy / 2) m_nValue = m_nMax;
 					else m_nValue = m_nMin + (m_nMax - m_nMin) * (m_rcItem.bottom - event.ptMouse.y - m_szThumb.cy / 2) / (m_rcItem.bottom - m_rcItem.top - m_szThumb.cy);
 				}
-				if (m_bSendMove) {
+				if (m_bSendMove && m_nValue != nOldValue) {
 					UpdateText ();
 					m_pManager->SendNotify (this, DUI_MSGTYPE_VALUECHANGED_MOVE);
 				}
