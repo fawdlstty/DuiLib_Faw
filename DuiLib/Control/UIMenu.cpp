@@ -289,6 +289,12 @@ namespace DuiLib {
 			m_pLayout->SetManager (&m_pm, nullptr, true);
 			faw::string_t pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("Menu"));
 			if (!pDefaultAttributes.empty ()) {
+				m_pLayout->GetManager ()->AddDefaultAttributeList (_T ("Menu"), pDefaultAttributes);
+				m_pLayout->ApplyAttributeList (pDefaultAttributes);
+			}
+			pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("ExplandIcon"));
+			if (!pDefaultAttributes.empty ()) {
+				m_pLayout->GetManager ()->AddDefaultAttributeList (_T ("ExplandIcon"), pDefaultAttributes);
 				m_pLayout->ApplyAttributeList (pDefaultAttributes);
 			}
 			m_pLayout->GetList ()->SetAutoDestroy (false);

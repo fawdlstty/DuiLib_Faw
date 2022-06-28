@@ -1404,7 +1404,11 @@ namespace DuiLib {
 
 	void CRenderEngine::DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, faw::string_t pstrText, DWORD dwTextColor, int iFont, UINT uStyle) {
 		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
-		if (pstrText.empty () || !pManager) return;
+		if (pstrText.empty () || !pManager) {
+			rc.right = rc.left + 1;
+			rc.bottom = rc.top + 1;
+			return;
+		}
 
 		if (pManager->IsLayered () || pManager->IsUseGdiplusText ()) {
 			HFONT hOldFont = (HFONT)::SelectObject (hDC, pManager->GetFont (iFont));
