@@ -929,7 +929,7 @@ namespace DuiLib {
 						if (m_bLayered && m_bLayeredChanged) {
 							Invalidate ();
 							SetPainting (false);
-							return lRes;
+							//return lRes;
 						}
 						// 更新阴影窗口显示
 						m_shadow.Update (m_hWndPaint);
