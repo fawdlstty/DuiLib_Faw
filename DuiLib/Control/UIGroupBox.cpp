@@ -55,13 +55,13 @@ namespace DuiLib {
 		if (sText.empty ()) return;
 
 		RECT rcText = m_rcItem;
-		::InflateRect (&rcText, -5, -5);
-		SIZE szAvailable = { rcText.right - rcText.left, rcText.bottom - rcText.top };
-		SIZE sz = CalcrectSize (szAvailable);
+		SIZE szAvailable = { m_rcItem.right - m_rcItem.left - 10 , m_rcItem.bottom - m_rcItem.top - 10 };
+		SIZE sz = CalcrectSize(szAvailable);
+		::InflateRect(&rcText, -sz.cy / 2, -sz.cy / 2);
 
 		//计算文字区域
 		rcText.left = rcText.left + 15;
-		rcText.top = rcText.top - 5;
+		rcText.top = rcText.top - sz.cy / 2;
 		rcText.right = rcText.left + sz.cx;
 		rcText.bottom = rcText.top + sz.cy;
 
