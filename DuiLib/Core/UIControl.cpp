@@ -922,12 +922,15 @@ namespace DuiLib {
 
 	bool CControlUI::DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl) {
 		// 绘制循序：背景颜色->背景图->状态图->文本->边框
+		int nBorderSize = { 0 };
 		SIZE cxyBorderRound = { 0 };
 		RECT rcBorderSize = { 0 };
 		if (m_pManager) {
+			nBorderSize = GetManager()->GetDPIObj()->Scale(m_nBorderSize);
 			cxyBorderRound = GetManager ()->GetDPIObj ()->Scale (m_cxyBorderRound);
 			rcBorderSize = GetManager ()->GetDPIObj ()->Scale (m_rcBorderSize);
 		} else {
+			nBorderSize = m_nBorderSize;
 			cxyBorderRound = m_cxyBorderRound;
 			rcBorderSize = m_rcBorderSize;
 		}
@@ -935,7 +938,14 @@ namespace DuiLib {
 		if (cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0) {
 			CRenderClip roundClip;
 			CRenderClip::GenerateRoundClip (hDC, m_rcPaint, m_rcItem, cxyBorderRound.cx, cxyBorderRound.cy, roundClip);
-			PaintBkColor (hDC);
+			if (m_dwBackColor2 != 0) {   //渐变色采用原方案,单一色采用GDI+绘制
+				PaintBkColor(hDC);
+			}
+			else {
+				auto dwBackColor = Gdiplus::Color(GetAdjustColor(m_dwBackColor));
+				auto dwBorderColor = GetAdjustColor((IsFocused() && m_dwFocusBorderColor != 0) ? m_dwFocusBorderColor : m_dwBorderColor);
+				CRenderEngine::DrawRoundRectangle(hDC, m_rcItem.left, m_rcItem.top, m_rcItem.right - m_rcItem.left - 1, m_rcItem.bottom - m_rcItem.top - 1, cxyBorderRound.cx, nBorderSize, dwBorderColor, true, dwBackColor);
+			}
 			PaintBkImage (hDC);
 			PaintStatusImage (hDC);
 			PaintForeColor (hDC);
@@ -968,8 +978,9 @@ namespace DuiLib {
 				} else {
 					CRenderEngine::DrawGradient (hDC, m_rcItem, GetAdjustColor (m_dwBackColor), GetAdjustColor (m_dwBackColor2), bVer, 16);
 				}
-			} else if (m_dwBackColor >= 0xFF000000) CRenderEngine::DrawColor (hDC, m_rcPaint, GetAdjustColor (m_dwBackColor));
-			else CRenderEngine::DrawColor (hDC, m_rcItem, GetAdjustColor (m_dwBackColor));
+			} 
+			//else if (m_dwBackColor >= 0xFF000000) CRenderEngine::DrawColor (hDC, m_rcPaint, GetAdjustColor (m_dwBackColor));
+			//else CRenderEngine::DrawColor (hDC, m_rcItem, GetAdjustColor (m_dwBackColor));
 		}
 	}
 
