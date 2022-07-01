@@ -63,7 +63,7 @@ namespace DuiLib {
 		// 以下函数中的颜色参数alpha值无效
 		static void DrawLine (HDC hDC, const RECT& rc, int nSize, DWORD dwPenColor, int nStyle = PS_SOLID);
 		static void DrawRect (HDC hDC, const RECT& rc, int nSize, DWORD dwPenColor, int nStyle = PS_SOLID);
-		static void DrawRoundRectangle(HDC hDC, float x, float y, float width, float height, float arcSize, float lineWidth, Gdiplus::Color lineColor, bool fillPath, Gdiplus::Color fillColor);
+		static void DrawRoundRectangle(HDC hDC, float x, float y, float width, float height, float arcSize, float lineWidth, Gdiplus::Color lineColor, bool fillPath, DWORD fillColor);
 		static void DrawRoundRect (HDC hDC, const RECT& rc, int width, int height, int nSize, DWORD dwPenColor, int nStyle = PS_SOLID);
 		static void DrawText (HDC hDC, CPaintManagerUI* pManager, RECT& rc, faw::string_t pstrText, \
 			DWORD dwTextColor, int iFont, UINT uStyle);

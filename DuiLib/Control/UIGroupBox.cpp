@@ -127,9 +127,6 @@ namespace DuiLib {
 		// 绘图路径
 		Gdiplus::GraphicsPath roundRectPath;
 
-		// 保存绘图路径
-		if (arcSize < 15)
-			roundRectPath.AddLine(x + arcSize, y, x + 15, y);  // 顶部横线文字左侧
 		roundRectPath.AddLine(x + 15 + (rcItemText.right - rcItemText.left), y, x + width - arcSize, y);  // 顶部横线文字右侧
 		roundRectPath.AddArc(x + width - arcDiameter, y, arcDiameter, arcDiameter, 270, 90); // 右上圆角
 
@@ -141,6 +138,8 @@ namespace DuiLib {
 
 		roundRectPath.AddLine(x, y + height - arcSize, x, y + arcSize);  // 左侧竖线
 		roundRectPath.AddArc(x, y, arcDiameter, arcDiameter, 180, 90); // 左上圆角
+		if (arcSize < 15)
+			roundRectPath.AddLine(x + arcSize, y,x + 15 , y);  // 顶部横线文字左侧
 
 		//创建画笔
 		Gdiplus::Pen pen(Gdiplus::Color(GetAdjustColor(m_dwBorderColor)), m_nBorderSize);
