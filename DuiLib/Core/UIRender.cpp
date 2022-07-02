@@ -1346,7 +1346,7 @@ namespace DuiLib {
 	}
 
 	// 绘制及填充圆角矩形
-	void DrawRoundRectangle (HDC hDC, float x, float y, float width, float height, float arcSize, float lineWidth, Gdiplus::Color lineColor, bool fillPath, Gdiplus::Color fillColor) {
+	void CRenderEngine::DrawRoundRectangle(HDC hDC, float x, float y, float width, float height, float arcSize, float lineWidth, Gdiplus::Color lineColor, bool fillPath, DWORD fillColor) {
 		float arcDiameter = arcSize * 2;
 		// 创建GDI+对象
 		Gdiplus::Graphics  g (hDC);
@@ -1369,16 +1369,16 @@ namespace DuiLib {
 		roundRectPath.AddLine(x, y + height - arcSize, x, y + arcSize);  // 左侧竖线
 		roundRectPath.AddArc(x, y, arcDiameter, arcDiameter, 180, 90); // 左上圆角
 
-		//创建画笔
-		Gdiplus::Pen pen (lineColor, lineWidth);
-		// 绘制矩形
-		g.DrawPath (&pen, &roundRectPath);
+		if (lineWidth > 0)
+		{
+			//创建画笔
+			Gdiplus::Pen pen (lineColor, lineWidth);
+			// 绘制矩形
+			g.DrawPath (&pen, &roundRectPath);
+		}
 
 		// 是否填充
-		if(fillPath) {
-			if(fillColor.GetAlpha() == 0) {
-				fillColor = lineColor; // 若未指定填充色，则用线条色填充
-			}
+		if(fillPath && fillColor > 0) {
 
 			// 创建画刷
 			Gdiplus::SolidBrush brush (fillColor);
@@ -1390,15 +1390,15 @@ namespace DuiLib {
 
 	void CRenderEngine::DrawRoundRect (HDC hDC, const RECT& rc, int nSize, int width, int height, DWORD dwPenColor, int nStyle /*= PS_SOLID*/) {
 //#ifdef USE_GDI_RENDER
-		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
-		HPEN hPen = ::CreatePen (nStyle, nSize, RGB (GetBValue (dwPenColor), GetGValue (dwPenColor), GetRValue (dwPenColor)));
-		HPEN hOldPen = (HPEN)::SelectObject (hDC, hPen);
-		::SelectObject (hDC, ::GetStockObject (HOLLOW_BRUSH));
-		::RoundRect (hDC, rc.left, rc.top, rc.right, rc.bottom, width, height);
-		::SelectObject (hDC, hOldPen);
-		::DeleteObject (hPen);
+//		ASSERT (::GetObjectType (hDC) == OBJ_DC || ::GetObjectType (hDC) == OBJ_MEMDC);
+//		HPEN hPen = ::CreatePen (nStyle, nSize, RGB (GetBValue (dwPenColor), GetGValue (dwPenColor), GetRValue (dwPenColor)));
+//		HPEN hOldPen = (HPEN)::SelectObject (hDC, hPen);
+//		::SelectObject (hDC, ::GetStockObject (HOLLOW_BRUSH));
+//		::RoundRect (hDC, rc.left, rc.top, rc.right, rc.bottom, width, height);
+//		::SelectObject (hDC, hOldPen);
+//		::DeleteObject (hPen);
 //#else
-//		DrawRoundRectangle (hDC, rc.left, rc.top, rc.right - rc.left - 1, rc.bottom - rc.top - 1, width, Gdiplus::Color (dwPenColor), nSize, false, Gdiplus::Color (dwPenColor));
+		CRenderEngine::DrawRoundRectangle (hDC, rc.left, rc.top, rc.right - rc.left - 1, rc.bottom - rc.top - 1, width, nSize, Gdiplus::Color (dwPenColor),  false, dwPenColor);
 //#endif
 	}
 

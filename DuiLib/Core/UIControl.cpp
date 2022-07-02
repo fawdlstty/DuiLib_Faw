@@ -935,7 +935,7 @@ namespace DuiLib {
 		if (cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0) {
 			CRenderClip roundClip;
 			CRenderClip::GenerateRoundClip (hDC, m_rcPaint, m_rcItem, cxyBorderRound.cx, cxyBorderRound.cy, roundClip);
-			PaintBkColor (hDC);
+			PaintBkColor(hDC);
 			PaintBkImage (hDC);
 			PaintStatusImage (hDC);
 			PaintForeColor (hDC);
@@ -968,8 +968,23 @@ namespace DuiLib {
 				} else {
 					CRenderEngine::DrawGradient (hDC, m_rcItem, GetAdjustColor (m_dwBackColor), GetAdjustColor (m_dwBackColor2), bVer, 16);
 				}
-			} else if (m_dwBackColor >= 0xFF000000) CRenderEngine::DrawColor (hDC, m_rcPaint, GetAdjustColor (m_dwBackColor));
-			else CRenderEngine::DrawColor (hDC, m_rcItem, GetAdjustColor (m_dwBackColor));
+			} 
+			else {
+				int nBorderSize = { 0 };
+				SIZE cxyBorderRound = { 0 };
+				if (m_pManager != 0) {
+					nBorderSize = GetManager()->GetDPIObj()->Scale(m_nBorderSize);
+					cxyBorderRound = GetManager()->GetDPIObj()->Scale(m_cxyBorderRound);
+				}
+				else {
+					nBorderSize = m_nBorderSize;
+					cxyBorderRound = m_cxyBorderRound;
+				}
+				const auto dwBackColor = m_dwBackColor;
+				const auto dwBorderColor = GetAdjustColor((IsFocused() && m_dwFocusBorderColor != 0) ? m_dwFocusBorderColor : m_dwBorderColor);
+				const auto rcItem = m_rcItem;
+				CRenderEngine::DrawRoundRectangle(hDC, rcItem.left, rcItem.top, rcItem.right - rcItem.left - 1, rcItem.bottom - rcItem.top - 1, cxyBorderRound.cx, 0, dwBorderColor, true, dwBackColor);
+			}
 		}
 	}
 

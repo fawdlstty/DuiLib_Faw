@@ -23,6 +23,7 @@ namespace DuiLib {
 		//Paint
 		virtual void PaintText (HDC hDC);
 		virtual void PaintBorder (HDC hDC);
+		void PaintGroupBorder(HDC hDC, float x, float y, float width, float height, float arcSize, float lineWidth, Gdiplus::Color lineColor, RECT rcItemText, Gdiplus::Color fillColor);
 		virtual void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
 	private:

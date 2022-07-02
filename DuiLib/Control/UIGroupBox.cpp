@@ -55,13 +55,13 @@ namespace DuiLib {
 		if (sText.empty ()) return;
 
 		RECT rcText = m_rcItem;
-		::InflateRect (&rcText, -5, -5);
-		SIZE szAvailable = { rcText.right - rcText.left, rcText.bottom - rcText.top };
-		SIZE sz = CalcrectSize (szAvailable);
+		SIZE szAvailable = { m_rcItem.right - m_rcItem.left - 10 , m_rcItem.bottom - m_rcItem.top - 10 };
+		SIZE sz = CalcrectSize(szAvailable);
+		::InflateRect(&rcText, -sz.cy / 2, -sz.cy / 2);
 
 		//计算文字区域
 		rcText.left = rcText.left + 15;
-		rcText.top = rcText.top - 5;
+		rcText.top = rcText.top - sz.cy / 2;
 		rcText.right = rcText.left + sz.cx;
 		rcText.bottom = rcText.top + sz.cy;
 
@@ -84,27 +84,9 @@ namespace DuiLib {
 		}
 
 		if (nBorderSize > 0) {
-			//RECT rcItem = m_rcItem;
-			//rcItem.Deflate (5, 5);
-
-			//if (cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0) {//画圆角边框
-			//	if (IsFocused () && m_dwFocusBorderColor != 0)
-			//		CRenderEngine::DrawRoundRect (hDC, rcItem, nBorderSize, cxyBorderRound.cx, cxyBorderRound.cy, GetAdjustColor (m_dwFocusBorderColor));
-			//	else
-			//		CRenderEngine::DrawRoundRect (hDC, rcItem, nBorderSize, cxyBorderRound.cx, cxyBorderRound.cy, GetAdjustColor (m_dwBorderColor));
-			//} else {
-			//	if (IsFocused () && m_dwFocusBorderColor != 0)
-			//		CRenderEngine::DrawRect (hDC, rcItem, nBorderSize, GetAdjustColor (m_dwFocusBorderColor));
-			//	else
-			//		CRenderEngine::DrawRect (hDC, rcItem, nBorderSize, GetAdjustColor (m_dwBorderColor));
-			//}
 			Gdiplus::Bitmap gb (m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top, PixelFormat32bppARGB);
 			Gdiplus::Graphics gg (&gb);
 			RECT rcItem = m_rcItem;
-			rcItem.right -= rcItem.left;
-			rcItem.bottom -= rcItem.top;
-			rcItem.left = rcItem.top = 0;
-			::InflateRect (&rcItem, -5, -5);
 			DWORD dwColor = GetAdjustColor ((IsFocused () && m_dwFocusBorderColor != 0) ? m_dwFocusBorderColor : m_dwBorderColor);
 			HDC gghdc = gg.GetHDC ();
 			if (cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0) {
@@ -114,22 +96,55 @@ namespace DuiLib {
 			}
 			gg.ReleaseHDC (gghdc);
 
+			// 可用空间
+			SIZE szAvailable = { m_rcItem.right - m_rcItem.left - 10, m_rcItem.bottom - m_rcItem.top - 10 };
+			// 文字大小
+			SIZE sz = CalcrectSize(szAvailable);
+			// 边框大小,边框缩放到文字腰部
+			::InflateRect(&rcItem, -sz.cy / 2, -sz.cy / 2);
+			// 文字位置,边框原点左移15,再上移使边框到其腰部
+			RECT rcItemText = rcItem;
+			rcItemText.left = rcItemText.left + 15;
+			rcItemText.top = rcItemText.top - sz.cy / 2;
+			rcItemText.right = rcItemText.left + sz.cx;
+			rcItemText.bottom = rcItemText.top + sz.cy;
 			// 清除文字位置的边框
-			SIZE szAvailable = { rcItem.right - rcItem.left, rcItem.bottom - rcItem.top };
-			SIZE sz = CalcrectSize (szAvailable);
-			rcItem.left = rcItem.left + 15;
-			rcItem.top = rcItem.top - 5;
-			rcItem.right = rcItem.left + sz.cx;
-			rcItem.bottom = rcItem.top + sz.cy;
-			Gdiplus::Color trans_c ((Gdiplus::ARGB) 0);
-			for (int i = rcItem.left; i <= rcItem.right; ++i)
-				for (int j = rcItem.top; j <= rcItem.bottom; ++j)
-					gb.SetPixel (i, j, trans_c);
-			Gdiplus::Graphics gx (hDC);
-			gx.DrawImage (&gb, Gdiplus::Rect (m_rcItem.left, m_rcItem.top, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top), 0, 0, gb.GetWidth (), gb.GetHeight (), Gdiplus::UnitPixel);
+			PaintGroupBorder(hDC, rcItem.left, rcItem.top, rcItem.right - rcItem.left - 1, rcItem.bottom - rcItem.top - 1, cxyBorderRound.cx, nBorderSize,
+				Gdiplus::Color(GetAdjustColor(m_dwFocusBorderColor)), rcItemText, Gdiplus::Color(GetAdjustColor(m_dwBackColor)));
 		}
 
 		PaintText (hDC);
+	}
+
+	void CGroupBoxUI::PaintGroupBorder(HDC hDC, float x, float y, float width, float height, float arcSize, float lineWidth, Gdiplus::Color lineColor, RECT rcItemText, Gdiplus::Color fillColor)
+	{
+		float arcDiameter = arcSize * 2;
+		// 创建GDI+对象
+		Gdiplus::Graphics  g(hDC);
+		//设置画图时的滤波模式为消除锯齿现象
+		g.SetSmoothingMode(Gdiplus::SmoothingModeHighQuality);
+
+		// 绘图路径
+		Gdiplus::GraphicsPath roundRectPath;
+
+		roundRectPath.AddLine(x + 15 + (rcItemText.right - rcItemText.left), y, x + width - arcSize, y);  // 顶部横线文字右侧
+		roundRectPath.AddArc(x + width - arcDiameter, y, arcDiameter, arcDiameter, 270, 90); // 右上圆角
+
+		roundRectPath.AddLine(x + width, y + arcSize, x + width, y + height - arcSize);  // 右侧竖线
+		roundRectPath.AddArc(x + width - arcDiameter, y + height - arcDiameter, arcDiameter, arcDiameter, 0, 90); // 右下圆角
+
+		roundRectPath.AddLine(x + width - arcSize, y + height, x + arcSize, y + height);  // 底部横线
+		roundRectPath.AddArc(x, y + height - arcDiameter, arcDiameter, arcDiameter, 90, 90); // 左下圆角
+
+		roundRectPath.AddLine(x, y + height - arcSize, x, y + arcSize);  // 左侧竖线
+		roundRectPath.AddArc(x, y, arcDiameter, arcDiameter, 180, 90); // 左上圆角
+		if (arcSize < 15)
+			roundRectPath.AddLine(x + arcSize, y,x + 15 , y);  // 顶部横线文字左侧
+
+		//创建画笔
+		Gdiplus::Pen pen(Gdiplus::Color(GetAdjustColor(m_dwBorderColor)), m_nBorderSize);
+		// 绘制矩形
+		g.DrawPath(&pen, &roundRectPath);
 	}
 
 	SIZE CGroupBoxUI::CalcrectSize (SIZE szAvailable) {
