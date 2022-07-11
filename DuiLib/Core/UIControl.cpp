@@ -922,19 +922,26 @@ namespace DuiLib {
 
 	bool CControlUI::DoPaint (HDC hDC, const RECT& rcPaint, CControlUI* pStopControl) {
 		// 绘制循序：背景颜色->背景图->状态图->文本->边框
+		int nBorderSize = { 0 };
 		SIZE cxyBorderRound = { 0 };
-		RECT rcBorderSize = { 0 };
-		if (m_pManager) {
-			cxyBorderRound = GetManager ()->GetDPIObj ()->Scale (m_cxyBorderRound);
-			rcBorderSize = GetManager ()->GetDPIObj ()->Scale (m_rcBorderSize);
-		} else {
+		RECT rcItem = { 0 };
+		RECT tempRCPaint = { 0 };
+		if (m_pManager != 0) {
+			nBorderSize = GetManager()->GetDPIObj()->Scale(m_nBorderSize);
+			cxyBorderRound = GetManager()->GetDPIObj()->Scale(m_cxyBorderRound);
+			rcItem = GetManager()->GetDPIObj()->Scale(m_rcItem);
+			tempRCPaint = GetManager()->GetDPIObj()->Scale(m_rcPaint);
+		}
+		else {
+			nBorderSize = m_nBorderSize;
 			cxyBorderRound = m_cxyBorderRound;
-			rcBorderSize = m_rcBorderSize;
+			rcItem = m_rcItem;
+			tempRCPaint = m_rcPaint;
 		}
 
 		if (cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0) {
 			CRenderClip roundClip;
-			CRenderClip::GenerateRoundClip (hDC, m_rcPaint, m_rcItem, cxyBorderRound.cx, cxyBorderRound.cy, roundClip);
+			CRenderClip::GenerateRoundClip (hDC, tempRCPaint, rcItem, cxyBorderRound.cx, cxyBorderRound.cy, roundClip);
 			PaintBkColor(hDC);
 			PaintBkImage (hDC);
 			PaintStatusImage (hDC);
@@ -954,36 +961,52 @@ namespace DuiLib {
 		return true;
 	}
 
-	void CControlUI::PaintBkColor (HDC hDC) {
+	void CControlUI::PaintBkColor(HDC hDC) {
 		if (m_dwBackColor != 0) {
-			bool bVer = (!FawTools::is_equal_nocase (m_sGradient, _T ("hor")));
+			int nBorderSize = { 0 };
+			SIZE cxyBorderRound = { 0 };
+			RECT rcItem = { 0 };
+			RECT tempRCPaint = { 0 };
+			if (m_pManager != 0) {
+				nBorderSize = GetManager()->GetDPIObj()->Scale(m_nBorderSize);
+				cxyBorderRound = GetManager()->GetDPIObj()->Scale(m_cxyBorderRound);
+				rcItem = GetManager()->GetDPIObj()->Scale(m_rcItem);
+				tempRCPaint = GetManager()->GetDPIObj()->Scale(m_rcPaint);
+			}
+			else {
+				nBorderSize = m_nBorderSize;
+				cxyBorderRound = m_cxyBorderRound;
+				rcItem = m_rcItem;
+				tempRCPaint = m_rcPaint;
+			}
+			bool bVer = (!FawTools::is_equal_nocase(m_sGradient, _T("hor")));
 			if (m_dwBackColor2 != 0) {
 				if (m_dwBackColor3 != 0) {
-					RECT rc = m_rcItem;
-					rc.bottom = (rc.bottom + rc.top) / 2;
-					CRenderEngine::DrawGradient (hDC, rc, GetAdjustColor (m_dwBackColor), GetAdjustColor (m_dwBackColor2), bVer, 8);
-					rc.top = rc.bottom;
-					rc.bottom = m_rcItem.bottom;
-					CRenderEngine::DrawGradient (hDC, rc, GetAdjustColor (m_dwBackColor2), GetAdjustColor (m_dwBackColor3), bVer, 8);
-				} else {
-					CRenderEngine::DrawGradient (hDC, m_rcItem, GetAdjustColor (m_dwBackColor), GetAdjustColor (m_dwBackColor2), bVer, 16);
-				}
-			} 
-			else {
-				int nBorderSize = { 0 };
-				SIZE cxyBorderRound = { 0 };
-				if (m_pManager != 0) {
-					nBorderSize = GetManager()->GetDPIObj()->Scale(m_nBorderSize);
-					cxyBorderRound = GetManager()->GetDPIObj()->Scale(m_cxyBorderRound);
+					auto RealBottom = rcItem.bottom;
+					rcItem.bottom = (rcItem.bottom + rcItem.top) / 2;
+					CRenderEngine::DrawGradient(hDC, rcItem, GetAdjustColor(m_dwBackColor), GetAdjustColor(m_dwBackColor2), bVer, 8);
+					rcItem.top = rcItem.bottom;
+					rcItem.bottom = RealBottom;
+					CRenderEngine::DrawGradient(hDC, rcItem, GetAdjustColor(m_dwBackColor2), GetAdjustColor(m_dwBackColor3), bVer, 8);
 				}
 				else {
-					nBorderSize = m_nBorderSize;
-					cxyBorderRound = m_cxyBorderRound;
+					CRenderEngine::DrawGradient(hDC, rcItem, GetAdjustColor(m_dwBackColor), GetAdjustColor(m_dwBackColor2), bVer, 16);
 				}
-				const auto dwBackColor = m_dwBackColor;
-				const auto dwBorderColor = GetAdjustColor((IsFocused() && m_dwFocusBorderColor != 0) ? m_dwFocusBorderColor : m_dwBorderColor);
-				const auto rcItem = m_rcItem;
-				CRenderEngine::DrawRoundRectangle(hDC, rcItem.left, rcItem.top, rcItem.right - rcItem.left - 1, rcItem.bottom - rcItem.top - 1, cxyBorderRound.cx, 0, dwBorderColor, true, dwBackColor);
+			}
+			else {
+				// 矩形很窄,不必再考虑圆角边框,直接 DrawColor
+				if (rcItem.right - rcItem.left <= 4 || rcItem.bottom - rcItem.top <= 4)
+				{
+					if (m_dwBackColor >= 0xFF000000) CRenderEngine::DrawColor(hDC, tempRCPaint, GetAdjustColor(m_dwBackColor));
+					else CRenderEngine::DrawColor(hDC, rcItem, GetAdjustColor(m_dwBackColor));
+				}
+				else
+				{
+					const auto dwBackColor = GetAdjustColor(m_dwBackColor);
+					const auto dwBorderColor = GetAdjustColor((IsFocused() && m_dwFocusBorderColor != 0) ? m_dwFocusBorderColor : m_dwBorderColor);
+					//此函数用于画矩形,高度为1的线是画不出来的
+					CRenderEngine::DrawRoundRectangle(hDC, rcItem.left, rcItem.top, rcItem.right - rcItem.left - 1, rcItem.bottom - rcItem.top - 1, cxyBorderRound.cx, 0, dwBorderColor, true, dwBackColor);
+				}
 			}
 		}
 	}
@@ -999,7 +1022,13 @@ namespace DuiLib {
 	}
 
 	void CControlUI::PaintForeColor (HDC hDC) {
-		CRenderEngine::DrawColor (hDC, m_rcItem, GetAdjustColor (m_dwForeColor));
+		RECT rcItem = { 0 };
+		if (m_pManager != 0) 
+			rcItem = GetManager()->GetDPIObj()->Scale(m_rcItem);
+		else
+			rcItem = m_rcItem;
+
+		CRenderEngine::DrawColor (hDC, rcItem, GetAdjustColor (m_dwForeColor));
 	}
 
 	void CControlUI::PaintForeImage (HDC hDC) {
@@ -1015,53 +1044,59 @@ namespace DuiLib {
 		int nBorderSize;
 		SIZE cxyBorderRound = { 0 };
 		RECT rcBorderSize = { 0 };
+		RECT rcItem = { 0 };
+		RECT tempRCPaint = { 0 };
 		if (m_pManager) {
 			nBorderSize = GetManager ()->GetDPIObj ()->Scale (m_nBorderSize);
 			cxyBorderRound = GetManager ()->GetDPIObj ()->Scale (m_cxyBorderRound);
 			rcBorderSize = GetManager ()->GetDPIObj ()->Scale (m_rcBorderSize);
+			rcItem = GetManager()->GetDPIObj()->Scale(m_rcItem);
+			tempRCPaint = GetManager()->GetDPIObj()->Scale(m_rcPaint);
 		} else {
 			nBorderSize = m_nBorderSize;
 			cxyBorderRound = m_cxyBorderRound;
 			rcBorderSize = m_rcBorderSize;
+			rcItem = GetManager()->GetDPIObj()->Scale(m_rcItem);
+			tempRCPaint = GetManager()->GetDPIObj()->Scale(m_rcPaint);
 		}
 
 		if (m_dwBorderColor != 0 || m_dwFocusBorderColor != 0) {
 			//画圆角边框
 			if (nBorderSize > 0 && (cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0)) {
 				if (IsFocused () && m_dwFocusBorderColor != 0)
-					CRenderEngine::DrawRoundRect (hDC, m_rcItem, nBorderSize, cxyBorderRound.cx, cxyBorderRound.cy, GetAdjustColor (m_dwFocusBorderColor), m_nBorderStyle);
+					CRenderEngine::DrawRoundRect (hDC, rcItem, nBorderSize, cxyBorderRound.cx, cxyBorderRound.cy, GetAdjustColor (m_dwFocusBorderColor), m_nBorderStyle);
 				else
-					CRenderEngine::DrawRoundRect (hDC, m_rcItem, nBorderSize, cxyBorderRound.cx, cxyBorderRound.cy, GetAdjustColor (m_dwBorderColor), m_nBorderStyle);
+					CRenderEngine::DrawRoundRect (hDC, rcItem, nBorderSize, cxyBorderRound.cx, cxyBorderRound.cy, GetAdjustColor (m_dwBorderColor), m_nBorderStyle);
 			} else {
 				if (IsFocused () && m_dwFocusBorderColor != 0 && nBorderSize > 0) {
-					CRenderEngine::DrawRect (hDC, m_rcItem, nBorderSize, GetAdjustColor (m_dwFocusBorderColor), m_nBorderStyle);
+					CRenderEngine::DrawRect (hDC, rcItem, nBorderSize, GetAdjustColor (m_dwFocusBorderColor), m_nBorderStyle);
 				} else if (rcBorderSize.left > 0 || rcBorderSize.top > 0 || rcBorderSize.right > 0 || rcBorderSize.bottom > 0) {
 					RECT rcBorder = { 0 };
 
 					if (rcBorderSize.left > 0) {
-						rcBorder = m_rcItem;
+						rcBorder = rcItem;
 						rcBorder.right = rcBorder.left;
 						CRenderEngine::DrawLine (hDC, rcBorder, rcBorderSize.left, GetAdjustColor (m_dwBorderColor), m_nBorderStyle);
 					}
 					if (rcBorderSize.top > 0) {
-						rcBorder = m_rcItem;
+						rcBorder = rcItem;
 						rcBorder.bottom = rcBorder.top;
 						CRenderEngine::DrawLine (hDC, rcBorder, rcBorderSize.top, GetAdjustColor (m_dwBorderColor), m_nBorderStyle);
 					}
 					if (rcBorderSize.right > 0) {
-						rcBorder = m_rcItem;
+						rcBorder = rcItem;
 						rcBorder.right -= 1;
 						rcBorder.left = rcBorder.right;
 						CRenderEngine::DrawLine (hDC, rcBorder, rcBorderSize.right, GetAdjustColor (m_dwBorderColor), m_nBorderStyle);
 					}
 					if (rcBorderSize.bottom > 0) {
-						rcBorder = m_rcItem;
+						rcBorder = rcItem;
 						rcBorder.bottom -= 1;
 						rcBorder.top = rcBorder.bottom;
 						CRenderEngine::DrawLine (hDC, rcBorder, rcBorderSize.bottom, GetAdjustColor (m_dwBorderColor), m_nBorderStyle);
 					}
 				} else if (nBorderSize > 0) {
-					CRenderEngine::DrawRect (hDC, m_rcItem, nBorderSize, GetAdjustColor (m_dwBorderColor), m_nBorderStyle);
+					CRenderEngine::DrawRect (hDC, rcItem, nBorderSize, GetAdjustColor (m_dwBorderColor), m_nBorderStyle);
 				}
 			}
 		}
