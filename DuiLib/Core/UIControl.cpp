@@ -726,7 +726,7 @@ namespace DuiLib {
 	}
 
 	void CControlUI::AddCustomAttribute (faw::string_t pstrName, faw::string_t pstrAttr) {
-		m_mCustomAttrs[pstrName.data ()] = pstrAttr;
+		m_mCustomAttrs[pstrName] = pstrAttr;
 	}
 
 	faw::string_t CControlUI::GetCustomAttribute (faw::string_t pstrName) {
@@ -734,7 +734,7 @@ namespace DuiLib {
 	}
 
 	bool CControlUI::RemoveCustomAttribute (faw::string_t pstrName) {
-		m_mCustomAttrs.erase (pstrName.data ());
+		m_mCustomAttrs.erase (pstrName);
 		return true;
 	}
 
