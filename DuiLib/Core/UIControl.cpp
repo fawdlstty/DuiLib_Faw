@@ -994,8 +994,8 @@ namespace DuiLib {
 				}
 			}
 			else {
-				// 矩形很窄,不必再考虑圆角边框,直接 DrawColor
-				if (rcItem.right - rcItem.left <= 4 || rcItem.bottom - rcItem.top <= 4)
+				// 矩形很窄,不必再考虑圆角边框,直接 DrawColor, 或者矩形无圆角,直接 DrawColor  
+				if (rcItem.right - rcItem.left <= 4 || rcItem.bottom - rcItem.top <= 4 || (cxyBorderRound.cx == 0 && cxyBorderRound.cy == 0))
 				{
 					if (m_dwBackColor >= 0xFF000000) CRenderEngine::DrawColor(hDC, tempRCPaint, GetAdjustColor(m_dwBackColor));
 					else CRenderEngine::DrawColor(hDC, rcItem, GetAdjustColor(m_dwBackColor));
