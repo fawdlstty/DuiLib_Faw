@@ -1755,7 +1755,7 @@ namespace DuiLib {
 		// Go ahead...
 		m_bUpdateNeeded = true;
 		m_bFirstLayout = true;
-		m_bFocusNeeded = true;
+		m_bFocusNeeded = false;
 		// Initiate all control
 		return InitControls (pControl);
 	}
