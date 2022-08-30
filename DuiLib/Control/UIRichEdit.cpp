@@ -2265,6 +2265,8 @@ namespace DuiLib {
 				if (!GetManager ()->IsNoActivate ()) ::SetFocus (GetManager ()->GetPaintWindow ());
 				SetFocus ();
 			}
+			if (uMsg == WM_RBUTTONUP || uMsg == WM_NCRBUTTONUP)
+				return std::nullopt;
 		}
 #ifdef _UNICODE
 		else if (uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST) {
