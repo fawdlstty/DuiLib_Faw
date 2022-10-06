@@ -321,6 +321,21 @@ namespace DuiLib {
 		::SendMessage (m_hWnd, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
 	}
 
+	void CWindowWnd::SetIcon(faw::string_t strIconPath)
+	{
+		HICON hIcon = (HICON)LoadImage(NULL, strIconPath.c_str(), IMAGE_ICON,
+			(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// 防止高DPI下图标模糊
+			LR_DEFAULTSIZE | LR_LOADFROMFILE);
+		ASSERT(hIcon);
+		::SendMessage(m_hWnd, WM_SETICON, (WPARAM)TRUE, (LPARAM)hIcon);
+
+		hIcon = (HICON)LoadImage(NULL, strIconPath.c_str(), IMAGE_ICON,
+			(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// 防止高DPI下图标模糊
+			LR_DEFAULTSIZE | LR_LOADFROMFILE);
+		ASSERT(hIcon);
+		::SendMessage(m_hWnd, WM_SETICON, (WPARAM)FALSE, (LPARAM)hIcon);
+	}
+
 	bool CWindowWnd::RegisterWindowClass () {
 		WNDCLASS wc = { 0 };
 		wc.style = GetClassStyle ();
