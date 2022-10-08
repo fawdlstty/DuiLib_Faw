@@ -14,7 +14,7 @@ namespace DuiLib {
 
 	LPVOID CButtonUI::GetInterface (faw::string_t pstrName) {
 		if (pstrName == DUI_CTRL_BUTTON) return static_cast<CButtonUI*>(this);
-		return CLabelUI::GetInterface (pstrName.data ());
+		return CLabelUI::GetInterface (pstrName);
 	}
 
 	UINT CButtonUI::GetControlFlags () const {

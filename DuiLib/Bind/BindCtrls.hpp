@@ -15,7 +15,7 @@ namespace DuiLib {
 			return static_cast<C##CTRL_TYPE##UI*> (m_ctrl);																		\
 		}																														\
 		C##CTRL_TYPE##UI *operator-> () { return operator* (); }																\
-		operator bool () noexcept {																								\
+		operator bool () {																										\
 			if (m_ctrl)																											\
 				return true;																									\
 			if (!m_pm)																											\
