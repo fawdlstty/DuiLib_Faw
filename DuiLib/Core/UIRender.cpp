@@ -654,6 +654,121 @@ namespace DuiLib {
 		return pImg;
 	}
 
+	HICON CRenderEngine::GdiplusLoadIcon(LPVOID pBuf, size_t dwSize) {
+		HGLOBAL hMem = ::GlobalAlloc(GMEM_FIXED, dwSize);
+		BYTE* pMem = (BYTE*)::GlobalLock(hMem);
+		HICON hIcon = NULL;
+		Gdiplus::Status stat = Gdiplus::Ok;
+		memcpy(pMem, pBuf, dwSize);
+		IStream* pStm = nullptr;
+		::CreateStreamOnHGlobal(hMem, TRUE, &pStm);
+		Gdiplus::Bitmap* pBmp = Gdiplus::Bitmap::FromStream(pStm);
+		if (!pBmp || pBmp->GetLastStatus() != Gdiplus::Ok) {
+			if (pBmp != NULL)
+			{
+				delete pBmp;
+				pBmp = NULL;
+			}
+			::GlobalUnlock(hMem);
+			return 0;
+		}
+		stat = pBmp->GetHICON(&hIcon);
+		if (pBmp != NULL)
+		{
+			delete pBmp;
+			pBmp = NULL;
+		}
+		return hIcon;
+	}
+
+	HICON CRenderEngine::GdiplusLoadIcon(faw::string_t pstrPath1) {
+		tagTDrawInfo drawInfo;
+		drawInfo.Parse(pstrPath1, _T(""), NULL);
+		faw::string_t sImageName = drawInfo.sImageName;
+
+		LPBYTE pData = nullptr;
+		DWORD dwSize = 0;
+
+		do {
+			faw::string_t sFile = CPaintManagerUI::GetResourcePath();
+			if (CPaintManagerUI::GetResourceZip().empty()) {
+				sFile += sImageName;
+				HANDLE hFile = ::CreateFile(sFile.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+					FILE_ATTRIBUTE_NORMAL, nullptr);
+				if (hFile == INVALID_HANDLE_VALUE) break;
+				dwSize = ::GetFileSize(hFile, nullptr);
+				if (dwSize == 0) break;
+
+				DWORD dwRead = 0;
+				pData = new BYTE[dwSize];
+				::ReadFile(hFile, pData, dwSize, &dwRead, nullptr);
+				::CloseHandle(hFile);
+
+				if (dwRead != dwSize) {
+					delete[] pData;
+					pData = nullptr;
+					break;
+				}
+			}
+			else {
+				sFile += CPaintManagerUI::GetResourceZip();
+				HZIP hz = nullptr;
+				if (CPaintManagerUI::IsCachedResourceZip()) hz = (HZIP)CPaintManagerUI::GetResourceZipHandle();
+				else {
+					faw::string_t sFilePwd = CPaintManagerUI::GetResourceZipPwd();
+					std::string pwd = FawTools::T_to_gb18030(sFilePwd);
+					hz = OpenZip(sFile.c_str(), pwd.c_str());
+				}
+				if (!hz) break;
+				ZIPENTRY ze;
+				int i = 0;
+				faw::string_t key = sImageName;
+				FawTools::replace_self(key, _T("\\"), _T("/"));
+				if (FindZipItem(hz, key.c_str(), true, &i, &ze) != 0) break;
+				dwSize = ze.unc_size;
+				if (dwSize == 0) break;
+				pData = new BYTE[dwSize];
+				int res = UnzipItem(hz, i, pData, dwSize);
+				if (res != 0x00000000 && res != 0x00000600) {
+					delete[] pData;
+					pData = nullptr;
+					if (!CPaintManagerUI::IsCachedResourceZip()) CloseZip(hz);
+					break;
+				}
+				if (!CPaintManagerUI::IsCachedResourceZip()) CloseZip(hz);
+			}
+
+		} while (0);
+
+		while (!pData) {
+			//读不到图片, 则直接去读取bitmap.m_lpstr指向的路径
+			HANDLE hFile = ::CreateFile(sImageName.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+			if (hFile == INVALID_HANDLE_VALUE) break;
+			dwSize = ::GetFileSize(hFile, nullptr);
+			if (dwSize == 0) break;
+
+			DWORD dwRead = 0;
+			pData = new BYTE[dwSize];
+			::ReadFile(hFile, pData, dwSize, &dwRead, nullptr);
+			::CloseHandle(hFile);
+
+			if (dwRead != dwSize) {
+				delete[] pData;
+				pData = nullptr;
+			}
+			break;
+		}
+
+		HICON pICON = nullptr;
+		if (pData) {
+			pICON = GdiplusLoadIcon(pData, dwSize);
+			delete[] pData;
+			pData = nullptr;
+		}
+		return pICON;
+	}
+
+
 	void CRenderEngine::FreeImage (TImageInfo* bitmap, bool bDelete) {
 		if (!bitmap) return;
 		if (bitmap->hBitmap) {

@@ -323,17 +323,15 @@ namespace DuiLib {
 
 	void CWindowWnd::SetIcon(faw::string_t strIconPath)
 	{
-		HICON hIcon = (HICON)LoadImage(NULL, strIconPath.c_str(), IMAGE_ICON,
-			(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// 防止高DPI下图标模糊
-			LR_DEFAULTSIZE | LR_LOADFROMFILE);
-		ASSERT(hIcon);
-		::SendMessage(m_hWnd, WM_SETICON, (WPARAM)TRUE, (LPARAM)hIcon);
-
-		hIcon = (HICON)LoadImage(NULL, strIconPath.c_str(), IMAGE_ICON,
-			(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// 防止高DPI下图标模糊
-			LR_DEFAULTSIZE | LR_LOADFROMFILE);
-		ASSERT(hIcon);
-		::SendMessage(m_hWnd, WM_SETICON, (WPARAM)FALSE, (LPARAM)hIcon);
+		static HICON icon_handle = NULL;
+		if (icon_handle)
+			::DestroyIcon(icon_handle);
+		icon_handle = CRenderEngine::GdiplusLoadIcon(strIconPath);
+		if (icon_handle)
+		{
+			::SendMessage(m_hWnd, WM_SETICON, (WPARAM)TRUE, (LPARAM)icon_handle);
+			::SendMessage(m_hWnd, WM_SETICON, (WPARAM)FALSE, (LPARAM)icon_handle);
+		}
 	}
 
 	bool CWindowWnd::RegisterWindowClass () {
