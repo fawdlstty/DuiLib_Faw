@@ -96,6 +96,7 @@ namespace DuiLib {
 		HWND m_hWnd;
 		WNDPROC m_OldWndProc;
 		bool m_bSubclassed;
+		HICON m_hIcon;
 	};
 
 } // namespace DuiLib

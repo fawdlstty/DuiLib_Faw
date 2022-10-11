@@ -193,7 +193,7 @@ namespace DuiLib {
 
 	//////////////////////////////////////////////////////////////////////////
 	///
-	CWindowWnd::CWindowWnd (): m_hWnd (nullptr), m_OldWndProc (::DefWindowProc), m_bSubclassed (false) {}
+	CWindowWnd::CWindowWnd (): m_hWnd (nullptr), m_OldWndProc (::DefWindowProc), m_bSubclassed (false), m_hIcon(NULL) {}
 
 	HWND CWindowWnd::CreateDuiWindow (HWND hwndParent, faw::string_t pstrWindowName, DWORD dwStyle /*=0*/, DWORD dwExStyle /*=0*/) {
 		return Create (hwndParent, pstrWindowName, dwStyle, dwExStyle, 0, 0, 0, 0, nullptr);
@@ -323,14 +323,13 @@ namespace DuiLib {
 
 	void CWindowWnd::SetIcon(faw::string_t strIconPath)
 	{
-		static HICON icon_handle = NULL;
-		if (icon_handle)
-			::DestroyIcon(icon_handle);
-		icon_handle = CRenderEngine::GdiplusLoadIcon(strIconPath);
-		if (icon_handle)
+		if (m_hIcon)
+			::DestroyIcon(m_hIcon);
+		m_hIcon = CRenderEngine::GdiplusLoadIcon(strIconPath);
+		if (m_hIcon)
 		{
-			::SendMessage(m_hWnd, WM_SETICON, (WPARAM)TRUE, (LPARAM)icon_handle);
-			::SendMessage(m_hWnd, WM_SETICON, (WPARAM)FALSE, (LPARAM)icon_handle);
+			::SendMessage(m_hWnd, WM_SETICON, (WPARAM)TRUE, (LPARAM)m_hIcon);
+			::SendMessage(m_hWnd, WM_SETICON, (WPARAM)FALSE, (LPARAM)m_hIcon);
 		}
 	}
 
