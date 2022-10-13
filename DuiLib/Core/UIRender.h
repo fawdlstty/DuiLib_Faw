@@ -42,6 +42,8 @@ namespace DuiLib {
 
 		static Gdiplus::Image	*GdiplusLoadImage (faw::string_t pstrPath);
 		static Gdiplus::Image* GdiplusLoadImage (LPVOID pBuf, size_t dwSize);
+		static HICON GdiplusLoadIcon(LPVOID pBuf, size_t dwSize);
+		static HICON GdiplusLoadIcon(faw::string_t pstrPath1);
 
 		static bool DrawIconImageString (HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, \
 			faw::string_t pStrImage, faw::string_t pStrModify = _T (""));
