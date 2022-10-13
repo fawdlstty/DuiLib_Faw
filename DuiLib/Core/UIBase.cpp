@@ -321,15 +321,13 @@ namespace DuiLib {
 		::SendMessage (m_hWnd, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
 	}
 
-	void CWindowWnd::SetIcon(faw::string_t strIconPath)
-	{
+	void CWindowWnd::SetIcon (faw::string_t strIconPath) {
 		if (m_hIcon)
 			::DestroyIcon(m_hIcon);
 		m_hIcon = CRenderEngine::GdiplusLoadIcon(strIconPath);
-		if (m_hIcon)
-		{
-			::SendMessage(m_hWnd, WM_SETICON, (WPARAM)TRUE, (LPARAM)m_hIcon);
-			::SendMessage(m_hWnd, WM_SETICON, (WPARAM)FALSE, (LPARAM)m_hIcon);
+		if (m_hIcon) {
+			::SendMessage(m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)m_hIcon);
+			::SendMessage(m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)m_hIcon);
 		}
 	}
 
