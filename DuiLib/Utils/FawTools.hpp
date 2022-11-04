@@ -190,7 +190,7 @@ namespace DuiLib {
 			size_t pos = _str.find (_s1);
 			while (pos != faw::string_t::npos) {
 				_str.replace (pos, _s1.size (), _s2);
-				pos = _str.find (_s1, pos + 2);
+				pos = _str.find (_s1, pos + _s2.size ());
 			}
 		}
 
