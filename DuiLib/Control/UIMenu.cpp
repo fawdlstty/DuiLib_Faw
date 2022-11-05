@@ -232,11 +232,8 @@ namespace DuiLib {
 
 	void CMenuWnd::Notify (TNotifyUI& msg) {
 		if (CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()) {
-			if (msg.sType == _T ("click") || msg.sType == _T ("valuechanged")) {
-				CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()->SendNotify (msg, false);
-			}
+			CMenuWnd::GetGlobalContextMenuObserver ().GetManager ()->SendNotify (msg, false);
 		}
-
 	}
 
 	CControlUI* CMenuWnd::CreateControl (faw::string_t pstrClassName) {
