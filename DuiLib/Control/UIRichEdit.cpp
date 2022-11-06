@@ -1561,7 +1561,7 @@ namespace DuiLib {
 	HRESULT CRichEditUI::TxSendMessage (UINT msg, WPARAM wparam, LPARAM lparam, LRESULT *plresult) const {
 		if (m_pTwh) {
 			if (msg == WM_KEYDOWN && TCHAR (wparam) == VK_RETURN) {
-				if (!m_bWantReturn || (::GetKeyState (VK_CONTROL) < 0 && !m_bWantCtrlReturn)) {
+				if (m_bWantReturn || (::GetKeyState (VK_CONTROL) < 0 && m_bWantCtrlReturn)) {
 					if (m_pManager) m_pManager->SendNotify ((CControlUI*) this, DUI_MSGTYPE_RETURN);
 					return S_OK;
 				}

@@ -104,6 +104,8 @@ namespace DuiLib {
 					m_cxyFixedLast.cy = m_pManager->GetFontInfo (m_iFont)->tm.tmHeight + 8;
 					m_cxyFixedLast.cy += GetManager ()->GetDPIObj ()->Scale (m_rcTextPadding.top + m_rcTextPadding.bottom);
 				}
+				else
+					m_cxyFixedLast.cy = GetManager()->GetDPIObj()->Scale(m_cxyFixed.cy);
 				// 宽度
 				if (m_cxyFixedLast.cx == 0) {
 					if (m_bAutoCalcWidth) {
@@ -117,6 +119,8 @@ namespace DuiLib {
 						m_cxyFixedLast.cx = rcText.right - rcText.left + GetManager ()->GetDPIObj ()->Scale (m_rcTextPadding.left + m_rcTextPadding.right);
 					}
 				}
+				else
+					m_cxyFixedLast.cx = GetManager()->GetDPIObj()->Scale(m_cxyFixed.cx);
 			} else if (m_cxyFixedLast.cy == 0) {
 				if (m_bAutoCalcHeight) {
 					RECT rcText = { 0, 0, m_cxyFixedLast.cx, 9999 };

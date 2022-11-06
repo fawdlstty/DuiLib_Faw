@@ -42,8 +42,11 @@ namespace DuiLib {
 
 	std::optional<LRESULT> WindowImplBase::MessageHandler (UINT uMsg, WPARAM wParam, LPARAM /*lParam*/) {
 		if (uMsg == WM_KEYDOWN) {
+			auto pFocus = m_pm.GetFocus();
 			switch (wParam) {
 			case VK_RETURN:
+				if (pFocus && pFocus->IsVisible() && pFocus->IsEnabled() && pFocus->GetClass().find(_T("RichEdit")) != faw::string_t::npos)
+					if (dynamic_cast<CRichEditUI*>(pFocus)->IsWantReturn()) return std::nullopt;
 			case VK_ESCAPE:
 				return ResponseDefaultKeyEvent (wParam);
 			default:

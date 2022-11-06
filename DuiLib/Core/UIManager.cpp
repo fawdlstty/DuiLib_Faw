@@ -701,7 +701,7 @@ namespace DuiLib {
 		{
 			// Tabbing between controls
 			if (wParam == VK_TAB) {
-				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("RichEditUI")) != faw::string_t::npos) {
+				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("RichEdit")) != faw::string_t::npos) {
 					if (dynamic_cast<CRichEditUI*>(m_pFocus)->IsWantTab ()) return std::nullopt;
 				}
 				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("WkeWebkitUI")) != faw::string_t::npos) {
@@ -1977,7 +1977,7 @@ namespace DuiLib {
 		}
 		RebuildFont (&m_SharedResInfo.m_DefaultFontInfo);
 
-		CStdPtrArray *richEditList = FindSubControlsByClass (GetRoot (), _T ("RichEditUI"));
+		CStdPtrArray *richEditList = FindSubControlsByClass (GetRoot (), _T ("RichEdit"));
 		for (int i = 0; i < richEditList->GetSize (); i++) {
 			CRichEditUI* pT = static_cast<CRichEditUI*>((*richEditList)[i]);
 			pT->SetFont (pT->GetFont ());
