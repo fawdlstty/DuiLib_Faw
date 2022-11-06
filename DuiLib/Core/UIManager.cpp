@@ -699,10 +699,6 @@ namespace DuiLib {
 		switch (uMsg) {
 		case WM_KEYDOWN:
 		{
-			if (wParam == VK_RETURN) {
-				if (m_pFocus && m_pFocus->IsVisible() && m_pFocus->IsEnabled() && m_pFocus->GetClass().find(_T("RichEdit")) != faw::string_t::npos)
-					if (dynamic_cast<CRichEditUI*>(m_pFocus)->IsWantReturn()) return std::nullopt;
-			}
 			// Tabbing between controls
 			if (wParam == VK_TAB) {
 				if (m_pFocus && m_pFocus->IsVisible () && m_pFocus->IsEnabled () && m_pFocus->GetClass ().find (_T ("RichEdit")) != faw::string_t::npos) {
