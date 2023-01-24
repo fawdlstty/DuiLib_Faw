@@ -2691,6 +2691,7 @@ namespace DuiLib {
 		pCollection->GetFamilies(count, pFontFamily, &found);
 		if (found == 0) {
 			free(pFontFamily);
+			delete pCollection;
 			return;
 		}
 		// 获取字体名称
@@ -2698,15 +2699,16 @@ namespace DuiLib {
 		pFontFamily->GetFamilyName(fontFamilyName);
 		free(pFontFamily);
 
+#ifdef _UNICODE
 		if (!m_mGDIPlusFontCollection.Find(fontFamilyName))
-		{
 			m_mGDIPlusFontCollection.Set(fontFamilyName, pCollection);
-		}
+#else
+		auto FontFamilyName = FawTools::utf16_to_gb18030(fontFamilyName);
+		if (!m_mGDIPlusFontCollection.Find(FontFamilyName))
+			m_mGDIPlusFontCollection.Set(FontFamilyName, pCollection);
+#endif // _UNICODE
 		else
-		{
 			delete pCollection;
-			return;
-		}
 	}
 	HFONT CPaintManagerUI::GetFont (int id) {
 		if (id < 0) return GetDefaultFontInfo ()->hFont;
