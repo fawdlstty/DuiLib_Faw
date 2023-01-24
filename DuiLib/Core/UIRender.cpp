@@ -1528,7 +1528,13 @@ namespace DuiLib {
 		if (pManager->IsLayered () || pManager->IsUseGdiplusText ()) {
 			HFONT hOldFont = (HFONT)::SelectObject (hDC, pManager->GetFont (iFont));
 			Gdiplus::Graphics graphics (hDC);
-			Gdiplus::Font font (hDC, pManager->GetFont (iFont));
+			Gdiplus::Font* font = Gdiplus::Font(hDC, pManager->GetFont(iFont)).Clone();
+			if (font->GetLastStatus() != 0) 
+			{
+				delete font;
+				auto info = pManager->GetFontInfo(iFont);
+				font = pManager->GetResourceFont(info->sFontName, info->iSize, info->bBold, info->bUnderline, info->bItalic);
+			}
 			Gdiplus::TextRenderingHint trh = Gdiplus::TextRenderingHintSystemDefault;
 			switch (pManager->GetGdiplusTextRenderingHint ()) {
 			case 0: trh = Gdiplus::TextRenderingHintSystemDefault; break;
@@ -1583,12 +1589,12 @@ namespace DuiLib {
 			std::wstring pcwszDest = FawTools::T_to_utf16 (pstrText);
 			if ((uStyle & DT_CALCRECT) != 0) {
 				Gdiplus::RectF bounds;
-				graphics.MeasureString (pcwszDest.data (), -1, &font, rectF, &stringFormat, &bounds);
+				graphics.MeasureString (pcwszDest.data (), -1, font, rectF, &stringFormat, &bounds);
 				// MeasureString存在计算误差，这里加一像素
 				rc.bottom = rc.top + (long) bounds.Height + 1;
 				rc.right = rc.left + (long) bounds.Width + 1;
 			} else {
-				graphics.DrawString (pcwszDest.data (), -1, &font, rectF, &stringFormat, &brush);
+				graphics.DrawString (pcwszDest.data (), -1, font, rectF, &stringFormat, &brush);
 			}
 			::SelectObject (hDC, hOldFont);
 		} else {

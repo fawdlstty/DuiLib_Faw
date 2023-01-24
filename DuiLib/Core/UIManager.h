@@ -315,11 +315,13 @@ namespace DuiLib {
 		HFONT AddFont (int id, faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
 		HFONT GetFont (int id);
 		HFONT GetFont (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
+		Gdiplus::Font* GetResourceFont(faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
 		int GetFontIndex (HFONT hFont, bool bShared = false);
 		int GetFontIndex (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
 		void RemoveFont (HFONT hFont, bool bShared = false);
 		void RemoveFont (int id, bool bShared = false);
 		void RemoveAllFonts (bool bShared = false);
+		void RemoveResourceFontCollection();
 		TFontInfo* GetFontInfo (int id);
 		TFontInfo* GetFontInfo (HFONT hFont);
 
@@ -524,6 +526,7 @@ namespace DuiLib {
 		CStdStringPtrMap m_mNameHash;
 		CStdStringPtrMap m_mWindowCustomAttrHash;
 		CStdStringPtrMap m_mOptionGroup;
+		CStdStringPtrMap m_mGDIPlusFontCollection;
 
 		bool m_bForceUseSharedRes;
 		TResInfo m_ResInfo;
