@@ -1596,6 +1596,7 @@ namespace DuiLib {
 			} else {
 				graphics.DrawString (pcwszDest.data (), -1, font, rectF, &stringFormat, &brush);
 			}
+			delete font;
 			::SelectObject (hDC, hOldFont);
 		} else {
 			::SetBkMode (hDC, TRANSPARENT);
