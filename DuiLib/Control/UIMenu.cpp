@@ -263,7 +263,7 @@ namespace DuiLib {
 			// 内部创建的内部删除
 			delete this;
 		} else {
-			DestroyMenu ();
+			// DestroyMenu ();
 			// 外部创建的也删除
 			delete this;
 		}

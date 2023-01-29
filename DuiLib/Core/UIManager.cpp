@@ -258,6 +258,7 @@ namespace DuiLib {
 		RemoveAllOptionGroups ();
 		RemoveAllTimers ();
 		RemoveAllDrawInfos ();
+		RemoveResourceFontCollection ();
 
 		if (m_hwndTooltip) {
 			::DestroyWindow (m_hwndTooltip);
@@ -298,6 +299,7 @@ namespace DuiLib {
 		RemoveAllWindowCustomAttribute ();
 		RemoveAllOptionGroups ();
 		RemoveAllTimers ();
+		RemoveResourceFontCollection ();
 
 		m_sName.clear ();
 		if (!pstrName.empty ()) m_sName = pstrName;
@@ -2524,6 +2526,12 @@ namespace DuiLib {
 			if (EnumFontFamiliesEx (_dc, &_lf, (FONTENUMPROC) _enum_font_cb, 0, 0) == 10)
 				return _font;
 		}
+		//AddFontMemResourceEx添加的字体找不到,先创建看看,可以创建就可以用
+		if (_fonts.length () > 0) {
+			_tcsncpy (_lf.lfFaceName, _fonts.data (), lengthof (_lf.lfFaceName));
+			HFONT hFont = ::CreateFontIndirect (&_lf);
+			if (hFont) return _fonts;
+		}
 		return _T ("Microsoft YaHei");
 	}
 
@@ -2658,11 +2666,48 @@ namespace DuiLib {
 			}
 			break;
 		}
+		if (!pData || dwSize == 0) return;
+
 		DWORD nFonts;
+		//AddFontMemResourceEx 添加的字体始终是发出调用且不可枚举的进程专用的。
 		HANDLE hFont = ::AddFontMemResourceEx (pData, dwSize, nullptr, &nFonts);
+		m_aFonts.Add (hFont);
+
+		// 添加字体
+		Gdiplus::PrivateFontCollection* pCollection = new Gdiplus::PrivateFontCollection ();
+		pCollection->AddMemoryFont (pData, dwSize);
 		delete[] pData;
 		pData = nullptr;
-		m_aFonts.Add (hFont);
+
+		int count = pCollection->GetFamilyCount ();
+		if (count == 0) {
+			delete pCollection;
+			return;
+		}
+
+		int found = 0;
+		Gdiplus::FontFamily* pFontFamily = (Gdiplus::FontFamily*) malloc (count * sizeof (Gdiplus::FontFamily));
+		pCollection->GetFamilies (count, pFontFamily, &found);
+		if (found == 0) {
+			free (pFontFamily);
+			delete pCollection;
+			return;
+		}
+		// 获取字体名称
+		WCHAR  fontFamilyName[MAX_PATH] = { 0 };
+		pFontFamily->GetFamilyName (fontFamilyName);
+		free (pFontFamily);
+
+#ifdef _UNICODE
+		if (!m_mGDIPlusFontCollection.Find (fontFamilyName))
+			m_mGDIPlusFontCollection.Set (fontFamilyName, pCollection);
+#else
+		auto FontFamilyName = FawTools::utf16_to_gb18030 (fontFamilyName);
+		if (!m_mGDIPlusFontCollection.Find (FontFamilyName))
+			m_mGDIPlusFontCollection.Set (FontFamilyName, pCollection);
+#endif // _UNICODE
+		else
+			delete pCollection;
 	}
 	HFONT CPaintManagerUI::GetFont (int id) {
 		if (id < 0) return GetDefaultFontInfo ()->hFont;
@@ -2698,6 +2743,31 @@ namespace DuiLib {
 		}
 
 		return nullptr;
+	}
+
+	Gdiplus::Font* CPaintManagerUI::GetResourceFont (faw::string_t pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic)
+	{
+		auto pCollection = (Gdiplus::PrivateFontCollection*) m_mGDIPlusFontCollection.Find (pStrFontName);
+		if (pCollection) {
+			Gdiplus::FontFamily fontFamily;
+			int nNumFound = 0;
+			pCollection->GetFamilies (1, &fontFamily, &nNumFound);
+
+			if (nNumFound > 0) {
+				int fontStyle = Gdiplus::FontStyle::FontStyleRegular;
+				if (bBold && bItalic)
+					fontStyle = Gdiplus::FontStyle::FontStyleBoldItalic;
+				else if (bBold)
+					fontStyle = Gdiplus::FontStyle::FontStyleBold;
+				else if (bUnderline)
+					fontStyle = Gdiplus::FontStyle::FontStyleUnderline;
+				else if (bItalic)
+					fontStyle = Gdiplus::FontStyle::FontStyleItalic;
+				Gdiplus::Font* font = Gdiplus::Font (&fontFamily, nSize, fontStyle, Gdiplus::Unit::UnitPixel).Clone ();
+				return font;
+			}
+		}
+		return Gdiplus::Font (GetDC (NULL), GetFont (-1)).Clone ();
 	}
 
 	int CPaintManagerUI::GetFontIndex (HFONT hFont, bool bShared) {
@@ -2831,6 +2901,19 @@ namespace DuiLib {
 			}
 			m_ResInfo.m_CustomFonts.RemoveAll ();
 		}
+	}
+
+	void CPaintManagerUI::RemoveResourceFontCollection ()
+	{
+		for (int i = 0; i < m_mGDIPlusFontCollection.GetSize (); i++) {
+			faw::string_t key = m_mGDIPlusFontCollection.GetAt (i)->Key;
+			if (!key.empty ()) {
+				auto FontCollection = static_cast<Gdiplus::PrivateFontCollection*> (m_mGDIPlusFontCollection.Find (key, false));
+				if (FontCollection)
+					delete FontCollection;
+			}
+		}
+		m_mGDIPlusFontCollection.RemoveAll ();
 	}
 
 	TFontInfo* CPaintManagerUI::GetFontInfo (int id) {
