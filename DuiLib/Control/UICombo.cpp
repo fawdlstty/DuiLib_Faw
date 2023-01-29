@@ -58,9 +58,9 @@ namespace DuiLib {
 		RECT rcInset = m_pOwner->GetDropBoxInset ();
 		RECT rcOwner = pOwner->GetPos ();
 		RECT rc = rcOwner;
-		auto Scale = pOwner->GetManager()->GetDPIObj()->GetScale();
+		auto Scale = pOwner->GetManager ()->GetDPIObj ()->GetScale ();
 		if (Scale > 100)
-			rc.right = rc.left + pOwner->GetWidth() * 100 / Scale;
+			rc.right = rc.left + pOwner->GetWidth () * 100 / Scale;
 		rc.top = rc.bottom;		// 父窗口left、bottom位置作为弹出窗口起点
 		rc.bottom = rc.top + szDrop.cy;	// 计算弹出窗口高度
 		if (szDrop.cx > 0) rc.right = rc.left + szDrop.cx;	// 计算弹出窗口宽度
@@ -158,12 +158,12 @@ namespace DuiLib {
 			m_pm.AttachDialog (m_pLayout);
 			m_pm.AddNotifier (this);
 			//默认字体为shared,在主窗体已经DPI调整,此处需要还原
-			m_pm.SetDPI(CDPI::GetMainMonitorDPI());
-			auto scale = m_pm.GetDPIObj()->GetScale();
+			m_pm.SetDPI (CDPI::GetMainMonitorDPI ());
+			auto scale = m_pm.GetDPIObj ()->GetScale ();
 			if (scale > 100)
 			{
-				auto fontinfo = m_pm.GetDefaultFontInfo();
-				m_pm.SetDefaultFont(fontinfo->sFontName, (int)(fontinfo->iSize * 100.0 / scale), fontinfo->bBold, fontinfo->bUnderline, fontinfo->bItalic, false);
+				auto fontinfo = m_pm.GetDefaultFontInfo ();
+				m_pm.SetDefaultFont (fontinfo->sFontName, (int) (fontinfo->iSize * 100.0 / scale), fontinfo->bBold, fontinfo->bUnderline, fontinfo->bItalic, false);
 			}
 			return 0;
 		} else if (uMsg == WM_CLOSE) {

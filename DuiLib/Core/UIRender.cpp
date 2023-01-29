@@ -1528,12 +1528,12 @@ namespace DuiLib {
 		if (pManager->IsLayered () || pManager->IsUseGdiplusText ()) {
 			HFONT hOldFont = (HFONT)::SelectObject (hDC, pManager->GetFont (iFont));
 			Gdiplus::Graphics graphics (hDC);
-			Gdiplus::Font* font = Gdiplus::Font(hDC, pManager->GetFont(iFont)).Clone();
-			if (font->GetLastStatus() != 0) 
+			Gdiplus::Font* font = Gdiplus::Font (hDC, pManager->GetFont (iFont)).Clone ();
+			if (font->GetLastStatus () != 0) 
 			{
 				delete font;
-				auto info = pManager->GetFontInfo(iFont);
-				font = pManager->GetResourceFont(info->sFontName, info->iSize, info->bBold, info->bUnderline, info->bItalic);
+				auto info = pManager->GetFontInfo (iFont);
+				font = pManager->GetResourceFont (info->sFontName, info->iSize, info->bBold, info->bUnderline, info->bItalic);
 			}
 			Gdiplus::TextRenderingHint trh = Gdiplus::TextRenderingHintSystemDefault;
 			switch (pManager->GetGdiplusTextRenderingHint ()) {

@@ -321,7 +321,7 @@ namespace DuiLib {
 		void RemoveFont (HFONT hFont, bool bShared = false);
 		void RemoveFont (int id, bool bShared = false);
 		void RemoveAllFonts (bool bShared = false);
-		void RemoveResourceFontCollection();
+		void RemoveResourceFontCollection ();
 		TFontInfo* GetFontInfo (int id);
 		TFontInfo* GetFontInfo (HFONT hFont);
 
