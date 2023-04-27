@@ -96,6 +96,11 @@ namespace DuiLib {
 			faw::string_t sText = GetText ();
 			m_bNeedEstimateSize = false;
 			m_szAvailableLast = szAvailable;
+			if (sText.empty())
+			{
+				m_cxyFixedLast = szAvailable;
+				return m_cxyFixedLast;
+			}
 			m_cxyFixedLast = m_cxyFixed;
 			// 自动计算宽度
 			if ((m_uTextStyle & DT_SINGLELINE) != 0) {
@@ -134,6 +139,9 @@ namespace DuiLib {
 					}
 					m_cxyFixedLast.cy = rcText.bottom - rcText.top + GetManager ()->GetDPIObj ()->Scale (m_rcTextPadding.top + m_rcTextPadding.bottom);
 				}
+				else
+					m_cxyFixedLast.cy = GetManager()->GetDPIObj()->Scale(m_cxyFixed.cy);
+
 			}
 		}
 		return m_cxyFixedLast;
