@@ -41,7 +41,7 @@ namespace DuiLib {
 		virtual void LoadGifImage () {
 			faw::string_t sImag = m_pOwer->GetBkImage ();
 			m_bLoadImg = true;
-			m_pGifImage = CRenderEngine::LoadGifImageX (std::variant<UINT, faw::string_t> (sImag), 0, 0);
+			m_pGifImage = CRenderEngine::LoadGifImageX (std::variant<UINT, faw::string_t> (sImag));
 			if (!m_pGifImage) return;
 			m_nFrameCount = m_pGifImage->GetNumFrames ();
 			m_nFramePosition = 0;
