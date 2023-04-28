@@ -430,26 +430,26 @@ namespace DuiLib {
 		return data;
 	}
 #ifdef USE_XIMAGE_EFFECT
-	static DWORD LoadImage2Memory(const std::variant<UINT, faw::string_t>& bitmap, faw::string_t type, LPBYTE& pData) {
-		assert(!pData);
+	static DWORD LoadImage2Memory (const std::variant<UINT, faw::string_t> &bitmap, faw::string_t type, LPBYTE &pData) {
+		assert (!pData);
 		pData = nullptr;
-		DWORD dwSize(0U);
+		DWORD dwSize (0U);
 		do {
 			if (type.empty()) {
-				faw::string_t sFile = CPaintManagerUI::GetResourcePath();
-				if (CPaintManagerUI::GetResourceZip().empty()) {
+				faw::string_t sFile = CPaintManagerUI::GetResourcePath ();
+				if (CPaintManagerUI::GetResourceZip ().empty ()) {
 					sFile += std::get<1>(bitmap).c_str();
-					HANDLE hFile = ::CreateFile(sFile.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+					HANDLE hFile = ::CreateFile (sFile.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
 						FILE_ATTRIBUTE_NORMAL, nullptr);
 					if (hFile == INVALID_HANDLE_VALUE) break;
-					dwSize = ::GetFileSize(hFile, nullptr);
+					dwSize = ::GetFileSize (hFile, nullptr);
 					if (dwSize == 0) break;
 
 					DWORD dwRead = 0;
 					pData = new BYTE[dwSize + 1];
-					memset(pData, 0, dwSize + 1);
-					::ReadFile(hFile, pData, dwSize, &dwRead, nullptr);
-					::CloseHandle(hFile);
+					memset (pData, 0, dwSize + 1);
+					::ReadFile (hFile, pData, dwSize, &dwRead, nullptr);
+					::CloseHandle (hFile);
 
 					if (dwRead != dwSize) {
 						delete[] pData;
@@ -457,20 +457,19 @@ namespace DuiLib {
 						dwSize = 0U;
 						break;
 					}
-				}
-				else {
-					sFile += CPaintManagerUI::GetResourceZip();
+				} else {
+					sFile += CPaintManagerUI::GetResourceZip ();
 					HZIP hz = nullptr;
-					if (CPaintManagerUI::IsCachedResourceZip())
-						hz = (HZIP)CPaintManagerUI::GetResourceZipHandle();
+					if (CPaintManagerUI::IsCachedResourceZip ())
+						hz = (HZIP) CPaintManagerUI::GetResourceZipHandle ();
 					else {
-						faw::string_t sFilePwd = CPaintManagerUI::GetResourceZipPwd();
+						faw::string_t sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
 #ifdef UNICODE
 						char* pwd = FawTools::utf16_to_gb18030((wchar_t*)sFilePwd.c_str()).data();
 						hz = OpenZip(sFile.c_str(), pwd);
 						if (pwd) delete[] pwd;
 #else
-						hz = OpenZip((void*)sFile, sFilePwd);
+						hz = OpenZip(sFile.c_str(), sFilePwd.c_str());
 #endif
 					}
 					if (!hz) break;
@@ -478,53 +477,52 @@ namespace DuiLib {
 					int i = 0;
 					faw::string_t key = std::get<1>(bitmap).c_str();
 					FawTools::replace_self(key, _T("\\"), _T("/"));
-					if (FindZipItem(hz, key.c_str(), true, &i, &ze) != 0) break;
+					if (FindZipItem (hz, key.c_str(), true, &i, &ze) != 0) break;
 					dwSize = ze.unc_size;
 					if (dwSize == 0) break;
 					pData = new BYTE[dwSize];
-					int res = UnzipItem(hz, i, pData, dwSize);
+					int res = UnzipItem (hz, i, pData, dwSize);
 					if (res != 0x00000000 && res != 0x00000600) {
 						delete[] pData;
 						pData = nullptr;
 						dwSize = 0U;
-						if (!CPaintManagerUI::IsCachedResourceZip())
-							CloseZip(hz);
+						if (!CPaintManagerUI::IsCachedResourceZip ())
+							CloseZip (hz);
 						break;
 					}
-					if (!CPaintManagerUI::IsCachedResourceZip())
-						CloseZip(hz);
+					if (!CPaintManagerUI::IsCachedResourceZip ())
+						CloseZip (hz);
 				}
-			}
-			else {
-				HINSTANCE hDll = CPaintManagerUI::GetResourceDll();
-				HRSRC hResource = ::FindResource(hDll, std::get<1>(bitmap).c_str(), type.c_str());
+			} else {
+				HINSTANCE hDll = CPaintManagerUI::GetResourceDll ();
+				HRSRC hResource = ::FindResource (hDll, std::get<1>(bitmap).c_str(), type.c_str());
 				if (!hResource) break;
-				HGLOBAL hGlobal = ::LoadResource(hDll, hResource);
+				HGLOBAL hGlobal = ::LoadResource (hDll, hResource);
 				if (!hGlobal) {
-					FreeResource(hResource);
+					FreeResource (hResource);
 					break;
 				}
 
-				dwSize = ::SizeofResource(hDll, hResource);
+				dwSize = ::SizeofResource (hDll, hResource);
 				if (dwSize == 0) break;
 				pData = new BYTE[dwSize];
-				::CopyMemory(pData, (LPBYTE)::LockResource(hGlobal), dwSize);
-				::FreeResource(hResource);
+				::CopyMemory (pData, (LPBYTE)::LockResource (hGlobal), dwSize);
+				::FreeResource (hResource);
 			}
 		} while (0);
 
 		while (!pData) {
 			//读不到图片, 则直接去读取bitmap.m_lpstr指向的路径
-			HANDLE hFile = ::CreateFile(std::get<1>(bitmap).c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+			HANDLE hFile = ::CreateFile (std::get<1>(bitmap).c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
 				FILE_ATTRIBUTE_NORMAL, nullptr);
 			if (hFile == INVALID_HANDLE_VALUE) break;
-			dwSize = ::GetFileSize(hFile, nullptr);
+			dwSize = ::GetFileSize (hFile, nullptr);
 			if (dwSize == 0) break;
 
 			DWORD dwRead = 0;
 			pData = new BYTE[dwSize];
-			::ReadFile(hFile, pData, dwSize, &dwRead, nullptr);
-			::CloseHandle(hFile);
+			::ReadFile (hFile, pData, dwSize, &dwRead, nullptr);
+			::CloseHandle (hFile);
 
 			if (dwRead != dwSize) {
 				delete[] pData;
@@ -535,16 +533,16 @@ namespace DuiLib {
 		}
 		return dwSize;
 	}
-	CxImage* CRenderEngine::LoadGifImageX(std::variant<UINT, faw::string_t> bitmap, faw::string_t type, DWORD mask) {
+	CxImage* CRenderEngine::LoadGifImageX (std::variant<UINT, faw::string_t> bitmap, faw::string_t type, DWORD mask) {
 		//write by wangji
 		LPBYTE pData = nullptr;
-		DWORD dwSize = LoadImage2Memory(bitmap, type, pData);
+		DWORD dwSize = LoadImage2Memory (bitmap, type, pData);
 		if (dwSize == 0U || !pData)
 			return nullptr;
-		CxImage* pImg = nullptr;
-		if (pImg = new CxImage()) {
-			pImg->SetRetreiveAllFrames(TRUE);
-			if (!pImg->Decode(pData, dwSize, CXIMAGE_FORMAT_GIF)) {
+		CxImage * pImg = nullptr;
+		if (pImg = new CxImage ()) {
+			pImg->SetRetreiveAllFrames (TRUE);
+			if (!pImg->Decode (pData, dwSize, CXIMAGE_FORMAT_GIF)) {
 				delete pImg;
 				pImg = nullptr;
 			}
