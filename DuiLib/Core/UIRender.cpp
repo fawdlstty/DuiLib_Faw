@@ -495,7 +495,7 @@ namespace DuiLib {
 				}
 			} else {
 				HINSTANCE hDll = CPaintManagerUI::GetResourceDll ();
-				HRSRC hResource = ::FindResource (hDll, std::get<1>(bitmap).c_str(), type.c_str());
+				HRSRC hResource = ::FindResource (hDll, MAKEINTRESOURCE(std::get<0>(bitmap)), type.c_str());
 				if (!hResource) break;
 				HGLOBAL hGlobal = ::LoadResource (hDll, hResource);
 				if (!hGlobal) {
