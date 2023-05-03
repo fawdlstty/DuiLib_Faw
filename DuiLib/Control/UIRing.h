@@ -4,7 +4,7 @@
 #pragma once
 
 namespace DuiLib {
-	class CRingUI: public CLabelUI {
+	class UILIB_API CRingUI: public CLabelUI {
 		enum {
 			RING_TIMERID = 100,
 		};

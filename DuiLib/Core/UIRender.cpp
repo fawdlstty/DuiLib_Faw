@@ -435,11 +435,11 @@ namespace DuiLib {
 		pData = nullptr;
 		DWORD dwSize (0U);
 		do {
-			if (!type) {
+			if (type.empty()) {
 				faw::string_t sFile = CPaintManagerUI::GetResourcePath ();
 				if (CPaintManagerUI::GetResourceZip ().empty ()) {
-					sFile += bitmap.m_lpstr;
-					HANDLE hFile = ::CreateFile (sFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+					sFile += std::get<1>(bitmap).c_str();
+					HANDLE hFile = ::CreateFile (sFile.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
 						FILE_ATTRIBUTE_NORMAL, nullptr);
 					if (hFile == INVALID_HANDLE_VALUE) break;
 					dwSize = ::GetFileSize (hFile, nullptr);
@@ -465,23 +465,23 @@ namespace DuiLib {
 					else {
 						faw::string_t sFilePwd = CPaintManagerUI::GetResourceZipPwd ();
 #ifdef UNICODE
-						char* pwd = w2a ((wchar_t*) sFilePwd);
-						hz = OpenZip ((void*) sFile, pwd);
+						char* pwd = FawTools::utf16_to_gb18030((wchar_t*)sFilePwd.c_str()).data();
+						hz = OpenZip(sFile.c_str(), pwd);
 						if (pwd) delete[] pwd;
 #else
-						hz = OpenZip ((void*) sFile, sFilePwd);
+						hz = OpenZip(sFile.c_str(), sFilePwd.c_str());
 #endif
 					}
 					if (!hz) break;
 					ZIPENTRY ze;
 					int i = 0;
-					faw::string_t key = bitmap.m_lpstr;
-					key.replace_self (_T ("\\"), _T ("/"));
-					if (FindZipItem (hz, key, true, &i, &ze) != 0) break;
+					faw::string_t key = std::get<1>(bitmap).c_str();
+					FawTools::replace_self(key, _T("\\"), _T("/"));
+					if (FindZipItem (hz, key.c_str(), true, &i, &ze) != 0) break;
 					dwSize = ze.unc_size;
 					if (dwSize == 0) break;
 					pData = new BYTE[dwSize];
-					int res = UnzipItem (hz, i, pData, dwSize, 3);
+					int res = UnzipItem (hz, i, pData, dwSize);
 					if (res != 0x00000000 && res != 0x00000600) {
 						delete[] pData;
 						pData = nullptr;
@@ -495,7 +495,7 @@ namespace DuiLib {
 				}
 			} else {
 				HINSTANCE hDll = CPaintManagerUI::GetResourceDll ();
-				HRSRC hResource = ::FindResource (hDll, bitmap.m_lpstr, type);
+				HRSRC hResource = ::FindResource (hDll, MAKEINTRESOURCE(std::get<0>(bitmap)), type.c_str());
 				if (!hResource) break;
 				HGLOBAL hGlobal = ::LoadResource (hDll, hResource);
 				if (!hGlobal) {
@@ -513,7 +513,7 @@ namespace DuiLib {
 
 		while (!pData) {
 			//读不到图片, 则直接去读取bitmap.m_lpstr指向的路径
-			HANDLE hFile = ::CreateFile (bitmap.m_lpstr, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
+			HANDLE hFile = ::CreateFile (std::get<1>(bitmap).c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, \
 				FILE_ATTRIBUTE_NORMAL, nullptr);
 			if (hFile == INVALID_HANDLE_VALUE) break;
 			dwSize = ::GetFileSize (hFile, nullptr);
@@ -544,7 +544,7 @@ namespace DuiLib {
 			pImg->SetRetreiveAllFrames (TRUE);
 			if (!pImg->Decode (pData, dwSize, CXIMAGE_FORMAT_GIF)) {
 				delete pImg;
-				pImg = nullptrptr;
+				pImg = nullptr;
 			}
 		}
 		delete[] pData;
