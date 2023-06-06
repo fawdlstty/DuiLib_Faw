@@ -99,7 +99,6 @@ namespace DuiLib {
 			if (sText.empty())
 			{
 				m_cxyFixedLast = szAvailable;
-				return m_cxyFixedLast;
 			}
 			m_cxyFixedLast = m_cxyFixed;
 			// 自动计算宽度
