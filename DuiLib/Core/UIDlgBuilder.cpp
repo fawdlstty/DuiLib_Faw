@@ -276,7 +276,7 @@ namespace DuiLib {
 				if (!szValue.empty ())
 					count = _ttoi (szValue.c_str ());
 				szValue = node.GetAttributeValue (_T ("source"));
-				if (!szValue.empty ()) continue;
+				if (szValue.empty ()) continue;
 				for (int i = 0; i < count; i++) {
 					CDialogBuilder builder;
 					if (!m_pstrtype.empty ()) { // 使用资源dll，从资源中读取

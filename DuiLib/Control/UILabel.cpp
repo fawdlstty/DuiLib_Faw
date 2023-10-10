@@ -96,12 +96,11 @@ namespace DuiLib {
 			faw::string_t sText = GetText ();
 			m_bNeedEstimateSize = false;
 			m_szAvailableLast = szAvailable;
+			m_cxyFixedLast = m_cxyFixed;
 			if (sText.empty())
 			{
 				m_cxyFixedLast = szAvailable;
-				return m_cxyFixedLast;
 			}
-			m_cxyFixedLast = m_cxyFixed;
 			// 自动计算宽度
 			if ((m_uTextStyle & DT_SINGLELINE) != 0) {
 				// 高度
