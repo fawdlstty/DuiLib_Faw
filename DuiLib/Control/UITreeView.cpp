@@ -308,6 +308,17 @@ namespace DuiLib {
 		return !mTreeNodes.empty ();
 	}
 
+	long CTreeNodeUI::GetTreeLevel()
+	{
+		long level = 0;
+		CTreeNodeUI* pParentNode = GetParentNode();
+		while (pParentNode != NULL) {
+			level++;
+			pParentNode = pParentNode->GetParentNode();
+		}
+		return level;
+	}
+
 	//************************************
 	// 函数名称: AddChildNode
 	// 返回类型: bool
@@ -715,6 +726,12 @@ namespace DuiLib {
 			pControl->SetMinWidth (m_uItemMinWidth);
 
 		CListUI::Add (pControl);
+
+		int nLevel = pControl->GetTreeLevel();
+		int nFolderWidth = pControl->GetFolderButton()->GetFixedWidth();
+		if (nFolderWidth <= 0) nFolderWidth = 16;
+		if (!pControl->GetFolderButton()->IsVisible()) nFolderWidth = 0;
+		pControl->GetFolderButton()->SetPadding(RECT(nLevel * nFolderWidth, 0, 0, 0));
 
 		if (pControl->GetCountChild () > 0) {
 			int nCount = pControl->GetCountChild ();
