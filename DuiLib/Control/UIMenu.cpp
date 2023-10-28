@@ -345,7 +345,9 @@ namespace DuiLib {
 #if defined(WIN32) && !defined(UNDER_CE)
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof (oMonitor);
-		::GetMonitorInfo (::MonitorFromWindow (GetHWND (), MONITOR_DEFAULTTOPRIMARY), &oMonitor);
+		HWND hWndParent = m_hWnd;
+		while (::GetParent(hWndParent)) hWndParent = ::GetParent(hWndParent);
+		::GetMonitorInfo(::MonitorFromWindow(hWndParent, MONITOR_DEFAULTTONEAREST), &oMonitor);
 		RECT rcWork = oMonitor.rcWork;
 #else
 		RECT rcWork = { 0 };
@@ -396,7 +398,7 @@ namespace DuiLib {
 #if defined(WIN32) && !defined(UNDER_CE)
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof (oMonitor);
-		::GetMonitorInfo (::MonitorFromWindow (GetHWND (), MONITOR_DEFAULTTOPRIMARY), &oMonitor);
+		::GetMonitorInfo (::MonitorFromWindow (m_pOwner->GetManager()->GetPaintWindow(), MONITOR_DEFAULTTONEAREST), &oMonitor);
 		RECT rcWork = oMonitor.rcWork;
 #else
 		RECT rcWork = { 0 };
