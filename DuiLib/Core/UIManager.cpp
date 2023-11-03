@@ -1231,6 +1231,8 @@ namespace DuiLib {
 				::SendMessage (m_hwndTooltip, TTM_SETMAXTIPWIDTH, 0, pHover->GetToolTipWidth ());
 			}
 			if (!::IsWindowVisible (m_hwndTooltip)) {
+				// 设置工具提示显示在最前面,避免被其他窗体遮挡
+				::SetWindowPos(m_hwndTooltip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 				::SendMessage (m_hwndTooltip, TTM_SETTOOLINFO, 0, (LPARAM) &m_ToolTip);
 				::SendMessage (m_hwndTooltip, TTM_TRACKACTIVATE, TRUE, (LPARAM) &m_ToolTip);
 			}
