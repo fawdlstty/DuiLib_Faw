@@ -293,9 +293,9 @@ namespace DuiLib {
 				m_pLayout->GetManager ()->AddDefaultAttributeList (_T ("Menu"), pDefaultAttributes);
 				m_pLayout->ApplyAttributeList (pDefaultAttributes);
 			}
-			pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("ExplandIcon"));
+			pDefaultAttributes = m_pOwner->GetManager ()->GetDefaultAttributeList (_T ("ExpandIcon"));
 			if (!pDefaultAttributes.empty ()) {
-				m_pLayout->GetManager ()->AddDefaultAttributeList (_T ("ExplandIcon"), pDefaultAttributes);
+				m_pLayout->GetManager ()->AddDefaultAttributeList (_T ("ExpandIcon"), pDefaultAttributes);
 				m_pLayout->ApplyAttributeList (pDefaultAttributes);
 			}
 			m_pLayout->GetList ()->SetAutoDestroy (false);
@@ -605,7 +605,7 @@ namespace DuiLib {
 			//CMenuElementUI::DrawItemBk(hDC, m_rcItem);
 			//DrawItemText(hDC, m_rcItem);
 			//DrawItemIcon(hDC, m_rcItem);
-			//DrawItemExpland(hDC, m_rcItem);
+			//DrawItemExpand(hDC, m_rcItem);
 			//for (int i = 0; i < GetCount(); ++i)
 			//{
 			//	if (!GetItemAt(i)->GetInterface(_T("MenuElement"))) {
@@ -618,7 +618,7 @@ namespace DuiLib {
 			CMenuElementUI::DrawItemBk (hDC, m_rcItem);
 			DrawItemText (hDC, m_rcItem);
 			DrawItemIcon (hDC, m_rcItem);
-			DrawItemExpland (hDC, m_rcItem);
+			DrawItemExpand (hDC, m_rcItem);
 
 			if (m_items.GetSize () > 0) {
 				RECT rc = m_rcItem;
@@ -711,10 +711,10 @@ namespace DuiLib {
 		}
 	}
 
-	void CMenuElementUI::DrawItemExpland (HDC hDC, const RECT& rcItem) {
-		if (m_bShowExplandIcon) {
+	void CMenuElementUI::DrawItemExpand (HDC hDC, const RECT& rcItem) {
+		if (m_bShowExpandIcon) {
 			faw::string_t strExplandIcon;
-			strExplandIcon = GetManager ()->GetDefaultAttributeList (_T ("ExplandIcon"));
+			strExplandIcon = GetManager ()->GetDefaultAttributeList (_T ("ExpandIcon"));
 			if (strExplandIcon.empty ()) {
 				return;
 			}
@@ -729,9 +729,9 @@ namespace DuiLib {
 			}
 			RECT rcDest =
 			{
-				_cxyFixed.cx - pImageInfo->nX - padding,
+				padding,
 				(_cxyFixed.cy - pImageInfo->nY) / 2,
-				_cxyFixed.cx - pImageInfo->nX - padding + pImageInfo->nX,
+				padding + pImageInfo->nX,
 				(_cxyFixed.cy - pImageInfo->nY) / 2 + pImageInfo->nY
 			};
 			GetManager ()->GetDPIObj ()->ScaleBack (&rcDest);
@@ -1025,8 +1025,8 @@ namespace DuiLib {
 		return m_bCheckItem;
 	}
 
-	void CMenuElementUI::SetShowExplandIcon (bool bShow) {
-		m_bShowExplandIcon = bShow;
+	void CMenuElementUI::SetShowExpandIcon (bool bShow) {
+		m_bShowExpandIcon = bShow;
 	}
 
 	void CMenuElementUI::SetAttribute (faw::string_t pstrName, faw::string_t pstrValue) {
@@ -1054,7 +1054,7 @@ namespace DuiLib {
 			if (FawTools::parse_bool (pstrValue))
 				SetLineType ();
 		} else if (pstrName == _T ("expland")) {
-			SetShowExplandIcon (FawTools::parse_bool (pstrValue));
+			SetShowExpandIcon (FawTools::parse_bool (pstrValue));
 		} else if (pstrName == _T ("linecolor")) {
 			SetLineColor ((DWORD) FawTools::parse_hex (pstrValue));
 		} else if (pstrName == _T ("linepadding")) {

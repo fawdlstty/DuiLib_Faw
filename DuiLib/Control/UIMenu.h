@@ -328,8 +328,8 @@ namespace DuiLib {
 		void SetCheckItem (bool bCheckItem = false);
 		bool GetCheckItem () const;
 
-		void SetShowExplandIcon (bool bShow);
-		void DrawItemExpland (HDC hDC, const RECT& rcItem);
+		void SetShowExpandIcon (bool bShow);
+		void DrawItemExpand (HDC hDC, const RECT& rcItem);
 
 		void SetAttribute (faw::string_t pstrName, faw::string_t pstrValue);
 
@@ -346,7 +346,7 @@ namespace DuiLib {
 		faw::string_t	m_strIcon;
 		bool		m_bCheckItem		= false;
 
-		bool		m_bShowExplandIcon	= false;
+		bool		m_bShowExpandIcon	= false;
 	};
 
 } // namespace DuiLib

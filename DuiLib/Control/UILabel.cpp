@@ -98,9 +98,7 @@ namespace DuiLib {
 			m_szAvailableLast = szAvailable;
 			m_cxyFixedLast = m_cxyFixed;
 			if (sText.empty())
-			{
-				m_cxyFixedLast = szAvailable;
-			}
+				return { 0,0 };
 			// 自动计算宽度
 			if ((m_uTextStyle & DT_SINGLELINE) != 0) {
 				// 高度
