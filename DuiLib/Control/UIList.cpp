@@ -156,6 +156,18 @@ namespace DuiLib {
 			}
 		}
 		if (m_iCurSel >= iIndex) m_iCurSel += 1;
+
+		std::vector<int> VecTempSelIndex;
+		for (auto i = 0; i < m_aSelItems.GetSize(); i++)
+		{
+			int iSelIndex = (int)m_aSelItems.GetAt(i);
+			if (iSelIndex >= iIndex)iSelIndex++;
+			VecTempSelIndex.push_back(iSelIndex);
+		}
+		m_aSelItems.Empty();
+		for (size_t i = 0; i < VecTempSelIndex.size(); i++)
+			m_aSelItems.Add((void*)VecTempSelIndex[i]);
+
 		return true;
 	}
 
@@ -177,6 +189,18 @@ namespace DuiLib {
 			}
 		}
 
+		std::vector<int> VecTempSelIndex;
+		for (auto i = 0; i < m_aSelItems.GetSize(); i++)
+		{
+			int iSelIndex = (int)m_aSelItems.GetAt(i);
+			if (iSelIndex == iIndex)continue;
+			if (iSelIndex > iIndex)iSelIndex--;
+			VecTempSelIndex.push_back(iSelIndex);
+		}
+		m_aSelItems.Empty();
+		for (size_t i = 0; i < VecTempSelIndex.size(); i++)
+			m_aSelItems.Add((void*)VecTempSelIndex[i]);
+
 		if (iIndex == m_iCurSel && m_iCurSel >= 0) {
 			int iSel = m_iCurSel;
 			m_iCurSel = -1;
@@ -193,6 +217,18 @@ namespace DuiLib {
 			IListItemUI* pListItem = static_cast<IListItemUI*>(p->GetInterface (_T ("ListItem")));
 			if (pListItem) pListItem->SetIndex (i);
 		}
+
+		std::vector<int> VecTempSelIndex;
+		for (auto i = 0; i < m_aSelItems.GetSize(); i++)
+		{
+			int iSelIndex = (int)m_aSelItems.GetAt(i);
+			if (iSelIndex == iIndex)continue;
+			if (iSelIndex > iIndex)iSelIndex--;
+			VecTempSelIndex.push_back(iSelIndex);
+		}
+		m_aSelItems.Empty();
+		for (size_t i = 0; i < VecTempSelIndex.size(); i++)
+			m_aSelItems.Add((void*)VecTempSelIndex[i]);
 
 		if (iIndex == m_iCurSel && m_iCurSel >= 0) {
 			int iSel = m_iCurSel;
