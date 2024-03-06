@@ -46,6 +46,12 @@ namespace DuiLib {
 		virtual CControlUI* CreateControl (faw::string_t pstrClass);
 		LRESULT Invoke (std::function<LRESULT ()> f) { return ::SendMessage (m_hWnd, WM_USER + 0x101, 1, (LPARAM) &f); }
 		void AsyncInvoke (std::function<LRESULT ()> f) { ::PostMessage (m_hWnd, WM_USER + 0x101, 0, (LPARAM) new decltype (f) (f)); }
+		template<typename Func, typename... Args>
+		void AsyncInvoke(Func func, Args... args) {
+			auto boundFunc = std::bind(func, args...);
+			auto* funcPtr = new std::function<decltype(func(args...))()>(boundFunc);
+			::PostMessage(m_hWnd, WM_USER + 0x101, 0, reinterpret_cast<LPARAM>(funcPtr));
+		}
 		virtual faw::string_t QueryControlText (faw::string_t lpstrId, faw::string_t lpstrType);
 
 		virtual std::optional<LRESULT> MessageHandler (UINT uMsg, WPARAM wParam, LPARAM /*lParam*/);
