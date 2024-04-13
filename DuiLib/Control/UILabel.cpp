@@ -96,9 +96,9 @@ namespace DuiLib {
 			faw::string_t sText = GetText ();
 			m_bNeedEstimateSize = false;
 			m_szAvailableLast = szAvailable;
-			m_cxyFixedLast = m_cxyFixed;
+			m_cxyFixedLast = GetManager()->GetDPIObj()->Scale(m_cxyFixed);
 			if (sText.empty())
-				return { m_cxyFixed.cx , m_cxyFixed.cy };
+				return { m_cxyFixedLast.cx , m_cxyFixedLast.cy };
 			// 自动计算宽度
 			if ((m_uTextStyle & DT_SINGLELINE) != 0) {
 				// 高度
