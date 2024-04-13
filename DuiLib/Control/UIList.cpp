@@ -390,6 +390,31 @@ namespace DuiLib {
 		Invalidate ();
 	}
 
+	RECT CListUI::GetClientPos() const
+	{
+		RECT rc = m_rcItem;
+		rc.left += m_rcInset.left;
+		rc.top += m_rcInset.top;
+		rc.right -= m_rcInset.right;
+		rc.bottom -= m_rcInset.bottom;
+
+		if (GetVerticalScrollBar() && GetVerticalScrollBar()->IsVisible()) {
+			auto m_pVerticalScrollBar = GetVerticalScrollBar();
+			rc.top -= m_pVerticalScrollBar->GetScrollPos();
+			rc.bottom -= m_pVerticalScrollBar->GetScrollPos();
+			rc.bottom += m_pVerticalScrollBar->GetScrollRange();
+			rc.right -= m_pVerticalScrollBar->GetFixedWidth();
+		}
+		if (GetHorizontalScrollBar() && GetHorizontalScrollBar()->IsVisible()) {
+			auto m_pHorizontalScrollBar = GetVerticalScrollBar();
+			rc.left -= m_pHorizontalScrollBar->GetScrollPos();
+			rc.right -= m_pHorizontalScrollBar->GetScrollPos();
+			rc.right += m_pHorizontalScrollBar->GetScrollRange();
+			rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight();
+		}
+		return rc;
+	}
+
 	CListHeaderUI* CListUI::GetHeader () const {
 		return m_pHeader;
 	}

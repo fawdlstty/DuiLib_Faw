@@ -125,6 +125,7 @@ namespace DuiLib {
 
 		bool IsFixedScrollbar ();
 		void SetFixedScrollbar (bool bFixed);
+		RECT GetClientPos() const override;
 
 		CListHeaderUI* GetHeader () const;
 		CContainerUI* GetList () const;
