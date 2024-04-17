@@ -15,6 +15,7 @@ namespace DuiLib {
 	}
 
 	SIZE CTileLayoutUI::GetItemSize () const {
+		if (m_pManager) return m_pManager->GetDPIObj()->Scale(m_szItem);
 		return m_szItem;
 	}
 
@@ -48,10 +49,11 @@ namespace DuiLib {
 		rc = m_rcItem;
 
 		// Adjust for inset
-		rc.left += m_rcInset.left;
-		rc.top += m_rcInset.top;
-		rc.right -= m_rcInset.right;
-		rc.bottom -= m_rcInset.bottom;
+		auto rcInset = GetInset();
+		rc.left += rcInset.left;
+		rc.top += rcInset.top;
+		rc.right -= rcInset.right;
+		rc.bottom -= rcInset.bottom;
 
 		if (m_items.GetSize () == 0) {
 			ProcessScrollBar (rc, 0, 0);
@@ -62,7 +64,8 @@ namespace DuiLib {
 		if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible ()) rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight ();
 
 		// Position the elements
-		if (m_szItem.cx > 0) m_nColumns = (rc.right - rc.left) / m_szItem.cx;
+		auto szItem = GetItemSize();
+		if (szItem.cx > 0) m_nColumns = (rc.right - rc.left) / szItem.cx;
 		if (m_nColumns == 0) m_nColumns = 1;
 
 		int cyNeeded = 0;
