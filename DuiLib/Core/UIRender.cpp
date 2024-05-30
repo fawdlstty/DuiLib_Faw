@@ -1768,11 +1768,11 @@ namespace DuiLib {
 						faw::string_t *pStr = (faw::string_t*) (sLinks + iLinkIndex);
 						pStr->clear ();
 						while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) {
-							faw::string_t pstrTemp = pstrText.substr (1);
-							while (pstrText < pstrTemp) {
+							//faw::string_t pstrTemp = pstrText.substr (1);
+							//while (pstrText < pstrTemp) {
 								*pStr += pstrText[0];
 								pstrText = pstrText.substr (1);
-							}
+							//}
 						}
 					}
 
@@ -1845,21 +1845,21 @@ namespace DuiLib {
 						bool bUnderline = false;
 						bool bItalic = false;
 						while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}') && pstrText[0] != _T (' ')) {
-							pstrTemp = pstrText.substr (1);
-							while (pstrText < pstrTemp) {
+							//pstrTemp = pstrText.substr (1);
+							//while (pstrText < pstrTemp) {
 								sFontName += pstrText[0];
 								pstrText = pstrText.substr (1);
-							}
+							//}
 						}
 						if (isdigit (pstrText[0])) {
 							iFontSize = FawTools::parse_dec (pstrText);
 						}
 						while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}')) {
-							pstrTemp = pstrText.substr (1);
-							while (pstrText < pstrTemp) {
+							//pstrTemp = pstrText.substr (1);
+							//while (pstrText < pstrTemp) {
 								sFontAttr += pstrText[0];
 								pstrText = pstrText.substr (1);
-							}
+							//}
 						}
 						FawTools::lower (sFontAttr);
 						if (sFontAttr.find (_T ("bold")) != faw::string_t::npos) bBold = true;
@@ -1885,11 +1885,11 @@ namespace DuiLib {
 					const TImageInfo* pImageInfo = nullptr;
 					faw::string_t sName;
 					while (!pstrText.empty () && pstrText[0] != _T ('>') && pstrText[0] != _T ('}') && pstrText[0] != _T (' ')) {
-						faw::string_t pstrTemp = pstrText.substr (1);
-						while (pstrText < pstrTemp) {
+						//faw::string_t pstrTemp = pstrText.substr (1);
+						//while (pstrText < pstrTemp) {
 							sName += pstrText[0];
 							pstrText = pstrText.substr (1);
-						}
+						//}
 					}
 					if (sName.empty ()) { // Italic
 						pstrNextStart = _T ("");
@@ -1920,22 +1920,22 @@ namespace DuiLib {
 								sItem.clear ();
 								sValue.clear ();
 								while (pStrImage[0] != _T ('\0') && pStrImage[0] != _T ('=') && pStrImage[0] > _T (' ')) {
-									faw::string_t pstrTemp = pStrImage.substr (1);
-									while (pStrImage < pstrTemp) {
+									//faw::string_t pstrTemp = pStrImage.substr (1);
+									//while (pStrImage < pstrTemp) {
 										sItem += pStrImage[0];
 										pStrImage = pStrImage.substr (1);
-									}
+									//}
 								}
 								if (pStrImage[0] != _T ('=')) break;
 								pStrImage = pStrImage.substr (1);
 								if (pStrImage[0] != _T ('\'')) break;
 								pStrImage = pStrImage.substr (1);
 								while (pStrImage[0] != _T ('\0') && pStrImage[0] != _T ('\'')) {
-									faw::string_t pstrTemp = pStrImage.substr (1);
-									while (pStrImage < pstrTemp) {
+									//faw::string_t pstrTemp = pStrImage.substr (1);
+									//while (pStrImage < pstrTemp) {
 										sValue += pStrImage[0];
 										pStrImage = pStrImage.substr (1);
-									}
+									//}
 								}
 								if (pStrImage[0] != _T ('\'')) break;
 								pStrImage = pStrImage.substr (1);
@@ -2166,7 +2166,7 @@ namespace DuiLib {
 					}
 					pstrNext = p.substr (1);
 					cchChars++;
-					cchSize += (int) (pstrNext.data () - p.data ());
+					cchSize += (int) (p.size() - pstrNext.size());
 					szText.cx = cchChars * pTm->tmMaxCharWidth;
 					if (pt.x + szText.cx >= rc.right) {
 						::GetTextExtentPoint32 (hDC, pstrText.data (), cchSize, &szText);
@@ -2174,7 +2174,7 @@ namespace DuiLib {
 					if (pt.x + szText.cx > rc.right) {
 						if (pt.x + szText.cx > rc.right && pt.x != rc.left) {
 							cchChars--;
-							cchSize -= (int) (pstrNext.data () - p.data ());
+							cchSize -= (int) (p.size() - pstrNext.size());
 						}
 						if ((uStyle & DT_WORDBREAK) != 0 && cchLastGoodWord > 0) {
 							cchChars = cchLastGoodWord;
@@ -2186,9 +2186,9 @@ namespace DuiLib {
 							if (cchChars > 0) {
 								cchChars -= 1;
 								pstrPrev = &pstrPrev.data ()[-1];
-								cchSize -= (int) (p.data () - pstrPrev.data ());
+								cchSize -= (int) (p.size() - pstrNext.size());
 							} else
-								cchSize -= (int) (p.data () - pstrPrev.data ());
+								cchSize -= (int) (p.size() - pstrNext.size());
 							pt.x = rc.right;
 						}
 						bLineEnd = true;
